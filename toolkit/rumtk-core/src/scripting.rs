@@ -24,12 +24,15 @@ pub mod python_utils {
     use std::path::Path;
 
     use crate::core::RUMResult;
+    use crate::strings::RUMString;
     use compact_str::format_compact;
     use pyo3::prelude::*;
-    use pyo3::types::PyList;
+    use pyo3::types::{PyList, PyTuple};
 
     pub type RUMPyArgs = Py<PyList>;
     pub type RUMPyModule = Py<PyModule>;
+    pub type RUMPyTuple = Py<PyTuple>;
+    pub type RUMPyFunction = Py<PyAny>;
 
     fn string_to_cstring(data: &str) -> RUMResult<CString> {
         match CString::new(data) {
@@ -48,7 +51,7 @@ pub mod python_utils {
         match CString::new(data_str) {
             Ok(code) => Ok(code),
             Err(e) => Err(format_compact!(
-                "Could not cast Python code string to a C string because {}!",
+                "Could not cast Python code string to a C string because {:#?}!",
                 e
             )),
         }
@@ -98,6 +101,28 @@ pub mod python_utils {
             };
             Ok(py_list)
         })
+    }
+
+    fn py_extract_string_tuple<'py>(
+        py: &Python<'py>,
+        pyresult: &RUMPyTuple,
+    ) -> RUMResult<Vec<RUMString>> {
+        let pyresult_vec: Vec<String> = match pyresult.extract(*py) {
+            Ok(vec) => vec,
+            Err(e) => {
+                return Err(format_compact!(
+                    "Could not extract vector from Python result! Reason => {:?}",
+                    e
+                ))
+            }
+        };
+        let mut rumstring_vector = Vec::<RUMString>::with_capacity(pyresult_vec.len());
+
+        for itm in pyresult_vec {
+            rumstring_vector.push(RUMString::from(itm));
+        }
+
+        Ok(rumstring_vector)
     }
 
     ///
@@ -157,50 +182,39 @@ pub mod python_utils {
             Ok(pymod.into())
         })
     }
+
+    pub fn py_exec(
+        pymod: &RUMPyModule,
+        func_name: &str,
+        args: &RUMPyArgs,
+    ) -> RUMResult<Vec<RUMString>> {
+        Python::with_gil(|py| -> RUMResult<Vec<RUMString>> {
+            let pyfunc: RUMPyFunction = match pymod.getattr(py, func_name) {
+                Ok(f) => f.into(),
+                Err(e) => {
+                    return Err(format_compact!(
+                        "No function named {} found in module! Error: {:#?}",
+                        &func_name,
+                        e
+                    ));
+                }
+            };
+            let result: RUMPyTuple = match pyfunc.call1(py, &args) {
+                Ok(r) => r.into(),
+                Err(e) => {
+                    return Err(format_compact!(
+                        "An error occurred executing Python function {}. Error: {}",
+                        &func_name,
+                        e
+                    ))
+                }
+            };
+            py_extract_string_tuple(&py, &result)
+        })
+    }
 }
 
 pub mod python_macros {
-    ///
-    /// Turns a hash map into a Python dictionary.
-    ///
-    /// ## Example
-    ///
-    /// ### HashMap
-    ///
-    /// ```
-    ///     use ahash::{HashMap, HashMapExt};
-    ///     use crate::rumtk_core::rumtk_python_create_args;
-    ///     use pyo3::{
-    ///                 prelude::*,
-    ///                 types::{IntoPyDict, PyDict},
-    ///             };
-    ///
-    ///     let mut kv = HashMap::<&str, &str>::new();
-    ///     kv.insert("name", "Hello");
-    ///     
-    ///     let py_dict = rumtk_python_create_args!(kv).unwrap();
-    ///
-    ///     assert_eq!(kv.keys(), py_dict.keys().iter().collect::<Vec<String>>::(), "Key mismatch!")
-    /// ```
-    ///
-    #[macro_export]
-    macro_rules! rumtk_python_create_args {
-        ( $kv:expr ) => {{
-            use compact_str::format_compact;
-            use pyo3::{
-                prelude::*,
-                types::{IntoPyDict, PyDict},
-            };
-            match Python::with_gil(|py| -> PyResult<Bound<'_, PyDict>> { $kv.into_py_dict(py) }) {
-                Ok(dict) => Ok(dict),
-                Err(err) => Err(format_compact!(
-                    "Could not generate a dictionary kwargs structure because {}",
-                    err
-                )),
-            }
-        }};
-    }
-
     ///
     /// Load a module text into RAM.
     ///
@@ -220,18 +234,12 @@ pub mod python_macros {
     /// ```
     ///
     #[macro_export]
-    macro_rules! rumtk_python_load_module {
+    macro_rules! rumtk_python_exec {
         ( $mod_path:expr ) => {{
             use compact_str::format_compact;
             use pyo3::{prelude::*, types::IntoPyDict};
-            use std::fs::read_to_string;
-            match read_to_string($mod_path) {
-                Ok(data) => Ok(data),
-                Err(err) => Err(format_compact!(
-                    "Could not load Python module contents because {}",
-                    err
-                )),
-            }
+            use $crate::scripting::python_utils::py_load;
+            let pymod = py_load($mod_path)
         }};
     }
 }
