@@ -28,6 +28,7 @@ pub mod python_utils {
     use compact_str::format_compact;
     use pyo3::prelude::*;
     use pyo3::types::{PyList, PyTuple};
+    use pyo3::IntoPyObjectExt;
 
     pub type RUMPyArgs = Py<PyList>;
     pub type RUMPyResult = Vec<RUMString>;
@@ -133,6 +134,31 @@ pub mod python_utils {
     }
 
     ///
+    /// Extract value returned from functions and modules via a `PyAny` object.
+    ///
+    /// ## Example Usage
+    /// ```
+    ///
+    /// ```
+    ///
+    pub fn py_extract_any<'py, T>(py: &Python<'py>, pyresult: &RUMPyAny) -> RUMResult<T>
+    where
+        T: IntoPyObjectExt<'py> + pyo3::FromPyObject<'py>,
+    {
+        let pyresult_vec: T = match pyresult.extract(*py) {
+            Ok(vec) => vec,
+            Err(e) => {
+                return Err(format_compact!(
+                    "Could not extract vector from Python result! Reason => {:?}",
+                    e
+                ))
+            }
+        };
+
+        Ok(string_vector_to_rumstring_vector(&pyresult_vec))
+    }
+
+    ///
     /// Load a python module from a given file path!
     ///
     /// ## Example Usage
@@ -143,7 +169,7 @@ pub mod python_utils {
     ///     use rumtk_core::scripting::python_utils::RUMPyModule;
     ///     use crate::rumtk_core::scripting::python_utils::{py_load};
     ///
-    ///     let expected: &str = "print('Hello World!')";
+    ///     let expected: &str = "print('Hello World!')\ndef test():\n\treturn 'Hello'";
     ///     let fpath: &str = "/tmp/example.py";
     ///     std::fs::write(&fpath, expected.as_bytes()).expect("Failure to write test module.");
     ///
@@ -191,7 +217,27 @@ pub mod python_utils {
     }
 
     ///
+    /// Function for executing a python module's function.
     ///
+    /// # Example
+    ///
+    /// ```
+    ///     use compact_str::format_compact;
+    ///     use pyo3::types::PyModule;
+    ///     use rumtk_core::scripting::python_utils::{RUMPyArgs, RUMPyModule};
+    ///     use crate::rumtk_core::scripting::python_utils::{py_load, py_exec, py_buildargs};
+    ///
+    ///     let expected: &str = "print('Hello World!')\ndef test():\n\treturn 'Hello'";
+    ///     let fpath: &str = "/tmp/example.py";
+    ///     std::fs::write(&fpath, expected.as_bytes()).expect("Failure to write test module.");
+    ///
+    ///     let py_obj: RUMPyModule = py_load(&fpath).expect("Failure to load module!");
+    ///     let args: RUMPyArgs = py_buildargs(&vec![]).unwrap();
+    ///
+    ///     let result = py_exec(&py_obj, "test", &args);
+    ///
+    ///     std::fs::remove_file(&fpath).unwrap()
+    ///```
     ///
     pub fn py_exec(
         pymod: &RUMPyModule,
