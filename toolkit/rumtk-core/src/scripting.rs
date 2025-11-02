@@ -27,10 +27,10 @@ pub mod python_utils {
     use crate::strings::RUMString;
     use compact_str::format_compact;
     use pyo3::prelude::*;
-    use pyo3::types::{PyList, PyTuple};
-    use pyo3::IntoPyObjectExt;
+    use pyo3::types::PyTuple;
+    use pyo3::PyClass;
 
-    pub type RUMPyArgs = Py<PyList>;
+    pub type RUMPyArgs = Py<PyTuple>;
     pub type RUMPyResult = Vec<RUMString>;
     pub type RUMPyModule = Py<PyModule>;
     pub type RUMPyTuple = Py<PyTuple>;
@@ -78,15 +78,13 @@ pub mod python_utils {
     ///
     pub fn py_buildargs(arg_list: &Vec<&str>) -> RUMResult<RUMPyArgs> {
         Python::with_gil(|py| -> RUMResult<RUMPyArgs> {
-            match PyList::new(py, arg_list){
+            match PyTuple::new(py, arg_list){
                 Ok(pylist) => Ok(pylist.into()),
-                Err(e) => {
-                    Err(format_compact!(
-                            "Could not convert argument list {:#?} into a Python args list because of {:#?}!",
-                            &arg_list,
-                            e
-                        ))
-                }
+                Err(e) => Err(format_compact!(
+                    "Could not convert argument list {:#?} into a Python args list because of {:#?}!",
+                    &arg_list,
+                    e
+                ))
             }
         })
     }
@@ -141,21 +139,17 @@ pub mod python_utils {
     ///
     /// ```
     ///
-    pub fn py_extract_any<'py, T>(py: &Python<'py>, pyresult: &RUMPyAny) -> RUMResult<T>
+    pub fn py_extract_any<'py, T>(py: Python<'py>, pyresult: PyObject) -> RUMResult<T>
     where
-        T: IntoPyObjectExt<'py> + pyo3::FromPyObject<'py>,
+        T: FromPyObject<'py>,
     {
-        let pyresult_vec: T = match pyresult.extract(*py) {
-            Ok(vec) => vec,
-            Err(e) => {
-                return Err(format_compact!(
-                    "Could not extract vector from Python result! Reason => {:?}",
-                    e
-                ))
-            }
-        };
-
-        Ok(string_vector_to_rumstring_vector(&pyresult_vec))
+        match pyresult.extract::<T>(py) {
+            Ok(r) => Ok(r),
+            Err(e) => Err(format_compact!(
+                "Could not extract vector from Python result! Reason => {:?}",
+                e
+            )),
+        }
     }
 
     ///
@@ -168,9 +162,11 @@ pub mod python_utils {
     ///     use pyo3::types::PyModule;
     ///     use rumtk_core::scripting::python_utils::RUMPyModule;
     ///     use crate::rumtk_core::scripting::python_utils::{py_load};
+    ///     use rumtk_core::strings::RUMString;
+    ///     use uuid::Uuid;
     ///
     ///     let expected: &str = "print('Hello World!')\ndef test():\n\treturn 'Hello'";
-    ///     let fpath: &str = "/tmp/example.py";
+    ///     let fpath: RUMString = format_compact!("/tmp/{}.py", Uuid::new_v4());
     ///     std::fs::write(&fpath, expected.as_bytes()).expect("Failure to write test module.");
     ///
     ///     let py_obj: RUMPyModule = py_load(&fpath).expect("Failure to load module!");
@@ -226,25 +222,25 @@ pub mod python_utils {
     ///     use pyo3::types::PyModule;
     ///     use rumtk_core::scripting::python_utils::{RUMPyArgs, RUMPyModule};
     ///     use crate::rumtk_core::scripting::python_utils::{py_load, py_exec, py_buildargs};
+    ///     use uuid::Uuid;
     ///
     ///     let expected: &str = "print('Hello World!')\ndef test():\n\treturn 'Hello'";
-    ///     let fpath: &str = "/tmp/example.py";
+    ///     let fpath: RUMString = format_compact!("/tmp/{}.py", Uuid::new_v4());
     ///     std::fs::write(&fpath, expected.as_bytes()).expect("Failure to write test module.");
     ///
     ///     let py_obj: RUMPyModule = py_load(&fpath).expect("Failure to load module!");
     ///     let args: RUMPyArgs = py_buildargs(&vec![]).unwrap();
     ///
-    ///     let result = py_exec(&py_obj, "test", &args);
+    ///     let result: String = py_exec(&py_obj, "test", &args).expect("Failed to extract result!");
     ///
     ///     std::fs::remove_file(&fpath).unwrap()
     ///```
     ///
-    pub fn py_exec(
-        pymod: &RUMPyModule,
-        func_name: &str,
-        args: &RUMPyArgs,
-    ) -> RUMResult<Vec<RUMString>> {
-        Python::with_gil(|py| -> RUMResult<Vec<RUMString>> {
+    pub fn py_exec<T>(pymod: &RUMPyModule, func_name: &str, args: &RUMPyArgs) -> RUMResult<T>
+    where
+        T: Clone + PyClass,
+    {
+        Python::with_gil(|py| -> RUMResult<T> {
             let pyfunc: RUMPyFunction = match pymod.getattr(py, func_name) {
                 Ok(f) => f.into(),
                 Err(e) => {
@@ -255,17 +251,14 @@ pub mod python_utils {
                     ));
                 }
             };
-            let result: RUMPyAny = match pyfunc.call1(py, args.into()) {
-                Ok(r) => r.into(),
-                Err(e) => {
-                    return Err(format_compact!(
-                        "An error occurred executing Python function {}. Error: {}",
-                        &func_name,
-                        e
-                    ))
-                }
-            };
-            py_extract_string_tuple(&py, &result)
+            match pyfunc.call1(py, args) {
+                Ok(r) => py_extract_any(py, r),
+                Err(e) => Err(format_compact!(
+                    "An error occurred executing Python function {}. Error: {}",
+                    &func_name,
+                    e
+                )),
+            }
         })
     }
 }
