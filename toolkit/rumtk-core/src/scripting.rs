@@ -334,8 +334,10 @@ pub mod python_utils {
 
     ///
     /// Function for executing a python module's function.
-    /// If you set the argument `func_name` to an empty string, `py_exec` will execute the module
-    /// itself!!!
+    /// If you set the argument `func_name` to an empty string, `py_exec` will do nothing. Allegedly,
+    /// the module executed upon import.
+    ///
+    /// It is recommended you have a function to call from the module!!!
     ///
     /// # Examples
     ///
@@ -419,98 +421,198 @@ pub mod python_utils {
                 )),
             }
         } else {
-            match pymod.call0(py) {
-                Ok(r) => Ok(r),
-                Err(e) => Err(format_compact!(
-                    "An error occurred executing Python module {}. Error: {}",
-                    &func_name,
-                    e
-                )),
-            }
+            Ok(py_new_args(py).into_any())
         }
     }
 }
 
 pub mod python_macros {
     ///
-    /// Load a module text into RAM.
+    /// Load a Python module and execute contents.
     ///
     /// ## Example
+    ///
+    /// ### Running the Module
+    ///
     /// ```
     ///     use std::fs::write;
+    ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use crate::rumtk_core::rumtk_python_exec;
+    ///     use rumtk_core::core::RUMResult;
+    ///     use crate::rumtk_core::rumtk_python_exec_module;
     ///
-    ///     let module_fname = format!("{}_module.py", Uuid::new_v4());
-    ///     let module_contents = "print(\"Hello World!\")";
-    ///     write(&module_fname, module_contents).expect("Failed to write file!");
+    ///     fn test_module_exec() {
+    ///         let module_fname = format!("{}_module.py", Uuid::new_v4());
+    ///         let module_contents = "print(\"Hello World!\")";
+    ///         write(&module_fname, module_contents).expect("Failed to write file!");
     ///
-    ///     let module_data = rumtk_python_exec!(&module_fname).unwrap();
+    ///         let result = Python::attach(|py| -> RUMResult<()> {
+    ///             rumtk_python_exec_module!(py, &module_fname);
+    ///             Ok(())
+    ///         });
+    ///     }
     ///
-    ///     assert_eq!(module_contents, module_data, "Loaded wrong data!")
+    ///     test_module_exec()
+    ///
+    /// ```
+    ///
+    /// ### Running A Function
+    ///
+    /// ```
+    ///     use std::fs::write;
+    ///     use pyo3::Python;
+    ///     use uuid::Uuid;
+    ///     use rumtk_core::core::RUMResult;
+    ///     use crate::rumtk_core::rumtk_python_exec_module;
+    ///
+    ///     fn test_module_exec() {
+    ///         let module_fname = format!("{}_module.py", Uuid::new_v4());
+    ///         let module_contents = "def test():\n\tprint(\"Hello World!\")";
+    ///         write(&module_fname, module_contents).expect("Failed to write file!");
+    ///
+    ///         let result = Python::attach(|py| -> RUMResult<()> {
+    ///             rumtk_python_exec_module!(py, &module_fname, "test");
+    ///             Ok(())
+    ///         });
+    ///     }
+    ///
+    ///     test_module_exec()
+    ///
+    /// ```
+    ///
+    /// ### Running A Function With Result
+    ///
+    /// ```
+    ///     use std::fs::write;
+    ///     use pyo3::Python;
+    ///     use uuid::Uuid;
+    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::scripting::python_utils::py_extract_any;
+    ///     use crate::rumtk_core::rumtk_python_exec_module;
+    ///
+    ///     fn test_module_exec() -> usize {
+    ///         let module_fname = format!("{}_module.py", Uuid::new_v4());
+    ///         let module_contents = "def test():\n\treturn 5+5";
+    ///         write(&module_fname, module_contents).expect("Failed to write file!");
+    ///
+    ///         let result = Python::attach(|py| -> RUMResult<usize> {
+    ///             let result = rumtk_python_exec_module!(py, &module_fname, "test");
+    ///             let val: usize = py_extract_any(py, &result)?;
+    ///             Ok(val)
+    ///         });
+    ///
+    ///         result.unwrap()
+    ///     }
+    ///
+    ///     let result = test_module_exec();
+    ///
+    ///     assert_eq!(10, result, "Bad value returned from Python snippet!")
+    ///
+    /// ```
+    ///
+    /// ### Running A Function With Arguments and Result
+    ///
+    /// ```
+    ///     use std::fs::write;
+    ///     use pyo3::Python;
+    ///     use uuid::Uuid;
+    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::scripting::python_utils::py_extract_any;
+    ///     use crate::rumtk_core::rumtk_python_exec_module;
+    ///
+    ///     fn test_module_exec() -> usize {
+    ///         let module_fname = format!("{}_module.py", Uuid::new_v4());
+    ///         let module_contents = "def test():\n\treturn 5+5";
+    ///         write(&module_fname, module_contents).expect("Failed to write file!");
+    ///
+    ///         let result = Python::attach(|py| -> RUMResult<usize> {
+    ///             let result = rumtk_python_exec_module!(py, &module_fname, "test");
+    ///             let val: usize = py_extract_any(py, &result)?;
+    ///             Ok(val)
+    ///         });
+    ///
+    ///         result.unwrap()
+    ///     }
+    ///
+    ///     let result = test_module_exec();
+    ///
+    ///     assert_eq!(10, result, "Bad value returned from Python snippet!")
+    ///
     /// ```
     ///
     #[macro_export]
-    macro_rules! rumtk_python_exec {
+    macro_rules! rumtk_python_exec_module {
         ( $py:expr, $mod_path:expr) => {{
             use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
-            use rumtk_core::scripting::python_utils::{
-                RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule,
-            };
-            use rumtk_core::strings::RUMString;
-            use $crate::rumtk_core::scripting::python_utils::{
+            use $crate::scripting::python_utils::{
                 py_buildargs, py_exec, py_list_to_tuple, py_load, py_new_args,
             };
+            use $crate::scripting::python_utils::{RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule};
+            use $crate::strings::RUMString;
 
             // Load module
             let pymod: RUMPyModule = py_load($py, $mod_path)?;
 
             // Empty args
-            let args = py_new_args(py);
+            let args = py_new_args($py);
 
             // Let's execute against arguments
-            py_exec($py, pymod, "", &args)
+            py_exec($py, &pymod, "", &args)?
         }};
         ( $py:expr, $mod_path:expr, $func_name:expr ) => {{
             use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
-            use rumtk_core::scripting::python_utils::{
-                RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule,
-            };
-            use rumtk_core::strings::RUMString;
-            use $crate::rumtk_core::scripting::python_utils::{
+            use $crate::scripting::python_utils::{
                 py_buildargs, py_exec, py_list_to_tuple, py_load, py_new_args,
             };
+            use $crate::scripting::python_utils::{RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule};
+            use $crate::strings::RUMString;
 
             // Load module
             let pymod: RUMPyModule = py_load($py, $mod_path)?;
 
             // Empty args
-            let args = py_new_args(py);
+            let args = py_new_args($py);
 
             // Let's execute against arguments
-            py_exec($py, pymod, $func_name, &args)
+            py_exec($py, &pymod, $func_name, &args)?
         }};
         ( $py:expr, $mod_path:expr, $func_name:expr, $args:expr ) => {{
             use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
-            use rumtk_core::scripting::python_utils::{
-                RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule,
-            };
-            use rumtk_core::strings::RUMString;
-            use $crate::rumtk_core::scripting::python_utils::{
+            use $crate::scripting::python_utils::{
                 py_buildargs, py_exec, py_list_to_tuple, py_load,
             };
+            use $crate::scripting::python_utils::{RUMPyAny, RUMPyArgs, RUMPyList, RUMPyModule};
+            use $crate::strings::RUMString;
 
             // Load module
             let pymod: RUMPyModule = py_load($py, $mod_path)?;
 
             // Let's execute against arguments
-            py_exec($py, pymod, $func_name, $args)
+            py_exec($py, &pymod, $func_name, $args)?
+        }};
+    }
+
+    ///
+    /// This macro obtains the `GIL` and passes it to a closure of your choosing.
+    ///
+    /// ## Example Usage
+    ///
+    /// ```
+    ///
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_python_exec {
+        ( $closure:expr ) => {{
+            use pyo3::Python;
+
+            Python::attach($closure)
         }};
     }
 }
