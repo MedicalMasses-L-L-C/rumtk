@@ -101,6 +101,7 @@ mod tests {
         NTE|1|L|Reference Lab: GENOPTIX|L\n
         NTE|2|L|2110 ROUTHERFORD RD|L\n
         NTE|3|L|CARLSBAD, CA  92008|L";
+    // TODO: PID1.3 => See if it is the hospital mrn then concat with time (down to millis) at network receipt of message and concat with message id (incrementable) make arc<mutex<uint128>> or atomic integer.
     const HL7_V2_REPEATING_FIELD_MESSAGE: &str =
         "MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO\n
         PID|1||PATID14567^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Hernandez^Maria^^^^^L||19880906|F||2054-5^Black or   African American^HL70005|3248 E  FlorenceAve^^Huntington Park^CA^90255^^H||^^PH^^^323^5825421|||||||||H^Hispanic or Latino^HL70189\n
