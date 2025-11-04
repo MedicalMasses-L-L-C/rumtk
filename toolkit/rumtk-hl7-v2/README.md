@@ -36,6 +36,7 @@ communication and automation in medicine.
         - [ ] HL7 v2 Custom Message Overrides
         - [ ] HL7 v2 Message Validator
         - [x] HL7 v2 Message to ASCII Message Generation
+        - [x] HL7 v2 Message Python Bindings
     - [x] MLLP
         - [x] Protocol
         - [x] Client

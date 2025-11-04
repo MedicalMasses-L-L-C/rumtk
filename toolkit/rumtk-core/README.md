@@ -26,14 +26,14 @@ communication and automation in medicine.
     - [x] Memory Cache Support
     - [x] Network Core library
     - [x] JSON Serialization Support
-    - [ ] Cryptologic Adapters
+    - [ ] Cryptographic Adapters
     - [x] Commandline Standard Argument Interface
     - [x] Enable STDIN|Pipe Functionality
     - [ ] Toolkit Core Tests
     - [x] Async support
     - [x] Multithreaded support
     - [ ] SQLite Bindings
-    - [ ] PyO3 for extending message processing
+    - [x] PyO3 for extending message processing
     - [ ] SIMD support?? [Maybe]
 
 # Contributing

@@ -38,14 +38,14 @@ communication and automation in medicine.
     - [x] Memory Cache Support
     - [x] Network Core library
     - [x] JSON Serialization Support
-    - [ ] Cryptologic Adapters
+    - [ ] Cryptographic Adapters
     - [x] Commandline Standard Argument Interface
     - [x] Enable STDIN|Pipe Functionality
     - [ ] Toolkit Core Tests
     - [x] Async support
     - [x] Multithreaded support
     - [ ] SQLite Bindings
-    - [ ] PyO3 for extending message processing
+    - [x] PyO3 for extending message processing
     - [ ] SIMD support?? [Maybe]
 - [ ] HL7 v2 Library
     - [ ] Parser
@@ -65,6 +65,7 @@ communication and automation in medicine.
         - [ ] HL7 v2 Custom Message Overrides
         - [ ] HL7 v2 Message Validator
         - [x] HL7 v2 Message to ASCII Message Generation
+        - [x] HL7 v2 Message Python Bindings
     - [x] MLLP
         - [x] Protocol
         - [x] Client
