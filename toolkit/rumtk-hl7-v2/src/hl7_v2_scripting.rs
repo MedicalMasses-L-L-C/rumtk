@@ -19,12 +19,13 @@
  */
 
 pub mod python {
-    use crate::hl7_v2_parser::v2_parser::V2Message;
     use rumtk_core::core::RUMResult;
     use rumtk_core::scripting::python_utils::RUMPython;
     use rumtk_core::scripting::python_utils::{py_extract_any, py_new_args, py_push_arg};
     use rumtk_core::strings::RUMString;
     use rumtk_core::{rumtk_python_exec, rumtk_python_exec_module};
+
+    use crate::hl7_v2_parser::v2_parser::V2Message;
 
     const EXPECTED_PROCESSOR_FUNCTION_NAME: &str = "process";
 

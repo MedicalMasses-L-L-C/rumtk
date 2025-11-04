@@ -42,10 +42,12 @@ pub mod v2_parser {
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR,
     };
+    use pyo3::exceptions::PyValueError;
     pub use rumtk_core::cache::{get_or_set_from_cache, new_cache, AHashMap, LazyRUMCache};
     use rumtk_core::core::clamp_index;
     use rumtk_core::json::serialization::{Deserialize, Serialize};
     use rumtk_core::rumtk_cache_fetch;
+    use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::strings::CompactStringExt;
     pub use rumtk_core::strings::{
         format_compact, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
@@ -537,6 +539,19 @@ pub mod v2_parser {
             field.get(index.component as isize)
         }
 
+        pub fn find_component_mut(
+            &mut self,
+            search_pattern: &RUMString,
+        ) -> V2Result<&mut V2Component> {
+            let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, compile_search_index);
+            let segment = self.get_mut(&index.segment, index.segment_group as usize)?;
+            let mut field = match segment.get_mut(index.field as isize)?.get_mut((index.field_group - 1) as usize) {
+                Some(field) => field,
+                None => return Err(format_compact!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
+            };
+            field.get_mut(index.component as isize)
+        }
+
         pub fn is_repeat_segment(&self, segment_index: &u8) -> bool {
             let _segment_group: &V2SegmentGroup = self.get_group(segment_index).unwrap();
             _segment_group.len() > 1
@@ -600,6 +615,30 @@ pub mod v2_parser {
             }
 
             Ok(segments)
+        }
+    }
+
+    ///
+    /// Implementation of Python API interface so that Python code can interact and modify
+    /// [V2Component] in [V2Message]!.
+    ///
+    #[pymethods]
+    impl V2Message {
+        pub fn get_component(&self, search_pattern: &str) -> RUMPyResult<V2Component> {
+            match self.find_component(&search_pattern.to_rumstring()) {
+                Ok(component) => Ok((*component).clone()),
+                Err(e) => Err(PyValueError::new_err(e.to_string())),
+            }
+        }
+
+        pub fn set_component(&mut self, search_pattern: &str, value: &str) -> RUMPyResult<()> {
+            match self.find_component_mut(&search_pattern.to_rumstring()) {
+                Ok(component) => {
+                    component.component = RUMString::from(value);
+                    Ok(())
+                }
+                Err(e) => Err(PyValueError::new_err(e.to_string())),
+            }
         }
     }
 
