@@ -33,12 +33,13 @@ pub mod python_utils {
 
     pub type RUMPyArgs = Py<PyTuple>;
     pub type RUMPyList = Py<PyList>;
-    pub type RUMPyResult = Vec<RUMString>;
+    pub type RUMPyResultList = Vec<RUMString>;
     pub type RUMPyModule = Py<PyModule>;
     pub type RUMPyTuple = Py<PyTuple>;
     pub type RUMPyFunction = Py<PyAny>;
     pub type RUMPyAny = Py<PyAny>;
     pub type RUMPython<'py> = Python<'py>;
+    pub type RUMPyResult<T> = PyResult<T>;
 
     fn string_to_cstring(data: &str) -> RUMResult<CString> {
         match CString::new(data) {
@@ -186,7 +187,7 @@ pub mod python_utils {
         }
     }
 
-    fn string_vector_to_rumstring_vector(list: &Vec<String>) -> RUMPyResult {
+    fn string_vector_to_rumstring_vector(list: &Vec<String>) -> RUMPyResultList {
         let mut rumstring_vector = Vec::<RUMString>::with_capacity(list.len());
 
         for itm in list {
@@ -196,8 +197,8 @@ pub mod python_utils {
         rumstring_vector
     }
 
-    pub fn py_extract_string_vector(pyargs: &RUMPyArgs) -> RUMResult<RUMPyResult> {
-        Python::attach(|py| -> RUMResult<RUMPyResult> {
+    pub fn py_extract_string_vector(pyargs: &RUMPyArgs) -> RUMResult<RUMPyResultList> {
+        Python::attach(|py| -> RUMResult<RUMPyResultList> {
             let py_list: Vec<String> = match pyargs.extract(py) {
                 Ok(list) => list,
                 Err(e) => {
