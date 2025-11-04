@@ -19,10 +19,10 @@
  */
 
 pub mod python {
-    use pyo3_ffi::c_str;
-
     use crate::hl7_v2_parser::v2_parser::V2Message;
     use rumtk_core::core::RUMResult;
 
-    pub fn process_message(message: &V2Message) -> RUMResult<V2Message> {}
+    pub fn process_message(message: &V2Message) -> RUMResult<V2Message> {
+        Ok(V2Message::from_str(""))
+    }
 }
