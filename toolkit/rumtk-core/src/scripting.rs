@@ -617,7 +617,6 @@ pub mod python_macros {
     #[macro_export]
     macro_rules! rumtk_python_exec_module {
         ( $py:expr, $mod_path:expr) => {{
-            use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
             use $crate::scripting::python_utils::{
@@ -636,7 +635,6 @@ pub mod python_macros {
             py_exec_module($py, &pymod, "", &args)?
         }};
         ( $py:expr, $mod_path:expr, $func_name:expr ) => {{
-            use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
             use $crate::scripting::python_utils::{
@@ -655,7 +653,6 @@ pub mod python_macros {
             py_exec_module($py, &pymod, $func_name, &args)?
         }};
         ( $py:expr, $mod_path:expr, $func_name:expr, $args:expr ) => {{
-            use compact_str::format_compact;
             use pyo3::types::PyModule;
             use pyo3::{IntoPyObjectExt, Python};
             use $crate::scripting::python_utils::{
