@@ -33,6 +33,8 @@
 ///
 
 pub mod v2_parser {
+    use pyo3::prelude::*;
+
     pub use crate::hl7_v2_base_types::v2_primitives::{
         V2DateTime, V2ParserCharacters, V2PrimitiveCasting, V2Result, V2SearchIndex, V2String,
     };
@@ -88,13 +90,14 @@ pub mod v2_parser {
     /// a field for other purposes is prohibited.
     /// ```
     ///
-    #[derive(Debug, Serialize, Deserialize, PartialEq)]
+    #[pyclass]
+    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     pub struct V2Component {
         component: V2String,
     }
 
     impl V2Component {
-        fn new() -> V2Component {
+        fn new() -> Self {
             V2Component {
                 component: V2String::from(""),
             }
@@ -205,12 +208,14 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Debug, Serialize, Deserialize, PartialEq)]
+    #[pyclass]
+    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
+
     impl V2Field {
-        pub fn new() -> V2Field {
+        pub fn new() -> Self {
             V2Field {
                 components: ComponentList::new(),
             }
@@ -297,7 +302,8 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Debug, Serialize, Deserialize, PartialEq)]
+    #[pyclass]
+    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     pub struct V2Segment {
         name: RUMString,
         description: RUMString,
@@ -311,7 +317,7 @@ pub mod v2_parser {
                 .collect();
             let raw_field_count = raw_fields.len();
 
-            if raw_field_count <= 0 {
+            if raw_field_count == 0 {
                 return Err(format_compact!(
                     "Error splitting segments into fields!\nRaw segment: {}\nField separator: {}",
                     &raw_segment,
@@ -428,7 +434,8 @@ pub mod v2_parser {
     ///
     pub type SegmentMap = AHashMap<u8, V2SegmentGroup>;
 
-    #[derive(Debug, Serialize, Deserialize, PartialEq)]
+    #[pyclass]
+    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,
@@ -523,7 +530,7 @@ pub mod v2_parser {
         pub fn find_component(&self, search_pattern: &RUMString) -> V2Result<&V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, compile_search_index);
             let segment = self.get(&index.segment, index.segment_group as usize)?;
-            let field = match segment.get((index.field) as isize)?.get((index.field_group - 1) as usize) {
+            let field = match segment.get(index.field as isize)?.get((index.field_group - 1) as usize) {
                 Some(field) => field,
                 None => return Err(format_compact!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
             };
@@ -647,8 +654,6 @@ pub mod v2_parser {
 
 pub mod v2_parser_interface {
     /**************************** Macros ***************************************/
-    use crate::hl7_v2_parser;
-
     ///
     /// Simple interface for creating an instance of V2Message!
     /// You can pass a string view, a String, a RUMString, or a byte slice as input.
