@@ -114,7 +114,7 @@ pub mod serialization {
     /// # Example
     ///
     /// ```
-    /// pub use crate::rumtk_core::json::serialization::{Serialize, Deserialize};
+    /// use serde::{Deserialize, Deserializer, Serialize, Serializer};
     /// use crate::rumtk_core::strings::RUMString;
     /// use crate::rumtk_core::{rumtk_serialize, rumtk_deserialize};
     ///

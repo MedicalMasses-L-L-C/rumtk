@@ -19,7 +19,7 @@
  */
 
 pub mod v2_base_types {
-    use serde::{Deserialize, Serialize};
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
     use crate::hl7_v2_constants::{
         V2_DATETIME_MICRO_LENGTH, V2_DATETIME_THOUSAND_TICK, V2_MSHEADER_PATTERN,
