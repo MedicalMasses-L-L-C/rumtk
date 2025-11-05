@@ -19,7 +19,7 @@
  */
 
 //#![feature(unboxed_closures)]
-#![feature(inherent_associated_types)]
+//#![feature(inherent_associated_types)]
 #![feature(type_alias_impl_trait)]
 #![feature(unboxed_closures)]
 #![feature(buf_read_has_data_left)]
@@ -660,7 +660,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_serde_json() {
-        use serde::{Deserialize, Serialize};
+        use serde::{Deserialize, Deserializer, Serialize, Serializer};
         use serde_json::{from_str, to_string};
 
         #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
@@ -680,26 +680,25 @@ mod tests {
         );
     }
 
-    /*
-        #[test]
-        fn test_deserialize_json() {
-            #[derive(Serialize, Deserialize, PartialEq)]
-            struct MyStruct {
-                hello: RUMString,
-            }
-
-            let hw = MyStruct {
-                hello: RUMString::from("World"),
-            };
-            let hw_str = rumtk_serialize!(&hw, true).unwrap();
-            let new_hw: MyStruct = rumtk_deserialize!(&hw_str).unwrap();
-
-            assert!(
-                new_hw == hw,
-                "Deserialized JSON does not match the expected value!"
-            );
+    #[test]
+    fn test_deserialize_json() {
+        #[derive(Serialize, Deserialize, PartialEq)]
+        struct MyStruct {
+            hello: RUMString,
         }
-    */
+
+        let hw = MyStruct {
+            hello: RUMString::from("World"),
+        };
+        let hw_str = rumtk_serialize!(&hw, true).unwrap();
+        let new_hw: MyStruct = rumtk_deserialize!(&hw_str).unwrap();
+
+        assert!(
+            new_hw == hw,
+            "Deserialized JSON does not match the expected value!"
+        );
+    }
+
     /*
     #[test]
     fn test_escape_unescape_json() {

@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#![feature(inherent_associated_types)]
+//#![feature(inherent_associated_types)]
 #![feature(rustc_private)]
 #![feature(str_as_str)]
 extern crate rumtk_core;

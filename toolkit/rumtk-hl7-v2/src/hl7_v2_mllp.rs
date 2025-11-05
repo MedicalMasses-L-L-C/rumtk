@@ -766,10 +766,10 @@ pub mod mllp_v2 {
         peer: RUMString,
     }
 
-    impl MLLPChannel {
-        type SendArgs = (SafeAsyncMLLP, RUMString, RUMString);
-        type ReceiveArgs = (SafeAsyncMLLP, RUMString);
+    type MLLPSendArgs = (SafeAsyncMLLP, RUMString, RUMString);
+    type MLLPReceiveArgs = (SafeAsyncMLLP, RUMString);
 
+    impl MLLPChannel {
         pub fn open(endpoint: &RUMString, mllp_instance: &SafeAsyncMLLP) -> MLLPChannel {
             MLLPChannel {
                 peer: endpoint.clone(),
@@ -779,7 +779,7 @@ pub mod mllp_v2 {
 
         pub fn send_message(&mut self, message: &str) -> RUMResult<()> {
             rumtk_exec_task!(
-                async |args: &SafeTaskArgs<Self::SendArgs>| -> RUMResult<()> {
+                async |args: &SafeTaskArgs<MLLPSendArgs>| -> RUMResult<()> {
                     let owned_args = args.write().await;
                     let (channel, message, peer) = owned_args.get(0).unwrap();
                     let result = channel.lock().await.send(message, peer).await;
@@ -795,7 +795,7 @@ pub mod mllp_v2 {
 
         pub fn receive_message(&mut self) -> RUMResult<RUMString> {
             rumtk_exec_task!(
-                async |args: &SafeTaskArgs<Self::ReceiveArgs>| -> RUMResult<RUMString> {
+                async |args: &SafeTaskArgs<MLLPReceiveArgs>| -> RUMResult<RUMString> {
                     let owned_args = args.write().await;
                     let owned_arg = owned_args.get(0);
                     let (channel, peer) = owned_arg.unwrap();
