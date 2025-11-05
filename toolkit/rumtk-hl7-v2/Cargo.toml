@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-hl7-v2"
 description = "HL7 V2 Parser and MLLP Implementation to support building interface utilities."
-version = "0.8.2"
+version = "0.8.3"
 readme = "README.md"
 license = "LGPL-2.1"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-hl7-v2"
@@ -19,8 +19,8 @@ chrono = "0.4.39"
 once_cell = "1.20.2"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.145"
-rumtk-core = { path = "../rumtk-core" }
+#rumtk-core = { path = "../rumtk-core" }
 tokio = { version = "1.45.0", features = ["full"] }
 pyo3 = { version = "0.27.1", features = ["default", "auto-initialize", "serde"] }
-#rumtk-core = "0.9.3"
+rumtk-core = "0.9.4"
 pyo3-ffi = "0.27.1"
