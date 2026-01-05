@@ -18,12 +18,29 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-TMPDIR="/tmp/$(uuidgen)"
-RESULTSDIR="$TMPDIR/out"
+mkdir demo
+mkdir demo/echo_interface
 
-mkdir "$TMPDIR"
-mkdir "$RESULTSDIR"
+echo "Setting up Interface Chain"
+./target/debug/rumtk-v2-interface --port 55555 --local > demo/echo_interface/out.log &
+sleep 1
+./target/debug/rumtk-v2-interface --port 55556 --local | ./target/debug/rumtk-v2-interface --outbound --port 55555 --local &
+sleep 1
 
-./"$1"/setup.sh "$TMPDIR" "$RESULTSDIR"
-./"$1"/benchmark.sh "$TMPDIR" "$RESULTSDIR"
-./"$1"/cleanup.sh "$TMPDIR" "$RESULTSDIR" "$1"
+echo "Pushing Message through PIPEs!"
+cat examples/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55556
+
+sleep 1
+
+echo "Output"
+DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/echo_interface/out.log) )
+
+echo "Clean up"
+pkill -i -e -f rumtk-v2-interface
+rm -r demo/echo_interface
+
+if [ "$DIFF" != "" ]; then
+    echo "Values mismatch!"
+    echo "Diff: $DIFF"
+    exit 69
+fi
