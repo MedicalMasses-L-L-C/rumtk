@@ -1,0 +1,55 @@
+MSH|^~\&|SendingApp|SendingFac|ReceivingApp|ReceivingFac|20120309132638||ORU^R01|Q162690178T166106789|P|2.3
+PID|1||000734081|000734081|BAR^GRANOLA^||19690226|F||||011||||M|||123-89-4567|||N||||||||N
+PV1|1|I||EM|||01255^PHYSICIAN^ADAM^I|1247^PHYSICIAN^LAWRENCE^J|02008^PHYSICIAN^SZILVIA~01116^PHYSICIAN^NURUDEEN^A~00976^PHYSICIAN^DAVID^G|MED||||7|||01255^PHYSICIAN^ADAM^I|||||||||||||||||||||||||||20120306145500
+ORC|RE|||||||||||01255
+OBR|1|126372120^STDOM|126372120|4050097^Surg Path Final Report|||20120307000000|20120308091200||||||||01255||||00000SP20120002103||20120309132541||AP|F||1~^^^^^R
+OBX|1|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|2|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Patient Name:  Blah||||||F|||20120309132541
+OBX|3|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Accession No.:  SP-12-0002103||||||F|||20120309132541
+OBX|4|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|5|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|6|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|7|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||           A P -   S u r g   P a t h   F i n a l   R e p o r t||||||F|||20120309132541
+OBX|8|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|9|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Accession Number   Collected          Received    Pathologist||||||F|||20120309132541
+OBX|10|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||                        Date/Time          Date/Time||||||F|||20120309132541
+OBX|11|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     SP-12-0002103      03/07/2012         03/08/2012     Smith, Randall S||||||F|||20120309132541
+OBX|12|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||                        12:00:00 AM CST    9:12:00 AM CST||||||F|||20120309132541
+OBX|13|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|14|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Diagnosis:||||||F|||20120309132541
+OBX|15|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     BRAIN, 4TH VENTRICLE||||||F|||20120309132541
+OBX|16|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|17|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     MILD GLIOSIS||||||F|||20120309132541
+OBX|18|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|19|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Randall S. Smith, MD||||||F|||20120309132541
+OBX|20|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     (Electronically signed by)||||||F|||20120309132541
+OBX|21|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Verified:  03/09/12 1:25 PM||||||F|||20120309132541
+OBX|22|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     RSS/PCW||||||F|||20120309132541
+OBX|23|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|24|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Comment:||||||F|||20120309132541
+OBX|25|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     No evidence of granulomatous inflammation as seen in previous biopsies||||||F|||20120309132541
+OBX|26|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     (SP03-6655)and no evidence of the psammoma bodies noted in the previous||||||F|||20120309132541
+OBX|27|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     biopsy (SP07-11382).||||||F|||20120309132541
+OBX|28|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|29|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Specimen(s):||||||F|||20120309132541
+OBX|30|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     4TH VENTRICULAR CYST||||||F|||20120309132541
+OBX|31|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|32|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Clinical Information:||||||F|||20120309132541
+OBX|33|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     No clinical information submitted||||||F|||20120309132541
+OBX|34|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|35|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Gross Description:||||||F|||20120309132541
+OBX|36|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     The specimen designated as "4th ventricular cyst" is received in formalin||||||F|||20120309132541
+OBX|37|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     in a container labeled with the patient's name and medical record number||||||F|||20120309132541
+OBX|38|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     and consists of an irregular shaped fragment of light tan tissue which||||||F|||20120309132541
+OBX|39|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     measures 0.2 x 0.2 x 0.1 cm.  The specimen is totally submitted in||||||F|||20120309132541
+OBX|40|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     cassette 1A.||||||F|||20120309132541
+OBX|41|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|42|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     RSS/VB||||||F|||20120309132541
+OBX|43|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|44|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Microscopic Description:||||||F|||20120309132541
+OBX|45|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     A microscopic exam was performed.||||||F|||20120309132541
+OBX|46|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|47|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     RSS/PCW||||||F|||20120309132541
+OBX|48|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||||||||F|||20120309132541
+OBX|49|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     Intradepartmental Consultation:||||||F|||20120309132541
+OBX|50|TX|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||     T. A. ROSE, MD||||||F|||20120309132541
