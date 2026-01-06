@@ -39,10 +39,11 @@
 
 TMPDIR="/tmp/$(uuidgen)"
 RESULTSDIR="$TMPDIR/out"
+TEMPLATEDIR="$(pwd)/hl7"
 
 mkdir "$TMPDIR"
 mkdir "$RESULTSDIR"
 
-./benchmark/"$1"/setup.sh "$TMPDIR" "$RESULTSDIR"
+./benchmark/"$1"/setup.sh "$TMPDIR" "$RESULTSDIR" "$TEMPLATEDIR"
 ./benchmark/"$1"/benchmark.sh "$TMPDIR" "$RESULTSDIR"
-./benchmark/"$1"/cleanup.sh "$TMPDIR" "$RESULTSDIR" "$2"
+#./benchmark/"$1"/cleanup.sh "$TMPDIR" "$RESULTSDIR" "$2"
