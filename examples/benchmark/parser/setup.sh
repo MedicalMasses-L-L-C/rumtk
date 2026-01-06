@@ -21,7 +21,16 @@
 pushd "$1" || exit
 
 echo "Generating HL7 sample files..."
-# Generate a 2MB BASE 64 encoded string to embed in ORU to simulate embedded report
-random_string=$(openssl rand -base64 2097152)
+for i in {0..99}; do
+  # Generate a 2MB BASE 64 encoded string to embed in ORU to simulate embedded report
+  random_string=$(head -c 2097152 /dev/urandom | base64)
+  fpath="$1/$i.hl7"
+  cp "$3/path_report_enterprisehealth.hl7" "$fpath"
+  pdf_data="OBX|51|ED|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||^PDF^^base64^$random_string||||||F|||20120309132541"
+  echo "$pdf_data" >> "$fpath"
+  echo "Generated file $fpath..."
+done
+
+echo "Benchmark samples found in $1"
 
 popd || exit
