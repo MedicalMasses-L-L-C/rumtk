@@ -1,12 +1,46 @@
-use askama::Template;
-use crate::{mm_render_html, mm_get_text_item, mm_render_component};
 use crate::components::COMPONENTS;
+use crate::utils::defaults::{DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM, PARAMS_TYPE, PARAMS_CSS_CLASS};
+use crate::{mm_get_text_item, mm_render_component, mm_render_html};
+use askama::Template;
 
 #[derive(Template, Debug)]
-#[template(path = "components/contact_button.html")]
-struct ContactButton {
+#[template(
+    source = "
+        <style>
+            .contact-centered-button-container {
+                max-width: fit-content;
+                margin-inline: auto;
+
+                height: 90px;
+            }
+
+            .contact-centered-button {
+                background: radial-gradient(circle,var(--color-darkpurple) 0%, var(--color-indigo) 70%);
+
+                color: var(--color-bg-white);
+
+                border-radius: 15px;
+            }
+        </style>
+        <link href="/static/components/contact_button.css" rel="stylesheet">
+        <script type="module" id="contact_button">
+            export function goto_contact() {
+                window.location.href = './contact';
+            }
+
+            // @ts-ignore
+            window.goto_contact = goto_contact;
+        </script>
+        <div class="contact-{{ css_class }}-button-container">
+            <button class="contact-{{ css_class }}-button" onclick="{{ send_function }}()">
+                {{title|safe}}
+            </button>
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct ContactButton {
     title: MMString,
     typ: MMString,
     send_function: MMString,

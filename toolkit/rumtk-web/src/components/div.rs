@@ -1,12 +1,20 @@
-use askama::Template;
-use crate::{mm_render_html, mm_get_text_item};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_text_item, mm_render_html};
+use askama::Template;
 
 #[derive(Template, Debug)]
-#[template(path = "components/div.html")]
-struct Div {
-    text: MMString,
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <div class="div-{{css_class}}">{{contents|safe}}</div>
+    ",
+    ext = "html"
+)]
+pub struct Div {
+    contents: MMString,
     css_class: MMString,
 }
 
@@ -14,10 +22,8 @@ pub fn div(path_components: URLPath, params: URLParams, state: SharedAppState) -
     let contents = mm_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    mm_render_html!(
-        Div {
-            text: MMString::from(contents),
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(Div {
+        contents: MMString::from(contents),
+        css_class: MMString::from(css_class),
+    })
 }

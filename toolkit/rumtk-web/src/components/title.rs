@@ -1,12 +1,52 @@
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
-use crate::{mm_render_html, mm_get_conf, mm_get_text_item};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 
 #[derive(Template, Debug)]
-#[template(path = "components/title.html")]
-struct Title {
+#[template(
+    source = "
+        <style>
+            .title-default-container {
+                display: block;
+                height: 40px;
+                align-content: center;
+                margin-block: 20px 20px;
+            }
+
+            .title-default {
+                display: block;
+                margin-block: 0;
+            }
+
+            .title-default-overlay {
+                position: relative;
+                margin-block: 0;
+                z-index: var(--mid-layer);
+                bottom: 1.25em;
+
+                background-image: var(--img-glitch-0);
+                background-repeat: repeat;
+                background-clip: text;
+                color: transparent;
+                background-position: center;
+                filter: blur(5px);
+
+                animation: slide 30s infinite linear;
+            }
+        </style>
+        <link href="/static/components/title.css" rel="stylesheet">
+        <div class="f14 centered title-{{ css_class }}-container">
+            <a id="{{typ}}">
+                <h2 class="title-{{ css_class }}">{{ text.to_uppercase() }}</h2>
+                <h2 class="title-{{ css_class }}-overlay no-select">{{ text.to_uppercase() }}</h2>
+            </a>
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct Title {
     typ: MMString,
     text: MMString,
     css_class: MMString,

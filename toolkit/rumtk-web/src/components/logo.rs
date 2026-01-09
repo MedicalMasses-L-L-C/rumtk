@@ -1,11 +1,26 @@
-use askama::Template;
-use crate::{mm_get_param_eq, mm_render_html, mm_get_text_item};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_param_eq, mm_get_text_item, mm_render_html};
+use askama::Template;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/logo.html")]
-struct Logo {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <link href="/static/components/logo.css" rel="stylesheet">
+        <div class="centered logo">
+        {% if diamond %}
+            <img src="/static/img/logo.webp" alt="Webp Logo" class="logo-{{ css_class }}" fetchpriority="high" />
+        {% else %}
+            <img src="/static/img/logo.svg" alt="SVG Logo" fetchpriority="high"/>
+        {% endif %}
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct Logo {
     diamond: bool,
     css_class: MMString,
 }

@@ -1,10 +1,10 @@
-use std::collections::HashMap;
+use crate::components::contact_card::contact_card;
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
+use crate::utils::types::{AppState, HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_conf, mm_get_param, mm_get_text_item, mm_render_html};
 use askama::Template;
 use axum::response::Html;
-use crate::{mm_get_param, mm_render_html, mm_get_conf, mm_get_text_item};
-use crate::components::contact_card::contact_card;
-use crate::utils::types::{AppState, HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT, PARAMS_TYPE, PARAMS_CSS_CLASS, PARAMS_SECTION};
+use std::collections::HashMap;
 
 #[derive(Debug)]
 struct PortraitItem {
@@ -16,8 +16,33 @@ struct PortraitItem {
 type PortraitGrid = Vec<Vec<PortraitItem>>;
 
 #[derive(Template, Debug)]
-#[template(path = "components/portrait_card.html")]
-struct PortraitCard {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <link href="/static/components/portrait_card.css" rel="stylesheet">
+        <div class="centered twothird-width portrait-card-{{ css_class }}-container">
+            <table>
+                <thead></thead>
+                <tbody>
+                {% for row in icon_data %}
+                    <tr class="portrait-card-{{ css_class }}-row">
+                        {% for item in row %}
+                        <td class="portrait-card-{{ css_class }}-item">
+                            <img src="{{ item.portrait }}" alt="{{ item.user }}" class="portrait-card-{{ css_class }}-item-portrait" fetchpriority="low" />
+                            {{item.contact|safe}}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct PortraitCard {
     icon_data: PortraitGrid,
     css_class: MMString,
 }
@@ -41,11 +66,11 @@ fn get_portrait_grid(section: &str, typ: &str, lang: &str, app_state: SharedAppS
                             ("section".to_string(), section.to_string()),
                             ("type".to_string(), i_name.to_string())
                         ]),
-                        app_state.clone()
+                        app_state.clone(),
                     ) {
                         Ok(v) => v.0,
                         Err(_) => default_html.0.clone(),
-                    }
+                    },
                 }
             );
         }

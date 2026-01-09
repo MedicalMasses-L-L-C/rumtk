@@ -1,17 +1,117 @@
-use std::collections::HashMap;
+use crate::components::logo::logo;
+use crate::components::navlink::navlink;
+use crate::components::COMPONENTS;
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use crate::utils::types::{AppState, HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_conf, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 use axum::response::Html;
 use phf_macros::phf_ordered_map;
-use crate::{mm_get_conf, mm_get_text_item, mm_render_component, mm_render_html};
-use crate::components::COMPONENTS;
-use crate::components::logo::logo;
-use crate::components::navlink::navlink;
-use crate::utils::types::{AppState, HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use std::collections::HashMap;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/navbar.html")]
-struct NavBar {
+#[template(
+    source = "
+        <style>
+            .navbar-default-container {
+                position: fixed;
+                top: 0;
+
+                padding: 1em;
+
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+
+                align-items: center;
+                justify-content: space-between;
+                justify-items: center;
+
+                background-color: var(--color-indigo);
+                border-bottom: var(--color-turqoise) 0.1em solid;
+
+                width: 100%;
+                backdrop-filter: blur(5px);
+
+                opacity: 0.9;
+                height: fit-content;
+
+                z-index: var(--top-layer);
+            }
+
+            .navbar-default-navlogo {
+                position: relative;
+                left: 0;
+                min-width: 64px;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .navbar-default-navactions {
+                position: relative;
+
+                align-self: center;
+                width: fit-content;
+                min-width: 200px;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                justify-items: center;
+                gap: 1em;
+
+                padding: 10px;
+            }
+
+            .navbar-default-misc {
+                position: relative;
+                right: 0;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                width: 17.5%;
+                gap: 1em;
+            }
+
+            .navlink:link, .navlink:visited {
+                color: var(--color-navlink);
+            }
+
+            .navlink:hover {
+                background-color: var(--color-darkpurple);
+                border-radius: 10px;
+            }
+
+            .brand-name {
+                background-image: linear-gradient(to right, var(--color-darkpurple), var(--color-ticklemepink), var(--color-cerulean), var(--color-turqoise));
+                background-clip: text;
+                color: transparent;
+            }
+
+        </style>
+        <link href="/static/components/navbar.css" rel="stylesheet">
+        <div class="navbar-{{ css_class }}-container">
+            <div class="navbar-{{ css_class }}-navlogo">
+                <a class="undecorated no-select" href="./" style="display:flex;flex-direction:row;align-items:center;">
+                    {{logo|safe}}
+                    <h3 class="brand-name"> MedicalMasses</h3>
+                </a>
+            </div>
+            <div class="navbar-{{ css_class }}-navactions">
+                {% for item in nav_links %}
+                {{item|safe}}
+                {% endfor %}
+            </div>
+            <div class="navbar-{{ css_class }}-misc">
+            </div>
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct NavBar {
     logo: MMString,
     nav_links: Vec<MMString>,
     css_class: MMString,
@@ -27,7 +127,7 @@ fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> 
                 &HashMap::from([
                     ("target".to_string(), key.to_string()),
                 ]),
-                app_state.clone()
+                app_state.clone(),
             ).unwrap_or_else(|_| default_html.clone()).0
         );
     }

@@ -1,10 +1,27 @@
-use askama::Template;
-use crate::{mm_render_html, mm_get_text_item};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_text_item, mm_render_html};
+use askama::Template;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/form/text_card.html")]
+#[template(
+    source = "
+        <style>
+            .card-default {
+                max-width: 1700px;
+                padding: 20px;
+                background-color: var(--color-indigo);
+
+                border-radius: 15px;
+            }
+        </style>
+        <link href="/static/components/form/text_card.css" rel="stylesheet">
+        <div class="centered card-{{css_class}}">
+          <div hx-get="/component/label?type={{typ}}" hx-target="this" hx-trigger="load"> </div>
+        </div>
+    ",
+    ext = "html"
+)]
 struct TextCard {
     typ: MMString,
     css_class: MMString,

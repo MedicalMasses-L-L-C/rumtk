@@ -1,12 +1,57 @@
+use crate::utils::defaults::{DEFAULT_CONTACT_ITEM, DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
+use crate::utils::types::{HTMLResult, MMString, NestedNestedTextMap, NestedTextMap, SharedAppState, TextMap, URLParams, URLPath};
+use crate::{mm_get_conf, mm_get_param, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
-use crate::{mm_get_param, mm_render_html, mm_get_conf, mm_get_text_item};
-use crate::utils::types::{HTMLResult, MMString, NestedNestedTextMap, NestedTextMap, SharedAppState, TextMap, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT, DEFAULT_CONTACT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, PARAMS_SECTION};
 
 #[derive(Template, Debug)]
-#[template(path = "components/contact_card.html")]
-struct ContactCard {
+#[template(
+    source = "
+        <style>
+            .contact-card-default-container {
+            }
+
+            .contact-card-default-container > p {
+                margin: 0;
+            }
+
+            .contact-card-centered-container {
+                max-width: fit-content;
+                margin-inline: auto;
+            }
+
+            .contact-card-centered-container > p {
+                margin: 0;
+            }
+        </style>
+        <link href="/static/components/contact_card.css" rel="stylesheet">
+        <div class="f14 centered">
+            <div class="f18 contact-card-{{ css_class }}-container">
+                {% for (details_typ, details_data) in contact_lines %}
+                {% if details_typ == &"phrase" && !details_data.is_empty() %}
+                <p class="italics f18" >
+                    "{{ details_data }}"
+                </p>
+                {% else if details_typ == &"email" && !details_data.is_empty() %}
+                <p>
+                    <a  class=" f14 no-text-color" href="mailto:{{ details_data }}">{{ details_data }}</a>
+                </p>
+                {% else if details_typ == &"phone" && !details_data.is_empty() %}
+                <p>
+                    <a  class="f14 no-text-color" href="tel:{{ details_data }}">{{ details_data }}</a>
+                </p>
+                {% else if !details_data.is_empty() %}
+                <p class="f14" >
+                    {{ details_data }}
+                </p>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct ContactCard {
     contact_lines: &'static TextMap,
     css_class: MMString,
 }

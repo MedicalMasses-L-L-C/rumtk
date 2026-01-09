@@ -1,11 +1,33 @@
-use askama::Template;
-use crate::{mm_render_html, mm_get_text_item, mm_get_misc_conf};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
+use askama::Template;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/item_card.html")]
-struct ItemCard {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <link href="/static/components/item_card.css" rel="stylesheet">
+        <div class="item-card-{{css_class}}-container">
+            {% for (service_name, service_description) in services %}
+            <div>
+                <details>
+                    <summary class="f16 item-card-{{css_class}}-title">
+                        {{ service_name.to_uppercase() }}
+                    </summary>
+                    <pre class="item-card-{{css_class}}-details">
+                        {{ service_description }}
+                    </pre>
+                </details>
+            </div>
+            {% endfor %}
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct ItemCard {
     services: &'static TextMap,
     css_class: MMString,
 }

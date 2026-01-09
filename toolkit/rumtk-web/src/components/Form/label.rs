@@ -1,11 +1,25 @@
-use askama::Template;
-use phf_macros::{phf_ordered_map};
-use crate::{mm_render_html, mm_get_conf, mm_get_text_item, mm_render_markdown};
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
+use crate::{mm_get_conf, mm_get_text_item, mm_render_html, mm_render_markdown};
+use askama::Template;
+use phf_macros::phf_ordered_map;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/form/label.html")]
+#[template(
+    source = "
+        <style>
+            .label-default {
+                text-wrap: wrap;
+                margin: auto;
+            }
+        </style>
+        <link href="/static/components/form/label.css" rel="stylesheet">
+        <pre class="label-{{css_class}}">
+            {{text|safe}}
+        </pre>
+    ",
+    ext = "html"
+)]
 struct Label {
     text: MMString,
     css_class: MMString,

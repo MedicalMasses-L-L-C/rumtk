@@ -1,7 +1,7 @@
-use askama::Template;
-use crate::{mm_render_html, mm_get_text_item, mm_get_misc_conf};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
+use askama::Template;
 
 const ICON_CSS: &str = "fa-brands fa-square-{}";
 
@@ -15,8 +15,21 @@ struct Social {
 type SocialsList = Vec<Social>;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/socials.html")]
-struct Socials {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <link href="/static/components/socials.css" rel="stylesheet">
+        <div class="socials-{{ css_class }}-container">
+          {% for icon in icons %}
+            <a href="{{icon.url}}" aria-label="link-{{icon.name}}" class="f20 {{icon.icon}}"> </a>
+          {% endfor %}
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct Socials {
     icons: SocialsList,
     css_class: MMString,
 }
@@ -37,7 +50,7 @@ fn get_social_list(social_list: &str) -> SocialsList {
             Social {
                 name: MMString::from(name),
                 icon: format!("fa-brands fa-{}", name),
-                url
+                url,
             }
         )
     }

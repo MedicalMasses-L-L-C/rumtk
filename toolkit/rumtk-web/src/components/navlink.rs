@@ -1,8 +1,8 @@
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
-use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
 
 #[derive(Debug, Clone)]
 struct NavItem {
@@ -11,8 +11,16 @@ struct NavItem {
 }
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/navlink.html")]
-struct NavLink {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <a class="undecorated navlink f18" href="{{target.url}}">{{target.title}}</a>
+    ",
+    ext = "html"
+)]
+pub struct NavLink {
     target: NavItem,
     css_class: MMString,
 }

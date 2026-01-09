@@ -1,12 +1,37 @@
-use askama::Template;
-use phf_macros::{phf_ordered_map};
-use crate::{mm_get_param_eq, mm_render_html, mm_get_conf, mm_get_text_item};
+use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED, PARAMS_ITEM};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, DEFAULT_NO_TEXT, PARAMS_CSS_CLASS, PARAMS_INVERTED, PARAMS_ITEM};
+use crate::{mm_get_conf, mm_get_param_eq, mm_get_text_item, mm_render_html};
+use askama::Template;
+use phf_macros::phf_ordered_map;
 
 #[derive(Template, Debug, Clone)]
-#[template(path = "components/info_card.html")]
-struct InfoCard {
+#[template(
+    source = "
+        <style>
+
+        </style>
+        <link href="/static/components/info_card.css" rel="stylesheet">
+        <div class="info-card-{{ css_class }}-container">
+            {% if inverted %}
+                <pre class="info-card-{{ css_class }}-descbox">
+                    {{ description }}
+                </pre>
+                <div class="f18 info-card-{{ css_class }}-titlebox">
+                    {{ title }}
+                </div>
+            {% else %}
+                <div class="f18 info-card-{{ css_class }}-titlebox">
+                    {{ title }}
+                </div>
+                <pre class="info-card-{{ css_class }}-descbox">
+                    {{ description }}
+                </pre>
+            {% endif %}
+        </div>
+    ",
+    ext = "html"
+)]
+pub struct InfoCard {
     title: &'static str,
     description: &'static str,
     inverted: bool,
