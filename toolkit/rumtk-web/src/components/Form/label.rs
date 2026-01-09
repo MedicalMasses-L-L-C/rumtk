@@ -1,0 +1,30 @@
+use askama::Template;
+use phf_macros::{phf_ordered_map};
+use crate::{mm_render_html, mm_get_conf, mm_get_text_item, mm_render_markdown};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
+
+#[derive(Template, Debug, Clone)]
+#[template(path = "components/form/label.html")]
+struct Label {
+    text: MMString,
+    css_class: MMString,
+}
+
+pub fn label(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+    let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
+    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let text_store = mm_get_conf!(SECTION_TEXT, DEFAULT_NO_TEXT);
+    let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
+    let itm = mm_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
+    let desc = mm_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
+    let html = mm_render_markdown!(desc);
+
+    mm_render_html!(
+        Label {
+            text: html,
+            css_class: MMString::from(css_class),
+        }
+    )
+}
