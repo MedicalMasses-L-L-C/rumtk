@@ -19,11 +19,18 @@
 #
 echo "Pushing Message through PIPEs!"
 
-files=$(ls $1/*.hl7)
+files=$(ls "$1"/*.hl7)
 
 for f in $files; do
-  echo "hyperfine --warmup 3 cat $f | ../target/release/rumtk-hl7-v2-parse"
-  hyperfine --warmup 3 "cat $f | ../target/release/rumtk-hl7-v2-parse"
+  echo "hyperfine --warmup 3 --runs 10 cat $f | ../target/release/rumtk-hl7-v2-parse"
+  hyperfine --warmup 3 --runs 10 --export-json "$f.json" "cat $f | ../target/release/rumtk-hl7-v2-parse"
 done
-#hyperfine --warmup 3 "cat hl7/path_report_enterprisehealth.hl7 | ../target/release/rumtk-hl7-v2-parse"
+
+pushd "$1" || exit
+for f in $files; do
+  echo "perf record -F99 --call-graph dwarf cat $f | ../target/release/rumtk-hl7-v2-parse"
+  perf record -F99 --call-graph dwarf -o "cat $f | ../target/release/rumtk-hl7-v2-parse"
+  break
+done
+popd || exit
 
