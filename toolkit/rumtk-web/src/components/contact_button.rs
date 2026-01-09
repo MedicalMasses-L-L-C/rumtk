@@ -23,7 +23,9 @@ use askama::Template;
                 border-radius: 15px;
             }
         </style>
-        <link href="/static/components/contact_button.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/contact_button.css" rel="stylesheet">
+        {% endif %}
         <script type="module" id="contact_button">
             export function goto_contact() {
                 window.location.href = './contact';

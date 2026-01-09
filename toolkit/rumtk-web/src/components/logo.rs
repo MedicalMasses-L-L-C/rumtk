@@ -9,7 +9,9 @@ use askama::Template;
         <style>
 
         </style>
-        <link href="/static/components/logo.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/logo.css" rel="stylesheet">
+        {% endif %}
         <div class="centered logo">
         {% if diamond %}
             <img src="/static/img/logo.webp" alt="Webp Logo" class="logo-{{ css_class }}" fetchpriority="high" />

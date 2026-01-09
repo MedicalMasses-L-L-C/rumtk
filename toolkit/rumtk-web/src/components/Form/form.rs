@@ -82,7 +82,9 @@ use phf_macros::phf_ordered_map;
                 color: var(--white);
             }
         </style>
-        <link href='/static/components/form/form.css' rel='stylesheet'>
+        {% if custom_css_enabled %}
+            <link href='/static/components/form/form.css' rel='stylesheet'>
+        {% endif %}
         <script type='module' id='form-script' src='{{module_path}}'>
         </script>
             {% for element in elements %}

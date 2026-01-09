@@ -21,7 +21,9 @@ type PortraitGrid = Vec<Vec<PortraitItem>>;
         <style>
 
         </style>
-        <link href="/static/components/portrait_card.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/portrait_card.css" rel="stylesheet">
+        {% endif %}
         <div class="centered twothird-width portrait-card-{{ css_class }}-container">
             <table>
                 <thead></thead>

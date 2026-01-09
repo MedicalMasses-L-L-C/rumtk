@@ -13,7 +13,9 @@ use phf_macros::phf_ordered_map;
                 margin: auto;
             }
         </style>
-        <link href="/static/components/form/label.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/form/label.css" rel="stylesheet">
+        {% endif %}
         <pre class="label-{{css_class}}">
             {{text|safe}}
         </pre>

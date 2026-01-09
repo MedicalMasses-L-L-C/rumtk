@@ -36,7 +36,9 @@ use phf_macros::phf_ordered_map;
                 animation: slide 30s infinite linear;
             }
         </style>
-        <link href="/static/components/title.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/title.css" rel="stylesheet">
+        {% endif %}
         <div class="f14 centered title-{{ css_class }}-container">
             <a id="{{typ}}">
                 <h2 class="title-{{ css_class }}">{{ text.to_uppercase() }}</h2>

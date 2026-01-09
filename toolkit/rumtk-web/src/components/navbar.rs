@@ -92,7 +92,9 @@ use std::collections::HashMap;
             }
 
         </style>
-        <link href="/static/components/navbar.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/navbar.css" rel="stylesheet">
+        {% endif %}
         <div class="navbar-{{ css_class }}-container">
             <div class="navbar-{{ css_class }}-navlogo">
                 <a class="undecorated no-select" href="./" style="display:flex;flex-direction:row;align-items:center;">

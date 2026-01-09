@@ -10,7 +10,9 @@ use phf_macros::phf_ordered_map;
         <style>
 
         </style>
-        <link href="/static/components/info_card.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/info_card.css" rel="stylesheet">
+        {% endif %}
         <div class="info-card-{{ css_class }}-container">
             {% if inverted %}
                 <pre class="info-card-{{ css_class }}-descbox">

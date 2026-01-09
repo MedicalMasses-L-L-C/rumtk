@@ -9,7 +9,9 @@ use askama::Template;
         <style>
 
         </style>
-        <link href="/static/components/item_card.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/item_card.css" rel="stylesheet">
+        {% endif %}
         <div class="item-card-{{css_class}}-container">
             {% for (service_name, service_description) in services %}
             <div>

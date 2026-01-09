@@ -15,7 +15,9 @@ use askama::Template;
                 border-radius: 15px;
             }
         </style>
-        <link href="/static/components/form/text_card.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/form/text_card.css" rel="stylesheet">
+        {% endif %}
         <div class="centered card-{{css_class}}">
           <div hx-get="/component/label?type={{typ}}" hx-target="this" hx-trigger="load"> </div>
         </div>

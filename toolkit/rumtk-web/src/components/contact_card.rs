@@ -24,27 +24,29 @@ use phf_macros::phf_ordered_map;
                 margin: 0;
             }
         </style>
-        <link href="/static/components/contact_card.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/contact_card.css" rel="stylesheet">
+        {% endif %}
         <div class="f14 centered">
             <div class="f18 contact-card-{{ css_class }}-container">
                 {% for (details_typ, details_data) in contact_lines %}
-                {% if details_typ == &"phrase" && !details_data.is_empty() %}
-                <p class="italics f18" >
-                    "{{ details_data }}"
-                </p>
-                {% else if details_typ == &"email" && !details_data.is_empty() %}
-                <p>
-                    <a  class=" f14 no-text-color" href="mailto:{{ details_data }}">{{ details_data }}</a>
-                </p>
-                {% else if details_typ == &"phone" && !details_data.is_empty() %}
-                <p>
-                    <a  class="f14 no-text-color" href="tel:{{ details_data }}">{{ details_data }}</a>
-                </p>
-                {% else if !details_data.is_empty() %}
-                <p class="f14" >
-                    {{ details_data }}
-                </p>
-                {% endif %}
+                    {% if details_typ == &"phrase" && !details_data.is_empty() %}
+                    <p class="italics f18" >
+                        "{{ details_data }}"
+                    </p>
+                    {% else if details_typ == &"email" && !details_data.is_empty() %}
+                    <p>
+                        <a  class=" f14 no-text-color" href="mailto:{{ details_data }}">{{ details_data }}</a>
+                    </p>
+                    {% else if details_typ == &"phone" && !details_data.is_empty() %}
+                    <p>
+                        <a  class="f14 no-text-color" href="tel:{{ details_data }}">{{ details_data }}</a>
+                    </p>
+                    {% else if !details_data.is_empty() %}
+                    <p class="f14" >
+                        {{ details_data }}
+                    </p>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

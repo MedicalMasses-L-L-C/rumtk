@@ -23,7 +23,9 @@ struct FooterSection {
         <style>
 
         </style>
-        <link href="/static/components/footer.css" rel="stylesheet">
+        {% if custom_css_enabled %}
+            <link href="/static/components/footer.css" rel="stylesheet">
+        {% endif %}
         <div class="footer-{{ css_class }}-container">
             <p class="f16">
                 {{company}} &copy; {{copyright_year}}
