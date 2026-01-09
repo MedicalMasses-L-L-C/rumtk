@@ -1,10 +1,10 @@
-use std::collections::HashMap;
-use std::pin::Pin;
 use axum::extract::State;
-use std::sync::{Arc, Mutex};
 use axum::extract::{Path, Query};
 use axum::response::Html;
 use phf::{Map, OrderedMap};
+use std::collections::HashMap;
+use std::pin::Pin;
+use std::sync::{Arc, Mutex};
 
 pub type MMString = String;
 pub type URLPath<'a, 'b> = &'a [&'b str];
@@ -18,17 +18,33 @@ pub type RouterComponents = Path<Vec<MMString>>;
 pub type RouterParams = Query<HashMap<MMString, MMString>>;
 
 pub struct AppState {
+    pub title: MMString,
+    pub description: MMString,
     pub lang: MMString,
     pub theme: MMString,
     //pub opts: TextMap,
 }
 
 impl AppState {
-    pub fn default() -> AppState {
-        AppState{
-            lang: MMString::from("en"),
-            theme: MMString::from(""),
-            //opts: phf_ordered_map!(),
+    pub fn default() -> Self {
+        Self::new(
+            MMString::from(""),
+            MMString::from(""),
+            MMString::from("en"),
+            MMString::from(""),
+        )
+    }
+
+    pub fn default_site(title: MMString, description: MMString) -> Self {
+        Self::new(title, description, MMString::from("en"), MMString::from(""))
+    }
+
+    pub fn new(title: MMString, description: MMString, lang: MMString, theme: MMString) -> Self {
+        AppState {
+            title,
+            description,
+            lang,
+            theme,
         }
     }
 }
@@ -39,7 +55,7 @@ pub type RouterAppState = State<Arc<Mutex<AppState>>>;
 /* Config Types */
 pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
 pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
-pub type AsyncReturn = Arc<Pin<Box<dyn Future<Output=HTMLResult>>>>;
+pub type AsyncReturn = Arc<Pin<Box<dyn Future<Output = HTMLResult>>>>;
 pub type AsyncComponentFunction = fn(AsyncURLPath, AsyncURLParams, SharedAppState) -> AsyncReturn;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
