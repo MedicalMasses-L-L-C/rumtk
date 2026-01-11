@@ -2,6 +2,7 @@
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2025  Luis M. Santos, M.D.
+ * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +25,6 @@
 pub mod thread_primitives {
     use crate::cache::{new_cache, LazyRUMCache};
     use crate::core::{RUMResult, RUMVec};
-    use std::future::IntoFuture;
     use std::sync::Arc;
     use tokio::runtime::Runtime as TokioRuntime;
     use tokio::sync::RwLock;

@@ -3,6 +3,7 @@
 #     rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
 #     This toolkit aims to be reliable, simple, performant, and standards compliant.
 #     Copyright (C) 2026  Luis M. Santos, M.D.
+#     Copyright (C) 2026  MedicalMasses L.L.C.
 #
 #     This program is free software: you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by

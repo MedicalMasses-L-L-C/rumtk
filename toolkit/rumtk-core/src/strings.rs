@@ -2,6 +2,7 @@
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2024  Luis M. Santos, M.D.
+ * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +22,6 @@ use crate::core::{is_unique, RUMResult};
 use chardetng::EncodingDetector;
 pub use compact_str::{format_compact, CompactString, CompactStringExt, ToCompactString};
 use encoding_rs::Encoding;
-use std::fmt::Display;
 use unicode_segmentation::UnicodeSegmentation;
 /**************************** Constants**************************************/
 const ESCAPED_STRING_WINDOW: usize = 6;

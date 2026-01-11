@@ -2,6 +2,7 @@
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2024  Luis M. Santos, M.D.
+ * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +33,7 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{format_compact, StringUtils, ToCompactString};
+    use rumtk_core::strings::{format_compact, ToCompactString};
     use rumtk_core::strings::{RUMString, RUMStringConversions, UTFStringExtensions};
 
     use std::fmt::Debug;

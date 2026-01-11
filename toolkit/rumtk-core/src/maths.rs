@@ -2,6 +2,7 @@
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2024  Luis M. Santos, M.D.
+ * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,13 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+use std::ops::Range;
 
-use std::ops::{Range};
-
-const base_ten: u8= 10;
+const base_ten: u8 = 10;
 pub fn generate_tenth_factor(tenth_place: u32) -> u32 {
     let mut factor: u32 = 1;
-    let irange = Range{start: 1, end: tenth_place + 1};
+    let irange = Range {
+        start: 1,
+        end: tenth_place + 1,
+    };
     for _ in irange {
         factor *= base_ten as u32;
     }

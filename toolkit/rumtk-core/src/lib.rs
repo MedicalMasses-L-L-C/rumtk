@@ -2,6 +2,7 @@
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2024  Luis M. Santos, M.D.
+ * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +47,6 @@ mod tests {
     use compact_str::{format_compact, CompactString};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_json::to_string;
-    use std::future::IntoFuture;
     use std::sync::Arc;
     use tokio::sync::RwLock;
 
