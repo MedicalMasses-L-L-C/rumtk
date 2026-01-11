@@ -1,7 +1,7 @@
 use crate::components::navlink::navlink;
 use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 use axum::response::Html;
@@ -120,7 +120,7 @@ pub struct NavBar {
     custom_css_enabled: bool,
 }
 
-fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> {
+fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppConf) -> Vec<MMString> {
     let mut nav_links = Vec::with_capacity(keys.len());
     let default_html = Html::<MMString>(MMString::default());
     for key in keys {
@@ -138,7 +138,7 @@ fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> 
     nav_links
 }
 
-pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let company = state.lock().expect("Lock failure").title.clone();

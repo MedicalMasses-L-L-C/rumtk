@@ -1,6 +1,6 @@
 use crate::components::COMPONENTS;
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_collect_page, mm_get_param, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -47,7 +47,7 @@ pub struct AppBody {
     footer: MMString,
 }
 
-pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let page: MMString = mm_get_param!(path_components, 0, MMString::from(DEFAULT_TEXT_ITEM));
     let theme = mm_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
 

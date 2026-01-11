@@ -3,7 +3,7 @@ use crate::utils::defaults::{
     PARAMS_TYPE,
 };
 use crate::utils::types::{
-    HTMLResult, MMString, NestedNestedTextMap, NestedTextMap, SharedAppState, TextMap, URLParams,
+    HTMLResult, MMString, NestedNestedTextMap, NestedTextMap, SharedAppConf, TextMap, URLParams,
     URLPath,
 };
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
@@ -68,7 +68,7 @@ pub struct ContactCard {
 pub fn contact_card(
     path_components: URLPath,
     params: URLParams,
-    state: SharedAppState,
+    state: SharedAppConf,
 ) -> HTMLResult {
     let section = mm_get_text_item!(params, PARAMS_SECTION, DEFAULT_CONTACT_ITEM);
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);

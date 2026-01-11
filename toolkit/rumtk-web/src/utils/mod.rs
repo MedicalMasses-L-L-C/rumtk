@@ -25,7 +25,7 @@ pub fn html_render<T: askama::Template>(template: T) -> HTMLResult {
     }
 }
 /*
-pub fn html_component_render(component: &str, params: &[(MMString, MMString)], app_state: SharedAppState, components: &ComponentMap) -> MMString {
+pub fn html_component_render(component: &str, params: &[(MMString, MMString)], app_state: SharedAppConf, components: &ComponentMap) -> MMString {
     let component = match components.get(component) {
         Some(x) => x,
         None => return MMString::default(),
@@ -201,10 +201,10 @@ macro_rules! mm_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
         use axum::response::Html;
-        use $crate::utils::types::{MMString, RouterAppState, RouterComponents, RouterParams};
+        use $crate::utils::types::{MMString, RouterAppConf, RouterComponents, RouterParams};
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
-               State(state): RouterAppState|
+               State(state): RouterAppConf|
                -> Html<String> {
             match $matcher(path_params, params, state).await {
                 Ok(res) => res,

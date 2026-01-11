@@ -1,6 +1,6 @@
 use crate::components::{app_body::app_body, app_head::app_head};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -23,7 +23,7 @@ pub struct AppShell {
     body: MMString,
 }
 
-pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let lang = mm_get_text_item!(params, "lang", LANG_EN);
     let theme = mm_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
     // TODO: We need to reevaluate how to validate the options that should be standardized to avoid parameter injection as an attack vector.

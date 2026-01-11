@@ -2,6 +2,7 @@ use axum::extract::State;
 use axum::extract::{Path, Query};
 use axum::response::Html;
 use phf::{Map, OrderedMap};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::{Arc, Mutex};
@@ -17,7 +18,8 @@ pub type RenderedPageComponents = Vec<MMString>;
 pub type RouterComponents = Path<Vec<MMString>>;
 pub type RouterParams = Query<HashMap<MMString, MMString>>;
 
-pub struct AppState {
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+pub struct AppConf {
     pub title: MMString,
     pub description: MMString,
     pub lang: MMString,
@@ -26,7 +28,7 @@ pub struct AppState {
     //pub opts: TextMap,
 }
 
-impl AppState {
+impl AppConf {
     pub fn default() -> Self {
         Self::new(
             MMString::from(""),
@@ -54,7 +56,7 @@ impl AppState {
         theme: MMString,
         custom_css: bool,
     ) -> Self {
-        AppState {
+        Self {
             title,
             description,
             lang,
@@ -64,14 +66,14 @@ impl AppState {
     }
 }
 
-pub type SharedAppState = Arc<Mutex<AppState>>;
-pub type RouterAppState = State<Arc<Mutex<AppState>>>;
+pub type SharedAppConf = Arc<Mutex<AppConf>>;
+pub type RouterAppConf = State<Arc<Mutex<AppConf>>>;
 
 /* Config Types */
-pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
-pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
+pub type ComponentFunction = fn(URLPath, URLParams, SharedAppConf) -> HTMLResult;
+pub type PageFunction = fn(SharedAppConf) -> RenderedPageComponents;
 pub type AsyncReturn = Arc<Pin<Box<dyn Future<Output = HTMLResult>>>>;
-pub type AsyncComponentFunction = fn(AsyncURLPath, AsyncURLParams, SharedAppState) -> AsyncReturn;
+pub type AsyncComponentFunction = fn(AsyncURLPath, AsyncURLParams, SharedAppConf) -> AsyncReturn;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
 pub type TextMap = OrderedMap<&'static str, &'static str>;

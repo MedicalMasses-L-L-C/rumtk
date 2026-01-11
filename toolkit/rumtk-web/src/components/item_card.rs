@@ -1,5 +1,5 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, TextMap, URLParams, URLPath};
 use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -35,7 +35,7 @@ pub struct ItemCard {
     custom_css_enabled: bool,
 }
 
-pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = mm_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let services = mm_get_misc_conf!(typ);

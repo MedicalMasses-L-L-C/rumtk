@@ -1,5 +1,5 @@
 use crate::mm_render_html;
-use crate::utils::types::{HTMLResult, MMString, SharedAppState};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf};
 use askama::Template;
 
 #[derive(Template)]
@@ -20,7 +20,7 @@ pub struct Meta {
     description: MMString,
 }
 
-pub fn meta(state: SharedAppState) -> HTMLResult {
+pub fn meta(state: SharedAppConf) -> HTMLResult {
     let owned_state = state.lock().expect("Lock failure");
 
     mm_render_html!(Meta {

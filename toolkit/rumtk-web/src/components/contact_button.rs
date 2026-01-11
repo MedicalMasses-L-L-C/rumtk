@@ -2,7 +2,7 @@ use crate::components::COMPONENTS;
 use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -55,7 +55,7 @@ pub struct ContactButton {
 pub fn contact_button(
     path_components: URLPath,
     params: URLParams,
-    state: SharedAppState,
+    state: SharedAppConf,
 ) -> HTMLResult {
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let send_function = mm_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);

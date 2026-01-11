@@ -1,5 +1,5 @@
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -34,7 +34,7 @@ pub struct AppShellHead {
 ///      It is not ideal but it will allow continuance of service for websites during CDN outages
 ///      which do happen.
 ///
-pub fn app_head(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_head(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     //Let's render the head component
     let html_meta = mm_render_component!(meta, state);
 

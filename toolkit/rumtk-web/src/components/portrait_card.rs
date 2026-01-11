@@ -2,7 +2,7 @@ use crate::components::contact_card::contact_card;
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use axum::response::Html;
@@ -56,7 +56,7 @@ fn get_portrait_grid(
     section: &str,
     typ: &str,
     lang: &str,
-    app_state: &SharedAppState,
+    app_state: &SharedAppConf,
 ) -> PortraitGrid {
     let img_conf = mm_get_conf!(typ);
     let text_conf = mm_get_conf!(typ, lang);
@@ -90,7 +90,7 @@ fn get_portrait_grid(
 pub fn portrait_card(
     path_components: URLPath,
     params: URLParams,
-    state: SharedAppState,
+    state: SharedAppConf,
 ) -> HTMLResult {
     let section = mm_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);

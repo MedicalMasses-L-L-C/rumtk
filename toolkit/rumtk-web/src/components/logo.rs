@@ -1,5 +1,5 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_param_eq, mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -30,7 +30,7 @@ pub struct Logo {
 
 const DEFAULT_TYPE: &str = "diamond";
 
-pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let diamond = mm_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
