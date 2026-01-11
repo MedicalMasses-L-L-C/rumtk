@@ -10,16 +10,16 @@ use askama::Template;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/item_card.css" rel="stylesheet">
+            <link href='/static/components/item_card.css' rel='stylesheet'>
         {% endif %}
-        <div class="item-card-{{css_class}}-container">
+        <div class='item-card-{{css_class}}-container'>
             {% for (service_name, service_description) in services %}
             <div>
                 <details>
-                    <summary class="f16 item-card-{{css_class}}-title">
+                    <summary class='f16 item-card-{{css_class}}-title'>
                         {{ service_name.to_uppercase() }}
                     </summary>
-                    <pre class="item-card-{{css_class}}-details">
+                    <pre class='item-card-{{css_class}}-details'>
                         {{ service_description }}
                     </pre>
                 </details>
@@ -39,10 +39,8 @@ pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppSt
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let services = mm_get_misc_conf!(typ);
 
-    mm_render_html!(
-        ItemCard {
-            services,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(ItemCard {
+        services,
+        css_class: MMString::from(css_class),
+    })
 }

@@ -10,9 +10,9 @@ use askama::Template;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/spacer.css" rel="stylesheet">
+            <link href='/static/components/spacer.css' rel='stylesheet'>
         {% endif %}
-        <div style="padding-bottom: {{size}}0px"></div>
+        <div style='padding-bottom: {{size}}0px'></div>
     ",
     ext = "html"
 )]

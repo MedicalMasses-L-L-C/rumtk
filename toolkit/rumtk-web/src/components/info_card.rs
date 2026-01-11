@@ -1,4 +1,7 @@
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED, PARAMS_ITEM};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
+    PARAMS_ITEM,
+};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_param_eq, mm_get_text_item, mm_render_html};
 use askama::Template;
@@ -11,21 +14,21 @@ use phf_macros::phf_ordered_map;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/info_card.css" rel="stylesheet">
+            <link href='/static/components/info_card.css' rel='stylesheet'>
         {% endif %}
-        <div class="info-card-{{ css_class }}-container">
+        <div class='info-card-{{ css_class }}-container'>
             {% if inverted %}
-                <pre class="info-card-{{ css_class }}-descbox">
+                <pre class='info-card-{{ css_class }}-descbox'>
                     {{ description }}
                 </pre>
-                <div class="f18 info-card-{{ css_class }}-titlebox">
+                <div class='f18 info-card-{{ css_class }}-titlebox'>
                     {{ title }}
                 </div>
             {% else %}
-                <div class="f18 info-card-{{ css_class }}-titlebox">
+                <div class='f18 info-card-{{ css_class }}-titlebox'>
                     {{ title }}
                 </div>
-                <pre class="info-card-{{ css_class }}-descbox">
+                <pre class='info-card-{{ css_class }}-descbox'>
                     {{ description }}
                 </pre>
             {% endif %}
@@ -51,12 +54,10 @@ pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppSt
     let title = mm_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = mm_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
 
-    mm_render_html!(
-        InfoCard {
-            title,
-            description: desc,
-            inverted,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(InfoCard {
+        title,
+        description: desc,
+        inverted,
+        css_class: MMString::from(css_class),
+    })
 }

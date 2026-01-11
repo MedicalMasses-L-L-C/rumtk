@@ -10,9 +10,9 @@ use askama::Template;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/div.css" rel="stylesheet">
+            <link href='/static/components/div.css' rel='stylesheet'>
         {% endif %}
-        <div class="div-{{css_class}}">{{contents|safe}}</div>
+        <div class='div-{{css_class}}'>{{contents|safe}}</div>
     ",
     ext = "html"
 )]

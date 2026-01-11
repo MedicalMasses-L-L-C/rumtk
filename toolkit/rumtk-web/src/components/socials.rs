@@ -1,4 +1,6 @@
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
+};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
@@ -21,11 +23,11 @@ type SocialsList = Vec<Social>;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/socials.css" rel="stylesheet">
+            <link href='/static/components/socials.css' rel='stylesheet'>
         {% endif %}
-        <div class="socials-{{ css_class }}-container">
+        <div class='socials-{{ css_class }}-container'>
           {% for icon in icons %}
-            <a href="{{icon.url}}" aria-label="link-{{icon.name}}" class="f20 {{icon.icon}}"> </a>
+            <a href='{{icon.url}}' aria-label='link-{{icon.name}}' class='f20 {{icon.icon}}'> </a>
           {% endfor %}
         </div>
     ",
@@ -48,13 +50,11 @@ fn get_social_list(social_list: &str) -> SocialsList {
         }
 
         let url = mm_get_text_item!(&sl_urls, name, "");
-        sl.push(
-            Social {
-                name: MMString::from(name),
-                icon: format!("fa-brands fa-{}", name),
-                url,
-            }
-        )
+        sl.push(Social {
+            name: MMString::from(name),
+            icon: format!("fa-brands fa-{}", name),
+            url,
+        })
     }
 
     sl
@@ -66,10 +66,8 @@ pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppStat
 
     let icons = get_social_list(&social_list);
 
-    mm_render_html!(
-        Socials {
-            icons,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(Socials {
+        icons,
+        css_class: MMString::from(css_class),
+    })
 }

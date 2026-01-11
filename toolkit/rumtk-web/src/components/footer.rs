@@ -1,5 +1,7 @@
 use crate::components::COMPONENTS;
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
+};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
@@ -24,10 +26,10 @@ struct FooterSection {
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/footer.css" rel="stylesheet">
+            <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}
-        <div class="footer-{{ css_class }}-container">
-            <p class="f16">
+        <div class='footer-{{ css_class }}-container'>
+            <p class='f16'>
                 {{company}} &copy; {{copyright_year}}
             </p>
             {{button|safe}}
@@ -48,14 +50,22 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppState
     let social_list = mm_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let contact_button = mm_render_component!("contact_button", [("type", "contact"), ("function", "goto_contact"), ("class", "centered")], state, COMPONENTS);
-    let socials = mm_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
+    let contact_button = mm_render_component!(
+        "contact_button",
+        [
+            ("type", "contact"),
+            ("function", "goto_contact"),
+            ("class", "centered")
+        ],
+        state,
+        COMPONENTS
+    );
+    let socials =
+        mm_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
 
-    mm_render_html!(
-        Footer {
-            button: contact_button,
-            socials,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(Footer {
+        button: contact_button,
+        socials,
+        css_class: MMString::from(css_class),
+    })
 }

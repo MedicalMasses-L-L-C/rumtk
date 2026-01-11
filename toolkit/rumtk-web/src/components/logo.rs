@@ -10,13 +10,13 @@ use askama::Template;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/logo.css" rel="stylesheet">
+            <link href='/static/components/logo.css' rel='stylesheet'>
         {% endif %}
-        <div class="centered logo">
+        <div class='centered logo'>
         {% if diamond %}
-            <img src="/static/img/logo.webp" alt="Webp Logo" class="logo-{{ css_class }}" fetchpriority="high" />
+            <img src='/static/img/logo.webp' alt='Webp Logo' class='logo-{{ css_class }}' fetchpriority='high' />
         {% else %}
-            <img src="/static/img/logo.svg" alt="SVG Logo" fetchpriority="high"/>
+            <img src='/static/img/logo.svg' alt='SVG Logo' fetchpriority='high'/>
         {% endif %}
         </div>
     ",
@@ -33,10 +33,8 @@ pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppState) 
     let diamond = mm_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    mm_render_html!(
-        Logo {
-            diamond,
-            css_class: MMString::from(css_class)
-        }
-    )
+    mm_render_html!(Logo {
+        diamond,
+        css_class: MMString::from(css_class)
+    })
 }

@@ -1,8 +1,7 @@
-use crate::components::logo::logo;
 use crate::components::navlink::navlink;
 use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{AppState, HTMLResult, MMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 use axum::response::Html;
@@ -93,21 +92,21 @@ use std::collections::HashMap;
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/navbar.css" rel="stylesheet">
+            <link href='/static/components/navbar.css' rel='stylesheet'>
         {% endif %}
-        <div class="navbar-{{ css_class }}-container">
-            <div class="navbar-{{ css_class }}-navlogo">
-                <a class="undecorated no-select" href="./" style="display:flex;flex-direction:row;align-items:center;">
+        <div class='navbar-{{ css_class }}-container'>
+            <div class='navbar-{{ css_class }}-navlogo'>
+                <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
                     {{logo|safe}}
-                    <h3 class="brand-name"> MedicalMasses</h3>
+                    <h3 class='brand-name'> {{company}}</h3>
                 </a>
             </div>
-            <div class="navbar-{{ css_class }}-navactions">
+            <div class='navbar-{{ css_class }}-navactions'>
                 {% for item in nav_links %}
                 {{item|safe}}
                 {% endfor %}
             </div>
-            <div class="navbar-{{ css_class }}-misc">
+            <div class='navbar-{{ css_class }}-misc'>
             </div>
         </div>
     ",
@@ -126,11 +125,11 @@ fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> 
         nav_links.push(
             navlink(
                 &[],
-                &HashMap::from([
-                    ("target".to_string(), key.to_string()),
-                ]),
+                &HashMap::from([("target".to_string(), key.to_string())]),
                 app_state.clone(),
-            ).unwrap_or_else(|_| default_html.clone()).0
+            )
+            .unwrap_or_else(|_| default_html.clone())
+            .0,
         );
     }
 
@@ -145,13 +144,16 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppState
     let nav_keys = en_link.keys().collect::<Vec<&&str>>();
     let nav_links = get_nav_links(&nav_keys, state.clone());
 
-    let logo = mm_render_component!("logo", [("type", "diamond"), ("class", "small")], state, COMPONENTS);
+    let logo = mm_render_component!(
+        "logo",
+        [("type", "diamond"), ("class", "small")],
+        state,
+        COMPONENTS
+    );
 
-    mm_render_html!(
-        NavBar {
-            logo,
-            nav_links,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(NavBar {
+        logo,
+        nav_links,
+        css_class: MMString::from(css_class),
+    })
 }

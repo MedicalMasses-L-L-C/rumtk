@@ -1,5 +1,5 @@
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
-use crate::utils::types::{HTMLResult, MMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
@@ -17,9 +17,9 @@ struct NavItem {
 
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/navlink.css" rel="stylesheet">
+            <link href='/static/components/navlink.css' rel='stylesheet'>
         {% endif %}
-        <a class="undecorated navlink f18" href="{{target.url}}">{{target.title}}</a>
+        <a class='undecorated navlink f18' href='{{target.url}}'>{{target.title}}</a>
     ",
     ext = "html"
 )]
@@ -38,13 +38,8 @@ pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppStat
     let title = mm_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let url = mm_get_text_item!(&itm, "url", DEFAULT_NO_TEXT);
 
-    mm_render_html!(
-        NavLink {
-            target: NavItem {
-                title,
-                url
-            },
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(NavLink {
+        target: NavItem { title, url },
+        css_class: MMString::from(css_class),
+    })
 }

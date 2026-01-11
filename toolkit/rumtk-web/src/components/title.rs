@@ -37,12 +37,12 @@ use phf_macros::phf_ordered_map;
             }
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/title.css" rel="stylesheet">
+            <link href='/static/components/title.css' rel='stylesheet'>
         {% endif %}
-        <div class="f14 centered title-{{ css_class }}-container">
-            <a id="{{typ}}">
-                <h2 class="title-{{ css_class }}">{{ text.to_uppercase() }}</h2>
-                <h2 class="title-{{ css_class }}-overlay no-select">{{ text.to_uppercase() }}</h2>
+        <div class='f14 centered title-{{ css_class }}-container'>
+            <a id='{{typ}}'>
+                <h2 class='title-{{ css_class }}'>{{ text.to_uppercase() }}</h2>
+                <h2 class='title-{{ css_class }}-overlay no-select'>{{ text.to_uppercase() }}</h2>
             </a>
         </div>
     ",
@@ -63,11 +63,9 @@ pub fn title(path_components: URLPath, params: URLParams, state: SharedAppState)
     let itm = mm_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
     let text = MMString::from(mm_get_text_item!(&itm, "title", ""));
 
-    mm_render_html!(
-        Title {
-            typ: MMString::from(typ),
-            text,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(Title {
+        typ: MMString::from(typ),
+        text,
+        css_class: MMString::from(css_class),
+    })
 }
