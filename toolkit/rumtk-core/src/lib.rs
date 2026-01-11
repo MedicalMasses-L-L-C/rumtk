@@ -43,8 +43,10 @@ mod tests {
     use super::*;
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
-    use crate::strings::{RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
-    use compact_str::{rumtk_format, CompactString};
+    use crate::strings::{
+        rumtk_format, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
+    };
+    use compact_str::CompactString;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_json::to_string;
     use std::sync::Arc;

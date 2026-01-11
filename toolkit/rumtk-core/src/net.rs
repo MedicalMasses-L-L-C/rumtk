@@ -27,7 +27,7 @@
 ///
 pub mod tcp {
     use crate::core::RUMResult;
-    use crate::strings::RUMString;
+    use crate::strings::{rumtk_format, RUMString};
     use crate::threading::thread_primitives::{SafeTaskArgs, SafeTokioRuntime, TaskResult};
     use crate::threading::threading_functions::get_default_system_thread_count;
     use crate::{
@@ -35,7 +35,7 @@ pub mod tcp {
         rumtk_resolve_task, rumtk_spawn_task, rumtk_wait_on_task,
     };
     use ahash::{HashMap, HashMapExt};
-    use compact_str::{rumtk_format, ToCompactString};
+    use compact_str::ToCompactString;
     use std::collections::VecDeque;
     use std::sync::Arc;
     use tokio::io;
