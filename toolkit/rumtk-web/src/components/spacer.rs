@@ -18,6 +18,7 @@ use askama::Template;
 )]
 pub struct Spacer {
     size: usize,
+    custom_css_enabled: bool,
 }
 
 pub fn spacer(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -25,5 +26,10 @@ pub fn spacer(path_components: URLPath, params: URLParams, state: SharedAppState
         .parse::<usize>()
         .unwrap_or(0);
 
-    mm_render_html!(Spacer { size })
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
+    mm_render_html!(Spacer {
+        size,
+        custom_css_enabled
+    })
 }

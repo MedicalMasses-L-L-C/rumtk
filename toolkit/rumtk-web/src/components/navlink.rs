@@ -26,11 +26,14 @@ struct NavItem {
 pub struct NavLink {
     target: NavItem,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let target = mm_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let links_store = mm_get_conf!(SECTION_LINKS, DEFAULT_NO_TEXT);
     let en_link = mm_get_text_item!(&links_store, "0", &&phf_ordered_map!());
@@ -41,5 +44,6 @@ pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppStat
     mm_render_html!(NavLink {
         target: NavItem { title, url },
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

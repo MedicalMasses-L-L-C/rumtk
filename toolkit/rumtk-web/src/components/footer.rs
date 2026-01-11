@@ -44,11 +44,14 @@ pub struct Footer {
     button: MMString,
     socials: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let social_list = mm_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let contact_button = mm_render_component!(
         "contact_button",
@@ -67,5 +70,6 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppState
         button: contact_button,
         socials,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

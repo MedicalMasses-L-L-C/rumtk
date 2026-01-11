@@ -41,12 +41,15 @@ pub struct InfoCard {
     description: &'static str,
     inverted: bool,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let card_text_item = mm_get_text_item!(params, PARAMS_ITEM, DEFAULT_TEXT_ITEM);
     let inverted = mm_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let text_store = mm_get_conf!(SECTION_TEXT, DEFAULT_NO_TEXT);
     let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
@@ -59,5 +62,6 @@ pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppSt
         description: desc,
         inverted,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

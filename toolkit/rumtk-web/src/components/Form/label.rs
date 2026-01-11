@@ -1,4 +1,6 @@
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE,
+};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html, mm_render_markdown};
 use askama::Template;
@@ -14,9 +16,9 @@ use phf_macros::phf_ordered_map;
             }
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/form/label.css" rel="stylesheet">
+            <link href='/static/components/form/label.css' rel='stylesheet'>
         {% endif %}
-        <pre class="label-{{css_class}}">
+        <pre class='label-{{css_class}}'>
             {{text|safe}}
         </pre>
     ",
@@ -25,11 +27,14 @@ use phf_macros::phf_ordered_map;
 struct Label {
     text: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn label(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let text_store = mm_get_conf!(SECTION_TEXT, DEFAULT_NO_TEXT);
     let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
@@ -37,10 +42,9 @@ pub fn label(path_components: URLPath, params: URLParams, state: SharedAppState)
     let desc = mm_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = mm_render_markdown!(desc);
 
-    mm_render_html!(
-        Label {
-            text: html,
-            css_class: MMString::from(css_class),
-        }
-    )
+    mm_render_html!(Label {
+        text: html,
+        css_class: MMString::from(css_class),
+        custom_css_enabled
+    })
 }

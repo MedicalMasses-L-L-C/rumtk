@@ -22,6 +22,7 @@ pub struct AppState {
     pub description: MMString,
     pub lang: MMString,
     pub theme: MMString,
+    pub custom_css: bool,
     //pub opts: TextMap,
 }
 
@@ -32,19 +33,33 @@ impl AppState {
             MMString::from(""),
             MMString::from("en"),
             MMString::from(""),
+            false,
         )
     }
 
-    pub fn default_site(title: MMString, description: MMString) -> Self {
-        Self::new(title, description, MMString::from("en"), MMString::from(""))
+    pub fn default_site(title: MMString, description: MMString, custom_css: bool) -> Self {
+        Self::new(
+            title,
+            description,
+            MMString::from("en"),
+            MMString::from(""),
+            custom_css,
+        )
     }
 
-    pub fn new(title: MMString, description: MMString, lang: MMString, theme: MMString) -> Self {
+    pub fn new(
+        title: MMString,
+        description: MMString,
+        lang: MMString,
+        theme: MMString,
+        custom_css: bool,
+    ) -> Self {
         AppState {
             title,
             description,
             lang,
             theme,
+            custom_css,
         }
     }
 }

@@ -19,14 +19,18 @@ use askama::Template;
 pub struct Div {
     contents: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn div(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let contents = mm_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     mm_render_html!(Div {
         contents: MMString::from(contents),
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

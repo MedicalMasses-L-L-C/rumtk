@@ -32,6 +32,7 @@ use askama::Template;
 pub struct ItemCard {
     services: &'static TextMap,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -39,8 +40,11 @@ pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppSt
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let services = mm_get_misc_conf!(typ);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     mm_render_html!(ItemCard {
         services,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

@@ -99,11 +99,14 @@ struct Form {
     title: MMString,
     module_path: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn form(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let text_store = mm_get_conf!(SECTION_TITLES, DEFAULT_NO_TEXT);
     let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
@@ -114,5 +117,6 @@ pub fn form(path_components: URLPath, params: URLParams, state: SharedAppState) 
         typ: MMString::from(typ),
         title,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

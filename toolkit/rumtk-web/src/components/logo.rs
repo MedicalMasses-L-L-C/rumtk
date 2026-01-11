@@ -25,6 +25,7 @@ use askama::Template;
 pub struct Logo {
     diamond: bool,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 const DEFAULT_TYPE: &str = "diamond";
@@ -33,8 +34,11 @@ pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppState) 
     let diamond = mm_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     mm_render_html!(Logo {
         diamond,
-        css_class: MMString::from(css_class)
+        css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

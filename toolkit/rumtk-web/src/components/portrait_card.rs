@@ -49,13 +49,14 @@ type PortraitGrid = Vec<Vec<PortraitItem>>;
 pub struct PortraitCard {
     icon_data: PortraitGrid,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 fn get_portrait_grid(
     section: &str,
     typ: &str,
     lang: &str,
-    app_state: SharedAppState,
+    app_state: &SharedAppState,
 ) -> PortraitGrid {
     let img_conf = mm_get_conf!(typ);
     let text_conf = mm_get_conf!(typ, lang);
@@ -94,10 +95,13 @@ pub fn portrait_card(
     let section = mm_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-    let icon_data = get_portrait_grid(section, typ, DEFAULT_NO_TEXT, state);
+    let icon_data = get_portrait_grid(section, typ, DEFAULT_NO_TEXT, &state);
+
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     mm_render_html!(PortraitCard {
         icon_data,
-        css_class: MMString::from(css_class)
+        css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

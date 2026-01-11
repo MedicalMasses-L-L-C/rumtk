@@ -36,6 +36,7 @@ type SocialsList = Vec<Social>;
 pub struct Socials {
     icons: SocialsList,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 fn get_social_list(social_list: &str) -> SocialsList {
@@ -64,10 +65,13 @@ pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppStat
     let social_list = mm_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     let icons = get_social_list(&social_list);
 
     mm_render_html!(Socials {
         icons,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

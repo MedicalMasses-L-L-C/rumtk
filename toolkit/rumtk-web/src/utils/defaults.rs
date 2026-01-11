@@ -1,25 +1,23 @@
-
-use phf_macros::phf_ordered_map;
 use crate::utils::types::TextMap;
+use phf_macros::phf_ordered_map;
 
 /*
-    TextMap
- */
+   TextMap
+*/
 pub static DEFAULT_TEXT_MAP: TextMap = phf_ordered_map!();
 
 /*
-    IP
- */
+   IP
+*/
 pub const DEFAULT_LOCAL_LISTENING_ADDRESS: &str = "127.0.0.1:3000";
 pub const DEFAULT_OUTBOUND_LISTENING_ADDRESS: &str = "0.0.0.0:3000";
 
 /*
-    Misc
- */
+   Misc
+*/
 pub const DEFAULT_TEXT_ITEM: &str = "default";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
 pub const DEFAULT_NO_TEXT: &str = "";
-
 
 /*
     Options
@@ -27,8 +25,9 @@ pub const DEFAULT_NO_TEXT: &str = "";
 pub const OPT_INVERTED_DIRECTION: &str = "inverted";
 
 /*
-    Params
- */
+   Params
+*/
+pub const PARAMS_TITLE: &str = "title";
 pub const PARAMS_TYPE: &str = "type";
 pub const PARAMS_CSS_CLASS: &str = "class";
 pub const PARAMS_SOCIAL_LIST: &str = "social_list";
@@ -41,8 +40,8 @@ pub const PARAMS_SIZE: &str = "size";
 pub const PARAMS_CONTENTS: &str = "contents";
 
 /*
-    CONF SECTIONS
- */
+   CONF SECTIONS
+*/
 pub const SECTION_TEXT: &str = "text";
 pub const SECTION_PERSONNEL: &str = "personnel";
 pub const SECTION_CONTACT: &str = "contact";
@@ -54,19 +53,19 @@ pub const SECTION_PRODUCTS: &str = "products";
 pub const SECTION_LINKS: &str = "links";
 
 /*
-    LANGUAGES
- */
+   LANGUAGES
+*/
 pub const LANG_EN: &str = "en";
 pub const LANG_ES: &str = "es";
 
 /*
-    Icon
- */
+   Icon
+*/
 pub const DEFAULT_ICON_STYLE: &str = "fa-solid";
 
 /*
-    Robots.txt
- */
+   Robots.txt
+*/
 pub const DEFAULT_ROBOT_TXT: &str = r"
 User-agent: *
 Disallow: /static/

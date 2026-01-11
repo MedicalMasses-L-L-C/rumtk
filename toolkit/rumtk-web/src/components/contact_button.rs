@@ -49,6 +49,7 @@ pub struct ContactButton {
     typ: MMString,
     send_function: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn contact_button(
@@ -60,12 +61,15 @@ pub fn contact_button(
     let send_function = mm_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     let title = mm_render_component!("title", [("type", typ)], state, COMPONENTS);
 
     mm_render_html!(ContactButton {
         title,
         typ: MMString::from(typ),
         send_function: MMString::from(send_function),
-        css_class: MMString::from(css_class)
+        css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

@@ -113,9 +113,11 @@ use std::collections::HashMap;
     ext = "html"
 )]
 pub struct NavBar {
+    company: MMString,
     logo: MMString,
     nav_links: Vec<MMString>,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> {
@@ -139,6 +141,9 @@ fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppState) -> Vec<MMString> 
 pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let company = state.lock().expect("Lock failure").title.clone();
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     let links_store = mm_get_conf!(SECTION_LINKS, DEFAULT_NO_TEXT);
     let en_link = mm_get_text_item!(&links_store, "0", &&phf_ordered_map!());
     let nav_keys = en_link.keys().collect::<Vec<&&str>>();
@@ -152,8 +157,10 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppState
     );
 
     mm_render_html!(NavBar {
+        company: MMString::from(company),
         logo,
         nav_links,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

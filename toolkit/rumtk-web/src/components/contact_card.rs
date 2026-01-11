@@ -62,6 +62,7 @@ use phf_macros::phf_ordered_map;
 pub struct ContactCard {
     contact_lines: &'static TextMap,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn contact_card(
@@ -73,6 +74,8 @@ pub fn contact_card(
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
     let text_conf: &NestedNestedTextMap = mm_get_conf!(SECTION_CONTACT, DEFAULT_NO_TEXT);
     let contact_item: &&NestedTextMap =
         mm_get_text_item!(&text_conf, &section, &&phf_ordered_map!());
@@ -81,5 +84,6 @@ pub fn contact_card(
     mm_render_html!(ContactCard {
         contact_lines,
         css_class: MMString::from(css_class),
+        custom_css_enabled
     })
 }

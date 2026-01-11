@@ -1,4 +1,4 @@
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ITEM, PARAMS_TYPE};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, MMString, SharedAppState, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_html};
 use askama::Template;
@@ -16,10 +16,10 @@ use askama::Template;
             }
         </style>
         {% if custom_css_enabled %}
-            <link href="/static/components/form/text_card.css" rel="stylesheet">
+            <link href='/static/components/form/text_card.css' rel='stylesheet'>
         {% endif %}
-        <div class="centered card-{{css_class}}">
-          <div hx-get="/component/label?type={{typ}}" hx-target="this" hx-trigger="load"> </div>
+        <div class='centered card-{{css_class}}'>
+          <div hx-get='/component/label?type={{typ}}' hx-target='this' hx-trigger='load'> </div>
         </div>
     ",
     ext = "html"
@@ -27,16 +27,18 @@ use askama::Template;
 struct TextCard {
     typ: MMString,
     css_class: MMString,
+    custom_css_enabled: bool,
 }
 
 pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    mm_render_html!(
-        TextCard {
-            typ: MMString::from(typ),
-            css_class: MMString::from(css_class),
-        }
-    )
+    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+
+    mm_render_html!(TextCard {
+        typ: MMString::from(typ),
+        css_class: MMString::from(css_class),
+        custom_css_enabled
+    })
 }
