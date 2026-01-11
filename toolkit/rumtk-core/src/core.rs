@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::strings::RUMString;
-use compact_str::format_compact;
+use rumtk_core::strings::rumtk_format;
 pub use smallvec::{smallvec, SmallVec};
 
 ///
@@ -55,47 +55,47 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
 /// ## Min
 /// ```
 /// use ::rumtk_core::core::clamp_index;
-/// use ::rumtk_core::strings::format_compact;
+/// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 1;
 /// let result = clamp_index(&i, &max).unwrap();
-/// assert_eq!(&1, &result, "{}", format_compact!("Expected to receive 0 but got {}", &result))
+/// assert_eq!(&1, &result, "{}", rumtk_format!("Expected to receive 0 but got {}", &result))
 /// ```
 ///
 /// ## Max
 /// ```
 /// use ::rumtk_core::core::clamp_index;
-/// use ::rumtk_core::strings::format_compact;
+/// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 5;
 /// let result = clamp_index(&i, &max).unwrap();
-/// assert_eq!(&5, &result, "{}", format_compact!("Expected to receive 0 but got {}", &result))
+/// assert_eq!(&5, &result, "{}", rumtk_format!("Expected to receive 0 but got {}", &result))
 /// ```
 ///
 /// ## Valid
 /// ```
 /// use ::rumtk_core::core::clamp_index;
-/// use ::rumtk_core::strings::format_compact;
+/// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 5;
 /// let result = clamp_index(&i, &max).unwrap();
-/// assert_eq!(&5, &result, "{}", format_compact!("Expected to receive 0 but got {}", &result))
+/// assert_eq!(&5, &result, "{}", rumtk_format!("Expected to receive 0 but got {}", &result))
 /// ```
 ///
 /// ## Valid Negative Index (reverse lookup)
 /// ```
 /// use ::rumtk_core::core::clamp_index;
-/// use ::rumtk_core::strings::format_compact;
+/// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = -1;
 /// let result = clamp_index(&i, &max).unwrap();
-/// assert_eq!(&5, &result, "{}", format_compact!("Expected to receive 0 but got {}", &result))
+/// assert_eq!(&5, &result, "{}", rumtk_format!("Expected to receive 0 but got {}", &result))
 /// ```
 #[inline(always)]
 pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
     let neg_max_indx = *max_size * -1;
     if *given_indx == 0 {
-        return Err(format_compact!(
+        return Err(rumtk_format!(
             "Index {} is invalid! Use 1-indexed values if using positive indices.",
             given_indx
         ));
@@ -109,7 +109,7 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
         return Ok(*given_indx as usize);
     }
 
-    Err(format_compact!(
+    Err(rumtk_format!(
         "Index {} is outside {} < x < {} boundary!",
         given_indx,
         neg_max_indx,

@@ -34,9 +34,9 @@ pub mod serialization {
     /// # Examples
     /// ## Pretty Print
     /// ```
-    /// pub use crate::rumtk_core::json::serialization::{Serialize};
-    /// use crate::rumtk_core::strings::RUMString;
-    /// use crate::rumtk_core::rumtk_serialize;
+    /// pub use rumtk_core::json::serialization::{Serialize};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::rumtk_serialize;
     ///
     /// #[derive(Serialize)]
     /// struct MyStruct {
@@ -52,9 +52,9 @@ pub mod serialization {
     ///
     /// ## Default
     /// ```
-    /// pub use crate::rumtk_core::json::serialization::{Serialize};
-    /// use crate::rumtk_core::strings::RUMString;
-    /// use crate::rumtk_core::rumtk_serialize;
+    /// pub use rumtk_core::json::serialization::{Serialize};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::rumtk_serialize;
     ///
     /// #[derive(Serialize)]
     /// struct MyStruct {
@@ -72,34 +72,25 @@ pub mod serialization {
     macro_rules! rumtk_serialize {
         ( $object:expr ) => {{
             use $crate::json::serialization::{to_string, to_string_pretty};
-            use $crate::strings::format_compact;
+            use $crate::strings::rumtk_format;
 
             match to_string(&$object) {
                 Ok(s) => Ok(s),
-                Err(e) => Err(format_compact!(
-                    "Failed to serialize object because of {}",
-                    e
-                )),
+                Err(e) => Err(rumtk_format!("Failed to serialize object because of {}", e)),
             }
         }};
         ( $object:expr, $pretty:expr ) => {{
             use $crate::json::serialization::{to_string, to_string_pretty};
-            use $crate::strings::format_compact;
+            use $crate::strings::rumtk_format;
 
             match $pretty {
                 true => match to_string_pretty(&$object) {
                     Ok(s) => Ok(s),
-                    Err(e) => Err(format_compact!(
-                        "Failed to serialize object because of {}",
-                        e
-                    )),
+                    Err(e) => Err(rumtk_format!("Failed to serialize object because of {}", e)),
                 },
                 false => match to_string(&$object) {
                     Ok(s) => Ok(s),
-                    Err(e) => Err(format_compact!(
-                        "Failed to serialize object because of {}",
-                        e
-                    )),
+                    Err(e) => Err(rumtk_format!("Failed to serialize object because of {}", e)),
                 },
             }
         }};
@@ -116,8 +107,8 @@ pub mod serialization {
     ///
     /// ```
     /// use serde::{Deserialize, Deserializer, Serialize, Serializer};
-    /// use crate::rumtk_core::strings::RUMString;
-    /// use crate::rumtk_core::{rumtk_serialize, rumtk_deserialize};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::{rumtk_serialize, rumtk_deserialize};
     ///
     /// #[derive(Serialize, Deserialize, PartialEq)]
     /// struct MyStruct {

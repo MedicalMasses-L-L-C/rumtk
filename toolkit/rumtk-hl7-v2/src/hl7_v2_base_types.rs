@@ -33,7 +33,7 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{format_compact, ToCompactString};
+    use rumtk_core::strings::{rumtk_format, ToCompactString};
     use rumtk_core::strings::{RUMString, RUMStringConversions, UTFStringExtensions};
 
     use std::fmt::Debug;
@@ -121,13 +121,13 @@ pub mod v2_base_types {
             msg_key_chars: &'a Vec<&'b str>,
         ) -> V2Result<&'a Vec<&'b str>> {
             if msg_key_chars.len() < 4 {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Too few parser characters! Is MSH malformed? => {:?}",
                     &msg_key_chars
                 ));
             }
             if msg_key_chars.len() > 6 {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Too many parser characters! Is MSH malformed? => {:?}",
                     &msg_key_chars
                 ));
@@ -135,7 +135,7 @@ pub mod v2_base_types {
             if is_unique(msg_key_chars) {
                 return Ok(msg_key_chars);
             }
-            Err(format_compact!(
+            Err(rumtk_format!(
                 "Unknown malformed parser characters! Is MSH malformed? => {:?}",
                 &msg_key_chars
             ))
@@ -582,7 +582,7 @@ pub mod v2_base_types {
         }
 
         pub fn as_utc_string(&self) -> V2String {
-            format_compact!(
+            rumtk_format!(
                 "{year:0<4}-{month:0>2}-{day:0>2}T{hour:0>2}:{minute:0>2}:{second:0>2}.{microsecond:0<4}{offset}",
                 year = self.year,
                 month = self.month,
@@ -599,10 +599,10 @@ pub mod v2_base_types {
             self.as_utc_string().parse().unwrap()
         }
         pub fn as_v2_date(&self) -> V2String {
-            format_compact!("{:04}{:02}{:02}", &self.year, &self.month, &self.day)
+            rumtk_format!("{:04}{:02}{:02}", &self.year, &self.month, &self.day)
         }
         pub fn as_v2_date_time(&self) -> V2String {
-            format_compact!(
+            rumtk_format!(
                 "{:04}{:02}{:02}{:02}{:02}{:02}.{:04}",
                 &self.year,
                 &self.month,
@@ -796,7 +796,7 @@ pub mod v2_primitives {
     pub use crate::hl7_v2_base_types::v2_base_types::*;
     use rumtk_core::search::rumtk_search::string_search;
     use rumtk_core::strings::{
-        format_compact, AsStr, CompactString, RUMString, ToCompactString, UTFStringExtensions,
+        rumtk_format, AsStr, CompactString, RUMString, ToCompactString, UTFStringExtensions,
         DOT_STR,
     };
 
@@ -822,7 +822,7 @@ pub mod v2_primitives {
         if r.len() > 0 {
             Ok(r)
         } else {
-            Err(format_compact!("Empty results detected! Input string validation failure! Input: {}\nRegex used: {}", input, regex))
+            Err(rumtk_format!("Empty results detected! Input string validation failure! Input: {}\nRegex used: {}", input, regex))
         }
     }
 
@@ -836,7 +836,7 @@ pub mod v2_primitives {
                 REGEX_VALIDATE_DATETIME,
             )?;
             match input.len() {
-                0..=3 => Err(format_compact!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
+                0..=3 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
                 _ => Ok(V2DateTime::from_str(&validated)),
             }
         }
@@ -850,7 +850,7 @@ pub mod v2_primitives {
                 REGEX_VALIDATE_DATETIME,
             )?;
             match input.len() {
-                0..=3 => Err(format_compact!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
+                0..=3 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
                 _ => Ok(V2Date::from_str(&validated)),
             }
         }
@@ -864,8 +864,8 @@ pub mod v2_primitives {
                 REGEX_VALIDATE_DATETIME,
             )?;
             match input.len() {
-                0..=1 => Err(format_compact!("Cannot build V2DateTime type due to the string input being smaller than 2 characters. => [{}] ", input)),
-                _ => Ok(V2Date::from_str(format_compact!("19700101{}", &validated).as_str())),
+                0..=1 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 2 characters. => [{}] ", input)),
+                _ => Ok(V2Date::from_str(rumtk_format!("19700101{}", &validated).as_str())),
             }
         }
 
@@ -875,14 +875,14 @@ pub mod v2_primitives {
             let truncated_input = input.truncate(TRUNCATE_NM as usize);
 
             if truncated_input.starts_with(DOT_STR) {
-                return Err(format_compact!("Malformed floating point number string. The standard forbids starting with a period for input {}!", truncated_input));
+                return Err(rumtk_format!("Malformed floating point number string. The standard forbids starting with a period for input {}!", truncated_input));
             }
 
             let validated =
                 validate_type(&truncated_input.trim().to_lowercase(), REGEX_VALIDATE_NM)?;
             match validated.parse::<V2NM>() {
                 Ok(val) => Ok(val),
-                Err(why) => Err(format_compact!(
+                Err(why) => Err(rumtk_format!(
                     "Error parsing string into numeric type V2NM. Input: {}",
                     validated
                 )),
@@ -898,7 +898,7 @@ pub mod v2_primitives {
                 validate_type(&truncated_input.trim().to_lowercase(), REGEX_VALIDATE_SI)?;
             match validated.parse::<V2SI>() {
                 Ok(val) => Ok(val),
-                Err(why) => Err(format_compact!(
+                Err(why) => Err(rumtk_format!(
                     "Error parsing string into Sequence ID type V2SI. Input: {}",
                     validated
                 )),
@@ -910,7 +910,7 @@ pub mod v2_primitives {
             let input: &str = self.as_str();
             let validated = validate_type(&input.trim().to_lowercase(), REGEX_VALIDATE_SNM)?;
             if validated.len() == 0 {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Error parsing string into Sequence ID type V2SI. Input: {}",
                     validated
                 ));
@@ -949,7 +949,7 @@ pub mod v2_primitives {
             let validated: &str = input.trim();
             if input.len() > TRUNCATE_ST as usize {
                 // Returning error for now, maybe in the future we should cheat and simply call to_v2formattedtext() automatically.
-                return Err(format_compact!("Error parsing string into string data type V2ST/V2IS. The string is longer than {} characters. Consider using V2FT or V2TX data type casting methods for input: {}",
+                return Err(rumtk_format!("Error parsing string into string data type V2ST/V2IS. The string is longer than {} characters. Consider using V2FT or V2TX data type casting methods for input: {}",
                     TRUNCATE_ST, validated
                 ));
             }

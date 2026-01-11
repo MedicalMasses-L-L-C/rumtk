@@ -18,16 +18,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-mod conf;
+pub mod conf;
 pub mod defaults;
 pub mod matcher;
+pub mod render;
 pub mod types;
 
 use axum::response::Html;
 use std::collections::HashMap;
 
 use crate::utils::types::AppState;
-use axum::{Router, routing::get};
+use axum::{routing::get, Router};
 use std::sync::Arc;
 use std::sync::Mutex;
 use tower_http::compression::{CompressionLayer, DefaultPredicate, Predicate};

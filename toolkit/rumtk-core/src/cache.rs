@@ -67,8 +67,8 @@ pub mod cache_macros {
     /// function passed to this macro.
     ///
     /// ```
-    /// use crate::rumtk_core::rumtk_cache_fetch;
-    /// use crate::rumtk_core::cache::{new_cache, LazyRUMCache};
+    /// use rumtk_core::rumtk_cache_fetch;
+    /// use rumtk_core::cache::{new_cache, LazyRUMCache};
     /// use std::sync::Arc;
     ///
     /// type StringCache = LazyRUMCache<String, String>;

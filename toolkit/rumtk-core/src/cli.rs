@@ -21,7 +21,7 @@
 
 pub mod cli_utils {
     use crate::core::RUMResult;
-    use crate::strings::{format_compact, RUMArrayConversions, RUMString};
+    use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
     use clap::Parser;
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
@@ -116,7 +116,7 @@ pub mod cli_utils {
                 buf.extend_from_slice(&chunk);
                 Ok(s)
             }
-            Err(e) => Err(format_compact!("Error reading stdin chunk because {}!", e)),
+            Err(e) => Err(rumtk_format!("Error reading stdin chunk because {}!", e)),
         }
     }
 
@@ -125,15 +125,15 @@ pub mod cli_utils {
         match stdout_handle.write_all(data.as_bytes()) {
             Ok(_) => match stdout_handle.flush() {
                 Ok(_) => Ok(()),
-                Err(e) => Err(format_compact!("Error flushing stdout: {}", e)),
+                Err(e) => Err(rumtk_format!("Error flushing stdout: {}", e)),
             },
-            Err(e) => Err(format_compact!("Error writing to stdout!")),
+            Err(e) => Err(rumtk_format!("Error writing to stdout!")),
         }
     }
 
     pub fn print_license_notice(program: &str, year: &str, author_list: &Vec<&str>) {
         let authors = author_list.join_compact(", ");
-        let notice = format_compact!(
+        let notice = rumtk_format!(
             "  {program}  Copyright (C) {year}  {authors}
         This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
         This is free software, and you are welcome to redistribute it
@@ -152,7 +152,7 @@ pub mod macros {
     /// ```
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::strings::RUMString;
-    /// use crate::rumtk_core::rumtk_read_stdin;
+    /// use rumtk_core::rumtk_read_stdin;
     ///
     /// fn test_read_stdin() -> RUMResult<RUMString> {
     ///     rumtk_read_stdin!()

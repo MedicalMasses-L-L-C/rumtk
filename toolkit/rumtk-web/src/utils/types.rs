@@ -27,6 +27,7 @@ use std::pin::Pin;
 use std::sync::Arc;
 
 pub use rumtk_core::strings::RUMString;
+pub use rumtk_core::strings::{CompactStringExt, RUMStringConversions, UTFStringExtensions};
 
 pub type URLPath<'a, 'b> = &'a [&'b str];
 pub type AsyncURLPath = Arc<Vec<RUMString>>;

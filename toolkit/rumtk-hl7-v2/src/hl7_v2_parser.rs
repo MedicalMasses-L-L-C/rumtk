@@ -50,7 +50,7 @@ pub mod v2_parser {
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::strings::CompactStringExt;
     pub use rumtk_core::strings::{
-        format_compact, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
+        rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
 
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -261,7 +261,7 @@ pub mod v2_parser {
             let component_indx = clamp_index(&indx, &(self.components.len() as isize))? - 1;
             match self.components.get(component_indx) {
                 Some(component) => Ok(component),
-                None => Err(format_compact!("Component at index {} not found!", indx)),
+                None => Err(rumtk_format!("Component at index {} not found!", indx)),
             }
         }
 
@@ -269,7 +269,7 @@ pub mod v2_parser {
             let component_indx = clamp_index(&indx, &(self.components.len() as isize))? - 1;
             match self.components.get_mut(component_indx) {
                 Some(component) => Ok(component),
-                None => Err(format_compact!("Component at index {} not found!", indx)),
+                None => Err(rumtk_format!("Component at index {} not found!", indx)),
             }
         }
     }
@@ -322,7 +322,7 @@ pub mod v2_parser {
             let raw_field_count = raw_fields.len();
 
             if raw_field_count == 0 {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Error splitting segments into fields!\nRaw segment: {}\nField separator: {}",
                     &raw_segment,
                     &parser_chars.field_separator
@@ -368,7 +368,7 @@ pub mod v2_parser {
                 }
                 segment.push(fields.join_compact(parser_chars.repetition_separator.as_str()));
             }
-            format_compact!(
+            rumtk_format!(
                 "{}{}{}",
                 self.name,
                 parser_chars.field_separator.as_str(),
@@ -380,7 +380,7 @@ pub mod v2_parser {
             let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
             match self.fields.get(field_indx) {
                 Some(field) => Ok(field),
-                None => Err(format_compact!("Field number {} not found!", indx)),
+                None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
 
@@ -388,7 +388,7 @@ pub mod v2_parser {
             let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
             match self.fields.get_mut(field_indx) {
                 Some(field) => Ok(field),
-                None => Err(format_compact!("Field number {} not found!", indx)),
+                None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
 
@@ -486,7 +486,7 @@ pub mod v2_parser {
             let subsegment_indx = sub_segment - 1;
             match segment_group.get(subsegment_indx) {
                 Some(segment) => Ok(segment),
-                None => Err(format_compact!(
+                None => Err(rumtk_format!(
                     "Subsegment {} was not found in segment group {}!",
                     subsegment_indx,
                     segment_index
@@ -503,7 +503,7 @@ pub mod v2_parser {
             let subsegment_indx = sub_segment - 1;
             match segment_group.get_mut(subsegment_indx) {
                 Some(segment) => Ok(segment),
-                None => Err(format_compact!(
+                None => Err(rumtk_format!(
                     "Subsegment {} was not found in segment group {}!",
                     subsegment_indx,
                     segment_index
@@ -514,7 +514,7 @@ pub mod v2_parser {
         pub fn get_group(&self, segment_index: &u8) -> V2Result<&V2SegmentGroup> {
             match self.segment_groups.get(segment_index) {
                 Some(segment_group) => Ok(segment_group),
-                None => Err(format_compact!(
+                None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
                     segment_index
                 )),
@@ -524,7 +524,7 @@ pub mod v2_parser {
         pub fn get_mut_group(&mut self, segment_index: &u8) -> V2Result<&mut V2SegmentGroup> {
             match self.segment_groups.get_mut(segment_index) {
                 Some(segment_group) => Ok(segment_group),
-                None => Err(format_compact!(
+                None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
                     segment_index
                 )),
@@ -536,7 +536,7 @@ pub mod v2_parser {
             let segment = self.get(&index.segment, index.segment_group as usize)?;
             let field = match segment.get(index.field as isize)?.get((index.field_group - 1) as usize) {
                 Some(field) => field,
-                None => return Err(format_compact!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
+                None => return Err(rumtk_format!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
             };
             field.get(index.component as isize)
         }
@@ -549,7 +549,7 @@ pub mod v2_parser {
             let segment = self.get_mut(&index.segment, index.segment_group as usize)?;
             let mut field = match segment.get_mut(index.field as isize)?.get_mut((index.field_group - 1) as usize) {
                 Some(field) => field,
-                None => return Err(format_compact!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
+                None => return Err(rumtk_format!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
             };
             field.get_mut(index.component as isize)
         }
@@ -608,7 +608,7 @@ pub mod v2_parser {
 
                 let key = match V2_SEGMENT_IDS.get(&segment.name) {
                     Some(k) => k,
-                    None => return Err(format_compact!("Segment name is not a valid segment!")),
+                    None => return Err(rumtk_format!("Segment name is not a valid segment!")),
                 };
                 if !segments.contains_key(key) {
                     segments.insert(*key, V2SegmentGroup::new());

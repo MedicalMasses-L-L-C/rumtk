@@ -190,7 +190,7 @@ pub mod mllp_v2 {
     //!     <SB><NAK><EB><CR>
     //! ```
 
-    use crate::hl7_v2_parser::v2_parser::format_compact;
+    use crate::hl7_v2_parser::v2_parser::rumtk_format;
     use rumtk_core::core::RUMResult;
     pub use rumtk_core::net::tcp::{
         AsyncMutex, AsyncMutexGuard, ClientIDList, RUMClientHandle, RUMNetMessage, RUMServerHandle,
@@ -284,7 +284,7 @@ pub mod mllp_v2 {
             return Ok(message.to_rumstring());
         }
         if message.len() < 3 {
-            return Err(format_compact!(
+            return Err(rumtk_format!(
                 "Message is empty and malformed! Got: {:?}",
                 message
             ));
@@ -292,7 +292,7 @@ pub mod mllp_v2 {
         let start_index = match message.iter().position(|&c| c == SB) {
             Some(i) => i + 1,
             None => {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Message is malformed! No Start Block character found!"
                 ))
             }
@@ -300,7 +300,7 @@ pub mod mllp_v2 {
         let end_index = match message.iter().position(|&c| c == EB) {
             Some(i) => i,
             None => {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Message is malformed! No End Block character found!"
                 ))
             }
@@ -560,7 +560,7 @@ pub mod mllp_v2 {
                     }
                 }
             }
-            Err(format_compact!(
+            Err(rumtk_format!(
                 "Attempted to send message to {} {} times, but they all failed! Last error \
                 message => {}",
                 &endpoint,
@@ -589,7 +589,7 @@ pub mod mllp_v2 {
                 }
 
                 if is_nack(&response) {
-                    return Err(format_compact!(
+                    return Err(rumtk_format!(
                         "Endpoint {} responded with a negative \
                     acknowledgement. That means they failed to parse or store our message!",
                         &endpoint
@@ -597,7 +597,7 @@ pub mod mllp_v2 {
                 }
                 rumtk_async_sleep!(TIMEOUT_STEP_SOURCE).await;
             }
-            Err(format_compact!(
+            Err(rumtk_format!(
                 "Timeout reached attempting to send message to {}!",
                 &endpoint
             ))
@@ -663,9 +663,7 @@ pub mod mllp_v2 {
                 }
                 rumtk_async_sleep!(TIMEOUT_STEP_DESTINATION).await
             }
-            Err(format_compact!(
-                "Timeout reached while awaiting for message!"
-            ))
+            Err(rumtk_format!("Timeout reached while awaiting for message!"))
         }
 
         ///
@@ -815,7 +813,7 @@ pub mod mllp_v2 {
                     let owned_mllp = mllp.lock().await;
                     match owned_mllp.get_address_info().await {
                         Some(val) => Ok(val),
-                        None => Err(format_compact!(
+                        None => Err(rumtk_format!(
                             "Expected IP:Port address string but found nothing!"
                         )),
                     }
@@ -859,7 +857,7 @@ pub mod mllp_v2_api {
     /// ## With Port only
     /// ```
     ///     use rumtk_core::{rumtk_sleep};
-    ///     use rumtk_core::strings::format_compact;
+    ///     use rumtk_core::strings::rumtk_format;
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_get_client_ids};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
@@ -868,7 +866,7 @@ pub mod mllp_v2_api {
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
     ///     rumtk_sleep!(1);
     ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(&safe_client);
-    ///     let expected_client_id = format_compact!("{}:{}", &client_ip, &client_port);
+    ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
     ///     let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
     ///     let client_id = client_ids.get(0).unwrap();
     ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
@@ -877,7 +875,7 @@ pub mod mllp_v2_api {
     /// ## With IP + Port
     /// ```
     ///     use rumtk_core::{rumtk_sleep};
-    ///     use rumtk_core::strings::format_compact;
+    ///     use rumtk_core::strings::rumtk_format;
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_get_client_ids};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
@@ -886,7 +884,7 @@ pub mod mllp_v2_api {
     ///     let safe_client = rumtk_v2_mllp_connect!("127.0.0.1", port, MLLP_FILTER_POLICY::NONE).unwrap();
     ///     rumtk_sleep!(1);
     ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(&safe_client);
-    ///     let expected_client_id = format_compact!("{}:{}", &client_ip, &client_port);
+    ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
     ///     let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
     ///     let client_id = client_ids.get(0).unwrap();
     ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
@@ -1130,7 +1128,7 @@ pub mod mllp_v2_api {
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
-    /// use rumtk_core::strings::{format_compact, RUMString, RUMStringConversions};
+    /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
     ///
     /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
     /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp);
@@ -1141,13 +1139,13 @@ pub mod mllp_v2_api {
     macro_rules! rumtk_v2_mllp_get_ip_port {
         ( $safe_mllp:expr ) => {{
             use rumtk_core::core::RUMResult;
-            use rumtk_core::strings::{format_compact, RUMString, RUMStringConversions};
+            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
             use rumtk_core::{rumtk_exec_task, rumtk_get_ip_port};
             let mllp_ref = $safe_mllp.clone();
             let address_str = rumtk_exec_task!(async || -> RUMResult<RUMString> {
                 match mllp_ref.lock().await.get_address_info().await {
                     Some(ip) => Ok(ip.to_rumstring()),
-                    None => Err(format_compact!(
+                    None => Err(rumtk_format!(
                         "MLLP instance is missing an IP address. This is not expected!!!"
                     )),
                 }
@@ -1169,7 +1167,7 @@ pub mod mllp_v2_api {
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
-    /// use rumtk_core::strings::{format_compact, RUMString, RUMStringConversions};
+    /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
     ///
     /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
     /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp);
@@ -1177,7 +1175,7 @@ pub mod mllp_v2_api {
     /// let results = rumtk_v2_mllp_get_client_ids!(&mllp);
     /// let client_id = results.get(0).unwrap();
     /// let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client);
-    /// let expected = format_compact!("{}:{}", client_ip, client_port);
+    /// let expected = rumtk_format!("{}:{}", client_ip, client_port);
     /// assert_eq!(expected, client_id, "Expected to see client with ID: {}", expected);
     /// ```
     ///
@@ -1186,7 +1184,7 @@ pub mod mllp_v2_api {
         ( $safe_mllp:expr ) => {{
             use rumtk_core::core::RUMResult;
             use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::{format_compact, RUMString, RUMStringConversions};
+            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
             use $crate::hl7_v2_mllp::mllp_v2::ClientIDList;
             let mllp_ref = $safe_mllp.clone();
             let endpoint_list = rumtk_exec_task!(async || -> RUMResult<ClientIDList> {
@@ -1224,7 +1222,7 @@ pub mod mllp_v2_api {
         ( $safe_mllp:expr ) => {{
             use rumtk_core::core::RUMResult;
             use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::{format_compact, RUMString, RUMStringConversions};
+            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
             use $crate::hl7_v2_mllp::mllp_v2::ClientIDList;
             let mllp_ref = $safe_mllp.clone();
             let result = rumtk_exec_task!(async || -> RUMResult<bool> {

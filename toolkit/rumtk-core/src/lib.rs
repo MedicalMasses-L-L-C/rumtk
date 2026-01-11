@@ -44,7 +44,7 @@ mod tests {
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
     use crate::strings::{RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
-    use compact_str::{format_compact, CompactString};
+    use compact_str::{rumtk_format, CompactString};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_json::to_string;
     use std::sync::Arc;
@@ -314,7 +314,7 @@ mod tests {
         let task_args = SafeTaskArgs::<i32>::new(locked_args);
         let task_result = rumtk_wait_on_task!(rt, task_processor, &task_args);
         let result = task_result.unwrap();
-        assert_eq!(&result, &expected, "{}", format_compact!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
+        assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
     #[test]
@@ -336,7 +336,7 @@ mod tests {
         let task_args = rumtk_create_task_args!(1, 2, 3);
         let task_result = rumtk_wait_on_task!(rt, task_processor, &task_args);
         let result = task_result.unwrap();
-        assert_eq!(&result, &expected, "{}", format_compact!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
+        assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
     #[test]
@@ -359,7 +359,7 @@ mod tests {
             vec![1, 2, 3]
         )
         .unwrap();
-        assert_eq!(&result, &expected, "{}", format_compact!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
+        assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
     #[test]
@@ -490,7 +490,7 @@ mod tests {
             &msg.to_raw(),
             &received_message,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Received message does not match sent message by server {:?}",
                 &received_message
             )
@@ -631,7 +631,7 @@ mod tests {
             &msg.to_raw(),
             &received_message,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Received message does not match sent message by client {:?}",
                 &received_message
             )

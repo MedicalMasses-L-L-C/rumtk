@@ -22,7 +22,7 @@
 pub mod hl7_v2_complex_types {
     use crate::hl7_v2_base_types::v2_primitives::*;
     use crate::hl7_v2_field_descriptors::v2_field_descriptor::*;
-    use rumtk_core::strings::format_compact;
+    use rumtk_core::strings::rumtk_format;
 
     type V2StrField<'a> = Vec<&'a str>;
 
@@ -57,7 +57,7 @@ pub mod hl7_v2_complex_types {
         characters: &V2ParserCharacters,
     ) -> V2Type {
         if component_type.optionality.is_required() && component.len() == 0 {
-            return V2Type::Err(format_compact!(
+            return V2Type::Err(rumtk_format!(
                 "Required data in seq {} is missing!",
                 component_type.seq
             ));
@@ -66,7 +66,7 @@ pub mod hl7_v2_complex_types {
             V2ComponentType::Primitive(primitive) => {
                 if component.len() > 1 {
                     V2Type::Err(
-                        format_compact!(
+                        rumtk_format!(
                             "Received a tuple as component but components flagged with a primitive type \
                             expect only one string. Got [{:?}]", &component
                         )
@@ -94,7 +94,7 @@ pub mod hl7_v2_complex_types {
                 }
             }
             V2ComponentType::Complex(complex) => match complex {
-                _ => V2Type::Err(format_compact!("Unknown requested type!")),
+                _ => V2Type::Err(rumtk_format!("Unknown requested type!")),
             },
         }
     }

@@ -20,7 +20,9 @@
  */
 use crate::core::{is_unique, RUMResult};
 use chardetng::EncodingDetector;
-pub use compact_str::{format_compact, CompactString, CompactStringExt, ToCompactString};
+pub use compact_str::{
+    format_compact as rumtk_format, CompactString, CompactStringExt, ToCompactString,
+};
 use encoding_rs::Encoding;
 use unicode_segmentation::UnicodeSegmentation;
 /**************************** Constants**************************************/
@@ -400,7 +402,7 @@ pub fn unescape(escaped_str: &str) -> Result<Vec<u8>, RUMString> {
                 bytes.push(hex_to_byte(&lower_case[4..6])?);
             }
             _ => {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "Unknown multibyte sequence. Cannot decode {}",
                     lower_case
                 ))
@@ -434,7 +436,7 @@ fn unescape_control(escaped_str: &str) -> Result<char, RUMString> {
         "\\v" => Ok('\x0B'),
         "\\a" => Ok('\x07'),
         // Control sequences by
-        _ => Err(format_compact!(
+        _ => Err(rumtk_format!(
             "Unknown escape sequence? Sequence: {}!",
             escaped_str
         )),
@@ -461,7 +463,7 @@ fn unescape_control_byte(escaped_str: &str) -> Result<u8, RUMString> {
         "\\v" => Ok(11),  // Vertical Tab/Line Tabulation
         "\\a" => Ok(7),   // Alert bell
         // Control sequences by hex
-        //Err(format_compact!("Unknown escape sequence? Sequence: {}!", escaped_str))
+        //Err(rumtk_format!("Unknown escape sequence? Sequence: {}!", escaped_str))
         _ => hex_to_byte(escaped_str),
     }
 }
@@ -472,7 +474,7 @@ fn unescape_control_byte(escaped_str: &str) -> Result<u8, RUMString> {
 fn hex_to_number(hex_str: &str) -> Result<u32, RUMString> {
     match u32::from_str_radix(&hex_str, 16) {
         Ok(result) => Ok(result),
-        Err(val) => Err(format_compact!(
+        Err(val) => Err(rumtk_format!(
             "Failed to parse string with error {}! Input string {} \
         is not hex string!",
             val,
@@ -487,7 +489,7 @@ fn hex_to_number(hex_str: &str) -> Result<u32, RUMString> {
 fn hex_to_byte(hex_str: &str) -> Result<u8, RUMString> {
     match u8::from_str_radix(&hex_str, 16) {
         Ok(result) => Ok(result),
-        Err(val) => Err(format_compact!(
+        Err(val) => Err(rumtk_format!(
             "Failed to parse string with error {}! Input string {} \
         is not hex string!",
             val,
@@ -502,7 +504,7 @@ fn hex_to_byte(hex_str: &str) -> Result<u8, RUMString> {
 fn octal_to_number(hoctal_str: &str) -> Result<u32, RUMString> {
     match u32::from_str_radix(&hoctal_str, 8) {
         Ok(result) => Ok(result),
-        Err(val) => Err(format_compact!(
+        Err(val) => Err(rumtk_format!(
             "Failed to parse string with error {}! Input string {} \
         is not an octal string!",
             val,
@@ -517,7 +519,7 @@ fn octal_to_number(hoctal_str: &str) -> Result<u32, RUMString> {
 fn octal_to_byte(hoctal_str: &str) -> Result<u8, RUMString> {
     match u8::from_str_radix(&hoctal_str, 8) {
         Ok(result) => Ok(result),
-        Err(val) => Err(format_compact!(
+        Err(val) => Err(rumtk_format!(
             "Failed to parse string with error {}! Input string {} \
         is not an octal string!",
             val,
@@ -532,7 +534,7 @@ fn octal_to_byte(hoctal_str: &str) -> Result<u8, RUMString> {
 fn number_to_char(num: &u32) -> Result<RUMString, RUMString> {
     match char::from_u32(*num) {
         Some(result) => Ok(result.to_rumstring()),
-        None => Err(format_compact!(
+        None => Err(rumtk_format!(
             "Failed to cast number to character! Number {}",
             num
         )),

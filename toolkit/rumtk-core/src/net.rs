@@ -35,7 +35,7 @@ pub mod tcp {
         rumtk_resolve_task, rumtk_spawn_task, rumtk_wait_on_task,
     };
     use ahash::{HashMap, HashMapExt};
-    use compact_str::{format_compact, ToCompactString};
+    use compact_str::{rumtk_format, ToCompactString};
     use std::collections::VecDeque;
     use std::sync::Arc;
     use tokio::io;
@@ -73,13 +73,13 @@ pub mod tcp {
         /// Connect to peer and construct the client.
         ///
         pub async fn connect(ip: &str, port: u16) -> RUMResult<RUMClient> {
-            let addr = format_compact!("{}:{}", ip, port);
+            let addr = rumtk_format!("{}:{}", ip, port);
             match TcpStream::connect(addr.as_str()).await {
                 Ok(socket) => Ok(RUMClient {
                     socket,
                     disconnected: false,
                 }),
-                Err(e) => Err(format_compact!(
+                Err(e) => Err(rumtk_format!(
                     "Unable to connect to {} because {}",
                     &addr.as_str(),
                     &e
@@ -103,7 +103,7 @@ pub mod tcp {
         ///
         pub async fn send(&mut self, msg: &RUMNetMessage) -> RUMResult<()> {
             if self.is_disconnected() {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "{} disconnected!",
                     &self.socket.peer_addr().unwrap().to_compact_string()
                 ));
@@ -113,7 +113,7 @@ pub mod tcp {
                 Ok(_) => Ok(()),
                 Err(e) => {
                     self.disconnect();
-                    Err(format_compact!(
+                    Err(rumtk_format!(
                         "Unable to send message to {} because {}",
                         &self.socket.local_addr().unwrap().to_compact_string(),
                         &e
@@ -130,7 +130,7 @@ pub mod tcp {
             let mut msg = RUMNetMessage::new();
 
             if self.is_disconnected() {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "{} disconnected!",
                     &self.socket.peer_addr().unwrap().to_compact_string()
                 ));
@@ -152,7 +152,7 @@ pub mod tcp {
                 Ok(n) => match n {
                     0 => {
                         self.disconnect();
-                        Err(format_compact!(
+                        Err(rumtk_format!(
                             "Received 0 bytes from {}! It might have disconnected!",
                             &self.socket.peer_addr().unwrap().to_compact_string()
                         ))
@@ -165,7 +165,7 @@ pub mod tcp {
                 }
                 Err(e) => {
                     self.disconnect();
-                    Err(format_compact!(
+                    Err(rumtk_format!(
                         "Error receiving message from {} because {}",
                         &self.socket.peer_addr().unwrap().to_compact_string(),
                         &e
@@ -178,7 +178,7 @@ pub mod tcp {
             let mut buf: [u8; 1] = [0; 1];
 
             if self.is_disconnected() {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "{} disconnected!",
                     &self.socket.peer_addr().unwrap().to_compact_string()
                 ));
@@ -186,13 +186,13 @@ pub mod tcp {
 
             match self.socket.peek(&mut buf).await {
                 Ok(n) => match n {
-                    0 => Err(format_compact!(
+                    0 => Err(rumtk_format!(
                         "Received 0 bytes from {}! It might have disconnected!",
                         &self.socket.peer_addr().unwrap().to_compact_string()
                     )),
                     _ => Ok(true),
                 },
-                Err(e) => Err(format_compact!(
+                Err(e) => Err(rumtk_format!(
                     "Error receiving message from {} because {}. It might have disconnected!",
                     &self.socket.peer_addr().unwrap().to_compact_string(),
                     &e
@@ -312,11 +312,11 @@ pub mod tcp {
         /// management is not started until you invoke [RUMServer::run].
         ///
         pub async fn new(ip: &str, port: u16) -> RUMResult<RUMServer> {
-            let addr = format_compact!("{}:{}", ip, port);
+            let addr = rumtk_format!("{}:{}", ip, port);
             let tcp_listener_handle = match TcpListener::bind(addr.as_str()).await {
                 Ok(listener) => listener,
                 Err(e) => {
-                    return Err(format_compact!(
+                    return Err(rumtk_format!(
                         "Unable to bind to {} because {}",
                         &addr.as_str(),
                         &e
@@ -451,7 +451,7 @@ pub mod tcp {
                 shutdown_completed = reowned_self.shutdown_completed;
             }
 
-            Ok(format_compact!("Server fully shutdown!"))
+            Ok(rumtk_format!("Server fully shutdown!"))
         }
 
         ///
@@ -469,7 +469,7 @@ pub mod tcp {
                     let client = RUMClient::accept(socket).await?;
                     let client_id = match client.get_address(false).await {
                         Some(client_id) => client_id,
-                        None => return Err(format_compact!("Accepted client returned no peer address. This should not be happening!"))
+                        None => return Err(rumtk_format!("Accepted client returned no peer address. This should not be happening!"))
                     };
                     let mut client_list = clients.write().await;
                     RUMServer::register_queue(&tx_in, &client_id).await;
@@ -477,7 +477,7 @@ pub mod tcp {
                     client_list.insert(client_id, SafeClient::new(AsyncRwLock::new(client)));
                     Ok(())
                 }
-                Err(e) => Err(format_compact!(
+                Err(e) => Err(rumtk_format!(
                     "Error accepting incoming client! Error: {}",
                     e
                 )),
@@ -500,7 +500,7 @@ pub mod tcp {
                     match RUMServer::send(client, msg).await {
                         Ok(_) => (),
                         Err(e) => {
-                            return Err(format_compact!("{}... Dropping client...", e));
+                            return Err(rumtk_format!("{}... Dropping client...", e));
                         }
                     };
                 }
@@ -557,7 +557,7 @@ pub mod tcp {
             }
 
             if !disconnected_clients.is_empty() {
-                return Err(format_compact!(
+                return Err(rumtk_format!(
                     "The following clients have disconnected and thus will be removed! {:?}",
                     disconnected_clients
                 ));
@@ -581,7 +581,7 @@ pub mod tcp {
             let mut queue = match queues.get_mut(client) {
                 Some(queue) => queue,
                 None => {
-                    return Err(format_compact!("Attempted to queue message for non-connected \
+                    return Err(rumtk_format!("Attempted to queue message for non-connected \
                     client! Make sure client was connected! The client might have been disconnected. \
                     Client: {}", &client));
                 }
@@ -644,7 +644,7 @@ pub mod tcp {
         ) -> RUMResult<SafeClient> {
             match clients.read().await.get(client) {
                 Some(client) => Ok(client.clone()),
-                _ => Err(format_compact!("Client {} not found!", client)),
+                _ => Err(rumtk_format!("Client {} not found!", client)),
             }
         }
 
@@ -700,7 +700,7 @@ pub mod tcp {
         ) -> RUMResult<()> {
             let mut queue = self.tx_out.lock().await;
             if !queue.contains_key(client_id) {
-                return Err(format_compact!("No client with id {} found!", &client_id));
+                return Err(rumtk_format!("No client with id {} found!", &client_id));
             }
             let mut queue = queue[client_id].lock().await;
             queue.push_back(msg);
@@ -833,7 +833,7 @@ pub mod tcp {
             let (ip, port) = match lock_future.get(0) {
                 Some((ip, port)) => (ip, port),
                 None => {
-                    return Err(format_compact!(
+                    return Err(rumtk_format!(
                         "No IP address or port provided for connection!"
                     ))
                 }
@@ -1037,7 +1037,7 @@ pub mod tcp {
             let (ip, port) = match locked_args.get(0) {
                 Some((ip, port)) => (ip, port),
                 None => {
-                    return Err(format_compact!(
+                    return Err(rumtk_format!(
                         "No IP address or port provided for connection!"
                     ))
                 }

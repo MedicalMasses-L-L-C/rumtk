@@ -59,7 +59,7 @@ mod tests {
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{
-        basic_escape, format_compact, AsStr, RUMArrayConversions, RUMString, RUMStringConversions,
+        basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions,
         StringUtils,
     };
     use rumtk_core::{
@@ -616,14 +616,14 @@ mod tests {
     #[test]
     fn test_load_hl7_v2_message_macro_failure() {
         let input = "Hello World!";
-        let err_msg = format_compact!(
+        let err_msg = rumtk_format!(
             "Parsing did not fail as expected. Input {} => parsed?",
             input
         );
         match rumtk_v2_parse_message!(input) {
             Ok(v) => panic!("{}", err_msg.as_str()),
             Err(e) => {
-                println!("{}", format_compact!("Got error => {}", e).as_str());
+                println!("{}", rumtk_format!("Got error => {}", e).as_str());
                 println!("Passed failed case!");
             }
         };
@@ -680,7 +680,7 @@ mod tests {
     #[test]
     fn test_find_hl7_v2_message_component_macro_failure() {
         let pattern = "PID(1)15.4";
-        let err_msg = format_compact!(
+        let err_msg = rumtk_format!(
             "Search did not fail as expected. Input {} => found component?",
             pattern
         );
@@ -688,7 +688,7 @@ mod tests {
         match rumtk_v2_find_component!(message, pattern) {
             Ok(v) => panic!("{}", err_msg.as_str()),
             Err(e) => {
-                println!("{}", format_compact!("Got error => {}", e).as_str());
+                println!("{}", rumtk_format!("Got error => {}", e).as_str());
                 println!("Passed failed case!");
             }
         }
@@ -724,7 +724,7 @@ mod tests {
                 i, input, expected_utc
             );
             let date = input.to_v2datetime().unwrap();
-            let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
+            let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
             assert_eq!(expected_utc, date.as_utc_string().as_str(), "{}", &err_msg);
             println!(" ... Got: {} ✅ ", date.as_utc_string());
         }
@@ -759,7 +759,7 @@ mod tests {
         assert_eq!(expected_component, component.as_str(), "We are not using the correct component for this test. Check that the original test message has not changed and update the location string appropriately!");
         let date = component.to_v2datetime().unwrap();
         let expected_utc = "2007-08-18T11:23:00.0000";
-        let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [{}]", component.as_str());
+        let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [{}]", component.as_str());
         assert_eq!(expected_utc, date.as_utc_string().as_str(), "{}", &err_msg)
     }
 
@@ -767,7 +767,7 @@ mod tests {
     fn test_datetime_default() {
         let input = V2DateTime::default().as_utc_string();
         let expected_val = V2String::from("1970-01-01T00:00:00.00000");
-        let err_msg = format_compact!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, input);
+        let err_msg = rumtk_format!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, input);
         assert_eq!(expected_val, input, "{}", &err_msg);
     }
 
@@ -787,7 +787,7 @@ mod tests {
                 i, input, expected_utc
             );
             let date = input.to_v2date().unwrap();
-            let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
+            let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
             assert_eq!(expected_utc, date.as_utc_string().as_str(), "{}", &err_msg);
             println!(" ... Got: {} ✅ ", date.as_utc_string());
         }
@@ -822,7 +822,7 @@ mod tests {
         assert_eq!(expected_component, component.as_str(), "We are not using the correct component for this test. Check that the original test message has not changed and update the location string appropriately!");
         let date = component.to_v2date().unwrap();
         let expected_utc = "2015-06-25T00:00:00.0000";
-        let err_msg = format_compact!(
+        let err_msg = rumtk_format!(
             "The expected date string does not match the date string generated from the input [{}]",
             component.as_str()
         );
@@ -846,7 +846,7 @@ mod tests {
                 i, input, expected_utc
             );
             let date = input.to_v2time().unwrap();
-            let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
+            let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, date.as_utc_string());
             assert_eq!(expected_utc, date.as_utc_string().as_str(), "{}", &err_msg);
             println!(" ... Got: {} ✅ ", date.as_utc_string());
         }
@@ -904,7 +904,7 @@ mod tests {
                 i, input, expected_val
             );
             let val = input.to_v2number().unwrap();
-            let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, val);
+            let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, val);
             assert_eq!(expected_val, val, "{}", &err_msg);
             println!(" ... Got: {} ✅ ", val);
         }
@@ -941,7 +941,7 @@ mod tests {
                 i, input, expected_val
             );
             let val = input.to_v2stringdata().unwrap();
-            let err_msg = format_compact!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, val);
+            let err_msg = rumtk_format!("The expected date time string does not match the date time string generated from the input [In: {}, Got: {}]", input, val);
             assert_eq!(expected_val, val, "{}", &err_msg);
             println!(" ... Got: {} ✅ ", val);
         }
@@ -978,7 +978,7 @@ mod tests {
             );
             let val = input.to_v2formattedtext("~").unwrap();
             println!("{}", val.len());
-            let err_msg = format_compact!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, val);
+            let err_msg = rumtk_format!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, val);
             assert_eq!(expected_val, val, "{}", &err_msg);
             println!(" ... Got: {} ✅ ", val);
         }
@@ -1003,7 +1003,7 @@ mod tests {
         let input = "2007";
         let val = cast_component(vec![&input], &v2_component, &encode_chars);
         let expected = "2007-01-01T00:00:00.0000";
-        let err_msg = format_compact!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, expected);
+        let err_msg = rumtk_format!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, expected);
 
         match val {
             V2Type::V2Date(result) => {
@@ -1040,7 +1040,7 @@ mod tests {
             expected_message,
             payload.to_rumstring(),
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Malformed payload! Expected: {} Found: {}",
                 expected_message,
                 payload.to_rumstring()
@@ -1074,7 +1074,7 @@ mod tests {
             expected_message,
             decoded,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Malformed decoded message! Expected: {} Found: {}",
                 expected_message,
                 decoded
@@ -1094,7 +1094,7 @@ mod tests {
         });
         assert_eq!(
             client_id,
-            Ok(format_compact!("127.0.0.1:{}", &port)),
+            Ok(rumtk_format!("127.0.0.1:{}", &port)),
             "Failed to bind local port!"
         )
     }
@@ -1155,7 +1155,7 @@ mod tests {
             &client_id,
             &channel_address,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Issue stablishing MLLP communication channel! Expected: {} Received: {}",
                 &client_id,
                 &channel_address
@@ -1209,7 +1209,7 @@ mod tests {
             &expected_message,
             &received_message,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Issue sending message through channel! Expected: {} Received: {}",
                 &expected_message,
                 &received_message
@@ -1263,7 +1263,7 @@ mod tests {
             &HL7_V2_PDF_MESSAGE,
             &received_message,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Issue sending message through channel! Expected: {} Received: {}",
                 &HL7_V2_PDF_MESSAGE,
                 &received_message
@@ -1292,7 +1292,7 @@ mod tests {
             &HL7_V2_PDF_MESSAGE,
             &echoed_message,
             "{}",
-            format_compact!(
+            rumtk_format!(
                 "Issue echoing message through channel! Expected: {} Received: {}",
                 &HL7_V2_PDF_MESSAGE,
                 &echoed_message
