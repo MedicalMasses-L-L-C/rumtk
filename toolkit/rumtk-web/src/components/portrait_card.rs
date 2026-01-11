@@ -23,7 +23,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use axum::response::Html;
 use std::collections::HashMap;
@@ -78,8 +78,8 @@ fn get_portrait_grid(
     lang: &str,
     app_state: &SharedAppConf,
 ) -> PortraitGrid {
-    let img_conf = mm_get_conf!(typ);
-    let text_conf = mm_get_conf!(typ, lang);
+    let img_conf = rumtk_web_get_conf!(typ);
+    let text_conf = rumtk_web_get_conf!(typ, lang);
 
     let mut grid = Vec::with_capacity(text_conf.len());
     let default_html = Html::<RUMString>(RUMString::default());
@@ -88,7 +88,7 @@ fn get_portrait_grid(
         for (i_name, i_item) in *r_list {
             grid_row.push(PortraitItem {
                 user: i_name.to_string(),
-                portrait: RUMString::from(mm_get_text_item!(&img_conf, i_name, "")),
+                portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, i_name, "")),
                 contact: match contact_card(
                     &[],
                     &HashMap::from([
@@ -112,14 +112,14 @@ pub fn portrait_card(
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {
-    let section = mm_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
-    let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let icon_data = get_portrait_grid(section, typ, DEFAULT_NO_TEXT, &state);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    mm_render_html!(PortraitCard {
+    rumtk_web_render_html!(PortraitCard {
         icon_data,
         css_class: RUMString::from(css_class),
         custom_css_enabled

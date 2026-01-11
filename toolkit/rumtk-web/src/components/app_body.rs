@@ -21,7 +21,10 @@
 use crate::components::COMPONENTS;
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_collect_page, mm_get_param, mm_get_text_item, mm_render_component, mm_render_html};
+use crate::{
+    rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_get_text_item,
+    rumtk_web_render_component, rumtk_web_render_html,
+};
 use askama::Template;
 
 #[derive(Template)]
@@ -38,7 +41,7 @@ pub struct AppBodyContents<'a> {
 }
 
 fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
-    mm_render_html!(AppBodyContents { elements })
+    rumtk_web_render_html!(AppBodyContents { elements })
 }
 
 #[derive(Template)]
@@ -68,25 +71,26 @@ pub struct AppBody {
 }
 
 pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let page: RUMString = mm_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
-    let theme = mm_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
+    let page: RUMString =
+        rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
+    let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
 
     //Let's render the body to html
-    let body_components = mm_collect_page!(page, state);
+    let body_components = rumtk_web_collect_page!(page, state);
     let body = app_body_contents(&body_components)?.0;
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = mm_render_component!("navbar", [("", "")], state, COMPONENTS);
+    let header = rumtk_web_render_component!("navbar", [("", "")], state, COMPONENTS);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
-    let footer = mm_render_component!(
+    let footer = rumtk_web_render_component!(
         "footer",
         [("social_list", "linkedin,github")],
         state,
         COMPONENTS
     );
 
-    mm_render_html!(AppBody {
+    rumtk_web_render_html!(AppBody {
         theme: RUMString::from(theme),
         header,
         body,

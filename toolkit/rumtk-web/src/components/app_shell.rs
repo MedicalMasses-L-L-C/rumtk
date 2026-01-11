@@ -21,7 +21,7 @@ use crate::components::{app_body::app_body, app_head::app_head};
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_text_item, mm_render_component, mm_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
 const DEFAULT_PAGE_NAME: &str = "index";
@@ -44,8 +44,8 @@ pub struct AppShell {
 }
 
 pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let lang = mm_get_text_item!(params, "lang", LANG_EN);
-    let theme = mm_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
+    let lang = rumtk_web_get_text_item!(params, "lang", LANG_EN);
+    let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
     // TODO: We need to reevaluate how to validate the options that should be standardized to avoid parameter injection as an attack vector.
     //owned_state.opts = *params.clone();
 
@@ -55,14 +55,16 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppCo
     owned_state.theme = RUMString::from(theme);
 
     //Let's render the head component
-    let head =
-        mm_render_component!(|| -> HTMLResult { app_head(path_components, params, state.clone()) });
+    let head = rumtk_web_render_component!(|| -> HTMLResult {
+        app_head(path_components, params, state.clone())
+    });
 
     //Let's render the head component
-    let body =
-        mm_render_component!(|| -> HTMLResult { app_body(path_components, params, state.clone()) });
+    let body = rumtk_web_render_component!(|| -> HTMLResult {
+        app_body(path_components, params, state.clone())
+    });
 
-    mm_render_html!(AppShell {
+    rumtk_web_render_html!(AppShell {
         lang: RUMString::from(lang),
         head,
         body

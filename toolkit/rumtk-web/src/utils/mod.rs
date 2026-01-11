@@ -27,43 +27,16 @@ pub mod types;
 use axum::response::Html;
 use std::collections::HashMap;
 
-use crate::utils::types::AppState;
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
+pub use render::*;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tower_http::compression::{CompressionLayer, DefaultPredicate, Predicate};
 use tower_http::services::ServeDir;
-use types::*;
+pub use types::*;
 
-pub fn html_render<T: askama::Template>(template: T) -> HTMLResult {
-    let result = template.render();
-    match result {
-        Ok(html) => Ok(Html(html)),
-        Err(e) => {
-            let tn = std::any::type_name::<T>();
-            Err(format!("Template {tn} render failed: {e:?}"))
-        }
-    }
-}
-/*
-pub fn html_component_render(component: &str, params: &[(RUMString, RUMString)], app_state: SharedAppConf, components: &ComponentMap) -> RUMString {
-    let component = match components.get(component) {
-        Some(x) => x,
-        None => return RUMString::default(),
-    };
-
-    match component(
-        &[],
-        &HashMap::from(params),
-        app_state
-    ) {
-        Ok(x) => x.0,
-        Err(e) => RUMString::default(),
-    }
-}
-*/
 #[macro_export]
-macro_rules! mm_get_misc_conf {
+macro_rules! rumtk_web_get_misc_conf {
     ( $typ:expr ) => {{
         use $crate::utils::defaults::*;
         match $typ {
@@ -88,7 +61,7 @@ macro_rules! mm_get_misc_conf {
 }
 
 #[macro_export]
-macro_rules! mm_get_conf {
+macro_rules! rumtk_web_get_conf {
     ( $name:expr ) => {{
         use crate::conf::{IMG_DEFAULT, img};
         use crate::utils::defaults::SECTION_PERSONNEL;
@@ -130,7 +103,7 @@ macro_rules! mm_get_conf {
 }
 
 #[macro_export]
-macro_rules! mm_get_text_item {
+macro_rules! rumtk_web_get_text_item {
     ( $store:expr, $item:expr, $default:expr) => {{
         match $store.get($item) {
             Some(x) => x,
@@ -140,7 +113,7 @@ macro_rules! mm_get_text_item {
 }
 
 #[macro_export]
-macro_rules! mm_get_param_eq {
+macro_rules! rumtk_web_get_param_eq {
     ( $params:expr, $indx:expr, $comparison:expr, $default:expr ) => {{
         match $params.get($indx) {
             Some(x) => *x == $comparison,
@@ -150,7 +123,7 @@ macro_rules! mm_get_param_eq {
 }
 
 #[macro_export]
-macro_rules! mm_get_param {
+macro_rules! rumtk_web_get_param {
     ( $params:expr, $indx:expr, $default:expr ) => {{
         match $params.get($indx) {
             Some(x) => x.parse().unwrap_or($default),
@@ -160,7 +133,7 @@ macro_rules! mm_get_param {
 }
 
 #[macro_export]
-macro_rules! mm_params_map {
+macro_rules! rumtk_web_params_map {
     ( $params:expr ) => {{
         use std::collections::HashMap;
         let mut params = HashMap::<RUMString, RUMString>::with_capacity($params.len());
@@ -173,37 +146,7 @@ macro_rules! mm_params_map {
 }
 
 #[macro_export]
-macro_rules! mm_render_component {
-    ( $component_fxn:expr ) => {{
-        match $component_fxn() {
-            Ok(x) => x.0,
-            Err(e) => RUMString::default(),
-        }
-    }};
-    ( $component_fxn:expr, $app_state:expr ) => {{
-        match $component_fxn($app_state.clone()) {
-            Ok(x) => x.0,
-            Err(e) => RUMString::default(),
-        }
-    }};
-    ( $component:expr, $params:expr, $app_state:expr, $components:expr ) => {{
-        use $crate::components::div::div;
-        use $crate::mm_params_map;
-        use $crate::utils::types::ComponentFunction;
-        let component = match $components.get($component) {
-            Some(x) => x,
-            None => &(div as ComponentFunction),
-        };
-
-        match component(&[], &mm_params_map!($params), $app_state.clone()) {
-            Ok(x) => x.0,
-            _ => RUMString::default(),
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! mm_collect_page {
+macro_rules! rumtk_web_collect_page {
     ( $page:expr, $app_state:expr ) => {{
         use $crate::pages::PAGES;
         use $crate::utils::types::{PageFunction, RenderedPageComponents};
@@ -218,7 +161,7 @@ macro_rules! mm_collect_page {
 }
 
 #[macro_export]
-macro_rules! mm_fetch {
+macro_rules! rumtk_web_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
         use axum::response::Html;
@@ -251,15 +194,15 @@ pub async fn run_app(ip: &str) {
         .compress_when(DefaultPredicate::new());
     let app = Router::new()
         /* Robots.txt */
-        .route("/robots.txt", get(mm_fetch!(default_robots_matcher)))
+        .route("/robots.txt", get(rumtk_web_fetch!(default_robots_matcher)))
         /* Components */
         .route(
             "/component/{*name}",
-            get(mm_fetch!(default_component_matcher)),
+            get(rumtk_web_fetch!(default_component_matcher)),
         )
         /* Pages */
-        .route("/", get(mm_fetch!(default_page_matcher)))
-        .route("/{*page}", get(mm_fetch!(default_page_matcher)))
+        .route("/", get(rumtk_web_fetch!(default_page_matcher)))
+        .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
         /* Services */
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state)
@@ -276,7 +219,7 @@ pub async fn run_app(ip: &str) {
 }
 
 #[macro_export]
-macro_rules! mm_run_app {
+macro_rules! rumtk_web_run_app {
     (  ) => {{
         use $crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
         use $crate::utils::run_app;
@@ -289,42 +232,5 @@ macro_rules! mm_run_app {
     ( $ip:expr, $port:expr ) => {{
         use $crate::utils::run_app;
         run_app(&format!("{}:{}", $ip, $port)).await;
-    }};
-}
-
-#[macro_export]
-macro_rules! mm_render_html {
-    ( $component:expr ) => {{
-        use crate::utils::{html_render, types::HTMLResult};
-
-        let closure = || -> HTMLResult { html_render($component) };
-
-        closure()
-    }};
-}
-
-///
-///
-/// If using raw strings, do not leave an extra line. The first input must have characters or you will get <pre><code> blocks regardless of what you do.
-#[macro_export]
-macro_rules! mm_render_markdown {
-    ( $md:expr ) => {{
-        use pulldown_cmark::{Options, Parser};
-        use $crate::utils::types::RUMString;
-
-        let mut options = Options::empty();
-        options.insert(Options::ENABLE_STRIKETHROUGH);
-        options.insert(Options::ENABLE_TASKLISTS);
-        options.insert(Options::ENABLE_MATH);
-        options.insert(Options::ENABLE_TABLES);
-        options.insert(Options::ENABLE_WIKILINKS);
-
-        let input = RUMString::from($md);
-        let parser = Parser::new_ext(&input, options);
-        let mut html_output = RUMString::new();
-        pulldown_cmark::html::push_html(&mut html_output, parser);
-        println!("{}", &html_output);
-
-        html_output
     }};
 }

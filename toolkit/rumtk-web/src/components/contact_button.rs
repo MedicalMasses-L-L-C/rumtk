@@ -23,7 +23,7 @@ use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_text_item, mm_render_component, mm_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
 #[derive(Template, Debug)]
@@ -77,15 +77,15 @@ pub fn contact_button(
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {
-    let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
-    let send_function = mm_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
+    let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let title = mm_render_component!("title", [("type", typ)], state, COMPONENTS);
+    let title = rumtk_web_render_component!("title", [("type", typ)], state, COMPONENTS);
 
-    mm_render_html!(ContactButton {
+    rumtk_web_render_html!(ContactButton {
         title,
         typ: RUMString::from(typ),
         send_function: RUMString::from(send_function),

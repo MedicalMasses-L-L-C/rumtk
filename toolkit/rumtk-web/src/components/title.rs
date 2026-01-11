@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
 
@@ -76,17 +76,17 @@ pub struct Title {
 }
 
 pub fn title(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = mm_get_conf!(SECTION_TITLES, DEFAULT_NO_TEXT);
-    let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
-    let itm = mm_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
-    let text = RUMString::from(mm_get_text_item!(&itm, "title", ""));
+    let text_store = rumtk_web_get_conf!(SECTION_TITLES, DEFAULT_NO_TEXT);
+    let en_text = rumtk_web_get_text_item!(&text_store, "0", &&phf_ordered_map!());
+    let itm = rumtk_web_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
+    let text = RUMString::from(rumtk_web_get_text_item!(&itm, "title", ""));
 
-    mm_render_html!(Title {
+    rumtk_web_render_html!(Title {
         typ: RUMString::from(typ),
         text,
         css_class: RUMString::from(css_class),

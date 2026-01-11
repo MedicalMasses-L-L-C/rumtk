@@ -89,7 +89,7 @@ mod tests {
         NK1|2|CHILD^BABEE^^^^^^|SEL^SELF^HL70063^^^^^|22 YOUNGER LAND^^JUNEAU^WI^53039^^^^^^|(920)386-5555^PRN^PH^^^920^3865555^^\n
         PV1||R||||||||||||||||||\n
         ORC|RE||0|\n
-        RXA|0|999|20190503|20190503|110^DTAP/Polio/Hep B^CVX^Pediarix^Pediarix^WVTN|1.0|||01^^^^^~38230637^WIR immunization id^IMM_ID^^^||^^^WIR Physicians^^^^^^^^^^^|||||||||\n
+        RXA|0|999|20190503|20190503|110^DTAP/Polio/Hep B^CVX^Pediarix^Pediarix^WVTN|1.0|||01^^^^^~38230637^WIR immunization id^Irumtk_web_ID^^^||^^^WIR Physicians^^^^^^^^^^^|||||||||\n
         BTS|1|\n
         FTS|1|";
     const HL7_V2_PDF_MESSAGE: &str =

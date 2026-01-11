@@ -22,7 +22,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_misc_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
 const ICON_CSS: &str = "fa-brands fa-square-{}";
@@ -62,7 +62,7 @@ pub struct Socials {
 fn get_social_list(social_list: &str) -> SocialsList {
     let data = social_list.to_lowercase();
     let sl_names = data.split(',').collect::<Vec<&str>>();
-    let sl_urls = mm_get_misc_conf!(SECTION_SOCIALS);
+    let sl_urls = rumtk_web_get_misc_conf!(SECTION_SOCIALS);
     let mut sl: SocialsList = SocialsList::with_capacity(sl_names.len());
 
     for name in sl_names {
@@ -70,7 +70,7 @@ fn get_social_list(social_list: &str) -> SocialsList {
             continue;
         }
 
-        let url = mm_get_text_item!(&sl_urls, name, "");
+        let url = rumtk_web_get_text_item!(&sl_urls, name, "");
         sl.push(Social {
             name: RUMString::from(name),
             icon: format!("fa-brands fa-{}", name),
@@ -82,14 +82,14 @@ fn get_social_list(social_list: &str) -> SocialsList {
 }
 
 pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let social_list = mm_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     let icons = get_social_list(&social_list);
 
-    mm_render_html!(Socials {
+    rumtk_web_render_html!(Socials {
         icons,
         css_class: RUMString::from(css_class),
         custom_css_enabled

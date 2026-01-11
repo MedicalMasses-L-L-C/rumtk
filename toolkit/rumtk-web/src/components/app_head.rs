@@ -20,7 +20,7 @@
  */
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_render_component, mm_render_html};
+use crate::{rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
 const DEFAULT_PAGE_NAME: &str = "index";
@@ -56,18 +56,18 @@ pub struct AppShellHead {
 ///
 pub fn app_head(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     //Let's render the head component
-    let html_meta = mm_render_component!(meta, state);
+    let html_meta = rumtk_web_render_component!(meta, state);
 
     //Let's render the head component
-    let html_css = mm_render_component!(css);
+    let html_css = rumtk_web_render_component!(css);
 
     //Let's render the head component
-    let html_fontawesome = mm_render_component!(fontawesome);
+    let html_fontawesome = rumtk_web_render_component!(fontawesome);
 
     //Let's render the head component
-    let html_htmx = mm_render_component!(htmx);
+    let html_htmx = rumtk_web_render_component!(htmx);
 
-    mm_render_html!(AppShellHead {
+    rumtk_web_render_html!(AppShellHead {
         meta: html_meta,
         css: html_css,
         fontawesome: html_fontawesome,

@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::mm_render_html;
+use crate::rumtk_web_render_html;
 use crate::utils::types::HTMLResult;
 use askama::Template;
 
@@ -40,7 +40,7 @@ pub struct HTMX {
 }
 
 pub fn htmx() -> HTMLResult {
-    mm_render_html!(HTMX {
+    rumtk_web_render_html!(HTMX {
         lib: HTMXElement {
             version: "2.0.8",
             sha: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"

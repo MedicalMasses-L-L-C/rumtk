@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_param_eq, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_param_eq, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
 #[derive(Template, Debug, Clone)]
@@ -51,12 +51,12 @@ pub struct Logo {
 const DEFAULT_TYPE: &str = "diamond";
 
 pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let diamond = mm_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let diamond = rumtk_web_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    mm_render_html!(Logo {
+    rumtk_web_render_html!(Logo {
         diamond,
         css_class: RUMString::from(css_class),
         custom_css_enabled

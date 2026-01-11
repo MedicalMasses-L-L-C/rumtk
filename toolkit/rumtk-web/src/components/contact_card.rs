@@ -26,7 +26,7 @@ use crate::utils::types::{
     HTMLResult, NestedNestedTextMap, NestedTextMap, RUMString, SharedAppConf, TextMap, URLParams,
     URLPath,
 };
-use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
 
@@ -90,18 +90,19 @@ pub fn contact_card(
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {
-    let section = mm_get_text_item!(params, PARAMS_SECTION, DEFAULT_CONTACT_ITEM);
-    let typ = mm_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_CONTACT_ITEM);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_conf: &NestedNestedTextMap = mm_get_conf!(SECTION_CONTACT, DEFAULT_NO_TEXT);
+    let text_conf: &NestedNestedTextMap = rumtk_web_get_conf!(SECTION_CONTACT, DEFAULT_NO_TEXT);
     let contact_item: &&NestedTextMap =
-        mm_get_text_item!(&text_conf, &section, &&phf_ordered_map!());
-    let contact_lines: &TextMap = mm_get_text_item!(&contact_item, &typ, &phf_ordered_map!());
+        rumtk_web_get_text_item!(&text_conf, &section, &&phf_ordered_map!());
+    let contact_lines: &TextMap =
+        rumtk_web_get_text_item!(&contact_item, &typ, &phf_ordered_map!());
 
-    mm_render_html!(ContactCard {
+    rumtk_web_render_html!(ContactCard {
         contact_lines,
         css_class: RUMString::from(css_class),
         custom_css_enabled

@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::mm_render_html;
+use crate::rumtk_web_render_html;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf};
 use askama::Template;
 
@@ -43,7 +43,7 @@ pub struct Meta {
 pub fn meta(state: SharedAppConf) -> HTMLResult {
     let owned_state = state.lock().expect("Lock failure");
 
-    mm_render_html!(Meta {
+    rumtk_web_render_html!(Meta {
         title: owned_state.title.clone(),
         description: owned_state.description.clone()
     })

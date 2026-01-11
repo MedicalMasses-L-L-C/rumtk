@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, TextMap, URLParams, URLPath};
-use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
+use crate::{rumtk_web_get_misc_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
 #[derive(Template, Debug, Clone)]
@@ -56,13 +56,13 @@ pub struct ItemCard {
 }
 
 pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let typ = mm_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-    let services = mm_get_misc_conf!(typ);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let services = rumtk_web_get_misc_conf!(typ);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    mm_render_html!(ItemCard {
+    rumtk_web_render_html!(ItemCard {
         services,
         css_class: RUMString::from(css_class),
         custom_css_enabled

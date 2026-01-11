@@ -23,7 +23,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{mm_get_text_item, mm_render_component, mm_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
 #[derive(Debug, Clone)]
@@ -68,12 +68,12 @@ pub struct Footer {
 }
 
 pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let social_list = mm_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
-    let css_class = mm_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let contact_button = mm_render_component!(
+    let contact_button = rumtk_web_render_component!(
         "contact_button",
         [
             ("type", "contact"),
@@ -84,9 +84,9 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf)
         COMPONENTS
     );
     let socials =
-        mm_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
+        rumtk_web_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
 
-    mm_render_html!(Footer {
+    rumtk_web_render_html!(Footer {
         button: contact_button,
         socials,
         css_class: RUMString::from(css_class),
