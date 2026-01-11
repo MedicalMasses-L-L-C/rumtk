@@ -6,8 +6,8 @@ edition = "2024"
 [dependencies]
 #rumtk-core = { path = "../rumtk-core" }
 #rumtk-hl7-v2 = { path = "../rumtk-hl7-v2" }
-rumtk-core = "0.9.4"
-rumtk-hl7-v2 = "0.8.3"
+rumtk-core = "0.9.6"
+rumtk-hl7-v2 = "0.8.4"
 serde = { version = "1.0.219", features = ["derive", "std"] }
 serde_json = "1.0.140"
 clap = { version = "4.5.38", features = ["derive"] }
