@@ -22,7 +22,7 @@ use crate::components::contact_card::contact_card;
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use axum::response::Html;
@@ -30,9 +30,9 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 struct PortraitItem {
-    user: MMString,
-    portrait: MMString,
-    contact: MMString,
+    user: RUMString,
+    portrait: RUMString,
+    contact: RUMString,
 }
 
 type PortraitGrid = Vec<Vec<PortraitItem>>;
@@ -68,7 +68,7 @@ type PortraitGrid = Vec<Vec<PortraitItem>>;
 )]
 pub struct PortraitCard {
     icon_data: PortraitGrid,
-    css_class: MMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -82,13 +82,13 @@ fn get_portrait_grid(
     let text_conf = mm_get_conf!(typ, lang);
 
     let mut grid = Vec::with_capacity(text_conf.len());
-    let default_html = Html::<MMString>(MMString::default());
+    let default_html = Html::<RUMString>(RUMString::default());
     for (r_name, r_list) in text_conf {
         let mut grid_row = Vec::with_capacity(r_list.len());
         for (i_name, i_item) in *r_list {
             grid_row.push(PortraitItem {
                 user: i_name.to_string(),
-                portrait: MMString::from(mm_get_text_item!(&img_conf, i_name, "")),
+                portrait: RUMString::from(mm_get_text_item!(&img_conf, i_name, "")),
                 contact: match contact_card(
                     &[],
                     &HashMap::from([
@@ -121,7 +121,7 @@ pub fn portrait_card(
 
     mm_render_html!(PortraitCard {
         icon_data,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

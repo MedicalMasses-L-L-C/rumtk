@@ -21,7 +21,7 @@
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -29,8 +29,8 @@ const ICON_CSS: &str = "fa-brands fa-square-{}";
 
 #[derive(Debug, Clone)]
 struct Social {
-    name: MMString,
-    icon: MMString,
+    name: RUMString,
+    icon: RUMString,
     url: &'static str,
 }
 
@@ -55,7 +55,7 @@ type SocialsList = Vec<Social>;
 )]
 pub struct Socials {
     icons: SocialsList,
-    css_class: MMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -72,7 +72,7 @@ fn get_social_list(social_list: &str) -> SocialsList {
 
         let url = mm_get_text_item!(&sl_urls, name, "");
         sl.push(Social {
-            name: MMString::from(name),
+            name: RUMString::from(name),
             icon: format!("fa-brands fa-{}", name),
             url,
         })
@@ -91,7 +91,7 @@ pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppConf
 
     mm_render_html!(Socials {
         icons,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

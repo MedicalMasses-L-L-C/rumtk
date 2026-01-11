@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::mm_render_html;
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf};
 use askama::Template;
 
 #[derive(Template)]
@@ -36,8 +36,8 @@ use askama::Template;
     ext = "html"
 )]
 pub struct Meta {
-    title: MMString,
-    description: MMString,
+    title: RUMString,
+    description: RUMString,
 }
 
 pub fn meta(state: SharedAppConf) -> HTMLResult {

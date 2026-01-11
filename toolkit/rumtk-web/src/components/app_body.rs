@@ -20,7 +20,7 @@
  */
 use crate::components::COMPONENTS;
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_collect_page, mm_get_param, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -34,10 +34,10 @@ use askama::Template;
     ext = "html"
 )]
 pub struct AppBodyContents<'a> {
-    elements: &'a [MMString],
+    elements: &'a [RUMString],
 }
 
-fn app_body_contents(elements: &[MMString]) -> HTMLResult {
+fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
     mm_render_html!(AppBodyContents { elements })
 }
 
@@ -61,14 +61,14 @@ fn app_body_contents(elements: &[MMString]) -> HTMLResult {
     ext = "html"
 )]
 pub struct AppBody {
-    theme: MMString,
-    header: MMString,
-    body: MMString,
-    footer: MMString,
+    theme: RUMString,
+    header: RUMString,
+    body: RUMString,
+    footer: RUMString,
 }
 
 pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
-    let page: MMString = mm_get_param!(path_components, 0, MMString::from(DEFAULT_TEXT_ITEM));
+    let page: RUMString = mm_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
     let theme = mm_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
 
     //Let's render the body to html
@@ -87,7 +87,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
     );
 
     mm_render_html!(AppBody {
-        theme: MMString::from(theme),
+        theme: RUMString::from(theme),
         header,
         body,
         footer

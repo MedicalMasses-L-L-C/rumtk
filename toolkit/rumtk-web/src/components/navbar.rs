@@ -21,7 +21,7 @@
 use crate::components::navlink::navlink;
 use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 use axum::response::Html;
@@ -133,16 +133,16 @@ use std::collections::HashMap;
     ext = "html"
 )]
 pub struct NavBar {
-    company: MMString,
-    logo: MMString,
-    nav_links: Vec<MMString>,
-    css_class: MMString,
+    company: RUMString,
+    logo: RUMString,
+    nav_links: Vec<RUMString>,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppConf) -> Vec<MMString> {
+fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppConf) -> Vec<RUMString> {
     let mut nav_links = Vec::with_capacity(keys.len());
-    let default_html = Html::<MMString>(MMString::default());
+    let default_html = Html::<RUMString>(RUMString::default());
     for key in keys {
         nav_links.push(
             navlink(
@@ -177,10 +177,10 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf)
     );
 
     mm_render_html!(NavBar {
-        company: MMString::from(company),
+        company: RUMString::from(company),
         logo,
         nav_links,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

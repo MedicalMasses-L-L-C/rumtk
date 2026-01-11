@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -38,10 +38,10 @@ const DEFAULT_PAGE_NAME: &str = "index";
     ext = "html"
 )]
 pub struct AppShellHead {
-    meta: MMString,
-    css: MMString,
-    fontawesome: MMString,
-    htmx: MMString,
+    meta: RUMString,
+    css: RUMString,
+    fontawesome: RUMString,
+    htmx: RUMString,
 }
 
 ///

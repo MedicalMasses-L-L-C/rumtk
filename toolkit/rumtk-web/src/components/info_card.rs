@@ -22,7 +22,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
     PARAMS_ITEM,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_param_eq, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
@@ -60,7 +60,7 @@ pub struct InfoCard {
     title: &'static str,
     description: &'static str,
     inverted: bool,
-    css_class: MMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -81,7 +81,7 @@ pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppCo
         title,
         description: desc,
         inverted,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

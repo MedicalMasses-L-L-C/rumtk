@@ -18,24 +18,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::{app_shell::app_shell, COMPONENTS};
+use crate::components::{COMPONENTS, app_shell::app_shell};
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::types::SharedAppConf;
-use crate::utils::{HTMLResult, MMString};
+use crate::utils::{HTMLResult, RUMString};
 use axum::response::Html;
 use std::collections::HashMap;
 
 pub async fn default_robots_matcher(
-    path: Vec<MMString>,
-    params: HashMap<MMString, MMString>,
+    path: Vec<RUMString>,
+    params: HashMap<RUMString, RUMString>,
     state: SharedAppConf,
 ) -> HTMLResult {
-    Ok(Html::<MMString>::from(MMString::from(DEFAULT_ROBOT_TXT)))
+    Ok(Html::<RUMString>::from(RUMString::from(DEFAULT_ROBOT_TXT)))
 }
 
 pub async fn default_page_matcher(
-    path: Vec<MMString>,
-    params: HashMap<MMString, MMString>,
+    path: Vec<RUMString>,
+    params: HashMap<RUMString, RUMString>,
     state: SharedAppConf,
 ) -> HTMLResult {
     let path_components = match path.first() {
@@ -47,8 +47,8 @@ pub async fn default_page_matcher(
 }
 
 pub async fn default_component_matcher(
-    path: Vec<MMString>,
-    params: HashMap<MMString, MMString>,
+    path: Vec<RUMString>,
+    params: HashMap<RUMString, RUMString>,
     state: SharedAppConf,
 ) -> HTMLResult {
     let path_components = match path.first() {
@@ -58,7 +58,7 @@ pub async fn default_component_matcher(
 
     let component = match path_components.first() {
         Some(component) => component,
-        None => return Err(MMString::from("Missing component name to fetch!")),
+        None => return Err(RUMString::from("Missing component name to fetch!")),
     };
 
     let component = COMPONENTS.get(component);

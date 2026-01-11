@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, TextMap, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, TextMap, URLParams, URLPath};
 use crate::{mm_get_misc_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -51,7 +51,7 @@ use askama::Template;
 )]
 pub struct ItemCard {
     services: &'static TextMap,
-    css_class: MMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -64,7 +64,7 @@ pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppCo
 
     mm_render_html!(ItemCard {
         services,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

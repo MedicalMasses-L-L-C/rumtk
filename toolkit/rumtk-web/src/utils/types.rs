@@ -26,16 +26,17 @@ use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
 
-pub type MMString = String;
+pub use rumtk_core::strings::RUMString;
+
 pub type URLPath<'a, 'b> = &'a [&'b str];
-pub type AsyncURLPath = Arc<Vec<MMString>>;
-pub type URLParams<'a> = &'a HashMap<MMString, MMString>;
-pub type AsyncURLParams = Arc<HashMap<MMString, MMString>>;
-pub type HTMLResult = Result<Html<MMString>, MMString>;
-pub type RenderedPageComponents = Vec<MMString>;
+pub type AsyncURLPath = Arc<Vec<RUMString>>;
+pub type URLParams<'a> = &'a HashMap<RUMString, RUMString>;
+pub type AsyncURLParams = Arc<HashMap<RUMString, RUMString>>;
+pub type HTMLResult = Result<Html<RUMString>, RUMString>;
+pub type RenderedPageComponents = Vec<RUMString>;
 /* Router Match Types */
-pub type RouterComponents = Path<Vec<MMString>>;
-pub type RouterParams = Query<HashMap<MMString, MMString>>;
+pub type RouterComponents = Path<Vec<RUMString>>;
+pub type RouterParams = Query<HashMap<RUMString, RUMString>>;
 
 /* Config Types */
 pub type ComponentFunction = fn(URLPath, URLParams, SharedAppConf) -> HTMLResult;

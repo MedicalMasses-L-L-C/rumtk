@@ -22,20 +22,20 @@ use crate::components::COMPONENTS;
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
 #[derive(Debug, Clone)]
 struct FooterItem {
-    typ: MMString,
-    icon_url: MMString,
-    text: MMString,
+    typ: RUMString,
+    icon_url: RUMString,
+    text: RUMString,
 }
 
 #[derive(Debug, Clone)]
 struct FooterSection {
-    typ: MMString,
+    typ: RUMString,
     items: Vec<FooterItem>,
 }
 
@@ -59,11 +59,11 @@ struct FooterSection {
     ext = "html"
 )]
 pub struct Footer {
-    company: MMString,
+    company: RUMString,
     copyright_year: i32,
-    button: MMString,
-    socials: MMString,
-    css_class: MMString,
+    button: RUMString,
+    socials: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -89,7 +89,7 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf)
     mm_render_html!(Footer {
         button: contact_button,
         socials,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

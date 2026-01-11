@@ -20,7 +20,7 @@ use crate::components::{app_body::app_body, app_head::app_head};
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -38,9 +38,9 @@ const DEFAULT_PAGE_NAME: &str = "index";
     ext = "html"
 )]
 pub struct AppShell {
-    head: MMString,
-    lang: MMString,
-    body: MMString,
+    head: RUMString,
+    lang: RUMString,
+    body: RUMString,
 }
 
 pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
@@ -51,8 +51,8 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppCo
 
     //Config App
     let mut owned_state = state.lock().expect("Lock failure");
-    owned_state.lang = MMString::from(lang);
-    owned_state.theme = MMString::from(theme);
+    owned_state.lang = RUMString::from(lang);
+    owned_state.theme = RUMString::from(theme);
 
     //Let's render the head component
     let head =
@@ -63,7 +63,7 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppCo
         mm_render_component!(|| -> HTMLResult { app_body(path_components, params, state.clone()) });
 
     mm_render_html!(AppShell {
-        lang: MMString::from(lang),
+        lang: RUMString::from(lang),
         head,
         body
     })

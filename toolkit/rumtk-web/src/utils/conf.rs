@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::types::MMString;
+use crate::utils::types::RUMString;
 use axum::extract::State;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
@@ -32,10 +32,10 @@ use std::sync::{Arc, Mutex};
 ///
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct AppConf {
-    pub title: MMString,
-    pub description: MMString,
-    pub lang: MMString,
-    pub theme: MMString,
+    pub title: RUMString,
+    pub description: RUMString,
+    pub lang: RUMString,
+    pub theme: RUMString,
     pub custom_css: bool,
     //pub opts: TextMap,
 }
@@ -43,29 +43,29 @@ pub struct AppConf {
 impl AppConf {
     pub fn default() -> Self {
         Self::new(
-            MMString::from(""),
-            MMString::from(""),
-            MMString::from("en"),
-            MMString::from(""),
+            RUMString::from(""),
+            RUMString::from(""),
+            RUMString::from("en"),
+            RUMString::from(""),
             false,
         )
     }
 
-    pub fn default_site(title: MMString, description: MMString, custom_css: bool) -> Self {
+    pub fn default_site(title: RUMString, description: RUMString, custom_css: bool) -> Self {
         Self::new(
             title,
             description,
-            MMString::from("en"),
-            MMString::from(""),
+            RUMString::from("en"),
+            RUMString::from(""),
             custom_css,
         )
     }
 
     pub fn new(
-        title: MMString,
-        description: MMString,
-        lang: MMString,
-        theme: MMString,
+        title: RUMString,
+        description: RUMString,
+        lang: RUMString,
+        theme: RUMString,
         custom_css: bool,
     ) -> Self {
         Self {

@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_conf, mm_get_text_item, mm_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
@@ -115,10 +115,10 @@ use phf_macros::phf_ordered_map;
     ext = "html"
 )]
 struct Form {
-    typ: MMString,
-    title: MMString,
-    module_path: MMString,
-    css_class: MMString,
+    typ: RUMString,
+    title: RUMString,
+    module_path: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -131,12 +131,12 @@ pub fn form(path_components: URLPath, params: URLParams, state: SharedAppConf) -
     let text_store = mm_get_conf!(SECTION_TITLES, DEFAULT_NO_TEXT);
     let en_text = mm_get_text_item!(&text_store, "0", &&phf_ordered_map!());
     let itm = mm_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
-    let title = MMString::from(mm_get_text_item!(&itm, "title", ""));
+    let title = RUMString::from(mm_get_text_item!(&itm, "title", ""));
 
     mm_render_html!(Form {
-        typ: MMString::from(typ),
+        typ: RUMString::from(typ),
         title,
-        css_class: MMString::from(css_class),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

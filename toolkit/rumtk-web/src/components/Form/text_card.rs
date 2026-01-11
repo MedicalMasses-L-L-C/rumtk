@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -45,8 +45,8 @@ use askama::Template;
     ext = "html"
 )]
 struct TextCard {
-    typ: MMString,
-    css_class: MMString,
+    typ: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -57,8 +57,8 @@ pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppCo
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     mm_render_html!(TextCard {
-        typ: MMString::from(typ),
-        css_class: MMString::from(css_class),
+        typ: RUMString::from(typ),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

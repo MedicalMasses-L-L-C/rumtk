@@ -27,7 +27,7 @@ use axum::response::Html;
 use std::collections::HashMap;
 
 use crate::utils::types::AppState;
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
 use std::sync::Arc;
 use std::sync::Mutex;
 use tower_http::compression::{CompressionLayer, DefaultPredicate, Predicate};
@@ -45,10 +45,10 @@ pub fn html_render<T: askama::Template>(template: T) -> HTMLResult {
     }
 }
 /*
-pub fn html_component_render(component: &str, params: &[(MMString, MMString)], app_state: SharedAppConf, components: &ComponentMap) -> MMString {
+pub fn html_component_render(component: &str, params: &[(RUMString, RUMString)], app_state: SharedAppConf, components: &ComponentMap) -> RUMString {
     let component = match components.get(component) {
         Some(x) => x,
-        None => return MMString::default(),
+        None => return RUMString::default(),
     };
 
     match component(
@@ -57,7 +57,7 @@ pub fn html_component_render(component: &str, params: &[(MMString, MMString)], a
         app_state
     ) {
         Ok(x) => x.0,
-        Err(e) => MMString::default(),
+        Err(e) => RUMString::default(),
     }
 }
 */
@@ -162,7 +162,7 @@ macro_rules! mm_get_param {
 macro_rules! mm_params_map {
     ( $params:expr ) => {{
         use std::collections::HashMap;
-        let mut params = HashMap::<MMString, MMString>::with_capacity($params.len());
+        let mut params = HashMap::<RUMString, RUMString>::with_capacity($params.len());
 
         for (k, v) in $params.iter() {
             params.insert(k.to_string(), v.to_string());
@@ -176,13 +176,13 @@ macro_rules! mm_render_component {
     ( $component_fxn:expr ) => {{
         match $component_fxn() {
             Ok(x) => x.0,
-            Err(e) => MMString::default(),
+            Err(e) => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
         match $component_fxn($app_state.clone()) {
             Ok(x) => x.0,
-            Err(e) => MMString::default(),
+            Err(e) => RUMString::default(),
         }
     }};
     ( $component:expr, $params:expr, $app_state:expr, $components:expr ) => {{
@@ -196,7 +196,7 @@ macro_rules! mm_render_component {
 
         match component(&[], &mm_params_map!($params), $app_state.clone()) {
             Ok(x) => x.0,
-            _ => MMString::default(),
+            _ => RUMString::default(),
         }
     }};
 }
@@ -221,7 +221,7 @@ macro_rules! mm_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
         use axum::response::Html;
-        use $crate::utils::types::{MMString, RouterAppConf, RouterComponents, RouterParams};
+        use $crate::utils::types::{RUMString, RouterAppConf, RouterComponents, RouterParams};
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
                State(state): RouterAppConf|
@@ -230,7 +230,7 @@ macro_rules! mm_fetch {
                 Ok(res) => res,
                 Err(e) => {
                     error!("{}", e);
-                    return Html(MMString::default());
+                    return Html(RUMString::default());
                 }
             }
         }
@@ -309,7 +309,7 @@ macro_rules! mm_render_html {
 macro_rules! mm_render_markdown {
     ( $md:expr ) => {{
         use pulldown_cmark::{Options, Parser};
-        use $crate::utils::types::MMString;
+        use $crate::utils::types::RUMString;
 
         let mut options = Options::empty();
         options.insert(Options::ENABLE_STRIKETHROUGH);
@@ -318,9 +318,9 @@ macro_rules! mm_render_markdown {
         options.insert(Options::ENABLE_TABLES);
         options.insert(Options::ENABLE_WIKILINKS);
 
-        let input = MMString::from($md);
+        let input = RUMString::from($md);
         let parser = Parser::new_ext(&input, options);
-        let mut html_output = MMString::new();
+        let mut html_output = RUMString::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
         println!("{}", &html_output);
 

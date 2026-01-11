@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_html};
 use askama::Template;
 
@@ -37,8 +37,8 @@ use askama::Template;
     ext = "html"
 )]
 pub struct Div {
-    contents: MMString,
-    css_class: MMString,
+    contents: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -49,8 +49,8 @@ pub fn div(path_components: URLPath, params: URLParams, state: SharedAppConf) ->
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
     mm_render_html!(Div {
-        contents: MMString::from(contents),
-        css_class: MMString::from(css_class),
+        contents: RUMString::from(contents),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }

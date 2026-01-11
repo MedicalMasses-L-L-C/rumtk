@@ -22,7 +22,7 @@ use crate::components::COMPONENTS;
 use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE,
 };
-use crate::utils::types::{HTMLResult, MMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{mm_get_text_item, mm_render_component, mm_render_html};
 use askama::Template;
 
@@ -65,10 +65,10 @@ use askama::Template;
     ext = "html"
 )]
 pub struct ContactButton {
-    title: MMString,
-    typ: MMString,
-    send_function: MMString,
-    css_class: MMString,
+    title: RUMString,
+    typ: RUMString,
+    send_function: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -87,9 +87,9 @@ pub fn contact_button(
 
     mm_render_html!(ContactButton {
         title,
-        typ: MMString::from(typ),
-        send_function: MMString::from(send_function),
-        css_class: MMString::from(css_class),
+        typ: RUMString::from(typ),
+        send_function: RUMString::from(send_function),
+        css_class: RUMString::from(css_class),
         custom_css_enabled
     })
 }
