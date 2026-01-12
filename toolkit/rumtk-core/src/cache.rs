@@ -71,6 +71,14 @@ where
     cache.get(expr).unwrap()
 }
 
+pub fn cache_get<'a, K, V>(cache: &'a mut LazyRUMCache<K, V>, expr: &K) -> Option<&'a V>
+where
+    K: Hash + Eq + Clone,
+    V: Clone,
+{
+    cache.get(expr)
+}
+
 pub mod cache_macros {
     ///
     /// Searches for item in global cache. If global cache lacks item, create item using factory
@@ -162,6 +170,62 @@ pub mod cache_macros {
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
                 cache_push($cache, $key, $val)
+            }
+        }};
+    }
+
+    ///
+    /// Overrides contents in cache at key ```K```. No checks are performed for the existence of the
+    /// key in the cache. Be careful not to override necessary data.
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get};
+    /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push, cache_get};
+    /// use std::sync::Arc;
+    ///
+    /// type StringCache = LazyRUMCache<String, Vec<String>>;
+    ///
+    /// fn init_cache(k: &String) -> Vec<String> {
+    ///    vec![]
+    /// }
+    ///
+    /// let mut cache: StringCache = new_cache();
+    ///
+    /// let test_key: String = String::from("Hello World");
+    /// let test_value: String = String::from("?????");
+    ///
+    /// rumtk_cache_fetch!(
+    ///     &mut cache,
+    ///     &test_key,
+    ///     init_cache
+    /// );
+    ///
+    /// rumtk_cache_push!(
+    ///     &mut cache,
+    ///     &test_key,
+    ///     &vec![test_value.clone()]
+    /// );
+    ///
+    /// let v = rumtk_cache_get!(
+    ///     &mut cache,
+    ///     &test_key
+    /// ).unwrap();
+    ///
+    /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
+    ///
+    ///
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_cache_get {
+        ( $cache:expr, $key:expr ) => {{
+            use $crate::cache::cache_push;
+            // Do not remove the clippy disable decorator here since we do intend to expand within
+            // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
+            // internal references due to compiler error
+            #[allow(clippy::macro_metavars_in_unsafe)]
+            unsafe {
+                cache_get($cache, $key)
             }
         }};
     }
