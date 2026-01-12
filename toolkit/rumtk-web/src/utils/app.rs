@@ -20,7 +20,9 @@
  */
 use crate::utils::defaults::{DEFAULT_LOCAL_LISTENING_ADDRESS, DEFAULT_OUTBOUND_LISTENING_ADDRESS};
 use crate::utils::matcher::*;
-use crate::{rumtk_web_fetch, rumtk_web_load_conf};
+use crate::{
+    rumtk_web_fetch, rumtk_web_init_components, rumtk_web_init_pages, rumtk_web_load_conf,
+};
 
 use axum::routing::get;
 use axum::Router;
@@ -103,6 +105,26 @@ pub async fn run_app(args: &Args) {
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     (  ) => {{
+        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
+        rumtk_web_init_components!(vec![])
+        rumtk_web_init_pages!(vec![])
+
+        let args = Args::parse();
+        run_app(args).await;
+    }};
+    ( $pages:expr ) => {{
+        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
+        rumtk_web_init_components!(vec![])
+        rumtk_web_init_pages!($pages)
+
+        let args = Args::parse();
+        run_app(args).await;
+    }};
+    ( $pages:expr, $components:expr ) => {{
+        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
+        rumtk_web_init_components!($components)
+        rumtk_web_init_pages!($pages)
+
         let args = Args::parse();
         run_app(args).await;
     }};
