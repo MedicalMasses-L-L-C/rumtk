@@ -52,18 +52,18 @@ pub mod rumtk_search {
         let names: Vec<&str> = re
             .capture_names()
             .skip(1)
-            .map(|x| x.unwrap_or_else(|| ""))
+            .map(|x| x.unwrap_or(""))
             .collect();
         let mut clean_names: Vec<&str> = Vec::with_capacity(names.len());
         let mut groups = SearchGroups::with_capacity(DEFAULT_REGEX_CACHE_PAGE_SIZE);
 
         for name in &names {
-            if name.len() > 0 {
+            if !name.is_empty() {
                 clean_names.push(name);
             }
         }
 
-        if clean_names.len() == 0 {
+        if clean_names.is_empty() {
             return groups;
         }
 
@@ -74,7 +74,7 @@ pub mod rumtk_search {
         for cap in re.captures_iter(input).map(|c| c) {
             for name in &clean_names {
                 let val = cap.name(name).map_or("", |s| s.as_str());
-                if val.len() > 0 {
+                if !val.is_empty() {
                     groups.insert(RUMString::from(name.to_string()), RUMString::from(val));
                 }
             }
