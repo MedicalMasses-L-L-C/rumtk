@@ -18,11 +18,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_DEFAULT, SECTION_TITLES};
+use crate::components::Form::form_utils::{get_form, FormElements};
+use crate::utils::defaults::{
+    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE,
+};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
-use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
 
 #[derive(Template, Debug)]
 #[template(
@@ -115,10 +117,9 @@ use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
     ",
     ext = "html"
 )]
-struct Form {
+struct Form<'a> {
     typ: RUMString,
-    title: RUMString,
-    elements: Vec<RUMString>,
+    elements: &'a FormElements,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -129,16 +130,11 @@ pub fn form(path_components: URLPath, params: URLParams, state: SharedAppConf) -
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = rumtk_web_get_string!(state, SECTION_TITLES);
-    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
-    let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
-    let title = RUMString::from(rumtk_web_get_text_item!(&itm, "title", ""));
-
-    let elements =
+    let elements = get_form(typ);
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
-        title,
+        elements,
         css_class: RUMString::from(css_class),
         custom_css_enabled
     })

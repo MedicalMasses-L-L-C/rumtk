@@ -20,5 +20,30 @@
  */
 pub mod form;
 pub mod form_element;
-pub mod forms;
+pub mod form_utils;
 pub mod props;
+
+///
+/// This is an API macro for defining a form that can be used to render it later in your web pages.
+///
+#[macro_export]
+macro_rules! rumtk_web_add_form {
+    ( $name:expr, $build_fxn:expr ) => {{
+        use $crate::components::Form::form_utils::register_form_elements;
+
+        register_form_elements($name, $build_fxn)
+    }};
+}
+
+///
+/// This is an API macro to get the list of rendered elements that will be fed into the form shell
+/// to render your form in your web page.
+///
+#[macro_export]
+macro_rules! rumtk_web_get_form {
+    ( $name:expr ) => {{
+        use $crate::components::Form::form_utils::get_form;
+
+        get_form($name)
+    }};
+}
