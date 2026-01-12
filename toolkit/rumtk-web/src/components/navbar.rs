@@ -20,15 +20,16 @@
  */
 use crate::components::navlink::navlink;
 use crate::components::COMPONENTS;
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_DEFAULT, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::DEFAULT_NESTEDTEXTMAP;
 use crate::{
     rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html,
 };
 use askama::Template;
 use axum::response::Html;
-use phf_macros::phf_ordered_map;
+use rumtk_core::strings::RUMStringConversions;
 use std::collections::HashMap;
 
 #[derive(Template, Debug, Clone)]
@@ -143,18 +144,19 @@ pub struct NavBar {
     custom_css_enabled: bool,
 }
 
-fn get_nav_links(keys: &Vec<&&str>, app_state: SharedAppConf) -> Vec<RUMString> {
-    let mut nav_links = Vec::with_capacity(keys.len());
-    let default_html = Html::<RUMString>(RUMString::default());
+fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMString> {
+    let mut nav_links = Vec::<RUMString>::with_capacity(keys.len());
+    let default_html = Html::<String>(String::default());
     for key in keys {
         nav_links.push(
             navlink(
                 &[],
-                &HashMap::from([("target".to_string(), key.to_string())]),
+                &HashMap::from([("target".to_rumstring(), key.to_rumstring())]),
                 app_state.clone(),
             )
             .unwrap_or_else(|_| default_html.clone())
-            .0,
+            .0
+            .to_rumstring(),
         );
     }
 
@@ -167,9 +169,9 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf)
     let company = state.lock().expect("Lock failure").title.clone();
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let links_store = rumtk_web_get_string!(SECTION_LINKS, DEFAULT_NO_TEXT);
-    let en_link = rumtk_web_get_text_item!(&links_store, "0", &&phf_ordered_map!());
-    let nav_keys = en_link.keys().collect::<Vec<&&str>>();
+    let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
+    let en_link = rumtk_web_get_text_item!(&links_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let nav_keys = en_link.keys().collect::<Vec<&RUMString>>();
     let nav_links = get_nav_links(&nav_keys, state.clone());
 
     let logo = rumtk_web_render_component!(

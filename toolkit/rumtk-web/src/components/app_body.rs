@@ -77,7 +77,8 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
 
     //Let's render the body to html
     let body_components = rumtk_web_collect_page!(page, state);
-    let body = app_body_contents(&body_components)?.0;
+    let body =
+        rumtk_web_render_component!(|| -> HTMLResult { app_body_contents(&body_components) });
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>

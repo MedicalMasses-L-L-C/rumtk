@@ -18,16 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
+use crate::utils::defaults::{
+    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET, SECTION_DEFAULT, SECTION_LINKS,
+};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXT, DEFAULT_TEXTMAP};
 use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
-use phf_macros::phf_ordered_map;
 
 #[derive(Debug, Clone)]
-struct NavItem {
-    title: &'static str,
-    url: &'static str,
+struct NavItem<'a> {
+    title: &'a str,
+    url: &'a str,
 }
 
 #[derive(Template, Debug, Clone)]
@@ -43,8 +45,8 @@ struct NavItem {
     ",
     ext = "html"
 )]
-pub struct NavLink {
-    target: NavItem,
+pub struct NavLink<'a> {
+    target: NavItem<'a>,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -55,11 +57,11 @@ pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppConf
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let links_store = rumtk_web_get_string!(SECTION_LINKS, DEFAULT_NO_TEXT);
-    let en_link = rumtk_web_get_text_item!(&links_store, "0", &&phf_ordered_map!());
-    let itm = rumtk_web_get_text_item!(&en_link, &target, &&phf_ordered_map!());
-    let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
-    let url = rumtk_web_get_text_item!(&itm, "url", DEFAULT_NO_TEXT);
+    let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
+    let en_link = rumtk_web_get_text_item!(&links_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let itm = rumtk_web_get_text_item!(&en_link, target, &DEFAULT_TEXTMAP());
+    let title = rumtk_web_get_text_item!(&itm, "title", &DEFAULT_TEXT());
+    let url = rumtk_web_get_text_item!(&itm, "url", &DEFAULT_TEXT());
 
     rumtk_web_render_html!(NavLink {
         target: NavItem { title, url },

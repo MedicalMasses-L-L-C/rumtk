@@ -19,11 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST, SECTION_SOCIALS,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
+use rumtk_core::strings::{rumtk_format, RUMStringConversions};
 
 const ICON_CSS: &str = "fa-brands fa-square-{}";
 
@@ -31,7 +32,7 @@ const ICON_CSS: &str = "fa-brands fa-square-{}";
 struct Social {
     name: RUMString,
     icon: RUMString,
-    url: &'static str,
+    url: RUMString,
 }
 
 type SocialsList = Vec<Social>;
@@ -59,10 +60,10 @@ pub struct Socials {
     custom_css_enabled: bool,
 }
 
-fn get_social_list(social_list: &str) -> SocialsList {
+fn get_social_list(social_list: &str, state: &SharedAppConf) -> SocialsList {
     let data = social_list.to_lowercase();
     let sl_names = data.split(',').collect::<Vec<&str>>();
-    let sl_urls = rumtk_web_get_conf!(SECTION_SOCIALS);
+    let sl_urls = rumtk_web_get_conf!(state, SECTION_SOCIALS);
     let mut sl: SocialsList = SocialsList::with_capacity(sl_names.len());
 
     for name in sl_names {
@@ -70,10 +71,10 @@ fn get_social_list(social_list: &str) -> SocialsList {
             continue;
         }
 
-        let url = rumtk_web_get_text_item!(&sl_urls, name, "");
+        let url = rumtk_web_get_text_item!(&sl_urls, name, "").to_rumstring();
         sl.push(Social {
             name: RUMString::from(name),
-            icon: format!("fa-brands fa-{}", name),
+            icon: rumtk_format!("fa-brands fa-{}", name),
             url,
         })
     }
@@ -87,7 +88,7 @@ pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppConf
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let icons = get_social_list(&social_list);
+    let icons = get_social_list(&social_list, &state);
 
     rumtk_web_render_html!(Socials {
         icons,

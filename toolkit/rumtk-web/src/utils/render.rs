@@ -36,18 +36,21 @@ pub fn rumtk_web_render_html<T: askama::Template>(template: T) -> HTMLResult {
 #[macro_export]
 macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
+        use rumtk_core::strings::RUMStringConversions;
         match $component_fxn() {
-            Ok(x) => x.0,
-            Err(e) => RUMString::default(),
+            Ok(x) => x.0.to_rumstring(),
+            _ => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
+        use rumtk_core::strings::RUMStringConversions;
         match $component_fxn($app_state.clone()) {
-            Ok(x) => x.0,
-            Err(e) => RUMString::default(),
+            Ok(x) => x.0.to_rumstring(),
+            _ => RUMString::default(),
         }
     }};
     ( $component:expr, $params:expr, $app_state:expr, $components:expr ) => {{
+        use rumtk_core::strings::RUMStringConversions;
         use $crate::components::div::div;
         use $crate::rumtk_web_params_map;
         use $crate::utils::types::ComponentFunction;
@@ -57,7 +60,7 @@ macro_rules! rumtk_web_render_component {
         };
 
         match component(&[], &rumtk_web_params_map!($params), $app_state.clone()) {
-            Ok(x) => x.0,
+            Ok(x) => x.0.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
@@ -82,7 +85,7 @@ macro_rules! rumtk_web_render_html {
 macro_rules! rumtk_web_render_markdown {
     ( $md:expr ) => {{
         use pulldown_cmark::{Options, Parser};
-        use $crate::utils::types::RUMString;
+        use rumtk_core::strings::RUMStringConversions;
 
         let mut options = Options::empty();
         options.insert(Options::ENABLE_STRIKETHROUGH);
@@ -91,12 +94,12 @@ macro_rules! rumtk_web_render_markdown {
         options.insert(Options::ENABLE_TABLES);
         options.insert(Options::ENABLE_WIKILINKS);
 
-        let input = RUMString::from($md);
+        let input = String::from($md);
         let parser = Parser::new_ext(&input, options);
-        let mut html_output = RUMString::new();
+        let mut html_output = String::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
         println!("{}", &html_output);
 
-        html_output
+        html_output.to_rumstring()
     }};
 }

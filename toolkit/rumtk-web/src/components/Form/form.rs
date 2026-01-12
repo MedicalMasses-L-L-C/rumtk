@@ -18,11 +18,18 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_DEFAULT, SECTION_TITLES};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
-use phf_macros::phf_ordered_map;
+use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
+use crate::components::Form::{label::Label, formatted_label::FormattedLabel};
+
+enum FormElements {
+    LABEL(Label),
+    FORMATTEDLABEL(FormattedLabel),
+    
+}
 
 #[derive(Template, Debug)]
 #[template(
@@ -105,8 +112,9 @@ use phf_macros::phf_ordered_map;
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
-        <script type='module' id='form-script' src='{{module_path}}'>
+        <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
         </script>
+        <form id='form' class='f18 centered form-default-container'>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
@@ -117,7 +125,7 @@ use phf_macros::phf_ordered_map;
 struct Form {
     typ: RUMString,
     title: RUMString,
-    module_path: RUMString,
+    elements: Vec<RUMString>,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -128,10 +136,12 @@ pub fn form(path_components: URLPath, params: URLParams, state: SharedAppConf) -
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = rumtk_web_get_string!(SECTION_TITLES, DEFAULT_NO_TEXT);
-    let en_text = rumtk_web_get_text_item!(&text_store, "0", &&phf_ordered_map!());
-    let itm = rumtk_web_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
+    let text_store = rumtk_web_get_string!(state, SECTION_TITLES);
+    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
     let title = RUMString::from(rumtk_web_get_text_item!(&itm, "title", ""));
+    
+    let elements = 
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),

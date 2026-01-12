@@ -17,3 +17,4 @@ clap = { version = "4.5.38", features = ["derive"] }
 pulldown-cmark = "0.13.0"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.145"
+chrono = "0.4.39"

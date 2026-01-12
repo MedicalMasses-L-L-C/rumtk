@@ -50,7 +50,7 @@ use askama::Template;
     ext = "html"
 )]
 pub struct ItemCard {
-    services: &'static TextMap,
+    services: TextMap,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -58,7 +58,7 @@ pub struct ItemCard {
 pub fn item_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-    let services = rumtk_web_get_conf!(typ);
+    let services = rumtk_web_get_conf!(state, typ);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 

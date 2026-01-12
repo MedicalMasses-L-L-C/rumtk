@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::components::contact_card::contact_card;
-use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
-};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{
+    rumtk_web_get_conf, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
+};
 use askama::Template;
-use axum::response::Html;
+use rumtk_core::strings::RUMStringConversions;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -72,33 +72,28 @@ pub struct PortraitCard {
     custom_css_enabled: bool,
 }
 
-fn get_portrait_grid(
-    section: &str,
-    typ: &str,
-    lang: &str,
-    app_state: &SharedAppConf,
-) -> PortraitGrid {
-    let img_conf = rumtk_web_get_string!(typ);
-    let text_conf = rumtk_web_get_string!(typ, lang);
+fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppConf) -> PortraitGrid {
+    let img_conf = rumtk_web_get_conf!(app_state, typ);
+    let text_conf = rumtk_web_get_string!(app_state, typ);
 
     let mut grid = Vec::with_capacity(text_conf.len());
-    let default_html = Html::<RUMString>(RUMString::default());
+    let default_html = RUMString::default();
     for (r_name, r_list) in text_conf {
         let mut grid_row = Vec::with_capacity(r_list.len());
-        for (i_name, i_item) in *r_list {
+        for (i_name, i_item) in r_list {
             grid_row.push(PortraitItem {
-                user: i_name.to_string(),
-                portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, i_name, "")),
+                user: i_name.clone(),
+                portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, &i_name, "")),
                 contact: match contact_card(
                     &[],
                     &HashMap::from([
-                        ("section".to_string(), section.to_string()),
-                        ("type".to_string(), i_name.to_string()),
+                        ("section".to_rumstring(), section.to_rumstring()),
+                        ("type".to_rumstring(), i_name),
                     ]),
                     app_state.clone(),
                 ) {
-                    Ok(v) => v.0,
-                    Err(_) => default_html.0.clone(),
+                    Ok(v) => v.0.to_rumstring(),
+                    Err(_) => default_html.clone(),
                 },
             });
         }
@@ -115,7 +110,7 @@ pub fn portrait_card(
     let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-    let icon_data = get_portrait_grid(section, typ, DEFAULT_NO_TEXT, &state);
+    let icon_data = get_portrait_grid(section, typ, &state);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 

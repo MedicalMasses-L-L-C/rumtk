@@ -21,7 +21,7 @@
 pub use super::conf::*;
 use axum::extract::{Path, Query};
 use axum::response::Html;
-use phf::{Map, OrderedMap};
+use phf::Map;
 use std::collections::HashMap;
 use std::pin::Pin;
 use std::sync::Arc;
@@ -46,6 +46,3 @@ pub type AsyncReturn = Arc<Pin<Box<dyn Future<Output = HTMLResult>>>>;
 pub type AsyncComponentFunction = fn(AsyncURLPath, AsyncURLParams, SharedAppConf) -> AsyncReturn;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
-pub type TextMap = OrderedMap<&'static str, &'static str>;
-pub type NestedTextMap = OrderedMap<&'static str, &'static TextMap>;
-pub type NestedNestedTextMap = OrderedMap<&'static str, &'static NestedTextMap>;

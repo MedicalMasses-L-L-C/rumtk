@@ -20,14 +20,14 @@
  */
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
-    PARAMS_ITEM,
+    PARAMS_ITEM, SECTION_DEFAULT, SECTION_TEXT,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
 use crate::{
     rumtk_web_get_param_eq, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
 };
 use askama::Template;
-use phf_macros::phf_ordered_map;
 
 #[derive(Template, Debug, Clone)]
 #[template(
@@ -58,9 +58,9 @@ use phf_macros::phf_ordered_map;
     ",
     ext = "html"
 )]
-pub struct InfoCard {
-    title: &'static str,
-    description: &'static str,
+pub struct InfoCard<'a> {
+    title: &'a str,
+    description: &'a str,
     inverted: bool,
     css_class: RUMString,
     custom_css_enabled: bool,
@@ -73,9 +73,9 @@ pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppCo
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = rumtk_web_get_string!(SECTION_TEXT, DEFAULT_NO_TEXT);
-    let en_text = rumtk_web_get_text_item!(&text_store, "0", &&phf_ordered_map!());
-    let itm = rumtk_web_get_text_item!(&en_text, &card_text_item, &&phf_ordered_map!());
+    let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
+    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let itm = rumtk_web_get_text_item!(&en_text, card_text_item, &DEFAULT_TEXTMAP());
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
 

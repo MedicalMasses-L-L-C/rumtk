@@ -18,13 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::types::TextMap;
+use crate::utils::ConstTextMap;
 use phf_macros::phf_ordered_map;
-
 /*
    TextMap
 */
-pub static DEFAULT_TEXT_MAP: TextMap = phf_ordered_map!();
+pub static DEFAULT_TEXT_MAP: ConstTextMap = phf_ordered_map!();
 
 /*
    IP
@@ -71,6 +70,7 @@ pub const SECTION_SOCIALS: &str = "socials";
 pub const SECTION_SERVICES: &str = "services";
 pub const SECTION_PRODUCTS: &str = "products";
 pub const SECTION_LINKS: &str = "links";
+pub const SECTION_DEFAULT: &str = "default";
 
 /*
    LANGUAGES

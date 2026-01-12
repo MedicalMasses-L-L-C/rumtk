@@ -18,52 +18,59 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::COMPONENTS;
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_DEFAULT,
+    SECTION_TEXT,
+};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
+use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
+use crate::{
+    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, rumtk_web_render_markdown,
+};
 use askama::Template;
 
 #[derive(Template, Debug, Clone)]
 #[template(
     source = "
         <style>
-            .text-card-default {
-                max-width: 1700px;
-                padding: 20px;
-                background-color: var(--color-indigo);
-
-                border-radius: 15px;
+            .formatted-label-default {
+                text-wrap: wrap;
+                margin: auto;
             }
         </style>
         {% if custom_css_enabled %}
-            <link href='/static/components/form/text_card.css' rel='stylesheet'>
+            <link href='/static/components/form/formatted_label.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered text-card-{{css_class}}'>
-          {{formatted_label|safe}}
-        </div>
+        <pre class='formatted-label-{{css_class}}'>
+            {{text|safe}}
+        </pre>
     ",
     ext = "html"
 )]
-struct TextCard {
-    typ: RUMString,
-    formatted_label: RUMString,
+pub struct FormattedLabel {
+    text: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn formatted_label(
+    path_components: URLPath,
+    params: URLParams,
+    state: SharedAppConf,
+) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let formatted_label =
-        rumtk_web_render_component!("formatted_label", [("type", typ)], state, COMPONENTS);
+    let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
+    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
+    let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
+    let html = rumtk_web_render_markdown!(desc);
 
-    rumtk_web_render_html!(TextCard {
-        typ: RUMString::from(typ),
-        formatted_label,
+    rumtk_web_render_html!(FormattedLabel {
+        text: html,
         css_class: RUMString::from(css_class),
         custom_css_enabled
     })

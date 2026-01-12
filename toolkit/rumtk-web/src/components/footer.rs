@@ -50,7 +50,7 @@ struct FooterSection {
         {% endif %}
         <div class='footer-{{ css_class }}-container'>
             <p class='f16'>
-                {{company}} &copy; {{copyright_year}}
+                {{company}} &copy; {{copyright}}
             </p>
             {{button|safe}}
             {{socials|safe}}
@@ -60,7 +60,7 @@ struct FooterSection {
 )]
 pub struct Footer {
     company: RUMString,
-    copyright_year: i32,
+    copyright: RUMString,
     button: RUMString,
     socials: RUMString,
     css_class: RUMString,
@@ -72,6 +72,8 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf)
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let company = state.lock().expect("Lock failure").title.clone();
+    let copyright = state.lock().expect("Lock failure").copyright.clone();
 
     let contact_button = rumtk_web_render_component!(
         "contact_button",
@@ -87,6 +89,8 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf)
         rumtk_web_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
 
     rumtk_web_render_html!(Footer {
+        company,
+        copyright,
         button: contact_button,
         socials,
         css_class: RUMString::from(css_class),

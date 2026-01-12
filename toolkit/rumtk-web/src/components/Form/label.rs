@@ -18,13 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
+use crate::utils::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_DEFAULT,
+    SECTION_TEXT,
+};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
 use crate::{
     rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, rumtk_web_render_markdown,
 };
 use askama::Template;
-use phf_macros::phf_ordered_map;
 
 #[derive(Template, Debug, Clone)]
 #[template(
@@ -44,7 +47,7 @@ use phf_macros::phf_ordered_map;
     ",
     ext = "html"
 )]
-struct Label {
+pub struct Label {
     text: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
@@ -56,9 +59,9 @@ pub fn label(path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = rumtk_web_get_string!(SECTION_TEXT, DEFAULT_NO_TEXT);
-    let en_text = rumtk_web_get_text_item!(&text_store, "0", &&phf_ordered_map!());
-    let itm = rumtk_web_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
+    let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
+    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
+    let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = rumtk_web_render_markdown!(desc);
 

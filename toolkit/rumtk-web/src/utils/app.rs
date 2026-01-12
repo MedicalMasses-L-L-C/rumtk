@@ -21,10 +21,12 @@
 use crate::utils::defaults::{DEFAULT_LOCAL_LISTENING_ADDRESS, DEFAULT_OUTBOUND_LISTENING_ADDRESS};
 use crate::utils::matcher::*;
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
+
 use axum::routing::get;
 use axum::Router;
+use chrono::{DateTime, Datelike, Utc};
 use clap::Parser;
-use rumtk_core::strings::RUMString;
+use rumtk_core::strings::{RUMString, ToCompactString};
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
 use tracing::error;
@@ -39,14 +41,19 @@ pub struct Args {
     /// Website title to use internally. It can be omitted if defined in the app.json config file
     /// bundled with your app.
     ///
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "")]
     title: RUMString,
     ///
     /// Website description string. It can be omitted if defined in the app.json config file
     /// bundled with your app.
     ///
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "")]
     description: RUMString,
+    ///
+    /// Copyright year to display in website.
+    ///
+    #[arg(short, long, default_value = "")]
+    copyright: RUMString,
     ///
     /// Is the interface meant to be bound to the loopback address and remain hidden from the
     /// outside world.
@@ -56,11 +63,11 @@ pub struct Args {
     /// If a NIC IP is defined via `--ip`, that value will override this flag.
     ///
     #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
-    ip: str,
+    ip: RUMString,
 }
 
 pub async fn run_app(args: &Args) {
-    let state = rumtk_web_load_conf!();
+    let state = rumtk_web_load_conf!(&args);
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
         .deflate(true)
@@ -83,7 +90,7 @@ pub async fn run_app(args: &Args) {
         .with_state(state)
         .layer(comression_layer);
 
-    let listener = tokio::net::TcpListener::bind(&args.ip)
+    let listener = tokio::net::TcpListener::bind(&args.ip.as_str())
         .await
         .expect("There was an issue biding the listener.");
     println!("listening on {}", listener.local_addr().unwrap());

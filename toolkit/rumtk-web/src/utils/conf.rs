@@ -31,6 +31,7 @@ pub type TextMap = HashMap<RUMString, RUMString>;
 pub type NestedTextMap = HashMap<RUMString, TextMap>;
 pub type NestedNestedTextMap = HashMap<RUMString, NestedTextMap>;
 pub type RootNestedNestedTextMap = HashMap<RUMString, NestedNestedTextMap>;
+pub type RootRootNestedNestedTextMap = HashMap<RUMString, RootNestedNestedTextMap>;
 
 pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
@@ -47,33 +48,46 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
+    pub copyright: RUMString,
     pub lang: RUMString,
     pub theme: RUMString,
     pub custom_css: bool,
 
-    strings: NestedNestedTextMap,
+    strings: RootRootNestedNestedTextMap,
     config: NestedNestedTextMap,
     //pub opts: TextMap,
 }
 
 impl AppConf {
-    pub fn update_site_info(&mut self, title: RUMString, description: RUMString) {
-        self.title = title;
-        self.description = description;
+    pub fn update_site_info(
+        &mut self,
+        title: RUMString,
+        description: RUMString,
+        copyright: RUMString,
+    ) {
+        if !title.is_empty() {
+            self.title = title;
+        }
+        if !description.is_empty() {
+            self.description = description;
+        }
+        if !copyright.is_empty() {
+            self.copyright = copyright;
+        }
     }
 
-    pub fn get_text(&self, item: &str) -> TextMap {
+    pub fn get_text(&self, item: &str) -> NestedNestedTextMap {
         match self.strings.get(&self.lang) {
             Some(l) => match l.get(item) {
                 Some(i) => i.clone(),
-                None => TextMap::default(),
+                None => NestedNestedTextMap::default(),
             },
-            None => TextMap::default(),
+            None => NestedNestedTextMap::default(),
         }
     }
 
     pub fn get_conf(&self, section: &str) -> TextMap {
-        match self.strings.get(section) {
+        match self.config.get(section) {
             Some(l) => match l.get(&self.lang) {
                 Some(i) => i.clone(),
                 None => match l.get(DEFAULT_TEXT_ITEM) {
@@ -91,10 +105,12 @@ pub type RouterAppConf = State<Arc<Mutex<AppConf>>>;
 
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
-    ( ) => {{ rumtk_web_load_conf!("./app.json") }};
-    ( $path:expr ) => {{
+    ( $args:expr ) => {{ rumtk_web_load_conf!($args, "./app.json") }};
+    ( $args:expr, $path:expr ) => {{
         use rumtk_core::rumtk_deserialize;
         use std::fs::read_to_string;
+        use std::sync::{Arc, Mutex};
+        use $crate::utils::AppConf;
         let json = match read_to_string($path) {
             Ok(json) => json,
             Err(err) => panic!(
@@ -102,7 +118,7 @@ macro_rules! rumtk_web_load_conf {
                 $path, err
             ),
         };
-        let conf: AppConf = match rumtk_deserialize!(json) {
+        let mut conf: AppConf = match rumtk_deserialize!(json) {
             Ok(conf) => conf,
             Err(err) => panic!(
                 "The App config file in {} does not meet the expected structure. \
@@ -110,6 +126,11 @@ macro_rules! rumtk_web_load_conf {
                 $path, err, json
             ),
         };
+        conf.update_site_info(
+            $args.title.clone(),
+            $args.description.clone(),
+            $args.copyright.clone(),
+        );
         Arc::new(Mutex::new(conf))
     }};
 }
@@ -129,3 +150,12 @@ macro_rules! rumtk_web_get_conf {
         owned_state.get_conf($item)
     }};
 }
+
+/*
+   Default non static data to minimize allocations.
+*/
+pub const DEFAULT_TEXT: fn() -> RUMString = || RUMString::default();
+pub const DEFAULT_TEXTMAP: fn() -> TextMap = || TextMap::default();
+pub const DEFAULT_NESTEDTEXTMAP: fn() -> NestedTextMap = || NestedTextMap::default();
+pub const DEFAULT_NESTEDNESTEDTEXTMAP: fn() -> NestedNestedTextMap =
+    || NestedNestedTextMap::default();
