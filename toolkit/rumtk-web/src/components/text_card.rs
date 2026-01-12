@@ -37,7 +37,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
@@ -77,8 +76,7 @@ pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppCo
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let formatted_label =
-        rumtk_web_render_component!("formatted_label", [("type", typ)], state, COMPONENTS);
+    let formatted_label = rumtk_web_render_component!("formatted_label", [("type", typ)], state);
 
     rumtk_web_render_html!(TextCard {
         typ: RUMString::from(typ),

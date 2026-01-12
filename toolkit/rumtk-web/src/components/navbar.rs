@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::components::navlink::navlink;
-use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_DEFAULT, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::utils::DEFAULT_NESTEDTEXTMAP;
@@ -174,12 +173,8 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf)
     let nav_keys = en_link.keys().collect::<Vec<&RUMString>>();
     let nav_links = get_nav_links(&nav_keys, state.clone());
 
-    let logo = rumtk_web_render_component!(
-        "logo",
-        [("type", "diamond"), ("class", "small")],
-        state,
-        COMPONENTS
-    );
+    let logo =
+        rumtk_web_render_component!("logo", [("type", "diamond"), ("class", "small")], state);
 
     rumtk_web_render_html!(NavBar {
         company: RUMString::from(company),

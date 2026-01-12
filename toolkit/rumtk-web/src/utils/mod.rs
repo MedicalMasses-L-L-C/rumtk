@@ -26,7 +26,6 @@ pub mod render;
 pub mod types;
 
 pub use render::*;
-use tower_http::compression::Predicate;
 pub use types::*;
 
 #[macro_export]
@@ -78,10 +77,10 @@ macro_rules! rumtk_web_params_map {
 #[macro_export]
 macro_rules! rumtk_web_collect_page {
     ( $page:expr, $app_state:expr ) => {{
-        use $crate::pages::PAGES;
+        use $crate::rumtk_web_get_page;
         use $crate::utils::types::{PageFunction, RenderedPageComponents};
 
-        let page = match PAGES.get(&$page) {
+        let page = match rumtk_web_get_page!(&$page) {
             Some(x) => x,
             None => &(|_| -> RenderedPageComponents { vec![] } as PageFunction),
         };

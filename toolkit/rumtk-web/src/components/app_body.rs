@@ -18,7 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::COMPONENTS;
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{
@@ -84,12 +83,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
     let header = rumtk_web_render_component!("navbar", [("", "")], state, COMPONENTS);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
-    let footer = rumtk_web_render_component!(
-        "footer",
-        [("social_list", "linkedin,github")],
-        state,
-        COMPONENTS
-    );
+    let footer = rumtk_web_render_component!("footer", [("social_list", "linkedin,github")], state);
 
     rumtk_web_render_html!(AppBody {
         theme: RUMString::from(theme),

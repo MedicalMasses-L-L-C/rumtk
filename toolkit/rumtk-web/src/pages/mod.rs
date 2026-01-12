@@ -18,7 +18,54 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::types::PageMap;
-use phf_macros::phf_map;
+use crate::utils::PageFunction;
+use rumtk_core::cache::{new_cache, LazyRUMCache};
+use rumtk_core::strings::RUMString;
+use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
-pub static PAGES: PageMap = phf_map! {};
+pub type PageCache = LazyRUMCache<RUMString, PageFunction>;
+pub type PageItem = (RUMString, PageFunction);
+pub type UserPages = Vec<PageItem>;
+
+static mut page_cache: PageCache = new_cache();
+
+pub fn register_page(name: &str, component_fxn: PageFunction) {
+    let key = RUMString::from(name);
+    rumtk_cache_push!(&mut page_cache, &key, &component_fxn);
+}
+
+pub fn get_page(name: &str) -> Option<&PageFunction> {
+    rumtk_cache_get!(&mut page_cache, &RUMString::from(name))
+}
+
+pub fn init_pages(user_components: &UserPages) {
+    /* Init any user prescribed components */
+    for itm in user_components {
+        let (name, value) = itm;
+        register_page(name, *value);
+    }
+}
+
+#[macro_export]
+macro_rules! rumtk_web_register_page {
+    ( $key:expr, $fxn:expr ) => {{
+        use $crate::pages::register_page;
+        register_page($key, $fxn)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_get_page {
+    ( $key:expr ) => {{
+        use $crate::pages::get_page;
+        get_page($key)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_init_pages {
+    ( $pages:expr ) => {{
+        use $crate::pages::init_pages;
+        init_pages($pages)
+    }};
+}

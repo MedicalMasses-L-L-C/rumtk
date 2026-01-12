@@ -18,7 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::{app_shell::app_shell, COMPONENTS};
+use crate::components::app_shell::app_shell;
+use crate::rumtk_web_get_component;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::types::SharedAppConf;
 use crate::utils::{HTMLResult, RUMString};
@@ -61,7 +62,7 @@ pub async fn default_component_matcher(
         None => return Err(RUMString::from("Missing component name to fetch!")),
     };
 
-    let component = COMPONENTS.get(component);
+    let component = rumtk_web_get_component!(component);
 
     match component {
         Some(cf) => cf(&path_components[1..], &params, state.clone()),

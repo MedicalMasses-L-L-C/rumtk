@@ -18,7 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::COMPONENTS;
 use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE,
 };
@@ -83,7 +82,7 @@ pub fn contact_button(
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let title = rumtk_web_render_component!("title", [("type", typ)], state, COMPONENTS);
+    let title = rumtk_web_render_component!("title", [("type", typ)], state);
 
     rumtk_web_render_html!(ContactButton {
         title,

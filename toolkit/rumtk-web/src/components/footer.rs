@@ -18,7 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::COMPONENTS;
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
@@ -82,11 +81,9 @@ pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf)
             ("function", "goto_contact"),
             ("class", "centered")
         ],
-        state,
-        COMPONENTS
+        state
     );
-    let socials =
-        rumtk_web_render_component!("socials", [("social_list", social_list)], state, COMPONENTS);
+    let socials = rumtk_web_render_component!("socials", [("social_list", social_list)], state);
 
     rumtk_web_render_html!(Footer {
         company,
