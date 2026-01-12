@@ -32,14 +32,17 @@ mod contact_button;
 mod contact_card;
 pub mod div;
 mod footer;
+mod formatted_label;
 mod info_card;
 mod item_card;
+mod label;
 mod logo;
 mod navbar;
 mod navlink;
 mod portrait_card;
 mod socials;
 mod spacer;
+mod text_card;
 mod title;
 
 pub static COMPONENTS: ComponentMap = phf_map! {
@@ -54,8 +57,9 @@ pub static COMPONENTS: ComponentMap = phf_map! {
     "socials" => socials::socials,
     "item_card" => item_card::item_card,
     "navlink" => navlink::navlink,
-    "label" => Form::formatted_label::label,
-    "text_card" => Form::text_card::text_card,
+    "label" => label::label,
+    "formatted_label" => formatted_label::formatted_label,
+    "text_card" => text_card::text_card,
     "form" => Form::form::form,
     "spacer" => spacer::spacer,
     "div" => div::div,

@@ -18,7 +18,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-pub mod form;
-pub mod form_element;
-pub mod forms;
-pub mod props;
+use crate::components::Form::props::InputProps;
+use crate::rumtk_web_render_html;
+use crate::utils::types::HTMLResult;
+use askama::Template;
+
+#[derive(Template, Debug, Clone)]
+#[template(
+    source = "
+        <{{element}} {{props.to_rumstring()}} class='{{css}}'>{{data|safe}}</{{element}}>
+    ",
+    ext = "html"
+)]
+pub struct FormElement<'a> {
+    element: &'a str,
+    data: &'a str,
+    props: InputProps,
+    css: &'a str,
+}
+
+pub fn form_element(element: &str, data: &str, props: InputProps, css: &str) -> HTMLResult {
+    rumtk_web_render_html!(FormElement {
+        element,
+        data,
+        props,
+        css
+    })
+}

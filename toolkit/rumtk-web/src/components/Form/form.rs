@@ -23,13 +23,6 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPa
 use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
-use crate::components::Form::{label::Label, formatted_label::FormattedLabel};
-
-enum FormElements {
-    LABEL(Label),
-    FORMATTEDLABEL(FormattedLabel),
-    
-}
 
 #[derive(Template, Debug)]
 #[template(
@@ -140,8 +133,8 @@ pub fn form(path_components: URLPath, params: URLParams, state: SharedAppConf) -
     let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
     let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
     let title = RUMString::from(rumtk_web_get_text_item!(&itm, "title", ""));
-    
-    let elements = 
+
+    let elements =
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
