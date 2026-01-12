@@ -55,7 +55,7 @@ where
     F: Fn(&K) -> V,
 {
     if !cache.contains_key(expr) {
-        let mut cache_ref = Arc::get_mut(cache).unwrap();
+        let cache_ref = Arc::get_mut(cache).unwrap();
         cache_ref.insert(expr.clone(), new_fn(expr).clone());
     }
     cache.get(expr).unwrap()
