@@ -219,7 +219,7 @@ pub mod cache_macros {
     #[macro_export]
     macro_rules! rumtk_cache_get {
         ( $cache:expr, $key:expr ) => {{
-            use $crate::cache::cache_push;
+            use $crate::cache::cache_get;
             // Do not remove the clippy disable decorator here since we do intend to expand within
             // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
             // internal references due to compiler error
