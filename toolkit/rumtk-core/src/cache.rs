@@ -95,7 +95,10 @@ pub mod cache_macros {
     macro_rules! rumtk_cache_fetch {
         ( $cache:expr, $key:expr, $func:expr ) => {{
             use $crate::cache::get_or_set_from_cache;
-            unsafe { get_or_set_from_cache($cache, $key, $func) }
+            let cache = $cache;
+            let key = $key;
+            let func = $func;
+            unsafe { get_or_set_from_cache(cache, key, func) }
         }};
     }
 }
