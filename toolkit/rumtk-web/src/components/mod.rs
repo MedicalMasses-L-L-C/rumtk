@@ -18,8 +18,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::types::ComponentMap;
-use phf_macros::phf_map;
+use crate::utils::ComponentFunction;
+use rumtk_core::cache::{new_cache, LazyRUMCache};
+use rumtk_core::strings::RUMString;
+use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
 //AppShell
 pub mod app_body;
@@ -45,22 +47,70 @@ mod spacer;
 mod text_card;
 mod title;
 
-pub static COMPONENTS: ComponentMap = phf_map! {
-    "logo" => logo::logo,
-    "info_card" => info_card::info_card,
-    "portrait_card" => portrait_card::portrait_card,
-    "title" => title::title,
-    "footer" => footer::footer,
-    "navbar" => navbar::navbar,
-    "contact_card" => contact_card::contact_card,
-    "contact_button" => contact_button::contact_button,
-    "socials" => socials::socials,
-    "item_card" => item_card::item_card,
-    "navlink" => navlink::navlink,
-    "label" => label::label,
-    "formatted_label" => formatted_label::formatted_label,
-    "text_card" => text_card::text_card,
-    "form" => Form::form::form,
-    "spacer" => spacer::spacer,
-    "div" => div::div,
-};
+pub use Form::form_utils::*;
+
+pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
+pub type UserComponentCacheItem = (RUMString, ComponentFunction);
+pub type UserComponents = Vec<UserComponentCacheItem>;
+
+static mut component_cache: ComponentCache = new_cache();
+
+pub fn register_component(name: &str, component_fxn: ComponentFunction) {
+    let key = RUMString::from(name);
+    rumtk_cache_push!(&mut component_cache, &key, &component_fxn);
+}
+
+pub fn get_component(name: &str) -> Option<&ComponentFunction> {
+    rumtk_cache_get!(&mut component_cache, &RUMString::from(name))
+}
+
+pub fn init_components(user_components: &UserComponents) {
+    /* Register the default library components */
+    register_component("logo", logo::logo);
+    register_component("info_card", info_card::info_card);
+    register_component("portrait_card", portrait_card::portrait_card);
+    register_component("title", title::title);
+    register_component("footer", footer::footer);
+    register_component("navbar", navbar::navbar);
+    register_component("contact_card", contact_card::contact_card);
+    register_component("contact_button", contact_button::contact_button);
+    register_component("socials", socials::socials);
+    register_component("item_card", item_card::item_card);
+    register_component("navlink", navlink::navlink);
+    register_component("label", label::label);
+    register_component("formatted_label", formatted_label::formatted_label);
+    register_component("text_card", text_card::text_card);
+    register_component("form", Form::form::form);
+    register_component("spacer", spacer::spacer);
+    register_component("div", div::div);
+
+    /* Init any user prescribed components */
+    for itm in user_components {
+        let (name, value) = itm;
+        register_component(name, *value);
+    }
+}
+
+#[macro_export]
+macro_rules! rumtk_web_register_component {
+    ( $key:expr, $fxn:expr ) => {{
+        use $crate::components::register_component;
+        register_component($key, $fxn)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_get_component {
+    ( $key:expr ) => {{
+        use $crate::components::get_component;
+        get_component($key)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_init_components {
+    ( $components:expr ) => {{
+        use $crate::components::init_components;
+        init_components($components)
+    }};
+}
