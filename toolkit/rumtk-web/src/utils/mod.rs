@@ -18,21 +18,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+pub mod app;
 pub mod conf;
 pub mod defaults;
 pub mod matcher;
 pub mod render;
 pub mod types;
 
-use axum::response::Html;
-use std::collections::HashMap;
-
-use axum::{routing::get, Router};
 pub use render::*;
-use std::sync::Arc;
-use std::sync::Mutex;
-use tower_http::compression::{CompressionLayer, DefaultPredicate, Predicate};
-use tower_http::services::ServeDir;
+use tower_http::compression::Predicate;
 pub use types::*;
 
 #[macro_export]
@@ -115,60 +109,5 @@ macro_rules! rumtk_web_fetch {
                 }
             }
         }
-    }};
-}
-
-use crate::rumtk_web_load_conf;
-use crate::utils::matcher::*;
-use tracing::error;
-
-pub async fn run_app(ip: &str) {
-    let state = rumtk_web_load_conf!();
-    let comression_layer: CompressionLayer = CompressionLayer::new()
-        .br(true)
-        .deflate(true)
-        .gzip(true)
-        .zstd(true)
-        .compress_when(DefaultPredicate::new());
-    let app = Router::new()
-        /* Robots.txt */
-        .route("/robots.txt", get(rumtk_web_fetch!(default_robots_matcher)))
-        /* Components */
-        .route(
-            "/component/{*name}",
-            get(rumtk_web_fetch!(default_component_matcher)),
-        )
-        /* Pages */
-        .route("/", get(rumtk_web_fetch!(default_page_matcher)))
-        .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
-        /* Services */
-        .nest_service("/static", ServeDir::new("static"))
-        .with_state(state)
-        .layer(comression_layer);
-
-    let listener = tokio::net::TcpListener::bind(&ip)
-        .await
-        .expect("There was an issue biding the listener.");
-    println!("listening on {}", listener.local_addr().unwrap());
-
-    axum::serve(listener, app)
-        .await
-        .expect("There was an issue with the server.");
-}
-
-#[macro_export]
-macro_rules! rumtk_web_run_app {
-    (  ) => {{
-        use $crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
-        use $crate::utils::run_app;
-        run_app(DEFAULT_LOCAL_LISTENING_ADDRESS).await;
-    }};
-    ( $ip:expr ) => {{
-        use $crate::utils::run_app;
-        run_app(&$ip).await;
-    }};
-    ( $ip:expr, $port:expr ) => {{
-        use $crate::utils::run_app;
-        run_app(&format!("{}:{}", $ip, $port)).await;
     }};
 }
