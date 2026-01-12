@@ -23,7 +23,6 @@ use axum::extract::{Path, Query};
 use axum::response::Html;
 use phf::Map;
 use std::collections::HashMap;
-use std::pin::Pin;
 use std::sync::Arc;
 
 pub use rumtk_core::strings::RUMString;
@@ -42,7 +41,5 @@ pub type RouterParams = Query<HashMap<RUMString, RUMString>>;
 /* Config Types */
 pub type ComponentFunction = fn(URLPath, URLParams, SharedAppConf) -> HTMLResult;
 pub type PageFunction = fn(SharedAppConf) -> RenderedPageComponents;
-pub type AsyncReturn = Arc<Pin<Box<dyn Future<Output = HTMLResult>>>>;
-pub type AsyncComponentFunction = fn(AsyncURLPath, AsyncURLParams, SharedAppConf) -> AsyncReturn;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
