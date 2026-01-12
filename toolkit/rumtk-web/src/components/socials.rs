@@ -22,7 +22,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_misc_conf, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
 const ICON_CSS: &str = "fa-brands fa-square-{}";
@@ -62,7 +62,7 @@ pub struct Socials {
 fn get_social_list(social_list: &str) -> SocialsList {
     let data = social_list.to_lowercase();
     let sl_names = data.split(',').collect::<Vec<&str>>();
-    let sl_urls = rumtk_web_get_misc_conf!(SECTION_SOCIALS);
+    let sl_urls = rumtk_web_get_conf!(SECTION_SOCIALS);
     let mut sl: SocialsList = SocialsList::with_capacity(sl_names.len());
 
     for name in sl_names {

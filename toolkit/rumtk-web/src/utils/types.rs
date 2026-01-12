@@ -33,7 +33,7 @@ pub type URLPath<'a, 'b> = &'a [&'b str];
 pub type AsyncURLPath = Arc<Vec<RUMString>>;
 pub type URLParams<'a> = &'a HashMap<RUMString, RUMString>;
 pub type AsyncURLParams = Arc<HashMap<RUMString, RUMString>>;
-pub type HTMLResult = Result<Html<RUMString>, RUMString>;
+pub type HTMLResult = Result<Html<String>, RUMString>;
 pub type RenderedPageComponents = Vec<RUMString>;
 /* Router Match Types */
 pub type RouterComponents = Path<Vec<RUMString>>;

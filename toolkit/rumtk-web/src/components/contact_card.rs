@@ -26,7 +26,7 @@ use crate::utils::types::{
     HTMLResult, NestedNestedTextMap, NestedTextMap, RUMString, SharedAppConf, TextMap, URLParams,
     URLPath,
 };
-use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
 
@@ -96,7 +96,7 @@ pub fn contact_card(
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_conf: &NestedNestedTextMap = rumtk_web_get_conf!(SECTION_CONTACT, DEFAULT_NO_TEXT);
+    let text_conf: &NestedNestedTextMap = rumtk_web_get_string!(SECTION_CONTACT, DEFAULT_NO_TEXT);
     let contact_item: &&NestedTextMap =
         rumtk_web_get_text_item!(&text_conf, &section, &&phf_ordered_map!());
     let contact_lines: &TextMap =

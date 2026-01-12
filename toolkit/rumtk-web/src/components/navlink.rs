@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use phf_macros::phf_ordered_map;
 
@@ -55,7 +55,7 @@ pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppConf
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let links_store = rumtk_web_get_conf!(SECTION_LINKS, DEFAULT_NO_TEXT);
+    let links_store = rumtk_web_get_string!(SECTION_LINKS, DEFAULT_NO_TEXT);
     let en_link = rumtk_web_get_text_item!(&links_store, "0", &&phf_ordered_map!());
     let itm = rumtk_web_get_text_item!(&en_link, &target, &&phf_ordered_map!());
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);

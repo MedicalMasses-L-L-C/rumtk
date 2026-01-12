@@ -23,7 +23,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use axum::response::Html;
 use std::collections::HashMap;
@@ -78,8 +78,8 @@ fn get_portrait_grid(
     lang: &str,
     app_state: &SharedAppConf,
 ) -> PortraitGrid {
-    let img_conf = rumtk_web_get_conf!(typ);
-    let text_conf = rumtk_web_get_conf!(typ, lang);
+    let img_conf = rumtk_web_get_string!(typ);
+    let text_conf = rumtk_web_get_string!(typ, lang);
 
     let mut grid = Vec::with_capacity(text_conf.len());
     let default_html = Html::<RUMString>(RUMString::default());

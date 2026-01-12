@@ -27,80 +27,13 @@ pub mod types;
 use axum::response::Html;
 use std::collections::HashMap;
 
-use axum::{Router, routing::get};
+use axum::{routing::get, Router};
 pub use render::*;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tower_http::compression::{CompressionLayer, DefaultPredicate, Predicate};
 use tower_http::services::ServeDir;
 pub use types::*;
-
-#[macro_export]
-macro_rules! rumtk_web_get_misc_conf {
-    ( $typ:expr ) => {{
-        use $crate::utils::defaults::*;
-        match $typ {
-            SECTION_SOCIALS => {
-                use crate::conf::misc::SOCIAL_URLS as DEFAULT_SOCIAL_ICONS;
-                &DEFAULT_SOCIAL_ICONS
-            }
-            SECTION_SERVICES => {
-                use crate::conf::misc::SERVICES as DEFAULT_SERVICES;
-                &DEFAULT_SERVICES
-            }
-            SECTION_PRODUCTS => {
-                use crate::conf::misc::PRODUCTS as DEFAULT_PRODUCTS;
-                &DEFAULT_PRODUCTS
-            }
-            _ => {
-                use crate::conf::misc::API_ENDPOINTS as API_DEFAULT;
-                &API_DEFAULT
-            }
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_web_get_conf {
-    ( $name:expr ) => {{
-        use crate::conf::{IMG_DEFAULT, img};
-        use crate::utils::defaults::SECTION_PERSONNEL;
-        match $name {
-            SECTION_PERSONNEL => &img::IMG_PERSONNEL,
-            _ => &IMG_DEFAULT,
-        }
-    }};
-    ( $name:expr, $lang:expr ) => {{
-        use crate::utils::defaults::{
-            LANG_ES, SECTION_CONTACT, SECTION_LINKS, SECTION_PERSONNEL, SECTION_TEXT,
-            SECTION_TITLES,
-        };
-        match $lang {
-            LANG_ES => {
-                use crate::conf::{TEXT_DEFAULT, text_en};
-                match $name {
-                    SECTION_TEXT => &text_en::TEXT,
-                    SECTION_PERSONNEL => &text_en::TEXT_PERSONNEL_INFO,
-                    SECTION_CONTACT => &text_en::TEXT_CONTACT_INFO,
-                    SECTION_TITLES => &text_en::TEXT_TITLES_TEXT,
-                    SECTION_LINKS => &text_en::TEXT_LINKS_TEXT,
-                    _ => &TEXT_DEFAULT,
-                }
-            }
-            _ => {
-                use crate::conf::{TEXT_DEFAULT, text_en};
-                match $name {
-                    SECTION_TEXT => &text_en::TEXT,
-                    SECTION_PERSONNEL => &text_en::TEXT_PERSONNEL_INFO,
-                    SECTION_CONTACT => &text_en::TEXT_CONTACT_INFO,
-                    SECTION_TITLES => &text_en::TEXT_TITLES_TEXT,
-                    SECTION_LINKS => &text_en::TEXT_LINKS_TEXT,
-                    _ => &TEXT_DEFAULT,
-                }
-            }
-        }
-    }};
-}
 
 #[macro_export]
 macro_rules! rumtk_web_get_text_item {
@@ -139,7 +72,10 @@ macro_rules! rumtk_web_params_map {
         let mut params = HashMap::<RUMString, RUMString>::with_capacity($params.len());
 
         for (k, v) in $params.iter() {
-            params.insert(k.to_string(), v.to_string());
+            params.insert(
+                RUMString::from(k.to_string()),
+                RUMString::from(v.to_string()),
+            );
         }
         params
     }};
@@ -165,7 +101,8 @@ macro_rules! rumtk_web_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
         use axum::response::Html;
-        use $crate::utils::types::{RUMString, RouterAppConf, RouterComponents, RouterParams};
+        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterParams};
+
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
                State(state): RouterAppConf|
@@ -174,18 +111,19 @@ macro_rules! rumtk_web_fetch {
                 Ok(res) => res,
                 Err(e) => {
                     error!("{}", e);
-                    return Html(RUMString::default());
+                    return Html(String::default());
                 }
             }
         }
     }};
 }
 
+use crate::rumtk_web_load_conf;
 use crate::utils::matcher::*;
 use tracing::error;
 
 pub async fn run_app(ip: &str) {
-    let state = Arc::new(Mutex::new(AppState::default()));
+    let state = rumtk_web_load_conf!();
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
         .deflate(true)

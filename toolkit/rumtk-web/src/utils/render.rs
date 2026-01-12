@@ -20,12 +20,12 @@
  */
 use crate::utils::types::HTMLResult;
 use axum::response::Html;
-use rumtk_core::strings::{rumtk_format, RUMStringConversions};
+use rumtk_core::strings::rumtk_format;
 
-pub fn rumtk_web_html_render<T: askama::Template>(template: T) -> HTMLResult {
+pub fn rumtk_web_render_html<T: askama::Template>(template: T) -> HTMLResult {
     let result = template.render();
     match result {
-        Ok(html) => Ok(Html(html.to_rumstring())),
+        Ok(html) => Ok(Html(html)),
         Err(e) => {
             let tn = std::any::type_name::<T>();
             Err(rumtk_format!("Template {tn} render failed: {e:?}"))
@@ -66,9 +66,9 @@ macro_rules! rumtk_web_render_component {
 #[macro_export]
 macro_rules! rumtk_web_render_html {
     ( $component:expr ) => {{
-        use crate::utils::{rumtk_web_html_render, types::HTMLResult};
+        use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
 
-        let closure = || -> HTMLResult { rumtk_web_html_render($component) };
+        let closure = || -> HTMLResult { rumtk_web_render_html($component) };
 
         closure()
     }};

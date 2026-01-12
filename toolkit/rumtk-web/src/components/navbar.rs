@@ -23,7 +23,8 @@ use crate::components::COMPONENTS;
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_render_html,
 };
 use askama::Template;
 use axum::response::Html;
@@ -166,7 +167,7 @@ pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf)
     let company = state.lock().expect("Lock failure").title.clone();
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let links_store = rumtk_web_get_conf!(SECTION_LINKS, DEFAULT_NO_TEXT);
+    let links_store = rumtk_web_get_string!(SECTION_LINKS, DEFAULT_NO_TEXT);
     let en_link = rumtk_web_get_text_item!(&links_store, "0", &&phf_ordered_map!());
     let nav_keys = en_link.keys().collect::<Vec<&&str>>();
     let nav_links = get_nav_links(&nav_keys, state.clone());

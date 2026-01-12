@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, rumtk_web_render_markdown,
+    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, rumtk_web_render_markdown,
 };
 use askama::Template;
 use phf_macros::phf_ordered_map;
@@ -56,7 +56,7 @@ pub fn label(path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
 
-    let text_store = rumtk_web_get_conf!(SECTION_TEXT, DEFAULT_NO_TEXT);
+    let text_store = rumtk_web_get_string!(SECTION_TEXT, DEFAULT_NO_TEXT);
     let en_text = rumtk_web_get_text_item!(&text_store, "0", &&phf_ordered_map!());
     let itm = rumtk_web_get_text_item!(&en_text, &typ, &&phf_ordered_map!());
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
