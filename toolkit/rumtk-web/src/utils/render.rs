@@ -52,9 +52,9 @@ macro_rules! rumtk_web_render_component {
     ( $component:expr, $params:expr, $app_state:expr ) => {{
         use rumtk_core::strings::RUMStringConversions;
         use $crate::components::div::div;
+        use $crate::rumtk_web_get_component;
         use $crate::rumtk_web_params_map;
         use $crate::utils::types::ComponentFunction;
-        use $crate::{rumtk_web_get_component}
         let component = match rumtk_web_get_component!($component) {
             Some(x) => x,
             None => &(div as ComponentFunction),
