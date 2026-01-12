@@ -95,10 +95,13 @@ pub mod cache_macros {
     macro_rules! rumtk_cache_fetch {
         ( $cache:expr, $key:expr, $func:expr ) => {{
             use $crate::cache::get_or_set_from_cache;
-            let cache = $cache;
-            let key = $key;
-            let func = $func;
-            unsafe { get_or_set_from_cache(cache, key, func) }
+            // Do not remove the clippy disable decorator here since we do intend to expand within
+            // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
+            // internal references due to compiler error
+            #[allow(clippy::macro_metavars_in_unsafe)]
+            unsafe {
+                get_or_set_from_cache($cache, $key, $func)
+            }
         }};
     }
 }
