@@ -81,7 +81,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = rumtk_web_render_component!("navbar", [("", "")], state, COMPONENTS);
+    let header = rumtk_web_render_component!("navbar", [("", "")], state);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
     let footer = rumtk_web_render_component!("footer", [("social_list", "linkedin,github")], state);
 
