@@ -105,25 +105,34 @@ pub async fn run_app(args: &Args) {
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     (  ) => {{
-        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
-        rumtk_web_init_components!(vec![])
-        rumtk_web_init_pages!(vec![])
+        use $crate::{
+            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
+        };
+        rumtk_web_init_components!(vec![]);
+        rumtk_web_init_pages!(vec![]);
+        rumtk_web_compile_css_bundle!();
 
         let args = Args::parse();
         run_app(args).await;
     }};
     ( $pages:expr ) => {{
-        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
-        rumtk_web_init_components!(vec![])
-        rumtk_web_init_pages!($pages)
+        use $crate::{
+            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
+        };
+        rumtk_web_init_components!(vec![]);
+        rumtk_web_init_pages!($pages);
+        rumtk_web_compile_css_bundle!();
 
         let args = Args::parse();
         run_app(args).await;
     }};
     ( $pages:expr, $components:expr ) => {{
-        use $crate::{rumtk_web_init_components, rumtk_web_init_pages};
-        rumtk_web_init_components!($components)
-        rumtk_web_init_pages!($pages)
+        use $crate::{
+            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
+        };
+        rumtk_web_init_components!($components);
+        rumtk_web_init_pages!($pages);
+        rumtk_web_compile_css_bundle!();
 
         let args = Args::parse();
         run_app(args).await;

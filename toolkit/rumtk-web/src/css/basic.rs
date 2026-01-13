@@ -18,24 +18,44 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-pub mod components;
-mod css;
-pub mod pages;
-pub mod static_components;
-pub mod utils;
 
-///
-/// Add utils unit tests here to ensure internal functions work.
-///
-#[cfg(test)]
-mod tests {
-    pub fn add(left: u64, right: u64) -> u64 {
-        left + right
-    }
+pub const BASIC_CSS: &str = r"
+        :root {
+            --lowest-layer: 0;
+            --mid-layer: 50;
+            --top-layer: 99;
+        }
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+        .no-decoration, .undecorated {
+            text-decoration: none;
+        }
+
+        .no-select {
+            user-select: none;
+        }
+
+        .centered {
+            max-width: fit-content;
+            margin-inline: auto;
+        }
+
+        .twothird-width {
+            width: 66vw;
+        }
+
+        .threequarter-width {
+            width: 75vw;
+        }
+
+        .half-width {
+            width: 50vw;
+        }
+
+        .padded-1x {
+            padding: 1em;
+        }
+
+        .margin-1x {
+            margin: 1em;
+        }
+    ";
