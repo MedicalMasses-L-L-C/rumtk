@@ -22,5 +22,5 @@ serde_json = "1.0.145"
 #rumtk-core = { path = "../rumtk-core" }
 tokio = { version = "1.45.0", features = ["full"] }
 pyo3 = { version = "0.27.1", features = ["default", "auto-initialize", "serde"] }
-rumtk-core = "0.9.7"
+rumtk-core = "0.9.8"
 pyo3-ffi = "0.27.1"
