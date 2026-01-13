@@ -20,6 +20,7 @@
  */
 
 pub const GAP_CSS: &str = r"
+
         .gap5 {
             padding-bottom: 50px;
         }

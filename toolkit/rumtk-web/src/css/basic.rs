@@ -20,6 +20,7 @@
  */
 
 pub const BASIC_CSS: &str = r"
+
         :root {
             --lowest-layer: 0;
             --mid-layer: 50;

@@ -20,6 +20,7 @@
  */
 
 pub const ANIMATIONS_CSS: &str = r"
+
         @keyframes slide {
             from {
                 background-position-x: 0;

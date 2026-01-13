@@ -20,6 +20,7 @@
  */
 
 pub const FONTS_CSS: &str = r"
+
         @font-face {
             font-family: 'Xirod';
             font-display: swap;

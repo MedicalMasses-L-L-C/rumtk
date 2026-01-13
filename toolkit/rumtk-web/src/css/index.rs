@@ -20,6 +20,7 @@
  */
 
 pub const BODY: &str = r"
+
     body {
         background-color: var(--color-jaguar);
         color: white;

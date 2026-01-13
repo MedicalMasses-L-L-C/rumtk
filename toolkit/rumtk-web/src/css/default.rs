@@ -20,6 +20,7 @@
  */
 
 pub const DEFAULT_CSS: &str = r"
+
         pre {
             max-width: 100%;
             white-space: pre-wrap;
