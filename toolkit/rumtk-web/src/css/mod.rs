@@ -21,6 +21,7 @@
 use minifier::css::minify;
 use rumtk_core::strings::RUMString;
 use std::fs;
+use std::path;
 
 mod animations;
 mod basic;
@@ -29,10 +30,10 @@ mod fonts;
 mod gap;
 mod index;
 
-const OUT_CSS_DIR: &str = "./static/css";
-const OUT_CSS: &str = "./static/css/bundle.min.css";
+pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
+pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
 
-pub fn bundle_css(sources: &[&str]) {
+pub fn bundle_css(sources: &[&str], out_dir: &str, out_file: &str) {
     let mut css: RUMString = RUMString::default();
 
     css += index::BODY;
@@ -47,14 +48,21 @@ pub fn bundle_css(sources: &[&str]) {
         css += &css_data;
     }
 
-    fs::create_dir_all(OUT_CSS_DIR).unwrap_or_default();
+    fs::create_dir_all(out_dir).unwrap_or_default();
 
-    if let Ok(exists) = fs::exists(OUT_CSS) {
+    let out_path = path::Path::new(out_dir)
+        .join(out_file)
+        .with_extension("css")
+        .to_str()
+        .expect("Could not create path to CSS file!")
+        .to_string();
+
+    if let Ok(exists) = fs::exists(&out_path) {
         if !exists {
             let minified = minify(&css)
                 .expect("Failed to minify the CSS contents!")
                 .to_string();
-            fs::write(OUT_CSS, minified).expect("Failed to write to CSS file!");
+            fs::write(&out_path, minified).expect("Failed to write to CSS file!");
         }
     }
 }
@@ -86,7 +94,13 @@ pub fn collect_css_sources(root: &str, depth: u8) -> Vec<String> {
 macro_rules! rumtk_web_compile_css_bundle {
     (  ) => {{
         use $crate::css::{bundle_css, collect_css_sources};
-        let sources = collect_css_sources("./static", 0);
-        bundle_css(&sources);
+        use $crate::css::{DEFAULT_OUT_CSS, DEFAULT_OUT_CSS_DIR};
+        let sources = collect_css_sources(DEFAULT_OUT_CSS_DIR, 0);
+        bundle_css(&sources, DEFAULT_OUT_CSS_DIR, DEFAULT_OUT_CSS);
+    }};
+    ( $static_dir_path:expr ) => {{
+        use $crate::css::{bundle_css, collect_css_sources};
+        let sources = collect_css_sources($static_dir_path, 0);
+        bundle_css(&sources, DEFAULT_OUT_CSS_DIR, DEFAULT_OUT_CSS);
     }};
 }
