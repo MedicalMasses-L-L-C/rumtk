@@ -18,17 +18,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_LOCAL_LISTENING_ADDRESS, DEFAULT_OUTBOUND_LISTENING_ADDRESS};
+use rumtk_core::strings::RUMString;
+
+use crate::css::DEFAULT_OUT_CSS_DIR;
+use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{
-    rumtk_web_fetch, rumtk_web_init_components, rumtk_web_init_pages, rumtk_web_load_conf,
-};
+use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
 use axum::routing::get;
 use axum::Router;
-use chrono::{DateTime, Datelike, Utc};
 use clap::Parser;
-use rumtk_core::strings::{RUMString, ToCompactString};
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
 use tracing::error;
@@ -56,6 +55,16 @@ pub struct Args {
     ///
     #[arg(short, long, default_value = "")]
     copyright: RUMString,
+    ///
+    /// Directory to scan on startup to find custom CSS sources to bundle into a minified CSS file
+    /// that can be quickly pulled by the app client side.
+    ///
+    /// This option can provide an alternative to direct component retrieval of CSS fragments.
+    /// Meaning, you could bundle all of your fragments into the master bundle at startup and
+    /// turn off component level ```custom_css_enabled``` option in the ```app.json``` config.
+    ///
+    #[arg(short, long, default_value = DEFAULT_OUT_CSS_DIR)]
+    css_source_dir: RUMString,
     ///
     /// Is the interface meant to be bound to the loopback address and remain hidden from the
     /// outside world.
@@ -108,33 +117,36 @@ macro_rules! rumtk_web_run_app {
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
         };
+        let args = Args::parse();
+
         rumtk_web_init_components!(vec![]);
         rumtk_web_init_pages!(vec![]);
-        rumtk_web_compile_css_bundle!();
+        rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        let args = Args::parse();
         run_app(args).await;
     }};
     ( $pages:expr ) => {{
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
         };
+        let args = Args::parse();
+
         rumtk_web_init_components!(vec![]);
         rumtk_web_init_pages!($pages);
-        rumtk_web_compile_css_bundle!();
+        rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        let args = Args::parse();
         run_app(args).await;
     }};
     ( $pages:expr, $components:expr ) => {{
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
         };
+        let args = Args::parse();
+
         rumtk_web_init_components!($components);
         rumtk_web_init_pages!($pages);
-        rumtk_web_compile_css_bundle!();
+        rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        let args = Args::parse();
         run_app(args).await;
     }};
 }
