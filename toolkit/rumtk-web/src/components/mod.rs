@@ -53,15 +53,15 @@ pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentCacheItem<'a> = (&'a str, ComponentFunction);
 pub type UserComponents<'a> = Vec<UserComponentCacheItem<'a>>;
 
-static mut component_cache: ComponentCache = new_cache();
+static mut COMPONENT_CACHE: ComponentCache = new_cache();
 
 pub fn register_component(name: &str, component_fxn: ComponentFunction) {
     let key = RUMString::from(name);
-    rumtk_cache_push!(&mut component_cache, &key, &component_fxn);
+    rumtk_cache_push!(&mut COMPONENT_CACHE, &key, &component_fxn);
 }
 
 pub fn get_component(name: &str) -> Option<&ComponentFunction> {
-    rumtk_cache_get!(&mut component_cache, &RUMString::from(name))
+    rumtk_cache_get!(&mut COMPONENT_CACHE, &RUMString::from(name))
 }
 
 pub fn init_components(user_components: &UserComponents) {

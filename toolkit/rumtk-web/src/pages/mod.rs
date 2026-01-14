@@ -27,15 +27,15 @@ pub type PageCache = LazyRUMCache<RUMString, PageFunction>;
 pub type PageItem<'a> = (&'a str, PageFunction);
 pub type UserPages<'a> = Vec<PageItem<'a>>;
 
-static mut page_cache: PageCache = new_cache();
+static mut PAGE_CACHE: PageCache = new_cache();
 
 pub fn register_page(name: &str, component_fxn: PageFunction) {
     let key = RUMString::from(name);
-    rumtk_cache_push!(&mut page_cache, &key, &component_fxn);
+    rumtk_cache_push!(&mut PAGE_CACHE, &key, &component_fxn);
 }
 
 pub fn get_page(name: &str) -> Option<&PageFunction> {
-    rumtk_cache_get!(&mut page_cache, &RUMString::from(name))
+    rumtk_cache_get!(&mut PAGE_CACHE, &RUMString::from(name))
 }
 
 pub fn init_pages(user_components: &UserPages) {

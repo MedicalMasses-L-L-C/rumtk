@@ -162,7 +162,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMStr
     nav_links
 }
 
-pub fn navbar(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn navbar(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let company = state.lock().expect("Lock failure").title.clone();
