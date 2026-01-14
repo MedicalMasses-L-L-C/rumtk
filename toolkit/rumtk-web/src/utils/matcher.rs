@@ -64,8 +64,5 @@ pub async fn default_component_matcher(
 
     let component = rumtk_web_get_component!(component);
 
-    match component {
-        Some(cf) => cf(&path_components[1..], &params, state.clone()),
-        _ => Ok(Html("<div></div>".to_string())),
-    }
+    component(&path_components[1..], &params, state.clone())
 }

@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::ComponentFunction;
-use rumtk_core::cache::{new_cache, LazyRUMCache};
+use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
@@ -47,21 +47,25 @@ mod spacer;
 mod text_card;
 mod title;
 
-pub use form::form_utils::*;
-
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
-pub type UserComponentCacheItem<'a> = (&'a str, ComponentFunction);
-pub type UserComponents<'a> = Vec<UserComponentCacheItem<'a>>;
+pub type UserComponentItem<'a> = (&'a str, ComponentFunction);
+pub type UserComponents<'a> = Vec<UserComponentItem<'a>>;
+pub type UserComponentCacheItem = LazyRUMCacheValue<ComponentFunction>;
 
 static mut COMPONENT_CACHE: ComponentCache = new_cache();
+static DEFAULT_COMPONENT: ComponentFunction = div::div;
 
 pub fn register_component(name: &str, component_fxn: ComponentFunction) {
     let key = RUMString::from(name);
     rumtk_cache_push!(&mut COMPONENT_CACHE, &key, &component_fxn);
 }
 
-pub fn get_component(name: &str) -> Option<&ComponentFunction> {
-    rumtk_cache_get!(&mut COMPONENT_CACHE, &RUMString::from(name))
+pub fn get_component(name: &str) -> UserComponentCacheItem {
+    rumtk_cache_get!(
+        &mut COMPONENT_CACHE,
+        &RUMString::from(name),
+        &DEFAULT_COMPONENT
+    )
 }
 
 pub fn init_components(user_components: &UserComponents) {

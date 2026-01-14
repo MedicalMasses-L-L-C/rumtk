@@ -29,7 +29,6 @@ use crate::utils::HTMLResult;
 
 pub mod form;
 pub mod form_element;
-pub mod form_utils;
 pub mod props;
 
 pub type FormElements = Vec<RUMString>;

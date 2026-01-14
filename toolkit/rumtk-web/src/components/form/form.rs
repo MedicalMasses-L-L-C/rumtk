@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::form::form_utils::{get_form, FormElements};
+use crate::components::form::get_form;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
@@ -117,7 +117,7 @@ use askama::Template;
 )]
 struct Form<'a> {
     typ: RUMString,
-    elements: &'a FormElements,
+    elements: &'a [RUMString],
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -132,7 +132,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
-        elements,
+        elements: elements.iter().as_ref(),
         css_class: RUMString::from(css_class),
         custom_css_enabled
     })

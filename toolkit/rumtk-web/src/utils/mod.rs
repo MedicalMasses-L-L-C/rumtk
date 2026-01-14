@@ -76,21 +76,6 @@ macro_rules! rumtk_web_params_map {
 }
 
 #[macro_export]
-macro_rules! rumtk_web_collect_page {
-    ( $page:expr, $app_state:expr ) => {{
-        use $crate::rumtk_web_get_page;
-        use $crate::utils::types::{PageFunction, RenderedPageComponents};
-
-        let page = match rumtk_web_get_page!(&$page) {
-            Some(x) => x,
-            None => &(|_| -> RenderedPageComponents { vec![] } as PageFunction),
-        };
-
-        page($app_state.clone())
-    }};
-}
-
-#[macro_export]
 macro_rules! rumtk_web_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
