@@ -48,7 +48,7 @@ pub mod rumtk_search {
     /// This function returns an instance of SearchGroup which is the hash map.
     ///
     pub fn string_search_named_captures(input: &str, expr: &str, default: &str) -> SearchGroups {
-        let re = rumtk_cache_fetch!(&mut re_cache, &RUMString::from(expr), compile_regex);
+        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
         let names: Vec<&str> = re
             .capture_names()
             .skip(1)
@@ -91,7 +91,7 @@ pub mod rumtk_search {
     /// This function returns an instance of CapturedList which is the list of strings.
     ///
     pub fn string_search_all_captures(input: &str, expr: &str, default: &str) -> CapturedList {
-        let re = rumtk_cache_fetch!(&mut re_cache, &RUMString::from(expr), compile_regex);
+        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
         let mut capture_list = CapturedList::with_capacity(DEFAULT_REGEX_CACHE_PAGE_SIZE);
 
         for caps in re.captures_iter(input) {
@@ -126,7 +126,7 @@ pub mod rumtk_search {
     /// Use \" \" in join_pattern if you wish to have spaces in between matches.
     ///
     pub fn string_search(input: &str, expr: &str, join_pattern: &str) -> RUMString {
-        let re = rumtk_cache_fetch!(&mut re_cache, &RUMString::from(expr), compile_regex);
+        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
         string_list(input, &re).join_compact(join_pattern)
     }
 }

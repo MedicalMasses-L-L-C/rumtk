@@ -183,7 +183,7 @@ pub mod threading_macros {
         ( $threads:expr ) => {{
             use $crate::rumtk_cache_fetch;
             use $crate::threading::thread_primitives::{init_cache, rt_cache};
-            let rt = rumtk_cache_fetch!(&mut rt_cache, $threads, init_cache);
+            let rt = rumtk_cache_fetch!(&raw mut rt_cache, $threads, init_cache);
             rt
         }};
     }
