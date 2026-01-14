@@ -20,15 +20,21 @@
  */
 use rumtk_core::strings::RUMString;
 use rumtk_core::threading::threading_functions::get_default_system_thread_count;
+use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
 
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
+use crate::{rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages};
+
+use crate::components::UserComponents;
+use crate::pages::UserPages;
 use axum::routing::get;
 use axum::Router;
 use clap::Parser;
+use rumtk_core::core::RUMResult;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
 use tracing::error;
@@ -38,7 +44,7 @@ use tracing::error;
 ///
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
-pub struct Args {
+struct Args {
     ///
     /// Website title to use internally. It can be omitted if defined in the app.json config file
     /// bundled with your app.
@@ -64,7 +70,7 @@ pub struct Args {
     /// Meaning, you could bundle all of your fragments into the master bundle at startup and
     /// turn off component level ```custom_css_enabled``` option in the ```app.json``` config.
     ///
-    #[arg(short, long, default_value = DEFAULT_OUT_CSS_DIR)]
+    #[arg(long, default_value = DEFAULT_OUT_CSS_DIR)]
     pub css_source_dir: RUMString,
     ///
     /// Is the interface meant to be bound to the loopback address and remain hidden from the
@@ -81,11 +87,11 @@ pub struct Args {
     /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
     /// cpus available. We use the system's total count of cpus by default.
     ///
-    #[arg(short, long, default_value_t = get_default_system_thread_count())]
+    #[arg(long, default_value_t = get_default_system_thread_count())]
     pub threads: usize,
 }
 
-pub async fn run_app(args: &Args, skip_serve: bool) {
+async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
     let state = rumtk_web_load_conf!(&args);
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
@@ -119,6 +125,22 @@ pub async fn run_app(args: &Args, skip_serve: bool) {
             .await
             .expect("There was an issue with the server.");
     }
+
+    Ok(())
+}
+
+pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool) {
+    use clap::Parser;
+
+    let args = Args::parse();
+
+    rumtk_web_init_components!(components);
+    rumtk_web_init_pages!(pages);
+    rumtk_web_compile_css_bundle!(&args.css_source_dir);
+
+    let rt = rumtk_init_threads!(&args.threads);
+    let task = run_app(&args, skip_serve);
+    rumtk_resolve_task!(rt, task);
 }
 
 ///
@@ -222,8 +244,8 @@ pub async fn run_app(args: &Args, skip_serve: bool) {
 ///     let skip_serve = false;
 ///
 ///     let result = rumtk_web_run_app!(
-///         &vec![("about", about)],
-///         &vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
+///         vec![("about", about)],
+///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
 ///         skip_serve //Omit in production code. This is used so that this example can work as a unit test.
 ///     );
 /// ```
@@ -231,60 +253,18 @@ pub async fn run_app(args: &Args, skip_serve: bool) {
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     ( $pages:expr ) => {{
-        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-        use $crate::app::Args;
-        use $crate::utils::run_app;
-        use $crate::{
-            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
-        };
+        use $crate::utils::app::app_main;
 
-        use clap::Parser;
-
-        let args = Args::parse();
-
-        rumtk_web_init_components!(&vec![]);
-        rumtk_web_init_pages!($pages);
-        rumtk_web_compile_css_bundle!(&args.css_source_dir);
-
-        let rt = rumtk_init_threads!(&args.threads);
-        rumtk_resolve_task!(rt, run_app(&args, false));
+        app_main(&$pages, &vec![], false)
     }};
     ( $pages:expr, $components:expr ) => {{
-        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-        use $crate::app::Args;
-        use $crate::utils::run_app;
-        use $crate::{
-            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
-        };
+        use $crate::utils::app::app_main;
 
-        use clap::Parser;
-
-        let args = Args::parse();
-
-        rumtk_web_init_components!($components);
-        rumtk_web_init_pages!($pages);
-        rumtk_web_compile_css_bundle!(&args.css_source_dir);
-
-        let rt = rumtk_init_threads!(&args.threads);
-        rumtk_resolve_task!(rt, run_app(&args, false));
+        app_main(&$pages, &$components, false)
     }};
     ( $pages:expr, $components:expr, $skip_serve:expr ) => {{
-        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-        use $crate::app::Args;
-        use $crate::utils::run_app;
-        use $crate::{
-            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
-        };
+        use $crate::utils::app::app_main;
 
-        use clap::Parser;
-
-        let args = Args::parse();
-
-        rumtk_web_init_components!($components);
-        rumtk_web_init_pages!($pages);
-        rumtk_web_compile_css_bundle!(&args.css_source_dir);
-
-        let rt = rumtk_init_threads!(&args.threads);
-        rumtk_resolve_task!(rt, run_app(&args, $skip_serve));
+        app_main(&$pages, &$components, $skip_serve)
     }};
 }
