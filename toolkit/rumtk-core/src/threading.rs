@@ -304,7 +304,7 @@ pub mod threading_macros {
             SafeTaskArgs::new(RwLock::new(vec![]))
         }};
         ( $($args:expr),+ ) => {{
-            use $crate::threading::thread_primitives::{TaskArgs, SafeTaskArgs, TaskItems};
+            use $crate::threading::thread_primitives::{SafeTaskArgs};
             use tokio::sync::RwLock;
             SafeTaskArgs::new(RwLock::new(vec![$($args),+]))
         }};

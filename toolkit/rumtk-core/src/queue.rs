@@ -32,7 +32,7 @@ pub mod queue {
 
     pub struct TaskQueue<R> {
         tasks: AsyncTaskHandles<R>,
-        runtime: &'static SafeTokioRuntime,
+        runtime: SafeTokioRuntime,
     }
 
     impl<R> TaskQueue<R>
@@ -59,7 +59,10 @@ pub mod queue {
         pub fn new(worker_num: &usize) -> RUMResult<TaskQueue<R>> {
             let tasks = AsyncTaskHandles::with_capacity(DEFAULT_QUEUE_CAPACITY);
             let runtime = rumtk_init_threads!(&worker_num);
-            Ok(TaskQueue { tasks, runtime })
+            Ok(TaskQueue {
+                tasks,
+                runtime: runtime.clone(),
+            })
         }
 
         ///

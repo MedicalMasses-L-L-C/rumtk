@@ -756,7 +756,7 @@ pub mod tcp {
     /// receive methods implemented in [RUMClient].
     ///
     pub struct RUMClientHandle {
-        runtime: &'static SafeTokioRuntime,
+        runtime: SafeTokioRuntime,
         client: SafeClient,
     }
 
@@ -777,7 +777,7 @@ pub mod tcp {
                 .unwrap();
             Ok(RUMClientHandle {
                 client: SafeClient::new(AsyncRwLock::new(client)),
-                runtime,
+                runtime: runtime.clone(),
             })
         }
 
@@ -861,7 +861,7 @@ pub mod tcp {
     /// own message.
     ///
     pub struct RUMServerHandle {
-        runtime: &'static SafeTokioRuntime,
+        runtime: SafeTokioRuntime,
         server: SafeServer,
     }
 
@@ -901,7 +901,7 @@ pub mod tcp {
                 .unwrap();
             Ok(RUMServerHandle {
                 server: Arc::new(AsyncRwLock::new(server)),
-                runtime,
+                runtime: runtime.clone(),
             })
         }
 
@@ -939,7 +939,10 @@ pub mod tcp {
                 msg.clone()
             ));
             let task = rumtk_create_task!(RUMServerHandle::send_helper, args);
-            rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task))?
+            rumtk_resolve_task!(
+                self.runtime.clone(),
+                rumtk_spawn_task!(self.runtime.clone(), task)
+            )?
         }
 
         ///
@@ -949,7 +952,7 @@ pub mod tcp {
         pub fn receive(&mut self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
             let args = rumtk_create_task_args!((Arc::clone(&mut self.server), client_id.clone()));
             let task = rumtk_create_task!(RUMServerHandle::receive_helper, args);
-            rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task))?
+            rumtk_resolve_task!(self.runtime.clone(), rumtk_spawn_task!(self.runtime, task))?
         }
 
         ///

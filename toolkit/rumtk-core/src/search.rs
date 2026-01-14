@@ -20,7 +20,7 @@
  */
 
 pub mod rumtk_search {
-    use crate::cache::{get_or_set_from_cache, new_cache, AHashMap, LazyRUMCache};
+    use crate::cache::{new_cache, AHashMap, LazyRUMCache};
     use crate::rumtk_cache_fetch;
     use crate::strings::{CompactStringExt, RUMString};
     use regex::Regex;

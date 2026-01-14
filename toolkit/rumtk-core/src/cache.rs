@@ -22,11 +22,10 @@
 pub use ahash::AHashMap;
 use core::hash::Hash;
 pub use once_cell::unsync::Lazy;
-use std::sync::Arc;
-pub use std::sync::Mutex;
+use std::sync::{Arc, MappedRwLockReadGuard, RwLock, RwLockReadGuard};
 /**************************** Constants**************************************/
-pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 /// I don't think most scenarios will need more than 10 items worth of memory pre-allocated at a time.
+pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 /**************************** Caches ****************************************/
 
 /**************************** Types *****************************************/
@@ -35,48 +34,66 @@ pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 /// the search parsing object here.
 ///
 pub type RUMCache<K, V> = AHashMap<K, V>;
-pub type LazyRUMCache<K, V> = Lazy<Arc<RUMCache<K, V>>>;
+pub type LazyRUMCache<K, V> = Lazy<Arc<RwLock<RUMCache<K, V>>>>;
+pub type LazyRUMCacheValue<V> = MappedRwLockReadGuard<'static, V>;
 
 /**************************** Traits ****************************************/
 
 /**************************** Helpers ***************************************/
 pub const fn new_cache<K, V>() -> LazyRUMCache<K, V> {
-    LazyRUMCache::new(|| Arc::new(RUMCache::with_capacity(DEFAULT_CACHE_PAGE_SIZE)))
+    LazyRUMCache::new(|| {
+        Arc::new(RwLock::new(RUMCache::with_capacity(
+            DEFAULT_CACHE_PAGE_SIZE,
+        )))
+    })
 }
 
-pub fn get_or_set_from_cache<'a, K, V, F>(
-    cache: &'a mut LazyRUMCache<K, V>,
+pub unsafe fn get_or_set_from_cache<K, V, F>(
+    cache: *mut LazyRUMCache<K, V>,
     expr: &K,
     new_fn: F,
-) -> &'a V
+) -> LazyRUMCacheValue<V>
 where
-    K: Hash + Eq + Clone,
+    K: Hash + Eq + Clone + 'static,
     V: Clone,
     F: Fn(&K) -> V,
 {
-    if !cache.contains_key(expr) {
-        let cache_ref = Arc::get_mut(cache).unwrap();
-        cache_ref.insert(expr.clone(), new_fn(expr).clone());
+    let cache_entity = &mut *cache;
+    if !cache_entity.read().unwrap().contains_key(&expr) {
+        let cache_ref = Arc::get_mut(cache_entity).unwrap();
+        cache_ref
+            .write()
+            .unwrap()
+            .insert(expr.clone(), new_fn(&expr).clone());
     }
-    cache.get(expr).unwrap()
+    RwLockReadGuard::map(cache_entity.read().unwrap(), |d| d.get(expr).unwrap())
 }
 
-pub fn cache_push<'a, K, V>(cache: &'a mut LazyRUMCache<K, V>, expr: &K, val: &V) -> &'a V
+pub unsafe fn cache_push<K, V>(
+    cache: *mut LazyRUMCache<K, V>,
+    expr: &K,
+    val: &V,
+) -> LazyRUMCacheValue<V>
 where
-    K: Hash + Eq + Clone,
+    K: Hash + Eq + Clone + 'static,
     V: Clone,
 {
-    let cache_ref = Arc::get_mut(cache).unwrap();
-    cache_ref.insert(expr.clone(), val.clone());
-    cache.get(expr).unwrap()
+    let cache_entity = &mut *cache;
+    cache_entity
+        .write()
+        .unwrap()
+        .insert(expr.clone(), val.clone());
+    RwLockReadGuard::map(cache_entity.read().unwrap(), |d| d.get(expr).unwrap())
 }
 
-pub fn cache_get<'a, K, V>(cache: &'a mut LazyRUMCache<K, V>, expr: &K) -> Option<&'a V>
+pub unsafe fn cache_get<K, V>(cache: *mut LazyRUMCache<K, V>, expr: &K) -> LazyRUMCacheValue<V>
 where
-    K: Hash + Eq + Clone,
+    K: Hash + Eq + Clone + 'static,
     V: Clone,
 {
-    cache.get(expr)
+    let cache_entity = &mut *cache;
+    let cache_ref = cache_entity.read().unwrap();
+    RwLockReadGuard::map(cache_ref, |d| d.get(expr).unwrap())
 }
 
 pub mod cache_macros {
@@ -99,7 +116,7 @@ pub mod cache_macros {
     ///
     /// let test_key: String = String::from("Hello World");
     /// let v = rumtk_cache_fetch!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key,
     ///     init_cache
     /// );
@@ -144,13 +161,13 @@ pub mod cache_macros {
     /// let test_value: String = String::from("?????");
     ///
     /// rumtk_cache_fetch!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key,
     ///     init_cache
     /// );
     ///
     /// let v = rumtk_cache_push!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key,
     ///     &vec![test_value.clone()]
     /// );
@@ -195,21 +212,21 @@ pub mod cache_macros {
     /// let test_value: String = String::from("?????");
     ///
     /// rumtk_cache_fetch!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key,
     ///     init_cache
     /// );
     ///
     /// rumtk_cache_push!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key,
     ///     &vec![test_value.clone()]
     /// );
     ///
     /// let v = rumtk_cache_get!(
-    ///     &mut cache,
+    ///     &raw mut cache,
     ///     &test_key
-    /// ).unwrap();
+    /// );
     ///
     /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
     ///

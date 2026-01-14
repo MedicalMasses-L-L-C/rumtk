@@ -24,6 +24,7 @@
 #![feature(type_alias_impl_trait)]
 #![feature(unboxed_closures)]
 #![feature(buf_read_has_data_left)]
+#![feature(mapped_lock_guards)]
 
 pub mod cache;
 pub mod cli;
