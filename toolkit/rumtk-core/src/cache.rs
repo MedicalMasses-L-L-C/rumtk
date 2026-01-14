@@ -50,7 +50,7 @@ macro_rules! cache_unwrap {
         |d| {
             match d.get($k) {
                 Some(val) => val,
-                None => $default()
+                None => $default
             }
         }
     }};
@@ -101,15 +101,14 @@ where
     RwLockReadGuard::map(cache_entity.read().unwrap(), cache_unwrap!(expr))
 }
 
-pub unsafe fn cache_get<K, V, F>(
+pub unsafe fn cache_get<K, V>(
     cache: *mut LazyRUMCache<K, V>,
     expr: &K,
-    default: F,
+    default: &'static V,
 ) -> LazyRUMCacheValue<V>
 where
     K: Hash + Eq + Clone + 'static,
     V: Clone,
-    F: FnOnce() -> &'static V,
 {
     let cache_entity = &mut *cache;
     let cache_ref = cache_entity.read().unwrap();
@@ -247,7 +246,7 @@ pub mod cache_macros {
     /// let v = rumtk_cache_get!(
     ///     &raw mut cache,
     ///     &test_key,
-    ///     || {&DEFAULT_VEC}
+    ///     &DEFAULT_VEC
     /// );
     ///
     /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
