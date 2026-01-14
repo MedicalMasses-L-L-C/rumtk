@@ -19,12 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use rumtk_core::strings::RUMString;
+use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
+use crate::pages::UserPages;
 use axum::routing::get;
 use axum::Router;
 use clap::Parser;
@@ -75,6 +77,13 @@ pub struct Args {
     ///
     #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
     ip: RUMString,
+    ///
+    /// How many threads to use to serve the website. By default, we use
+    /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
+    /// cpus available. We use the system's total count of cpus by default.
+    ///
+    #[arg(short, long, default_value_t = get_default_system_thread_count())]
+    threads: usize,
 }
 
 pub async fn run_app(args: &Args) {
@@ -111,20 +120,31 @@ pub async fn run_app(args: &Args) {
         .expect("There was an issue with the server.");
 }
 
+///
+/// This is the main macro for defining your applet and launching it.
+/// Usage is very simple and the only decision from a user is whether to pass a list of
+/// [UserPages](crate::pages::UserPages) or a list of [UserPages](crate::pages::UserPages) and a list
+/// of [UserComponents](crate::components::UserComponents).
+///
+/// These lists are used to automatically register your pages
+/// (e.g. `/index => ('index', my_index_function)`) and your custom components
+/// (e.g. `button => ('button', my_button_function)`
+///
+/// This macro will load CSS from predefined sources, concatenate their contents with predefined CSS,
+/// minified the concatenated results, and generate a bundle css file containing the minified results.
+/// The CSS bundle is written to file `./static/css/bundle.min.css`.
+///
+/// ***Note: anything in ./static will be considered static assets that need to be served.***
+///
+/// This macro will also parse the command line automatically with a few predefined options and
+/// use that information to override the config defaults.
+///
+/// By default, the app is launched to `127.0.0.1:3000` which is the loopback address.
+///
+/// App is served with the best compression algorithm allowed by the client browser.
+///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
-    (  ) => {{
-        use $crate::{
-            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
-        };
-        let args = Args::parse();
-
-        rumtk_web_init_components!(vec![]);
-        rumtk_web_init_pages!(vec![]);
-        rumtk_web_compile_css_bundle!(&args.css_source_dir);
-
-        run_app(args).await;
-    }};
     ( $pages:expr ) => {{
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
@@ -147,6 +167,6 @@ macro_rules! rumtk_web_run_app {
         rumtk_web_init_pages!($pages);
         rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        run_app(args).await;
+        run_app(args);
     }};
 }
