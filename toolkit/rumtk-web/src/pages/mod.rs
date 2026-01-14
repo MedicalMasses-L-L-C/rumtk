@@ -24,8 +24,8 @@ use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
 pub type PageCache = LazyRUMCache<RUMString, PageFunction>;
-pub type PageItem = (RUMString, PageFunction);
-pub type UserPages = Vec<PageItem>;
+pub type PageItem<'a> = (&'a str, PageFunction);
+pub type UserPages<'a> = Vec<PageItem<'a>>;
 
 static mut page_cache: PageCache = new_cache();
 

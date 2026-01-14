@@ -50,8 +50,8 @@ mod title;
 pub use Form::form_utils::*;
 
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
-pub type UserComponentCacheItem = (RUMString, ComponentFunction);
-pub type UserComponents = Vec<UserComponentCacheItem>;
+pub type UserComponentCacheItem<'a> = (&'a str, ComponentFunction);
+pub type UserComponents<'a> = Vec<UserComponentCacheItem<'a>>;
 
 static mut component_cache: ComponentCache = new_cache();
 
