@@ -73,7 +73,7 @@ pub struct FormattedLabel {
 }
 
 pub fn formatted_label(
-    path_components: URLPath,
+    _path_components: URLPath,
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {

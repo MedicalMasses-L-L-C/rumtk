@@ -77,7 +77,7 @@ pub struct Title {
     custom_css_enabled: bool,
 }
 
-pub fn title(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

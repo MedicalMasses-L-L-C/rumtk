@@ -50,8 +50,8 @@ pub fn bundle_css(sources: &[&str], out_dir: &str, out_file: &str) {
 
     fs::create_dir_all(out_dir).unwrap_or_default();
 
-    let out_path = path::Path::new(DEFAULT_OUT_CSS_DIR)
-        .join(DEFAULT_OUT_CSS)
+    let out_path = path::Path::new(out_dir)
+        .join(out_file)
         .with_extension("css")
         .to_str()
         .expect("Could not create path to CSS file!")

@@ -24,12 +24,8 @@ use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{
-    rumtk_web_fetch, rumtk_web_get_text_item, rumtk_web_load_conf, rumtk_web_render_html,
-    HTMLResult, SharedAppConf, URLParams, URLPath,
-};
+use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
-use crate::pages::UserPages;
 use axum::routing::get;
 use axum::Router;
 use clap::Parser;

@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 pub mod components;
-mod css;
+pub mod css;
 pub mod pages;
 pub mod static_components;
 pub mod utils;

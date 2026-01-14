@@ -23,8 +23,6 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPa
 use crate::{rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
-const DEFAULT_PAGE_NAME: &str = "index";
-
 #[derive(Template)]
 #[template(
     source = "
@@ -54,7 +52,7 @@ pub struct AppShellHead {
 ///      It is not ideal but it will allow continuance of service for websites during CDN outages
 ///      which do happen.
 ///
-pub fn app_head(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn app_head(_path_components: URLPath, _params: URLParams, state: SharedAppConf) -> HTMLResult {
     //Let's render the head component
     let html_meta = rumtk_web_render_component!(meta, state);
 

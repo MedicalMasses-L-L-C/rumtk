@@ -65,14 +65,13 @@ use askama::Template;
 )]
 pub struct ContactButton {
     title: RUMString,
-    typ: RUMString,
     send_function: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
 pub fn contact_button(
-    path_components: URLPath,
+    _path_components: URLPath,
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {
@@ -86,7 +85,6 @@ pub fn contact_button(
 
     rumtk_web_render_html!(ContactButton {
         title,
-        typ: RUMString::from(typ),
         send_function: RUMString::from(send_function),
         css_class: RUMString::from(css_class),
         custom_css_enabled

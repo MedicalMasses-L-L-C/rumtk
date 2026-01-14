@@ -41,7 +41,7 @@ pub struct Spacer {
     custom_css_enabled: bool,
 }
 
-pub fn spacer(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let size = rumtk_web_get_text_item!(params, PARAMS_SIZE, SECTION_DEFAULT)
         .parse::<usize>()
         .unwrap_or(0);

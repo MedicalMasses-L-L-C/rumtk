@@ -41,7 +41,7 @@ struct NavItem<'a> {
         {% if custom_css_enabled %}
             <link href='/static/components/navlink.css' rel='stylesheet'>
         {% endif %}
-        <a class='undecorated navlink f18' href='{{target.url}}'>{{target.title}}</a>
+        <a class='undecorated navlink f18 navlink-{{css_class}}' href='{{target.url}}'>{{target.title}}</a>
     ",
     ext = "html"
 )]
@@ -51,7 +51,7 @@ pub struct NavLink<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn navlink(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

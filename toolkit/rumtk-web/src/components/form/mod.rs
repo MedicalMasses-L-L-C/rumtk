@@ -18,30 +18,32 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::Form::props::InputProps;
-use crate::rumtk_web_render_html;
-use crate::utils::types::HTMLResult;
-use askama::Template;
+pub mod form;
+pub mod form_element;
+pub mod form_utils;
+pub mod props;
 
-#[derive(Template, Debug, Clone)]
-#[template(
-    source = "
-        <{{element}} {{props.to_rumstring()}} class='{{css}}'>{{data|safe}}</{{element}}>
-    ",
-    ext = "html"
-)]
-pub struct FormElement<'a> {
-    element: &'a str,
-    data: &'a str,
-    props: InputProps,
-    css: &'a str,
+///
+/// This is an API macro for defining a form that can be used to render it later in your web pages.
+///
+#[macro_export]
+macro_rules! rumtk_web_add_form {
+    ( $name:expr, $build_fxn:expr ) => {{
+        use $crate::components::form::form_utils::register_form_elements;
+
+        register_form_elements($name, $build_fxn)
+    }};
 }
 
-pub fn form_element(element: &str, data: &str, props: InputProps, css: &str) -> HTMLResult {
-    rumtk_web_render_html!(FormElement {
-        element,
-        data,
-        props,
-        css
-    })
+///
+/// This is an API macro to get the list of rendered elements that will be fed into the form shell
+/// to render your form in your web page.
+///
+#[macro_export]
+macro_rules! rumtk_web_get_form {
+    ( $name:expr ) => {{
+        use $crate::components::form::form_utils::get_form;
+
+        get_form($name)
+    }};
 }

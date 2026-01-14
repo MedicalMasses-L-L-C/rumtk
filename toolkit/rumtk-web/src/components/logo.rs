@@ -50,7 +50,7 @@ pub struct Logo {
 
 const DEFAULT_TYPE: &str = "diamond";
 
-pub fn logo(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let diamond = rumtk_web_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

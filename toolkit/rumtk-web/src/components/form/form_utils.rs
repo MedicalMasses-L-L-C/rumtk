@@ -22,8 +22,8 @@ use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 
-use crate::components::Form::form_element::form_element;
-use crate::components::Form::props::InputProps;
+use crate::components::form::form_element::form_element;
+use crate::components::form::props::InputProps;
 use crate::rumtk_web_render_component;
 use crate::utils::HTMLResult;
 
@@ -35,7 +35,7 @@ pub type FormBuilderFunction = fn(builder: FormElementBuilder) -> FormElements;
 
 static mut form_cache: FormCache = new_cache();
 
-fn new_form_entry(name: &RUMString) -> FormElements {
+fn new_form_entry(_name: &RUMString) -> FormElements {
     vec![]
 }
 

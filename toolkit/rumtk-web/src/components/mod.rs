@@ -29,11 +29,11 @@ pub mod app_head;
 pub mod app_shell;
 
 // Components
-mod Form;
 mod contact_button;
 mod contact_card;
 pub mod div;
 mod footer;
+mod form;
 mod formatted_label;
 mod info_card;
 mod item_card;
@@ -47,7 +47,7 @@ mod spacer;
 mod text_card;
 mod title;
 
-pub use Form::form_utils::*;
+pub use form::form_utils::*;
 
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentCacheItem<'a> = (&'a str, ComponentFunction);
@@ -80,7 +80,7 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("label", label::label);
     register_component("formatted_label", formatted_label::formatted_label);
     register_component("text_card", text_card::text_card);
-    register_component("form", Form::form::form);
+    register_component("form", form::form::form);
     register_component("spacer", spacer::spacer);
     register_component("div", div::div);
 

@@ -26,8 +26,6 @@ use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use rumtk_core::strings::{rumtk_format, RUMStringConversions};
 
-const ICON_CSS: &str = "fa-brands fa-square-{}";
-
 #[derive(Debug, Clone)]
 struct Social {
     name: RUMString,
@@ -82,7 +80,7 @@ fn get_social_list(social_list: &str, state: &SharedAppConf) -> SocialsList {
     sl
 }
 
-pub fn socials(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

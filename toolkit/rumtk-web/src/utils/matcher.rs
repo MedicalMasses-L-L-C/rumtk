@@ -27,9 +27,9 @@ use axum::response::Html;
 use std::collections::HashMap;
 
 pub async fn default_robots_matcher(
-    path: Vec<RUMString>,
-    params: HashMap<RUMString, RUMString>,
-    state: SharedAppConf,
+    _path: Vec<RUMString>,
+    _params: HashMap<RUMString, RUMString>,
+    _state: SharedAppConf,
 ) -> HTMLResult {
     Ok(Html::<String>::from(String::from(DEFAULT_ROBOT_TXT)))
 }

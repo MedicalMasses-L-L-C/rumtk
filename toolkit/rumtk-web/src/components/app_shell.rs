@@ -24,8 +24,6 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPa
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
-const DEFAULT_PAGE_NAME: &str = "index";
-
 #[derive(Template)]
 #[template(
     source = "

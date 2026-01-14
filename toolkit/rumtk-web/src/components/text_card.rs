@@ -45,13 +45,12 @@ use askama::Template;
     ext = "html"
 )]
 pub struct TextCard {
-    typ: RUMString,
     formatted_label: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn text_card(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -60,7 +59,6 @@ pub fn text_card(path_components: URLPath, params: URLParams, state: SharedAppCo
     let formatted_label = rumtk_web_render_component!("formatted_label", [("type", typ)], state);
 
     rumtk_web_render_html!(TextCard {
-        typ: RUMString::from(typ),
         formatted_label,
         css_class: RUMString::from(css_class),
         custom_css_enabled

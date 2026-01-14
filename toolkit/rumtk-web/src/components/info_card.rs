@@ -66,7 +66,7 @@ pub struct InfoCard<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn info_card(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn info_card(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let card_text_item = rumtk_web_get_text_item!(params, PARAMS_ITEM, DEFAULT_TEXT_ITEM);
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);

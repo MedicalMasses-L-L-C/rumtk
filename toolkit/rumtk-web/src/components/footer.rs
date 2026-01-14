@@ -25,19 +25,6 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPa
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
-#[derive(Debug, Clone)]
-struct FooterItem {
-    typ: RUMString,
-    icon_url: RUMString,
-    text: RUMString,
-}
-
-#[derive(Debug, Clone)]
-struct FooterSection {
-    typ: RUMString,
-    items: Vec<FooterItem>,
-}
-
 #[derive(Template, Debug, Clone)]
 #[template(
     source = "
@@ -66,7 +53,7 @@ pub struct Footer {
     custom_css_enabled: bool,
 }
 
-pub fn footer(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

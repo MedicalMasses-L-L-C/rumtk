@@ -78,9 +78,9 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppConf) -> Por
 
     let mut grid = Vec::with_capacity(text_conf.len());
     let default_html = RUMString::default();
-    for (r_name, r_list) in text_conf {
+    for (_r_name, r_list) in text_conf {
         let mut grid_row = Vec::with_capacity(r_list.len());
-        for (i_name, i_item) in r_list {
+        for (i_name, _i_item) in r_list {
             grid_row.push(PortraitItem {
                 user: i_name.clone(),
                 portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, &i_name, "")),
@@ -103,7 +103,7 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppConf) -> Por
 }
 
 pub fn portrait_card(
-    path_components: URLPath,
+    _path_components: URLPath,
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {

@@ -83,7 +83,7 @@ pub struct ContactCard<'a> {
 }
 
 pub fn contact_card(
-    path_components: URLPath,
+    _path_components: URLPath,
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {

@@ -18,10 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::Form::form_utils::{get_form, FormElements};
-use crate::utils::defaults::{
-    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE,
-};
+use crate::components::form::form_utils::{get_form, FormElements};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
@@ -109,7 +107,7 @@ use askama::Template;
         {% endif %}
         <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
         </script>
-        <form id='form' class='f18 centered form-default-container'>
+        <form id='form' class='f18 centered form-default-container' class='form-{{css_class}}-container'>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
@@ -124,7 +122,7 @@ struct Form<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn form(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 

@@ -72,7 +72,7 @@ pub struct Label {
     custom_css_enabled: bool,
 }
 
-pub fn label(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
