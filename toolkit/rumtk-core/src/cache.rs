@@ -40,6 +40,21 @@ pub type LazyRUMCacheValue<V> = MappedRwLockReadGuard<'static, V>;
 /**************************** Traits ****************************************/
 
 /**************************** Helpers ***************************************/
+macro_rules! cache_unwrap {
+    ( $k:expr ) => {{
+        |d| {
+            d.get($k).expect("Item not found in cache despite having inserted it previously within this scope! This is completely unexpected and a fatal bug!")
+        }
+    }};
+    ( $k:expr, $default:expr ) => {{
+        |d| {
+            match d.get($k) {
+                Some(val) => val,
+                None => $default()
+            }
+        }
+    }};
+}
 pub const fn new_cache<K, V>() -> LazyRUMCache<K, V> {
     LazyRUMCache::new(|| {
         Arc::new(RwLock::new(RUMCache::with_capacity(
@@ -66,7 +81,7 @@ where
             .unwrap()
             .insert(expr.clone(), new_fn(&expr).clone());
     }
-    RwLockReadGuard::map(cache_entity.read().unwrap(), |d| d.get(expr).unwrap())
+    RwLockReadGuard::map(cache_entity.read().unwrap(), cache_unwrap!(expr))
 }
 
 pub unsafe fn cache_push<K, V>(
@@ -83,17 +98,22 @@ where
         .write()
         .unwrap()
         .insert(expr.clone(), val.clone());
-    RwLockReadGuard::map(cache_entity.read().unwrap(), |d| d.get(expr).unwrap())
+    RwLockReadGuard::map(cache_entity.read().unwrap(), cache_unwrap!(expr))
 }
 
-pub unsafe fn cache_get<K, V>(cache: *mut LazyRUMCache<K, V>, expr: &K) -> LazyRUMCacheValue<V>
+pub unsafe fn cache_get<K, V, F>(
+    cache: *mut LazyRUMCache<K, V>,
+    expr: &K,
+    default: F,
+) -> LazyRUMCacheValue<V>
 where
     K: Hash + Eq + Clone + 'static,
     V: Clone,
+    F: FnOnce() -> &'static V,
 {
     let cache_entity = &mut *cache;
     let cache_ref = cache_entity.read().unwrap();
-    RwLockReadGuard::map(cache_ref, |d| d.get(expr).unwrap())
+    RwLockReadGuard::map(cache_ref, cache_unwrap!(expr, default))
 }
 
 pub mod cache_macros {
@@ -207,6 +227,7 @@ pub mod cache_macros {
     /// }
     ///
     /// let mut cache: StringCache = new_cache();
+    /// static DEFAULT_VEC: Vec<String> = vec![];
     ///
     /// let test_key: String = String::from("Hello World");
     /// let test_value: String = String::from("?????");
@@ -225,7 +246,8 @@ pub mod cache_macros {
     ///
     /// let v = rumtk_cache_get!(
     ///     &raw mut cache,
-    ///     &test_key
+    ///     &test_key,
+    ///     || {&DEFAULT_VEC}
     /// );
     ///
     /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
@@ -235,14 +257,14 @@ pub mod cache_macros {
     ///
     #[macro_export]
     macro_rules! rumtk_cache_get {
-        ( $cache:expr, $key:expr ) => {{
+        ( $cache:expr, $key:expr, $default_function:expr ) => {{
             use $crate::cache::cache_get;
             // Do not remove the clippy disable decorator here since we do intend to expand within
             // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
             // internal references due to compiler error
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
-                cache_get($cache, $key)
+                cache_get($cache, $key, $default_function)
             }
         }};
     }
