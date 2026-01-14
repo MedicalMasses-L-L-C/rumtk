@@ -18,10 +18,48 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
+use rumtk_core::strings::RUMString;
+use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
+
+use crate::components::form::form_element::form_element;
+use crate::components::form::props::InputProps;
+use crate::rumtk_web_render_component;
+use crate::utils::HTMLResult;
+
 pub mod form;
 pub mod form_element;
 pub mod form_utils;
 pub mod props;
+
+pub type FormElements = Vec<RUMString>;
+pub type FormCache = LazyRUMCache<RUMString, FormElements>;
+pub type FormElementBuilder =
+    fn(element: &str, data: &str, props: InputProps, css: &str) -> RUMString;
+pub type FormBuilderFunction = fn(builder: FormElementBuilder) -> FormElements;
+pub type FormCacheItem = LazyRUMCacheValue<FormElements>;
+
+static mut FORM_CACHE: FormCache = new_cache();
+static DEFAULT_FORMELEMENTS: FormElements = vec![];
+
+fn new_form_entry(_name: &RUMString) -> FormElements {
+    vec![]
+}
+
+fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> RUMString {
+    rumtk_web_render_component!(|| -> HTMLResult { form_element(element, data, props, css) })
+}
+
+pub fn register_form_elements(name: &str, element_builder: FormBuilderFunction) -> FormCacheItem {
+    let key = RUMString::from(name);
+    rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
+    let data = element_builder(build_form_element);
+    rumtk_cache_push!(&raw mut FORM_CACHE, &key, &data)
+}
+
+pub fn get_form(name: &str) -> FormCacheItem {
+    rumtk_cache_fetch!(&raw mut FORM_CACHE, &RUMString::from(name), new_form_entry)
+}
 
 ///
 /// This is an API macro for defining a form that can be used to render it later in your web pages.
@@ -29,7 +67,7 @@ pub mod props;
 #[macro_export]
 macro_rules! rumtk_web_add_form {
     ( $name:expr, $build_fxn:expr ) => {{
-        use $crate::components::form::form_utils::register_form_elements;
+        use $crate::components::form::register_form_elements;
 
         register_form_elements($name, $build_fxn)
     }};
@@ -42,7 +80,7 @@ macro_rules! rumtk_web_add_form {
 #[macro_export]
 macro_rules! rumtk_web_get_form {
     ( $name:expr ) => {{
-        use $crate::components::form::form_utils::get_form;
+        use $crate::components::form::get_form;
 
         get_form($name)
     }};
