@@ -57,12 +57,12 @@ static DEFAULT_COMPONENT: ComponentFunction = div::div;
 
 pub fn register_component(name: &str, component_fxn: ComponentFunction) {
     let key = RUMString::from(name);
-    rumtk_cache_push!(&mut COMPONENT_CACHE, &key, &component_fxn);
+    let _ = rumtk_cache_push!(&raw mut COMPONENT_CACHE, &key, &component_fxn);
 }
 
 pub fn get_component(name: &str) -> UserComponentCacheItem {
     rumtk_cache_get!(
-        &mut COMPONENT_CACHE,
+        &raw mut COMPONENT_CACHE,
         &RUMString::from(name),
         &DEFAULT_COMPONENT
     )

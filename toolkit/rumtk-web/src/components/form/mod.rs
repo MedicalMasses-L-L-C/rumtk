@@ -42,7 +42,7 @@ static mut FORM_CACHE: FormCache = new_cache();
 static DEFAULT_FORMELEMENTS: FormElements = vec![];
 
 fn new_form_entry(_name: &RUMString) -> FormElements {
-    vec![]
+    DEFAULT_FORMELEMENTS.clone()
 }
 
 fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> RUMString {
@@ -51,7 +51,7 @@ fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -
 
 pub fn register_form_elements(name: &str, element_builder: FormBuilderFunction) -> FormCacheItem {
     let key = RUMString::from(name);
-    rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
+    let _ = rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
     let data = element_builder(build_form_element);
     rumtk_cache_push!(&raw mut FORM_CACHE, &key, &data)
 }

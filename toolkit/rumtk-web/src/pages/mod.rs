@@ -35,7 +35,7 @@ static DEFAULT_PAGE: PageFunction = index::index;
 
 pub fn register_page(name: &str, component_fxn: PageFunction) {
     let key = RUMString::from(name);
-    rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
+    let _ = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
 }
 
 pub fn get_page(name: &str) -> PageCacheItem {

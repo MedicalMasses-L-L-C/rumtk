@@ -33,7 +33,7 @@ mod index;
 pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
 pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
 
-pub fn bundle_css(sources: &[&str], out_dir: &str, out_file: &str) {
+pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
     let mut css: RUMString = RUMString::default();
 
     css += index::BODY;
