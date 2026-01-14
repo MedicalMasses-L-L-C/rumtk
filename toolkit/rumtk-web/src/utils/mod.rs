@@ -25,6 +25,7 @@ pub mod matcher;
 pub mod render;
 pub mod types;
 
+pub use app::run_app;
 pub use render::*;
 pub use types::*;
 

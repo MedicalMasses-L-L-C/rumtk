@@ -55,12 +55,13 @@ macro_rules! rumtk_web_render_component {
         use $crate::rumtk_web_get_component;
         use $crate::rumtk_web_params_map;
         use $crate::utils::types::ComponentFunction;
+        use $crate::RUMString;
         let component = match rumtk_web_get_component!($component) {
             Some(x) => x,
             None => &(div as ComponentFunction),
         };
 
-        match component(&[], &rumtk_web_params_map!($params), $app_state.clone()) {
+        match component(&[""], &rumtk_web_params_map!($params), $app_state.clone()) {
             Ok(x) => x.0.to_rumstring(),
             _ => RUMString::default(),
         }

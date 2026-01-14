@@ -24,7 +24,10 @@ use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{rumtk_web_fetch, rumtk_web_load_conf};
+use crate::{
+    rumtk_web_fetch, rumtk_web_get_text_item, rumtk_web_load_conf, rumtk_web_render_html,
+    HTMLResult, SharedAppConf, URLParams, URLPath,
+};
 
 use crate::pages::UserPages;
 use axum::routing::get;
@@ -45,18 +48,18 @@ pub struct Args {
     /// bundled with your app.
     ///
     #[arg(short, long, default_value = "")]
-    title: RUMString,
+    pub title: RUMString,
     ///
     /// Website description string. It can be omitted if defined in the app.json config file
     /// bundled with your app.
     ///
     #[arg(short, long, default_value = "")]
-    description: RUMString,
+    pub description: RUMString,
     ///
     /// Copyright year to display in website.
     ///
     #[arg(short, long, default_value = "")]
-    copyright: RUMString,
+    pub copyright: RUMString,
     ///
     /// Directory to scan on startup to find custom CSS sources to bundle into a minified CSS file
     /// that can be quickly pulled by the app client side.
@@ -66,7 +69,7 @@ pub struct Args {
     /// turn off component level ```custom_css_enabled``` option in the ```app.json``` config.
     ///
     #[arg(short, long, default_value = DEFAULT_OUT_CSS_DIR)]
-    css_source_dir: RUMString,
+    pub css_source_dir: RUMString,
     ///
     /// Is the interface meant to be bound to the loopback address and remain hidden from the
     /// outside world.
@@ -76,17 +79,17 @@ pub struct Args {
     /// If a NIC IP is defined via `--ip`, that value will override this flag.
     ///
     #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
-    ip: RUMString,
+    pub ip: RUMString,
     ///
     /// How many threads to use to serve the website. By default, we use
     /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
     /// cpus available. We use the system's total count of cpus by default.
     ///
     #[arg(short, long, default_value_t = get_default_system_thread_count())]
-    threads: usize,
+    pub threads: usize,
 }
 
-pub async fn run_app(args: &Args) {
+pub async fn run_app(args: &Args, skip_serve: bool) {
     let state = rumtk_web_load_conf!(&args);
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
@@ -115,9 +118,11 @@ pub async fn run_app(args: &Args) {
         .expect("There was an issue biding the listener.");
     println!("listening on {}", listener.local_addr().unwrap());
 
-    axum::serve(listener, app)
-        .await
-        .expect("There was an issue with the server.");
+    if !skip_serve {
+        axum::serve(listener, app)
+            .await
+            .expect("There was an issue with the server.");
+    }
 }
 
 ///
@@ -143,30 +148,147 @@ pub async fn run_app(args: &Args) {
 ///
 /// App is served with the best compression algorithm allowed by the client browser.
 ///
+/// For testing purposes, the function
+///
+/// ## Example Usage
+///
+/// ### With Page and Component definition
+/// ```
+///     use rumtk_web::{
+///         rumtk_web_run_app,
+///         rumtk_web_render_component,
+///         rumtk_web_render_html,
+///         rumtk_web_get_text_item
+///     };
+///     use rumtk_web::{SharedAppConf, RenderedPageComponents};
+///     use rumtk_web::{URLPath, URLParams, HTMLResult, RUMString};
+///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
+///
+///     use askama::Template;
+///
+///     // About page
+///     pub fn about(app_state: SharedAppConf) -> RenderedPageComponents {
+///         let title_coop = rumtk_web_render_component!("title", [("type", "coop_values")], app_state.clone());
+///         let title_team = rumtk_web_render_component!("title", [("type", "meet_the_team")], app_state.clone());
+///     
+///         let text_card_story = rumtk_web_render_component!("text_card", [("type", "story")], app_state.clone());
+///         let text_card_coop = rumtk_web_render_component!("text_card", [("type", "coop_values")], app_state.clone());
+///     
+///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), ("type", "personnel")], app_state.clone());
+///     
+///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state.clone());
+///     
+///         vec![
+///             text_card_story,
+///             spacer_5.clone(),
+///             title_coop,
+///             text_card_coop,
+///             spacer_5,
+///             title_team,
+///             portrait_card
+///         ]
+///     }
+///
+///     //Custom component
+///     #[derive(Template, Debug)]
+///     #[template(
+///             source = "
+///                <style>
+///
+///                </style>
+///                {% if custom_css_enabled %}
+///                    <link href='/static/components/div.css' rel='stylesheet'>
+///                {% endif %}
+///                <div class='div-{{css_class}}'>{{contents|safe}}</div>
+///            ",
+///            ext = "html"
+///     )]
+///     struct MyDiv {
+///         contents: RUMString,
+///         css_class: RUMString,
+///         custom_css_enabled: bool,
+///     }
+///
+///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
+///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+///
+///         let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+///
+///         rumtk_web_render_html!(MyDiv {
+///             contents: RUMString::from(contents),
+///             css_class: RUMString::from(css_class),
+///             custom_css_enabled
+///         })
+///     }
+///
+///     //Requesting to immediately exit instead of indefinitely serving pages so this example can be used as a unit test.
+///     let skip_serve = false;
+///
+///     let result = rumtk_web_run_app!(
+///         &vec![("about", about)],
+///         &vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
+///         skip_serve //Omit in production code. This is used so that this example can work as a unit test.
+///     );
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     ( $pages:expr ) => {{
+        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
+        use $crate::app::Args;
+        use $crate::utils::run_app;
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
         };
+
+        use clap::Parser;
+
         let args = Args::parse();
 
-        rumtk_web_init_components!(vec![]);
+        rumtk_web_init_components!(&vec![]);
         rumtk_web_init_pages!($pages);
         rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        run_app(args).await;
+        let rt = rumtk_init_threads!(&args.threads);
+        rumtk_resolve_task!(rt, run_app(&args, false));
     }};
     ( $pages:expr, $components:expr ) => {{
+        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
+        use $crate::app::Args;
+        use $crate::utils::run_app;
         use $crate::{
             rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
         };
+
+        use clap::Parser;
+
         let args = Args::parse();
 
         rumtk_web_init_components!($components);
         rumtk_web_init_pages!($pages);
         rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
-        run_app(args);
+        let rt = rumtk_init_threads!(&args.threads);
+        rumtk_resolve_task!(rt, run_app(&args, false));
+    }};
+    ( $pages:expr, $components:expr, $skip_serve:expr ) => {{
+        use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
+        use $crate::app::Args;
+        use $crate::utils::run_app;
+        use $crate::{
+            rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages,
+        };
+
+        use clap::Parser;
+
+        let args = Args::parse();
+
+        rumtk_web_init_components!($components);
+        rumtk_web_init_pages!($pages);
+        rumtk_web_compile_css_bundle!(&args.css_source_dir);
+
+        let rt = rumtk_init_threads!(&args.threads);
+        rumtk_resolve_task!(rt, run_app(&args, $skip_serve));
     }};
 }

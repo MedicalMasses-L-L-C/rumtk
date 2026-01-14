@@ -100,6 +100,7 @@ macro_rules! rumtk_web_compile_css_bundle {
     }};
     ( $static_dir_path:expr ) => {{
         use $crate::css::{bundle_css, collect_css_sources};
+        use $crate::css::{DEFAULT_OUT_CSS, DEFAULT_OUT_CSS_DIR};
         let sources = collect_css_sources($static_dir_path, 0);
         bundle_css(&sources, DEFAULT_OUT_CSS_DIR, DEFAULT_OUT_CSS);
     }};
