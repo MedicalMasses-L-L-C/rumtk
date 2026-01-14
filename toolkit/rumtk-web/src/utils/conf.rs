@@ -44,7 +44,7 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 /// at runtime. The settings will dictate a few key project behaviors such as properly labeling
 /// some components with the company name or use the correct language text.
 ///
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
@@ -105,19 +105,21 @@ pub type RouterAppConf = State<Arc<Mutex<AppConf>>>;
 
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
-    ( $args:expr ) => {{ rumtk_web_load_conf!($args, "./app.json") }};
+    ( $args:expr ) => {{
+        rumtk_web_load_conf!($args, "./app.json")
+    }};
     ( $args:expr, $path:expr ) => {{
-        use rumtk_core::rumtk_deserialize;
+        use rumtk_core::strings::RUMStringConversions;
+        use rumtk_core::{rumtk_deserialize, rumtk_serialize};
         use std::fs::read_to_string;
         use std::sync::{Arc, Mutex};
         use $crate::utils::AppConf;
+
         let json = match read_to_string($path) {
             Ok(json) => json,
-            Err(err) => panic!(
-                "The App config file in {} is either missing or cannot be loaded because {}",
-                $path, err
-            ),
+            Err(err) => rumtk_serialize!(AppConf::default())?,
         };
+
         let mut conf: AppConf = match rumtk_deserialize!(json) {
             Ok(conf) => conf,
             Err(err) => panic!(

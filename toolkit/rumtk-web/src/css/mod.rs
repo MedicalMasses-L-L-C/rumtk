@@ -69,7 +69,12 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
 
 pub fn collect_css_sources(root: &str, depth: u8) -> Vec<String> {
     let mut files = Vec::<String>::new();
-    let dirs = fs::read_dir(root).unwrap();
+
+    let dirs = match fs::read_dir(root) {
+        Ok(dirs) => dirs,
+        Err(_) => return files,
+    };
+
     for dir_entry in dirs {
         let dir = dir_entry.unwrap();
         let dir_name = dir.file_name().into_string().unwrap();

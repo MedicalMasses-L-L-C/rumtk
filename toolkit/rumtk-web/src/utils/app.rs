@@ -241,7 +241,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool
 ///     }
 ///
 ///     //Requesting to immediately exit instead of indefinitely serving pages so this example can be used as a unit test.
-///     let skip_serve = false;
+///     let skip_serve = true;
 ///
 ///     let result = rumtk_web_run_app!(
 ///         vec![("about", about)],
