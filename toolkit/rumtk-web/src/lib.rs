@@ -24,6 +24,8 @@ pub mod pages;
 pub mod static_components;
 pub mod utils;
 
+pub use utils::*;
+
 ///
 /// Add utils unit tests here to ensure internal functions work.
 ///
