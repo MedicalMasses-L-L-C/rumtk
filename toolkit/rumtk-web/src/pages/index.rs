@@ -22,15 +22,8 @@ use crate::{RenderedPageComponents, SharedAppConf};
 use rumtk_core::strings::RUMString;
 
 const DEFAULT_INDEX_PAGE_HTML: &str = r"
-        <!DOCTYPE html>
-            <head>
-                <title>Dashboard Index</title>
-            </head>
-            <body>
-                <h1>Hello World!</h1>
-                <h2>If you are seeing this message, you have not registered your index page!</h2>
-            </body>
-        </html>
+        <h1>Hello World!</h1>
+        <h2>If you are seeing this message, you have not registered your index page!</h2>
     ";
 
 pub fn index(app_state: SharedAppConf) -> RenderedPageComponents {

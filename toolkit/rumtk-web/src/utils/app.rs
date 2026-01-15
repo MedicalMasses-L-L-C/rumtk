@@ -252,6 +252,11 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool
 ///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
+    (  ) => {{
+        use $crate::utils::app::app_main;
+
+        app_main(&vec![], &vec![], false)
+    }};
     ( $pages:expr ) => {{
         use $crate::utils::app::app_main;
 
