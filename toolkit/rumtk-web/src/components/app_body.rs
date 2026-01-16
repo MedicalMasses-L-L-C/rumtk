@@ -49,11 +49,11 @@ fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
         <body class='f12 {{theme}}'>
             {{header|safe}}
             <div class='' id='content'>
-                <div class='padbottom20'>
+                <div class='padding-bottom-200'>
     
                 </div>
                 {{body|safe}}
-                <div class='padbottom5'>
+                <div class='padding-bottom-50'>
     
                 </div>
             </div>

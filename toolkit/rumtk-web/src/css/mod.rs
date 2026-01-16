@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use minifier::css::minify;
-use rumtk_core::strings::RUMString;
-use std::fs;
-use std::path;
+use rumtk_core::hash::has_same_hash;
+use rumtk_core::strings::{RUMString, RUMStringConversions};
+use std::{fs, path};
 
 mod animations;
 mod basic;
@@ -57,13 +57,20 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
         .expect("Could not create path to CSS file!")
         .to_string();
 
-    if let Ok(exists) = fs::exists(&out_path) {
-        if !exists {
-            let minified = minify(&css)
-                .expect("Failed to minify the CSS contents!")
-                .to_string();
-            fs::write(&out_path, minified).expect("Failed to write to CSS file!");
-        }
+    let minified = minify(&css)
+        .expect("Failed to minify the CSS contents!")
+        .to_string();
+
+    let write_css = fs::exists(&out_path).unwrap_or(true)
+        || has_same_hash(
+            &css,
+            &fs::read_to_string(&out_path)
+                .unwrap_or_default()
+                .to_rumstring(),
+        );
+
+    if write_css {
+        fs::write(&out_path, minified).expect("Failed to write to CSS file!");
     }
 }
 

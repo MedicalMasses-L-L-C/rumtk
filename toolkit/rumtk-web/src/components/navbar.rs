@@ -122,12 +122,12 @@ use std::collections::HashMap;
                     <h3 class='brand-name'> {{company}}</h3>
                 </a>
             </div>
-            <div class='navbar-{{ css_class }}-navactions gap0.10'>
+            <div class='navbar-{{ css_class }}-navactions gap-10'>
                 {% for item in nav_links %}
                 {{item|safe}}
                 {% endfor %}
             </div>
-            <div class='navbar-{{ css_class }}-misc gap0.10'>
+            <div class='navbar-{{ css_class }}-misc gap-10'>
             </div>
         </div>
     ",

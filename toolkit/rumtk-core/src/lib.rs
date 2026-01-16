@@ -29,6 +29,7 @@
 pub mod cache;
 pub mod cli;
 pub mod core;
+pub mod hash;
 pub mod json;
 pub mod log;
 pub mod maths;

@@ -21,59 +21,59 @@
 
 pub const GAP_CSS: &str = r"
 
-        .padbottom0.5 {
+        .padding-bottom-5 {
             padding-bottom: 5px;
         }
 
-        .padbottom0.10 {
+        .padding-bottom-10 {
             padding-bottom: 10px;
         }
 
-        .padbottom5 {
+        .padding-bottom-50 {
             padding-bottom: 50px;
         }
         
-        .padbottom10 {
+        .padding-bottom-100 {
             padding-bottom: 100px;
         }
         
-        .padbottom5 {
+        .padding-bottom-150 {
             padding-bottom: 150px;
         }
         
-        .padbottom20 {
+        .padding-bottom-200 {
             padding-bottom: 200px;
         }
         
-        .padbottom30 {
+        .padding-bottom-300 {
             padding-bottom: 300px;
         }
 
-        .gap0.5 {
-            padding-bottom: 5px;
+        .gap-5 {
+            gap: 5px;
         }
 
-        .gap0.10 {
-            padding-bottom: 10px;
+        .gap-10 {
+            gap: 10px;
         }
 
-        .gap5 {
-            padding-bottom: 50px;
+        .gap-50 {
+            gap: 50px;
         }
 
-        .gap10 {
-            padding-bottom: 100px;
+        .gap-100 {
+            gap: 100px;
         }
 
-        .gap15 {
-            padding-bottom: 150px;
+        .gap-150 {
+            gap: 150px;
         }
 
-        .gap20 {
-            padding-bottom: 200px;
+        .gap-200 {
+            gap: 200px;
         }
 
-        .gap30 {
-            padding-bottom: 300px;
+        .gap-300 {
+            gap: 300px;
         }
     ";

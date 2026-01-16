@@ -49,7 +49,7 @@ type SocialsList = Vec<Social>;
         {% if custom_css_enabled %}
             <link href='/static/components/socials.css' rel='stylesheet'>
         {% endif %}
-        <div class='socials-{{ css_class }}-container gap0.10'>
+        <div class='socials-{{ css_class }}-container gap-10'>
           {% for icon in icons %}
             <a href='{{icon.url}}' aria-label='link-{{icon.name}}' class='f20 {{icon.icon}}'> </a>
           {% endfor %}
