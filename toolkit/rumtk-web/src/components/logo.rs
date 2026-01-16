@@ -54,7 +54,7 @@ pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
     let diamond = rumtk_web_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     rumtk_web_render_html!(Logo {
         diamond,

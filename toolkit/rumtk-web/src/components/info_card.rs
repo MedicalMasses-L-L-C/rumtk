@@ -71,7 +71,7 @@ pub fn info_card(_path_components: URLPath, params: URLParams, state: SharedAppC
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
     let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());

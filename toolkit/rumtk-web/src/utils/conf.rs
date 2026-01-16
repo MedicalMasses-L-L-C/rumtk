@@ -25,7 +25,7 @@ use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, RwLock};
 
 pub type TextMap = HashMap<RUMString, RUMString>;
 pub type NestedTextMap = HashMap<RUMString, TextMap>;
@@ -36,6 +36,19 @@ pub type RootRootNestedNestedTextMap = HashMap<RUMString, RootNestedNestedTextMa
 pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
 pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNestedTextMap>;
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
+pub struct HeaderConf {
+    pub logo_size: RUMString,
+    pub disable_navlinks: bool,
+    pub disable_logo: bool,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
+pub struct FooterConf {
+    pub socials_list: RUMString,
+    pub enable_contact_button: bool,
+}
 
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
@@ -52,6 +65,8 @@ pub struct AppConf {
     pub lang: RUMString,
     pub theme: RUMString,
     pub custom_css: bool,
+    pub header_conf: HeaderConf,
+    pub footer_conf: FooterConf,
 
     strings: RootRootNestedNestedTextMap,
     config: NestedNestedTextMap,
@@ -100,8 +115,8 @@ impl AppConf {
     }
 }
 
-pub type SharedAppConf = Arc<Mutex<AppConf>>;
-pub type RouterAppConf = State<Arc<Mutex<AppConf>>>;
+pub type SharedAppConf = Arc<RwLock<AppConf>>;
+pub type RouterAppConf = State<Arc<RwLock<AppConf>>>;
 
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
@@ -112,7 +127,7 @@ macro_rules! rumtk_web_load_conf {
         use rumtk_core::strings::RUMStringConversions;
         use rumtk_core::{rumtk_deserialize, rumtk_serialize};
         use std::fs::read_to_string;
-        use std::sync::{Arc, Mutex};
+        use std::sync::{Arc, RwLock};
         use $crate::utils::AppConf;
 
         let json = match read_to_string($path) {
@@ -133,14 +148,14 @@ macro_rules! rumtk_web_load_conf {
             $args.description.clone(),
             $args.copyright.clone(),
         );
-        Arc::new(Mutex::new(conf))
+        Arc::new(RwLock::new(conf))
     }};
 }
 
 #[macro_export]
 macro_rules! rumtk_web_get_string {
     ( $conf:expr, $item:expr ) => {{
-        let owned_state = $conf.lock().expect("Lock failure");
+        let owned_state = $conf.read().expect("Lock failure");
         owned_state.get_text($item)
     }};
 }
@@ -148,7 +163,7 @@ macro_rules! rumtk_web_get_string {
 #[macro_export]
 macro_rules! rumtk_web_get_conf {
     ( $conf:expr, $item:expr ) => {{
-        let owned_state = $conf.lock().expect("Lock failure");
+        let owned_state = $conf.read().expect("Lock failure");
         owned_state.get_conf($item)
     }};
 }

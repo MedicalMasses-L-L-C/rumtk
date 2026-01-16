@@ -60,7 +60,7 @@ pub fn item_card(_path_components: URLPath, params: URLParams, state: SharedAppC
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let services = rumtk_web_get_conf!(state, typ);
 
-    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     rumtk_web_render_html!(ItemCard {
         services,

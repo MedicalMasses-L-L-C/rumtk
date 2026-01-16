@@ -41,7 +41,7 @@ pub struct Meta {
 }
 
 pub fn meta(state: SharedAppConf) -> HTMLResult {
-    let owned_state = state.lock().expect("Lock failure");
+    let owned_state = state.read().expect("Lock failure");
 
     rumtk_web_render_html!(Meta {
         title: owned_state.title.clone(),

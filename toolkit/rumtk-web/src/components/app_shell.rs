@@ -48,8 +48,8 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppCo
     //owned_state.opts = *params.clone();
 
     //Config App
-    state.lock().expect("Lock failure").lang = RUMString::from(lang);
-    state.lock().expect("Lock failure").theme = RUMString::from(theme);
+    state.write().expect("Lock failure").lang = RUMString::from(lang);
+    state.write().expect("Lock failure").theme = RUMString::from(theme);
 
     //Let's render the head component
     let head = rumtk_web_render_component!(|| -> HTMLResult {

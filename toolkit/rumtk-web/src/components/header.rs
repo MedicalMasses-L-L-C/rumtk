@@ -53,7 +53,7 @@ use std::collections::HashMap;
             </div>
             <div class='header-{{ css_class }}-navactions gap-10'>
                 {% for item in nav_links %}
-                {{item|safe}}
+                    {{item|safe}}
                 {% endfor %}
             </div>
             <div class='header-{{ css_class }}-misc gap-10'>
@@ -92,16 +92,41 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMStr
 pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let company = state.lock().expect("Lock failure").title.clone();
-    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let company = state.read().expect("Lock failure").title.clone();
+    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
     let en_link = rumtk_web_get_text_item!(&links_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
     let nav_keys = en_link.keys().collect::<Vec<&RUMString>>();
-    let nav_links = get_nav_links(&nav_keys, state.clone());
+    let nav_links = match state
+        .read()
+        .expect("Lock failure")
+        .header_conf
+        .disable_navlinks
+    {
+        true => vec![],
+        false => get_nav_links(&nav_keys, state.clone()),
+    };
 
-    let logo =
-        rumtk_web_render_component!("logo", [("type", "diamond"), ("class", "small")], state);
+    let logo = match state.read().expect("Lock failure").header_conf.disable_logo {
+        true => RUMString::default(),
+        false => rumtk_web_render_component!(
+            "logo",
+            [
+                ("type", "diamond"),
+                (
+                    "class",
+                    state
+                        .read()
+                        .expect("Lock failure")
+                        .header_conf
+                        .logo_size
+                        .as_str()
+                ),
+            ],
+            state
+        ),
+    };
 
     rumtk_web_render_html!(Header {
         company: RUMString::from(company),

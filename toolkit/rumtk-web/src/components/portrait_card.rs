@@ -112,7 +112,7 @@ pub fn portrait_card(
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let icon_data = get_portrait_grid(section, typ, &state);
 
-    let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     rumtk_web_render_html!(PortraitCard {
         icon_data,
