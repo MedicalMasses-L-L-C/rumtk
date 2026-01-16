@@ -23,7 +23,7 @@
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{
-    rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_get_text_item,
+    rumtk_web_get_param, rumtk_web_get_text_item,
     rumtk_web_render_component, rumtk_web_render_html,
 };
 use askama::Template;
@@ -31,11 +31,11 @@ use askama::Template;
 #[derive(Template)]
 #[template(
     source = "
-        <main>
+        <div>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
-        </main>
+        </div>
     ",
     ext = "html"
 )]
@@ -51,16 +51,9 @@ fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
 #[template(
     source = "
         <body class='f12 theme-{{theme}}'>
+            <a href='#main-content'>Skip to main content</a>
             {{header|safe}}
-            <div class='' id='content'>
-                <div class='padding-bottom-200'>
-    
-                </div>
-                {{body|safe}}
-                <div class='padding-bottom-50'>
-    
-                </div>
-            </div>
+            {{main|safe}}
             {{footer|safe}}
         </body>
     ",
@@ -69,7 +62,7 @@ fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
 pub struct AppBody {
     theme: RUMString,
     header: RUMString,
-    body: RUMString,
+    main: RUMString,
     footer: RUMString,
 }
 
@@ -78,14 +71,10 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
         rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
     let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
 
-    //Let's render the body to html
-    let body_components = rumtk_web_collect_page!(page, state);
-    let body =
-        rumtk_web_render_component!(|| -> HTMLResult { app_body_contents(&body_components) });
-
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
     let header = rumtk_web_render_component!("header", [("", "")], state);
+    let main = rumtk_web_render_component!("main", [("", "")], state);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
     let footer = rumtk_web_render_component!(
         "footer",
@@ -104,7 +93,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
     rumtk_web_render_html!(AppBody {
         theme: RUMString::from(theme),
         header,
-        body,
+        main,
         footer
     })
 }

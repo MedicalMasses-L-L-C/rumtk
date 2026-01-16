@@ -42,6 +42,7 @@ mod info_card;
 mod item_card;
 mod label;
 mod logo;
+mod main;
 mod navlink;
 mod portrait_card;
 mod socials;
@@ -77,6 +78,7 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("portrait_card", portrait_card::portrait_card);
     register_component("title", title::title);
     register_component("footer", footer::footer);
+    register_component("main", main::main);
     register_component("header", header::header);
     register_component("contact_card", contact_card::contact_card);
     register_component("contact_button", contact_button::contact_button);

@@ -44,15 +44,13 @@ pub const DEFAULT_CSS: &str = r"
         }
 
         header {
-            flex: 1 0 auto;
         }
 
         main {
-            flex: 2 0 auto;
+            flex: 1;
         }
 
         footer {
-            flex-shrink: 0;
         }
 
     ";

@@ -1,4 +1,3 @@
-use crate::components::{app_body::app_body, app_head::app_head};
 /*
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
@@ -25,6 +24,8 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
+
+use crate::components::{app_body::app_body, app_head::app_head};
 
 #[derive(Template)]
 #[template(
