@@ -29,9 +29,9 @@ use askama::Template;
 #[derive(Template)]
 #[template(
     source = "
-    {% for element in elements %}
-        {{ element|safe }}
-    {% endfor %}
+        {% for element in elements %}
+            {{ element|safe }}
+        {% endfor %}
     ",
     ext = "html"
 )]
