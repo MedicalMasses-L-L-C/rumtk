@@ -22,6 +22,7 @@ pub mod app;
 pub mod conf;
 pub mod defaults;
 pub mod matcher;
+pub mod packaging;
 pub mod render;
 pub mod types;
 

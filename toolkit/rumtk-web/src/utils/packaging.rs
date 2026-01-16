@@ -18,17 +18,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use std::hash::{DefaultHasher, Hash, Hasher};
 
-pub fn hash_data<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
+use minifier::{css, html, js, json};
+use rumtk_core::core::RUMResult;
+use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
+
+pub enum Asset<'a> {
+    CSS(&'a str),
+    HTML(&'a str),
+    JSON(&'a str),
+    JS(&'a str),
 }
 
-pub fn has_same_hash<T: Hash>(lhs: &T, rhs: &T) -> bool {
-    let lhs_hash = hash_data(lhs);
-    let rhs_hash = hash_data(rhs);
-    println!("{} == {}", &lhs_hash, &rhs_hash);
-    lhs_hash == rhs_hash
+pub fn minify_asset(asset: Asset) -> RUMResult<RUMString> {
+    match asset {
+        Asset::CSS(css) => match css::minify(&css) {
+            Ok(css) => Ok(css.to_compact_string()),
+            Err(err) => Err(err.to_rumstring()),
+        },
+        Asset::HTML(html) => Ok(html::minify(&html).to_compact_string()),
+        Asset::JSON(json) => Ok(json::minify(&json).to_compact_string()),
+        Asset::JS(js) => Ok(js::minify(&js).to_compact_string()),
+    }
 }

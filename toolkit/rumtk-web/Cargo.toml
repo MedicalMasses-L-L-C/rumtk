@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-web"
 description = "Web framework part of the RUMTK framework that attempts to simplify and expedite dashboard development in Healthcare."
-version = "0.2.0"
+version = "0.2.1"
 readme = "README.md"
 license = "LGPL-2.1"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-web"
@@ -10,7 +10,7 @@ repository = "https://github.com/luissantosHCIT/rumtk"
 keywords = ["rumtk", "healthcare", "web", "framework"]
 categories = ["parsing", "science", "web-programming", "template-engine"]
 edition = "2021"
-rust-version = "1.79.0"
+rust-version = "1.81.0"
 
 [dependencies]
 rumtk-core = { version = "0.9.12", path = "../rumtk-core" }
@@ -26,4 +26,4 @@ pulldown-cmark = "0.13.0"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.145"
 chrono = "0.4.39"
-minifier = "0.3.6"
+minifier = { version = "0.3.6", features = ["html"] }

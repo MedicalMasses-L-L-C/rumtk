@@ -18,7 +18,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use minifier::css::minify;
+use crate::utils::packaging::{minify_asset, Asset};
 use rumtk_core::hash::has_same_hash;
 use rumtk_core::strings::{RUMString, RUMStringConversions};
 use std::{fs, path};
@@ -57,19 +57,20 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
         .expect("Could not create path to CSS file!")
         .to_string();
 
-    let minified = minify(&css)
+    let minified = minify_asset(Asset::CSS(&css))
         .expect("Failed to minify the CSS contents!")
-        .to_string();
+        .to_rumstring();
 
-    let write_css = fs::exists(&out_path).unwrap_or(true)
+    let skip_write_css = fs::exists(&out_path).unwrap_or_default()
         || has_same_hash(
-            &css,
+            &minified,
             &fs::read_to_string(&out_path)
                 .unwrap_or_default()
                 .to_rumstring(),
         );
 
-    if write_css {
+    if !skip_write_css {
+        println!("Generated minified CSS file!");
         fs::write(&out_path, minified).expect("Failed to write to CSS file!");
     }
 }
