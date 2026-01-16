@@ -29,6 +29,7 @@ mod default;
 mod fonts;
 mod gap;
 mod index;
+mod layout;
 mod theme;
 
 pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
@@ -44,6 +45,7 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
     css += fonts::FONTS_CSS;
     css += gap::GAP_CSS;
     css += animations::ANIMATIONS_CSS;
+    css += layout::LAYOUT;
 
     for source in sources {
         let css_data = fs::read_to_string(source).unwrap_or_default();

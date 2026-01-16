@@ -21,6 +21,10 @@
 
 pub const DEFAULT_CSS: &str = r"
 
+        html, body {
+          height: 100%;
+        }
+
         pre {
             max-width: 100%;
             white-space: pre-wrap;
@@ -35,6 +39,18 @@ pub const DEFAULT_CSS: &str = r"
         
         img {
             max-width: 100%;
+        }
+
+        header {
+            flex: 1 0 auto;
+        }
+
+        main {
+            flex: 2 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
         }
 
     ";

@@ -36,7 +36,14 @@ struct NavItem<'a> {
 #[template(
     source = "
         <style>
+            .navlink:link, .navlink:visited {
+                color: var(--color-navlink);
+            }
 
+            .navlink:hover {
+                background-color: var(--color-darkpurple);
+                border-radius: 10px;
+            }
         </style>
         {% if custom_css_enabled %}
             <link href='/static/components/navlink.css' rel='stylesheet'>

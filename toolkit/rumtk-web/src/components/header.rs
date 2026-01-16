@@ -35,99 +35,28 @@ use std::collections::HashMap;
 #[template(
     source = "
         <style>
-            .navbar-default-container {
-                position: fixed;
-                top: 0;
-
-                padding: 1em;
-
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-
-                align-items: center;
-                justify-content: space-between;
-                justify-items: center;
-
-                background-color: var(--color-indigo);
-                border-bottom: var(--color-turqoise) 0.1em solid;
-
-                width: 100%;
-                backdrop-filter: blur(5px);
-
-                opacity: 0.9;
-                height: fit-content;
-
-                z-index: var(--top-layer);
-            }
-
-            .navbar-default-navlogo {
-                position: relative;
-                left: 0;
-                min-width: 64px;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-            }
-
-            .navbar-default-navactions {
-                position: relative;
-
-                align-self: center;
-                width: fit-content;
-                min-width: 200px;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                justify-items: center;
-
-                padding: 10px;
-            }
-
-            .navbar-default-misc {
-                position: relative;
-                right: 0;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                width: 17.5%;
-            }
-
-            .navlink:link, .navlink:visited {
-                color: var(--color-navlink);
-            }
-
-            .navlink:hover {
-                background-color: var(--color-darkpurple);
-                border-radius: 10px;
-            }
-
             .brand-name {
                 background-image: linear-gradient(to right, var(--color-darkpurple), var(--color-ticklemepink), var(--color-cerulean), var(--color-turqoise));
                 background-clip: text;
                 color: transparent;
             }
-
         </style>
         {% if custom_css_enabled %}
-            <link href='/static/components/navbar.css' rel='stylesheet'>
+            <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}
-        <header class='navbar-{{ css_class }}-container'>
-            <div class='navbar-{{ css_class }}-navlogo'>
+        <header class='header-{{ css_class }}-container'>
+            <div class='header-{{ css_class }}-navlogo'>
                 <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
                     {{logo|safe}}
                     <h3 class='brand-name'> {{company}}</h3>
                 </a>
             </div>
-            <div class='navbar-{{ css_class }}-navactions gap-10'>
+            <div class='header-{{ css_class }}-navactions gap-10'>
                 {% for item in nav_links %}
                 {{item|safe}}
                 {% endfor %}
             </div>
-            <div class='navbar-{{ css_class }}-misc gap-10'>
+            <div class='header-{{ css_class }}-misc gap-10'>
             </div>
         </header>
     ",
