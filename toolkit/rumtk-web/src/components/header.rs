@@ -45,12 +45,14 @@ use std::collections::HashMap;
             <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}
         <header class='header-{{ css_class }}-container'>
+            {% if !disable_logo %}
             <div class='header-{{ css_class }}-navlogo'>
                 <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
                     {{logo|safe}}
                     <h3 class='brand-name'> {{company}}</h3>
                 </a>
             </div>
+            {% endif %}
             <div class='header-{{ css_class }}-navactions gap-10'>
                 {% for item in nav_links %}
                     {{item|safe}}
@@ -68,6 +70,7 @@ pub struct Header {
     nav_links: Vec<RUMString>,
     css_class: RUMString,
     custom_css_enabled: bool,
+    disable_logo: bool,
 }
 
 fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMString> {
@@ -108,7 +111,8 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf
         false => get_nav_links(&nav_keys, state.clone()),
     };
 
-    let logo = match state.read().expect("Lock failure").header_conf.disable_logo {
+    let disable_logo = state.read().expect("Lock failure").header_conf.disable_logo;
+    let logo = match disable_logo {
         true => RUMString::default(),
         false => rumtk_web_render_component!(
             "logo",
@@ -133,6 +137,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf
         logo,
         nav_links,
         css_class: RUMString::from(css_class),
-        custom_css_enabled
+        custom_css_enabled,
+        disable_logo
     })
 }
