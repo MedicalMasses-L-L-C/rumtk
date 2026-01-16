@@ -49,7 +49,7 @@ pub struct HeaderConf {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
 pub struct FooterConf {
     pub socials_list: RUMString,
-    pub enable_contact_button: bool,
+    pub disable_contact_button: bool,
 }
 
 ///

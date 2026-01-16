@@ -69,15 +69,23 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppConf
     let company = state.read().expect("Lock failure").title.clone();
     let copyright = state.read().expect("Lock failure").copyright.clone();
 
-    let contact_button = rumtk_web_render_component!(
-        "contact_button",
-        [
-            ("type", "contact"),
-            ("function", "goto_contact"),
-            ("class", "centered")
-        ],
-        state
-    );
+    let contact_button = match state
+        .read()
+        .expect("Lock failure")
+        .footer_conf
+        .disable_contact_button
+    {
+        true => RUMString::default(),
+        false => rumtk_web_render_component!(
+            "contact_button",
+            [
+                ("type", "contact"),
+                ("function", "goto_contact"),
+                ("class", "centered")
+            ],
+            state
+        ),
+    };
     let socials = rumtk_web_render_component!("socials", [("social_list", social_list)], state);
 
     rumtk_web_render_html!(Footer {

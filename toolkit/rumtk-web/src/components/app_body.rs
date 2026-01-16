@@ -87,7 +87,19 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppCon
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
     let header = rumtk_web_render_component!("header", [("", "")], state);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
-    let footer = rumtk_web_render_component!("footer", [("social_list", "linkedin,github")], state);
+    let footer = rumtk_web_render_component!(
+        "footer",
+        [(
+            "social_list",
+            state
+                .read()
+                .expect("Lock failure")
+                .footer_conf
+                .socials_list
+                .clone()
+        )],
+        state
+    );
 
     rumtk_web_render_html!(AppBody {
         theme: RUMString::from(theme),
