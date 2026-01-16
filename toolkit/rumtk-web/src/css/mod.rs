@@ -29,6 +29,7 @@ mod default;
 mod fonts;
 mod gap;
 mod index;
+mod theme;
 
 pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
 pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
@@ -36,6 +37,7 @@ pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
 pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
     let mut css: RUMString = RUMString::default();
 
+    css += theme::THEME;
     css += index::BODY;
     css += basic::BASIC_CSS;
     css += default::DEFAULT_CSS;

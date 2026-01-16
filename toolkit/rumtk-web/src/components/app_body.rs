@@ -48,7 +48,7 @@ fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
 #[derive(Template)]
 #[template(
     source = "
-        <body class='f12 {{theme}}'>
+        <body class='f12 theme-{{theme}}'>
             {{header|safe}}
             <div class='' id='content'>
                 <div class='padding-bottom-200'>

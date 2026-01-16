@@ -29,8 +29,8 @@ use askama::Template;
     source = "
         <!DOCTYPE html>
         <html lang='{{lang}}'>
-        {{head|safe}}
-        {{body|safe}}
+            {{head|safe}}
+            {{body|safe}}
         </html>
     ",
     ext = "html"

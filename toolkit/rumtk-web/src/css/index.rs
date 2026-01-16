@@ -22,6 +22,9 @@
 pub const BODY: &str = r"
 
     body {
+        display: flex;
+        flex-direction: column;
+        
         background-color: var(--color-jaguar);
         color: white;
     
