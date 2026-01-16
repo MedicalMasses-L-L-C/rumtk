@@ -88,7 +88,7 @@ pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppConf)
     let text_store = rumtk_web_get_string!(state, SECTION_TITLES);
     let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &NestedTextMap::default());
     let itm = rumtk_web_get_text_item!(&en_text, typ, &TextMap::default());
-    let text = RUMString::from(rumtk_web_get_text_item!(&itm, "title", ""));
+    let text = RUMString::from(rumtk_web_get_text_item!(&itm, "title", typ));
 
     rumtk_web_render_html!(Title {
         typ: RUMString::from(typ),

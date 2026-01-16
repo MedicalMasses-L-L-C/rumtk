@@ -109,7 +109,11 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf
         .header_conf
         .disable_navlinks
     {
-        true => vec![],
+        true => vec![rumtk_web_render_component!(
+            "title",
+            [("type", &state.read().expect("Lock failure").title.clone())],
+            state
+        )],
         false => get_nav_links(&nav_keys, state.clone()),
     };
 
