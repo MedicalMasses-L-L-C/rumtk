@@ -97,7 +97,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMStr
 pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let company = state.read().expect("Lock failure").title.clone();
+    let company = state.read().expect("Lock failure").company.clone();
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
