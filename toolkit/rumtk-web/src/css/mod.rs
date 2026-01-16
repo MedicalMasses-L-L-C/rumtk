@@ -61,8 +61,9 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
         .expect("Failed to minify the CSS contents!")
         .to_rumstring();
 
-    let skip_write_css = fs::exists(&out_path).unwrap_or_default()
-        || has_same_hash(
+    let file_exists = fs::exists(&out_path).unwrap_or_default();
+    let skip_write_css = file_exists
+        && has_same_hash(
             &minified,
             &fs::read_to_string(&out_path)
                 .unwrap_or_default()
@@ -87,7 +88,7 @@ pub fn collect_css_sources(root: &str, depth: u8) -> Vec<String> {
         let dir = dir_entry.unwrap();
         let dir_name = dir.file_name().into_string().unwrap();
         let dir_path = dir.path().to_str().unwrap().to_string();
-        if dir_name.ends_with(".css") {
+        if dir_name.ends_with(".css") && dir_name != DEFAULT_OUT_CSS {
             files.push(dir_path.clone());
         }
 

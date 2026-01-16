@@ -29,6 +29,5 @@ pub fn hash_data<T: Hash>(t: &T) -> u64 {
 pub fn has_same_hash<T: Hash>(lhs: &T, rhs: &T) -> bool {
     let lhs_hash = hash_data(lhs);
     let rhs_hash = hash_data(rhs);
-    println!("{} == {}", &lhs_hash, &rhs_hash);
     lhs_hash == rhs_hash
 }
