@@ -44,6 +44,7 @@ pub async fn default_page_matcher(
         None => Vec::new(),
     };
 
+    // Do not minify the page. we saved 0.3KB but transfer went from 5ms to 45ms
     app_shell(&path_components, &params, state.clone())
 }
 
