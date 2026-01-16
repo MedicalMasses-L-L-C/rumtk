@@ -115,7 +115,7 @@ use std::collections::HashMap;
         {% if custom_css_enabled %}
             <link href='/static/components/navbar.css' rel='stylesheet'>
         {% endif %}
-        <div class='navbar-{{ css_class }}-container'>
+        <header class='navbar-{{ css_class }}-container'>
             <div class='navbar-{{ css_class }}-navlogo'>
                 <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
                     {{logo|safe}}
@@ -129,11 +129,11 @@ use std::collections::HashMap;
             </div>
             <div class='navbar-{{ css_class }}-misc gap-10'>
             </div>
-        </div>
+        </header>
     ",
     ext = "html"
 )]
-pub struct NavBar {
+pub struct Header {
     company: RUMString,
     logo: RUMString,
     nav_links: Vec<RUMString>,
@@ -160,7 +160,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppConf) -> Vec<RUMStr
     nav_links
 }
 
-pub fn navbar(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let company = state.lock().expect("Lock failure").title.clone();
@@ -174,7 +174,7 @@ pub fn navbar(_path_components: URLPath, params: URLParams, state: SharedAppConf
     let logo =
         rumtk_web_render_component!("logo", [("type", "diamond"), ("class", "small")], state);
 
-    rumtk_web_render_html!(NavBar {
+    rumtk_web_render_html!(Header {
         company: RUMString::from(company),
         logo,
         nav_links,

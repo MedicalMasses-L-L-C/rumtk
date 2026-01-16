@@ -40,7 +40,7 @@ use askama::Template;
         {% if custom_css_enabled %}
             <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}
-        <footer class='footer-{{ css_class }}-container'>
+        <footer role='contentinfo' class='footer-{{ css_class }}-container'>
             <p class='f16'>
                 {{company}} &copy; {{copyright}}
             </p>
