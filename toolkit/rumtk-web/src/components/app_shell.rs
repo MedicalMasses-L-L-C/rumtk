@@ -3,6 +3,8 @@ use crate::components::{app_body::app_body, app_head::app_head};
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2025  Luis M. Santos, M.D.
+ * Copyright (C) 2025  Nick Stephenson
+ * Copyright (C) 2025  Ethan Dixon
  * Copyright (C) 2025  MedicalMasses L.L.C.
  *
  * This library is free software; you can redistribute it and/or
