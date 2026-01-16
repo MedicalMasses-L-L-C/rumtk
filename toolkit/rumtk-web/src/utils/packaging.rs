@@ -32,12 +32,12 @@ pub enum Asset<'a> {
 
 pub fn minify_asset(asset: Asset) -> RUMResult<RUMString> {
     match asset {
-        Asset::CSS(css) => match css::minify(&css) {
+        Asset::CSS(css) => match css::minify(css) {
             Ok(css) => Ok(css.to_compact_string()),
             Err(err) => Err(err.to_rumstring()),
         },
-        Asset::HTML(html) => Ok(html::minify(&html).to_compact_string()),
-        Asset::JSON(json) => Ok(json::minify(&json).to_compact_string()),
-        Asset::JS(js) => Ok(js::minify(&js).to_compact_string()),
+        Asset::HTML(html) => Ok(html::minify(html).to_compact_string()),
+        Asset::JSON(json) => Ok(json::minify(json).to_compact_string()),
+        Asset::JS(js) => Ok(js::minify(js).to_compact_string()),
     }
 }
