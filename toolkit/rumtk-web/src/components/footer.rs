@@ -29,18 +29,24 @@ use askama::Template;
 #[template(
     source = "
         <style>
-
+            .footer-default-container, #footer {
+                display: grid;
+                background-color: var(--color-indigo);
+                color: white;
+                padding: 1em;
+                justify-items: center;
+            }
         </style>
         {% if custom_css_enabled %}
             <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}
-        <div class='footer-{{ css_class }}-container'>
+        <footer class='footer-{{ css_class }}-container'>
             <p class='f16'>
                 {{company}} &copy; {{copyright}}
             </p>
             {{button|safe}}
             {{socials|safe}}
-        </div>
+        </footer>
     ",
     ext = "html"
 )]

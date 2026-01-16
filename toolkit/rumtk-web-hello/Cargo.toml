@@ -4,6 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-#rumtk-web = "0.1.0"
-rumtk-web = { path = "../rumtk-web" }
+rumtk-web = { version = "0.2.0", path = "../rumtk-web" }
 tokio = { version = "1.48.0", features = ["full"] }

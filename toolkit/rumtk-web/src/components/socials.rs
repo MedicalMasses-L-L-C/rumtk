@@ -39,12 +39,17 @@ type SocialsList = Vec<Social>;
 #[template(
     source = "
         <style>
-
+            .socials-default-container {
+                display: flex;
+                color: var(--color-bg-white);
+                padding: 1em;
+                filter: contrast(10%);
+            }
         </style>
         {% if custom_css_enabled %}
             <link href='/static/components/socials.css' rel='stylesheet'>
         {% endif %}
-        <div class='socials-{{ css_class }}-container'>
+        <div class='socials-{{ css_class }}-container gap0.10'>
           {% for icon in icons %}
             <a href='{{icon.url}}' aria-label='link-{{icon.name}}' class='f20 {{icon.icon}}'> </a>
           {% endfor %}

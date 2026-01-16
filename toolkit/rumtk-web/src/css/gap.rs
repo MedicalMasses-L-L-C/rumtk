@@ -21,22 +21,58 @@
 
 pub const GAP_CSS: &str = r"
 
-        .gap5 {
+        .padbottom0.5 {
+            padding-bottom: 5px;
+        }
+
+        .padbottom0.10 {
+            padding-bottom: 10px;
+        }
+
+        .padbottom5 {
             padding-bottom: 50px;
         }
         
-        .gap10 {
+        .padbottom10 {
             padding-bottom: 100px;
         }
         
-        .gap15 {
+        .padbottom5 {
             padding-bottom: 150px;
         }
         
-        .gap20 {
+        .padbottom20 {
             padding-bottom: 200px;
         }
         
+        .padbottom30 {
+            padding-bottom: 300px;
+        }
+
+        .gap0.5 {
+            padding-bottom: 5px;
+        }
+
+        .gap0.10 {
+            padding-bottom: 10px;
+        }
+
+        .gap5 {
+            padding-bottom: 50px;
+        }
+
+        .gap10 {
+            padding-bottom: 100px;
+        }
+
+        .gap15 {
+            padding-bottom: 150px;
+        }
+
+        .gap20 {
+            padding-bottom: 200px;
+        }
+
         .gap30 {
             padding-bottom: 300px;
         }

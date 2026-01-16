@@ -82,7 +82,6 @@ use std::collections::HashMap;
                 flex-direction: row;
                 justify-content: space-around;
                 justify-items: center;
-                gap: 1em;
 
                 padding: 10px;
             }
@@ -95,7 +94,6 @@ use std::collections::HashMap;
                 flex-direction: row;
                 justify-content: space-around;
                 width: 17.5%;
-                gap: 1em;
             }
 
             .navlink:link, .navlink:visited {
@@ -124,12 +122,12 @@ use std::collections::HashMap;
                     <h3 class='brand-name'> {{company}}</h3>
                 </a>
             </div>
-            <div class='navbar-{{ css_class }}-navactions'>
+            <div class='navbar-{{ css_class }}-navactions gap0.10'>
                 {% for item in nav_links %}
                 {{item|safe}}
                 {% endfor %}
             </div>
-            <div class='navbar-{{ css_class }}-misc'>
+            <div class='navbar-{{ css_class }}-misc gap0.10'>
             </div>
         </div>
     ",
