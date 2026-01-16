@@ -51,14 +51,19 @@ struct Args {
     /// Website title to use internally. It can be omitted if defined in the app.json config file
     /// bundled with your app.
     ///
-    #[arg(short, long, default_value = "")]
+    #[arg(long, default_value = "")]
     pub title: RUMString,
     ///
     /// Website description string. It can be omitted if defined in the app.json config file
     /// bundled with your app.
     ///
-    #[arg(short, long, default_value = "")]
+    #[arg(long, default_value = "")]
     pub description: RUMString,
+    ///
+    /// Company to display in website.
+    ///
+    #[arg(long, default_value = "")]
+    pub company: RUMString,
     ///
     /// Copyright year to display in website.
     ///

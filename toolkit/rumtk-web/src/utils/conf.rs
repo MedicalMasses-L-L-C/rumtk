@@ -63,6 +63,7 @@ pub struct FooterConf {
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
+    pub company: RUMString,
     pub copyright: RUMString,
     pub lang: RUMString,
     pub theme: RUMString,
@@ -80,10 +81,14 @@ impl AppConf {
         &mut self,
         title: RUMString,
         description: RUMString,
+        company: RUMString,
         copyright: RUMString,
     ) {
         if !title.is_empty() {
             self.title = title;
+        }
+        if !company.is_empty() {
+            self.company = company;
         }
         if !description.is_empty() {
             self.description = description;
@@ -128,13 +133,17 @@ macro_rules! rumtk_web_load_conf {
     ( $args:expr, $path:expr ) => {{
         use rumtk_core::strings::RUMStringConversions;
         use rumtk_core::{rumtk_deserialize, rumtk_serialize};
-        use std::fs::read_to_string;
+        use std::fs;
         use std::sync::{Arc, RwLock};
         use $crate::utils::AppConf;
 
-        let json = match read_to_string($path) {
+        let json = match fs::read_to_string($path) {
             Ok(json) => json,
-            Err(err) => rumtk_serialize!(AppConf::default())?,
+            Err(err) => {
+                let json = rumtk_serialize!(AppConf::default(), true)?;
+                fs::write($path, &json);
+                json
+            }
         };
 
         let mut conf: AppConf = match rumtk_deserialize!(json) {
@@ -148,6 +157,7 @@ macro_rules! rumtk_web_load_conf {
         conf.update_site_info(
             $args.title.clone(),
             $args.description.clone(),
+            $args.company.clone(),
             $args.copyright.clone(),
         );
         Arc::new(RwLock::new(conf))
