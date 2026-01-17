@@ -37,6 +37,8 @@ pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
 
 /**************************** Types *****************************************/
 pub type RUMString = CompactString;
+pub type EscapeException<'a> = (&'a str, &'a str);
+pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
 
 /**************************** Traits ****************************************/
 
@@ -562,10 +564,7 @@ fn number_to_char_unchecked(num: &u32) -> RUMString {
 ///```
 ///
 pub fn escape(unescaped_str: &str) -> RUMString {
-    basic_escape(unescaped_str)
-        .replace("{", "")
-        .replace("}", "")
-        .to_rumstring()
+    basic_escape(unescaped_str, &vec![("{", ""), ("}", "")])
 }
 
 ///
@@ -575,13 +574,17 @@ pub fn escape(unescaped_str: &str) -> RUMString {
 /// ```
 ///  use rumtk_core::strings::basic_escape;
 ///  let message = "I ❤ my wife!";
-///  let escaped_message = basic_escape(&message);
+///  let escaped_message = basic_escape(&message, &vec![]);
 ///  assert_eq!("I \\u{2764} my wife!", &escaped_message, "Did not get expected escaped string! Got {}!", &escaped_message);
 ///```
-pub fn basic_escape(unescaped_str: &str) -> RUMString {
+pub fn basic_escape(unescaped_str: &str, except: EscapeExceptions) -> RUMString {
     let escaped = is_escaped_str(unescaped_str);
     if !escaped {
-        return unescaped_str.escape_default().to_compact_string();
+        let mut escaped_str = unescaped_str.escape_default().to_string();
+        for (from, to) in except {
+            escaped_str = escaped_str.replace(from, to);
+        }
+        return escaped_str.to_rumstring();
     }
     unescaped_str.to_rumstring()
 }

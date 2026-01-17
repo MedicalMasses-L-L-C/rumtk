@@ -330,7 +330,7 @@ pub mod mllp_v2 {
     ) -> RUMResult<RUMString> {
         match mllp_filter_policy {
             MLLP_FILTER_POLICY::NONE => Ok(msg.to_rumstring()),
-            MLLP_FILTER_POLICY::ESCAPE_INPUT => Ok(basic_escape(msg)),
+            MLLP_FILTER_POLICY::ESCAPE_INPUT => Ok(basic_escape(msg, &vec![])),
             MLLP_FILTER_POLICY::FILTER_INPUT => Ok(filter_non_printable_ascii(msg)),
         }
     }

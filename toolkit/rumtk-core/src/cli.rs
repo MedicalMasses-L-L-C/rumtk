@@ -21,7 +21,7 @@
 
 pub mod cli_utils {
     use crate::core::RUMResult;
-    use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
+    use crate::strings::{rumtk_format, EscapeExceptions, RUMArrayConversions, RUMString};
     use crate::types::RUMCLIParser;
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
@@ -29,6 +29,9 @@ pub mod cli_utils {
 
     const BUFFER_SIZE: usize = 1024 * 4;
     const BUFFER_CHUNK_SIZE: usize = 512;
+
+    pub static CLI_ESCAPE_EXCEPTIONS: EscapeExceptions =
+        &[("\\n", "\n"), ("\\r", "\r"), ("\\\\", "\\")];
 
     pub type BufferSlice = Vec<u8>;
     pub type BufferChunk = [u8; BUFFER_CHUNK_SIZE];
@@ -185,9 +188,9 @@ pub mod macros {
     #[macro_export]
     macro_rules! rumtk_write_stdout {
         ( $message:expr ) => {{
-            use $crate::cli::cli_utils::write_stdout;
+            use $crate::cli::cli_utils::{write_stdout, CLI_ESCAPE_EXCEPTIONS};
             use $crate::strings::basic_escape;
-            let escaped_message = basic_escape($message);
+            let escaped_message = basic_escape($message, CLI_ESCAPE_EXCEPTIONS);
             write_stdout(&escaped_message);
         }};
     }

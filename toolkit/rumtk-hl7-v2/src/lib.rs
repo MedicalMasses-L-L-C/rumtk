@@ -25,6 +25,7 @@ extern crate rumtk_core;
 pub mod hl7_v2_base_types;
 pub mod hl7_v2_complex_types;
 pub mod hl7_v2_constants;
+pub mod hl7_v2_datasets;
 pub mod hl7_v2_field_descriptors;
 pub mod hl7_v2_interpreter;
 pub mod hl7_v2_mllp;
@@ -54,7 +55,7 @@ mod tests {
     use crate::{
         rumtk_v2_find_component, rumtk_v2_generate_message, rumtk_v2_mllp_connect,
         rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_iter_channels,
-        rumtk_v2_mllp_listen, rumtk_v2_mllp_send, rumtk_v2_parse_message, tests,
+        rumtk_v2_mllp_listen, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
@@ -68,75 +69,12 @@ mod tests {
     };
     use std::thread::spawn;
     /**********************************Constants**************************************/
-    const DEFAULT_HL7_V2_MESSAGE: &str =
-        "MSH|^~\\&|ADT1|GOOD HEALTH HOSPITAL|GHH LAB, INC.|GOOD HEALTH HOSPITAL|198808181126|SECURITY|ADT^A01^ADT_A01|MSG00001|P|2.8||\r\n\
-         EVN|A01|200708181123||\n\
-         PID|1||PATID1234^5^M11^ADT1^MR^GOOD HEALTH HOSPITAL~123456789^^^USSSA^SS||EVERYMAN^ADAM^A^III||19610615|M||C|2222 HOME STREET^^GREENSBORO^NC^27401-1020|GL|(555) 555-2004|(555)555-2004||S||PATID12345001^2^M10^ADT1^AN^A|444333333|987654^NC|\r\
-         NK1|1|NUCLEAR^NELDA^W|SPO^SPOUSE||||NK^NEXT OF KIN\n\r\
-         PV1|1|I|2000^2012^01||||004777^ATTEND^AARON^A|||SUR||||ADM|A0|";
-    const VXU_HL7_V2_MESSAGE: &str =
-        "MSH|^~\\&|NISTEHRAPP|NISTEHRFAC|NISTIISAPP|NISTIISFAC|20150625072816.601-0500||VXU^V04^VXU_V04|NIST-IZ-AD-10.1_Send_V04_Z22|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS|NISTEHRFAC|NISTIISFAC\n
-        PID|1||21142^^^NIST-MPI-1^MR||Vasquez^Manuel^Diego^^^^L||19470215|M||2106-3^White^CDCREC|227 Park Ave^^Bozeman^MT^59715^USA^P||^PRN^PH^^^406^5555815~^NET^^Manuel.Vasquez@isp.com|||||||||2135-2^Hispanic or Latino^CDCREC||N|1|||||N\n
-        PD1|||||||||||01^No reminder/recall^HL70215|N|20150625|||A|20150625|20150625ORC|RE||31165^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|||||||NISTEHRFAC^NISTEHRFacility^HL70362\n
-        RXA|0|1|20141021||152^Pneumococcal Conjugate, unspecified formulation^CVX|999|||01^Historical Administration^NIP001|||||||||||CP|A";
-    const HL7_V2_MESSAGE: &str =
-        "FHS|^~\\&|WIR11.3.2|WIR|||20200514||1219274.update|||\n
-        BHS|^~\\&|WIR11.3.2|WIR|||20200514|||||\n
-        MSH|^~\\&|WIR11.3.2^^|WIR^^||WIRPH^^|20200514||VXU^V04^VXU_V04|2020051412382900|P^|2.5.1^^|||ER||||||^CDCPHINVS\n
-        PID|||3064985^^^^SR^~ML288^^^^PI^||CHILD^BABEE^^^^^^||20180911|F||2106-3^^^^^|22 YOUNGER LAND^^JUNEAU^WI^53039^^^^WI027^^||(920)386-5555^PRN^PH^^^920^3865555^^|||||||||2186-5^^^^^|||||||\n
-        PD1|||||||||||02^^^^^|U||||A\n
-        NK1|1|CHILD^MARY^^^^^^|PAR^PARENT^HL70063^^^^^|22 YOUNGER LAND^^JUNEAU^WI^53039^^^^^^|(920)386-5555^PRN^PH^^^920^3865555^^\n
-        NK1|2|CHILD^BABEE^^^^^^|SEL^SELF^HL70063^^^^^|22 YOUNGER LAND^^JUNEAU^WI^53039^^^^^^|(920)386-5555^PRN^PH^^^920^3865555^^\n
-        PV1||R||||||||||||||||||\n
-        ORC|RE||0|\n
-        RXA|0|999|20190503|20190503|110^DTAP/Polio/Hep B^CVX^Pediarix^Pediarix^WVTN|1.0|||01^^^^^~38230637^WIR immunization id^Irumtk_web_ID^^^||^^^WIR Physicians^^^^^^^^^^^|||||||||\n
-        BTS|1|\n
-        FTS|1|";
-    const HL7_V2_PDF_MESSAGE: &str =
-        "MSH|^~\\&|SendingApp|SendingFac|ReceivingApp|ReceivingFac|201607060811||ORU^R03|5209141|D|2.3\n
-        PID|1|123456|123456||Andrés^Ángel^||19600101|M|||123 BLACK PEARL^^DETROIT^MI^48217||3138363978|||||1036557|123456789\n
-        PV1|||^^\n
-        ORC|RE||161810162||||00001^ONCE^^^^||201607060811|||00007553^PHYSICIAN^आरवा^ ^^^|||||||||BIOTECH CLINICAL LAB INC^^23D0709666^^^CLIA|25775 MEADOWBROOK^^NOVI^MI^48375|^^^^^248^9121700|OFFICE^1234 MILE ROAD  SUITE # 2^ROYAL OAK^MI^48073\n
-        OBR|8|455648^LA01|1618101622^GROUP951|GROUP951^CHROMOSOMAL ANALYSIS^L|||201606291253|||||||201606291631||00007553^PHYSICIAN^ひなた^ ^^^||||||201607060811|||F||1^^^^^9\n
-        OBX|1|ED|00008510^INTELLIGENT FLOW PROFILE^L||^^^^JVBERi0xLjQKJeLjz9MKCjEgMCBvYmoKPDwvVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFI+PgplbmRvYmoKCjIgMCBvYmoKPDwvVHlwZSAvUGFnZXMKL0tpZHMgWzMgMCBSXQovQ291bnQgMT4+CmVuZG9iagoKMTIgMCBvYmoKPDwvTGVuZ3RoIDEzIDAgUgovRmlsdGVyIC9GbGF0ZURlY29kZT4+CnN0cmVhbQp4nM1c3ZPUOJJ/569QxMRFMLtgrG+buBfoHmZ6BxgW+u5iN3hxV7m7feMqF3Y...T0YK||||||C|||201606291631\n
-        NTE|1|L|Reference Lab: GENOPTIX|L\n
-        NTE|2|L|2110 ROUTHERFORD RD|L\n
-        NTE|3|L|CARLSBAD, CA  92008|L";
-    // TODO: PID1.3 => See if it is the hospital mrn then concat with time (down to millis) at network receipt of message and concat with message id (incrementable) make arc<mutex<uint128>> or atomic integer.
-    const HL7_V2_REPEATING_FIELD_MESSAGE: &str =
-        "MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO\n
-        PID|1||PATID14567^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Hernandez^Maria^^^^^L||19880906|F||2054-5^Black or   African American^HL70005|3248 E  FlorenceAve^^Huntington Park^CA^90255^^H||^^PH^^^323^5825421|||||||||H^Hispanic or Latino^HL70189\n
-        ORC|NW|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130116090021-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\n
-        OBR|1|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||34555-3^Creatinine 24H renal clearance panel^LN^^^^^^CreatinineClearance|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\n
-        DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2\n
-        DG1|2||O10.93^Unspecified pre-existing hypertension complicating the puerperium^I10C^^^^^^Pregnancy with chronic hypertension|||W|||||||||1\n
-        OBX|1|CWE|67471-3^Pregnancy status^LN^1903^Pregnancy status^99USL^2.44^^Isthe patient pregnant?||Y^Yes^HL70136^1^Yes, confirmed less than 12 weeks^99USL^2.5.1^^early pregnancy (pre 12 weeks)||||||O|||20130115|||||||||||||||SCI\n
-        OBX|2|NM|3167-4^Volume of   24   hour Urine^LN^1904^Urine Volume of 24 hour collection^99USL^2.44^^Urine Volume 24hour collection||1250|mL^milliliter^UCUM^ml^mililiter^L^1.7^^ml|||||O|||20130116|||||||||||||||SCI\n
-        OBX|3|NM|3141-9^Body weight Measured^LN^BWm^Body weight Measured^99USL^2.44^^patient weight measured in kg||59.5|kg^kilogram^UCUM|||||O|||20130116|||||||||||||||SCI\n
-        SPM|1|S-2312987-1&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||276833005^24 hour urine sample (specimen)^SCT^UR24H^24hr Urine^99USL^^^24 hour urine|||||||||||||201301151130-0800^201301160912-0800\n
-        SPM|2|S-2312987-2&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||119297000^Blood Specimen^SCT|||||||||||||201301160912-0800ORC|NW|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130115102146-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\n
-        OBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\n
-        DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
-    const HL7_V2_MSH_ONLY: &str =
-        "MSH|^~\\&|NISTEHRAPP|NISTEHRFAC|NISTIISAPP|NISTIISFAC|20150625072816.601-0500||VXU^V04^VXU_V04|NIST-IZ-AD-10.1_Send_V04_Z22|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS|NISTEHRFAC|NISTIISFAC\n";
-    const HL7_V2_SCRAMBLED: &str = "
-                PD1|||||||||||01^No reminder/recall^HL70215|N|20150625|||A|20150625|20150625ORC|RE||31165^NIST-AA-IZ-2|||||||7824^Jackson^Lily^Suzanne^^^^^NIST-PI-1^L^^^PRN|||||||NISTEHRFAC^NISTEHRFacility^HL70362\rRXA|0|1|20141021||152^Pneumococcal Conjugate, unspecified formulation^CVX|999|||01^Historical Administration^NIP001|||||||||||CP|A\rPID|1||21142^^^NIST-MPI-1^MR||Vasquez^Manuel^Diego^^^^L||19470215|M||2106-3^White^CDCREC|227 Park Ave^^Bozeman^MT^59715^USA^P||^PRN^PH^^^406^5555815~^NET^^Manuel.Vasquez@isp.com|||||||||2135-2^Hispanic or Latino^CDCREC||N|1|||||N\rMSH|^~\\&|NISTEHRAPP|NISTEHRFAC|NISTIISAPP|NISTIISFAC|20150625072816.601-0500||VXU^V04^VXU_V04|NIST-IZ-AD-10.1_Send_V04_Z22|P|2.5.1|||ER|AL|||||Z22^CDCPHINVS|NISTEHRFAC|NISTIISFAC";
-    const ESCAPED_V2_JSON_MESSAGE: &str = "{\"separators\":{\"segment_terminator\":\"\\r\",\"field_separator\":\"|\",\"component_separator\":\"^\",\"repetition_separator\":\"~\",\"escape_character\":\"\\\",\"subcomponent_separator\":\"&\",\"truncation_character\":\"#\"},\"segment_groups\":{\"113\":[{\"name\":\"ORC\",\"description\":\"Common Order\",\"fields\":[[{\"components\":[{\"component\":\"NW\"}]}],[{\"components\":[{\"component\":\"ORD231-1\"},{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.24\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"20130116090021-0800\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"134569827\"},{\"component\":\"Feller\"},{\"component\":\"Hans\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI&2.16.840.1.113883.4.6&ISO\"},{\"component\":\"L\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI\"}]}]]}],\"124\":[{\"name\":\"PID\",\"description\":\"Patient Identification\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"PATID14567\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO\"},{\"component\":\"MR\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"Hernandez\"},{\"component\":\"Maria\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"L\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"19880906\"}]}],[{\"components\":[{\"component\":\"F\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"2054-5\"},{\"component\":\"Black or   African American\"},{\"component\":\"HL70005\"}]}],[{\"components\":[{\"component\":\"3248 E  FlorenceAve\"},{\"component\":\"\"},{\"component\":\"Huntington Park\"},{\"component\":\"CA\"},{\"component\":\"90255\"},{\"component\":\"\"},{\"component\":\"H\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"PH\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"323\"},{\"component\":\"5825421\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"H\"},{\"component\":\"Hispanic or Latino\"},{\"component\":\"HL70189\"}]}]]}],\"38\":[{\"name\":\"DG1\",\"description\":\"Diagnosis\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"I10\"},{\"component\":\"Essential (primary) hypertension\"},{\"component\":\"I10C\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"Hypertension, NOS\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"F\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"2\"}]}]]},{\"name\":\"DG1\",\"description\":\"Diagnosis\",\"fields\":[[{\"components\":[{\"component\":\"2\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"O10.93\"},{\"component\":\"Unspecified pre-existing hypertension complicating the puerperium\"},{\"component\":\"I10C\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"Pregnancy with chronic hypertension\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"W\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"1\"}]}]]},{\"name\":\"DG1\",\"description\":\"Diagnosis\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"I10\"},{\"component\":\"Essential (primary) hypertension\"},{\"component\":\"I10C\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"Hypertension, NOS\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"F\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"2\"}]}]]}],\"97\":[{\"name\":\"OBR\",\"description\":\"Observation Request\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"ORD231-1\"},{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.24\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"34555-3\"},{\"component\":\"Creatinine 24H renal clearance panel\"},{\"component\":\"LN\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"CreatinineClearance\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"201301151130-0800\"}]}],[{\"components\":[{\"component\":\"201301160912-0800\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"134569827\"},{\"component\":\"Feller\"},{\"component\":\"Hans\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI&2.16.840.1.113883.4.6&ISO\"},{\"component\":\"L\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI\"}]}]]},{\"name\":\"OBR\",\"description\":\"Observation Request\",\"fields\":[[{\"components\":[{\"component\":\"2\"}]}],[{\"components\":[{\"component\":\"ORD231-2\"},{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.24\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"21482-5\"},{\"component\":\"Protein [Mass/volume] in 24 hour Urine\"},{\"component\":\"LN\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"24 hour Urine Protein\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"201301151130-0800\"}]}],[{\"components\":[{\"component\":\"201301160912-0800\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"134569827\"},{\"component\":\"Feller\"},{\"component\":\"Hans\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI&2.16.840.1.113883.4.6&ISO\"},{\"component\":\"L\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI\"}]}]]}],\"98\":[{\"name\":\"OBX\",\"description\":\"Observation/Result\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"CWE\"}]}],[{\"components\":[{\"component\":\"67471-3\"},{\"component\":\"Pregnancy status\"},{\"component\":\"LN\"},{\"component\":\"1903\"},{\"component\":\"Pregnancy status\"},{\"component\":\"99USL\"},{\"component\":\"2.44\"},{\"component\":\"\"},{\"component\":\"Isthe patient pregnant?\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"Y\"},{\"component\":\"Yes\"},{\"component\":\"HL70136\"},{\"component\":\"1\"},{\"component\":\"Yes, confirmed less than 12 weeks\"},{\"component\":\"99USL\"},{\"component\":\"2.5.1\"},{\"component\":\"\"},{\"component\":\"early pregnancy (pre 12 weeks)\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"O\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"20130115\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"SCI\"}]}]]},{\"name\":\"OBX\",\"description\":\"Observation/Result\",\"fields\":[[{\"components\":[{\"component\":\"2\"}]}],[{\"components\":[{\"component\":\"NM\"}]}],[{\"components\":[{\"component\":\"3167-4\"},{\"component\":\"Volume of   24   hour Urine\"},{\"component\":\"LN\"},{\"component\":\"1904\"},{\"component\":\"Urine Volume of 24 hour collection\"},{\"component\":\"99USL\"},{\"component\":\"2.44\"},{\"component\":\"\"},{\"component\":\"Urine Volume 24hour collection\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"1250\"}]}],[{\"components\":[{\"component\":\"mL\"},{\"component\":\"milliliter\"},{\"component\":\"UCUM\"},{\"component\":\"ml\"},{\"component\":\"mililiter\"},{\"component\":\"L\"},{\"component\":\"1.7\"},{\"component\":\"\"},{\"component\":\"ml\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"O\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"20130116\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"SCI\"}]}]]},{\"name\":\"OBX\",\"description\":\"Observation/Result\",\"fields\":[[{\"components\":[{\"component\":\"3\"}]}],[{\"components\":[{\"component\":\"NM\"}]}],[{\"components\":[{\"component\":\"3141-9\"},{\"component\":\"Body weight Measured\"},{\"component\":\"LN\"},{\"component\":\"BWm\"},{\"component\":\"Body weight Measured\"},{\"component\":\"99USL\"},{\"component\":\"2.44\"},{\"component\":\"\"},{\"component\":\"patient weight measured in kg\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"59.5\"}]}],[{\"components\":[{\"component\":\"kg\"},{\"component\":\"kilogram\"},{\"component\":\"UCUM\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"O\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"20130116\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"SCI\"}]}]]}],\"178\":[{\"name\":\"SPM\",\"description\":\"Specimen\",\"fields\":[[{\"components\":[{\"component\":\"1\"}]}],[{\"components\":[{\"component\":\"S-2312987-1&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"276833005\"},{\"component\":\"24 hour urine sample (specimen)\"},{\"component\":\"SCT\"},{\"component\":\"UR24H\"},{\"component\":\"24hr Urine\"},{\"component\":\"99USL\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"24 hour urine\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"201301151130-0800\"},{\"component\":\"201301160912-0800\"}]}]]},{\"name\":\"SPM\",\"description\":\"Specimen\",\"fields\":[[{\"components\":[{\"component\":\"2\"}]}],[{\"components\":[{\"component\":\"S-2312987-2&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"119297000\"},{\"component\":\"Blood Specimen\"},{\"component\":\"SCT\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"201301160912-0800ORC\"}]}],[{\"components\":[{\"component\":\"NW\"}]}],[{\"components\":[{\"component\":\"ORD231-2\"},{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.24\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"20130115102146-0800\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"134569827\"},{\"component\":\"Feller\"},{\"component\":\"Hans\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI&2.16.840.1.113883.4.6&ISO\"},{\"component\":\"L\"},{\"component\":\"\"},{\"component\":\"\"},{\"component\":\"NPI\"}]}]]}],\"89\":[{\"name\":\"MSH\",\"description\":\"Message Header\",\"fields\":[[{\"components\":[{\"component\":\"^~\\&#\"}]}],[{\"components\":[{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.22\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST EHR Facility\"},{\"component\":\"2.16.840.1.113883.3.72.5.23\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST Test Lab APP\"},{\"component\":\"2.16.840.1.113883.3.72.5.20\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST Lab Facility\"},{\"component\":\"2.16.840.1.113883.3.72.5.21\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"20130211184101-0500\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"OML\"},{\"component\":\"O21\"},{\"component\":\"OML_O21\"}]}],[{\"components\":[{\"component\":\"NIST-LOI_9.0_1.1-GU_PRU\"}]}],[{\"components\":[{\"component\":\"T\"}]}],[{\"components\":[{\"component\":\"2.5.1\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"AL\"}]}],[{\"components\":[{\"component\":\"AL\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"LOI_Common_Component\"},{\"component\":\"LOI BaseProfile\"},{\"component\":\"2.16.840.1.113883.9.66\"},{\"component\":\"ISO\"}]},{\"components\":[{\"component\":\"LOI_GU_Component\"},{\"component\":\"LOI GU Profile\"},{\"component\":\"2.16.840.1.113883.9.78\"},{\"component\":\"ISO\"}]},{\"components\":[{\"component\":\"LAB_PRU_Component\"},{\"component\":\"LOI PRU Profile\"},{\"component\":\"2.16.840.1.113883.9.82\"},{\"component\":\"ISO\"}]}]]}]}}";
-    const V2_JSON_MESSAGE: &str = "MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO\nPID|1||PATID14567^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Hernandez^Maria^^^^^L||19880906|F||2054-5^Black or   African American^HL70005|3248 E  FlorenceAve^^Huntington Park^CA^90255^^H||^^PH^^^323^5825421|||||||||H^Hispanic or Latino^HL70189\nORC|NW|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130116090021-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\nOBR|1|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||34555-3^Creatinine 24H renal clearance panel^LN^^^^^^CreatinineClearance|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\nDG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2\nDG1|2||O10.93^Unspecified pre-existing hypertension complicating the puerperium^I10C^^^^^^Pregnancy with chronic hypertension|||W|||||||||1\nOBX|1|CWE|67471-3^Pregnancy status^LN^1903^Pregnancy status^99USL^2.44^^Isthe patient pregnant?||Y^Yes^HL70136^1^Yes, confirmed less than 12 weeks^99USL^2.5.1^^early pregnancy (pre 12 weeks)||||||O|||20130115|||||||||||||||SCI\nOBX|2|NM|3167-4^Volume of   24   hour Urine^LN^1904^Urine Volume of 24 hour collection^99USL^2.44^^Urine Volume 24hour collection||1250|mL^milliliter^UCUM^ml^mililiter^L^1.7^^ml|||||O|||20130116|||||||||||||||SCI\nOBX|3|NM|3141-9^Body weight Measured^LN^BWm^Body weight Measured^99USL^2.44^^patient weight measured in kg||59.5|kg^kilogram^UCUM|||||O|||20130116|||||||||||||||SCI\nSPM|1|S-2312987-1&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||276833005^24 hour urine sample (specimen)^SCT^UR24H^24hr Urine^99USL^^^24 hour urine|||||||||||||201301151130-0800^201301160912-0800\nSPM|2|S-2312987-2&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||119297000^Blood Specimen^SCT|||||||||||||201301160912-0800ORC|NW|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130115102146-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\nOBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI\nDG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
-    const ESCAPED_V2_JSON_MESSAGE_BASIC: &str = "{\"separators\":{\"segment_terminator\":\"\\r\",\"field_separator\":\"|\",\"component_separator\":\"^\",\"repetition_separator\":\"~\",\"escape_character\":\"\\\\\",\"subcomponent_separator\":\"&\",\"truncation_character\":\"#\"},\"segment_groups\":{\"89\":[{\"name\":\"MSH\",\"description\":\"Message Header\",\"fields\":[[{\"components\":[{\"component\":\"^~\\\\&#\"}]}],[{\"components\":[{\"component\":\"NIST EHR\"},{\"component\":\"2.16.840.1.113883.3.72.5.22\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST EHR Facility\"},{\"component\":\"2.16.840.1.113883.3.72.5.23\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST Test Lab APP\"},{\"component\":\"2.16.840.1.113883.3.72.5.20\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"NIST Lab Facility\"},{\"component\":\"2.16.840.1.113883.3.72.5.21\"},{\"component\":\"ISO\"}]}],[{\"components\":[{\"component\":\"20130211184101-0500\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"OML\"},{\"component\":\"O21\"},{\"component\":\"OML_O21\"}]}],[{\"components\":[{\"component\":\"NIST-LOI_9.0_1.1-GU_PRU\"}]}],[{\"components\":[{\"component\":\"T\"}]}],[{\"components\":[{\"component\":\"2.5.1\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"AL\"}]}],[{\"components\":[{\"component\":\"AL\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"LOI_Common_Component\"},{\"component\":\"LOI BaseProfile\"},{\"component\":\"2.16.840.1.113883.9.66\"},{\"component\":\"ISO\"}]},{\"components\":[{\"component\":\"LOI_GU_Component\"},{\"component\":\"LOI GU Profile\"},{\"component\":\"2.16.840.1.113883.9.78\"},{\"component\":\"ISO\"}]},{\"components\":[{\"component\":\"LAB_PRU_Component\"},{\"component\":\"LOI PRU Profile\"},{\"component\":\"2.16.840.1.113883.9.82\"},{\"component\":\"ISO\"}]}]]}]}}";
-    const V2_JSON_MESSAGE_BASIC: &str = "MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO\n";
-    const SPANISH_NAME: &str = "Andrés";
-    const SANSKRIT_NAME: &str = "आरवा";
-    const HIRAGANA_NAME: &str = "ひなた";
-    const repeate_field1: &str = "ISO";
-    const repeate_field2: &str = "LOI_GU_Component";
-    const repeate_field3: &str = "LAB_PRU_Component";
-    const DEFAULT_HL7_V2_FIELD_STRING: &str = "2000^2012^01";
+    use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
 
     /*********************************Test Cases**************************************/
     #[test]
     fn test_hl7_v2_field_parsing() {
-        let field_str = tests::DEFAULT_HL7_V2_FIELD_STRING;
+        let field_str = DEFAULT_HL7_V2_FIELD_STRING;
         let encode_chars = V2ParserCharacters::new();
         let field = V2Field::from_str(&field_str, &encode_chars);
         println!("{:#?}", &field);
@@ -175,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_sanitize_hl7_v2_message() {
-        let message = tests::DEFAULT_HL7_V2_MESSAGE;
+        let message = DEFAULT_HL7_V2_MESSAGE;
         let sanitized_message = V2Message::sanitize(message);
         println!("{}", message);
         println!("{}", sanitized_message);
@@ -192,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_tokenize_hl7_v2_message() {
-        let message = tests::DEFAULT_HL7_V2_MESSAGE;
+        let message = DEFAULT_HL7_V2_MESSAGE;
         let sanitized_message = V2Message::sanitize(message);
         let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
         println!("Token count {}", tokens.len());
@@ -205,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_encoding_characters() {
-        let message = tests::DEFAULT_HL7_V2_MESSAGE;
+        let message = DEFAULT_HL7_V2_MESSAGE;
         let sanitized_message = V2Message::sanitize(message);
         let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
         let encode_chars = V2ParserCharacters::from_msh(tokens[0]).unwrap();
@@ -242,7 +180,7 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_segments() {
-        let message = tests::DEFAULT_HL7_V2_MESSAGE;
+        let message = DEFAULT_HL7_V2_MESSAGE;
         let sanitized_message = V2Message::sanitize(message);
         let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
         let msh = V2Message::find_msh(&tokens).unwrap();
@@ -282,7 +220,7 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_scrambled_segments() {
-        let message = tests::HL7_V2_SCRAMBLED;
+        let message = HL7_V2_SCRAMBLED;
         let sanitized_message = V2Message::sanitize(message);
         let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
         let msh = V2Message::find_msh(&tokens).unwrap();
@@ -318,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_message() {
-        let message = V2Message::from_str(tests::DEFAULT_HL7_V2_MESSAGE);
+        let message = V2Message::from_str(DEFAULT_HL7_V2_MESSAGE);
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -349,7 +287,7 @@ mod tests {
     ///
     #[test]
     fn test_load_hl7_v2_message_wir_iis() {
-        let message = V2Message::from_str(tests::HL7_V2_MESSAGE);
+        let message = V2Message::from_str(HL7_V2_MESSAGE);
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -377,7 +315,7 @@ mod tests {
     }
     #[test]
     fn test_load_hl7_v2_message_scrambled() {
-        let message = V2Message::from_str(tests::HL7_V2_SCRAMBLED);
+        let message = V2Message::from_str(HL7_V2_SCRAMBLED);
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -401,7 +339,7 @@ mod tests {
     ///
     #[test]
     fn test_load_hl7_v2_utf8_message() {
-        let message = V2Message::from_str(tests::HL7_V2_PDF_MESSAGE);
+        let message = V2Message::from_str(HL7_V2_PDF_MESSAGE);
         let pid = message.get(&V2_SEGMENT_IDS["PID"], 1).unwrap();
         let orc = message.get(&V2_SEGMENT_IDS["ORC"], 1).unwrap();
         let obr = message.get(&V2_SEGMENT_IDS["OBR"], 1).unwrap();
@@ -441,7 +379,7 @@ mod tests {
     ///
     #[test]
     fn test_handle_hl7_v2_message_with_repeating_fields() {
-        let message = V2Message::from_str(tests::HL7_V2_REPEATING_FIELD_MESSAGE);
+        let message = V2Message::from_str(HL7_V2_REPEATING_FIELD_MESSAGE);
         let msh = message.get(&V2_SEGMENT_IDS["MSH"], 1).unwrap();
         let field1 = msh
             .get(-1)
@@ -488,7 +426,7 @@ mod tests {
 
     #[test]
     fn test_generating_v2_message() {
-        let message = rumtk_v2_parse_message!(&tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(&DEFAULT_HL7_V2_MESSAGE).unwrap();
         let generated_message_string = rumtk_v2_generate_message!(&message);
         let generated_message = rumtk_v2_parse_message!(&generated_message_string).unwrap();
         assert_eq!(
@@ -500,7 +438,7 @@ mod tests {
 
     #[test]
     fn test_generating_v2_message_wir() {
-        let message = rumtk_v2_parse_message!(&tests::HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(&HL7_V2_MESSAGE).unwrap();
         let generated_message_string = rumtk_v2_generate_message!(&message);
         let generated_message = rumtk_v2_parse_message!(&generated_message_string).unwrap();
         assert_eq!(
@@ -512,7 +450,7 @@ mod tests {
 
     #[test]
     fn test_generating_v2_message_pdf() {
-        let message = rumtk_v2_parse_message!(&tests::HL7_V2_PDF_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(&HL7_V2_PDF_MESSAGE).unwrap();
         let generated_message_string = rumtk_v2_generate_message!(&message);
         let generated_message = rumtk_v2_parse_message!(&generated_message_string).unwrap();
         assert_eq!(
@@ -524,7 +462,7 @@ mod tests {
 
     #[test]
     fn test_generating_v2_message_repeated_fields() {
-        let message = rumtk_v2_parse_message!(&tests::HL7_V2_REPEATING_FIELD_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(&HL7_V2_REPEATING_FIELD_MESSAGE).unwrap();
         let generated_message_string = rumtk_v2_generate_message!(&message);
         let generated_message = rumtk_v2_parse_message!(&generated_message_string).unwrap();
         assert_eq!(
@@ -590,7 +528,7 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_message_macro() {
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -632,7 +570,7 @@ mod tests {
     #[test]
     fn test_find_hl7_v2_message_component_macro() {
         let pattern = "PID(1)5.4";
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let component = rumtk_v2_find_component!(message, pattern).unwrap();
         let expected = "III";
         assert_eq!(
@@ -648,7 +586,7 @@ mod tests {
     #[test]
     fn test_find_hl7_v2_message_component_simple_macro() {
         let pattern = "PID5.4";
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let component = rumtk_v2_find_component!(message, pattern).unwrap();
         let expected = "III";
         assert_eq!(
@@ -664,7 +602,7 @@ mod tests {
     #[test]
     fn test_find_hl7_v2_message_msh_field() {
         let pattern = "MSH1.1";
-        let message = rumtk_v2_parse_message!(tests::HL7_V2_MSH_ONLY).unwrap();
+        let message = rumtk_v2_parse_message!(HL7_V2_MSH_ONLY).unwrap();
         let component = rumtk_v2_find_component!(message, pattern).unwrap();
         let expected = "^~\\&";
         assert_eq!(
@@ -684,7 +622,7 @@ mod tests {
             "Search did not fail as expected. Input {} => found component?",
             pattern
         );
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         match rumtk_v2_find_component!(message, pattern) {
             Ok(v) => panic!("{}", err_msg.as_str()),
             Err(e) => {
@@ -754,7 +692,7 @@ mod tests {
     fn test_cast_component_to_datetime_base_example() {
         let location = "EVN2"; //EVN|A01|200708181123||\n\r; EVN2 => segment = EVN, field = 2
         let expected_component = "200708181123";
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let component = rumtk_v2_find_component!(message, location).unwrap();
         assert_eq!(expected_component, component.as_str(), "We are not using the correct component for this test. Check that the original test message has not changed and update the location string appropriately!");
         let date = component.to_v2datetime().unwrap();
@@ -817,7 +755,7 @@ mod tests {
     fn test_cast_component_to_date_base_example() {
         let location = "PD113"; //EVN|A01|200708181123||\n\r; PD113 => segment = PD1, field = 13
         let expected_component = "20150625";
-        let message = rumtk_v2_parse_message!(tests::VXU_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(VXU_HL7_V2_MESSAGE).unwrap();
         let component = rumtk_v2_find_component!(message, location).unwrap();
         assert_eq!(expected_component, component.as_str(), "We are not using the correct component for this test. Check that the original test message has not changed and update the location string appropriately!");
         let date = component.to_v2date().unwrap();
@@ -986,7 +924,7 @@ mod tests {
 
     #[test]
     fn test_validated_cast_component_to_type() {
-        let message = tests::DEFAULT_HL7_V2_MESSAGE;
+        let message = DEFAULT_HL7_V2_MESSAGE;
         let sanitized_message = V2Message::sanitize(message);
         let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
         let encode_chars = V2ParserCharacters::from_msh(tokens[0]).unwrap();
@@ -1303,9 +1241,9 @@ mod tests {
     ////////////////////////////JSON Tests/////////////////////////////////
     #[test]
     fn test_deserialize_escaped_v2_message() {
-        let message = rumtk_v2_parse_message!(tests::V2_JSON_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(V2_JSON_MESSAGE).unwrap();
         let serialized = rumtk_serialize!(&message).unwrap();
-        let escaped = basic_escape(&serialized);
+        let escaped = basic_escape(&serialized, &vec![]);
         let deserialized = rumtk_deserialize!(&escaped).unwrap();
 
         assert_eq!(
@@ -1316,7 +1254,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_v2_message() {
-        let message = rumtk_v2_parse_message!(tests::DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let message_str = rumtk_serialize!(&message, true).unwrap();
         let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
 
@@ -1328,10 +1266,8 @@ mod tests {
 
     #[test]
     fn test_deserialize_stdin_v2_message_basic() {
-        let expected_message: V2Message =
-            rumtk_v2_parse_message!(tests::V2_JSON_MESSAGE_BASIC).unwrap();
-        let deserialized: V2Message =
-            rumtk_deserialize!(&tests::ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
+        let expected_message: V2Message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
+        let deserialized: V2Message = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
 
         assert_eq!(
             expected_message, deserialized,
