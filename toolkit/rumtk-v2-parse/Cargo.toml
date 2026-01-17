@@ -1,5 +1,6 @@
 [package]
 name = "rumtk-hl7-v2-parse"
+description = "HL7 V2 Parser utility based on the RUMTK framework."
 version = "0.1.1"
 readme = "README.md"
 license = "GPL-3.0-or-later"
