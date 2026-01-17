@@ -1,0 +1,20 @@
+{
+  "title": "Benchmarks",
+  "description": "",
+  "company": "MedicalMasses L.L.C.",
+  "copyright": "2026",
+  "lang": "en",
+  "theme": "",
+  "custom_css": false,
+  "header_conf": {
+    "logo_size": "small",
+    "disable_navlinks": true,
+    "disable_logo": true
+  },
+  "footer_conf": {
+    "socials_list": "",
+    "disable_contact_button": true
+  },
+  "strings": {},
+  "config": {}
+}
