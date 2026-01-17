@@ -10,7 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-v2-interface/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-v2-parse/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-web/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-web-benchmark/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-benchmark/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
