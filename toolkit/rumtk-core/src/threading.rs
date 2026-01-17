@@ -262,8 +262,16 @@ pub mod threading_macros {
     macro_rules! rumtk_resolve_task {
         ( $rt:expr, $future:expr ) => {{
             use $crate::strings::rumtk_format;
-            //$rt.block_on(async move { $future.await }).unwrap()
-            match $rt.block_on(async move { $future.await }) {
+            // Fun tidbit, the expression rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task)), where
+            // rt is the tokio runtime yields async move { { &rt.spawn(task) } }. However, the whole thing
+            // is technically moved into the async closure and captured so things like mutex guards
+            // technically go out of the outer scope. As a result that expression fails to compile even
+            // though the intent is for rumtk_spawn_task to resolve first and its result get moved
+            // into the async closure. To ensure that happens regardless of given expression, we do
+            // a variable assignment below to force the "future" macro expressions to resolve before
+            // moving into the closure. DO NOT REMOVE OR "SIMPLIFY" THE let future = $future LINE!!!
+            let future = $future;
+            match $rt.block_on(async move { future.await }) {
                 Ok(r) => Ok(r),
                 Err(e) => Err(rumtk_format!("Task failed with {}", e)),
             }

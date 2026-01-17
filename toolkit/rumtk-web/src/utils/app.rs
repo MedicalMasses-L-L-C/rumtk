@@ -238,7 +238,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
-///         let custom_css_enabled = state.lock().expect("Lock failure").custom_css;
+///         let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 ///
 ///         rumtk_web_render_html!(MyDiv {
 ///             contents: RUMString::from(contents),

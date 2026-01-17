@@ -827,6 +827,30 @@ pub mod mllp_v2 {
     pub type MLLPChannels = Vec<SafeMLLPChannel>;
 }
 
+pub mod mllp_v2_helpers {
+    use crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, AsyncMutex, SafeAsyncMLLP, MLLP_FILTER_POLICY};
+    use rumtk_core::core::RUMResult;
+    use rumtk_core::strings::RUMString;
+    use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
+
+    ///
+    /// Helper function for creating a thread-safe MLLP connection or listener layer.
+    ///
+    /// To create a listener, ser `server` to `true`.
+    ///
+    pub fn create_async_mllp(
+        ip: &str,
+        port: u16,
+        policy: MLLP_FILTER_POLICY,
+        server: bool,
+    ) -> RUMResult<SafeAsyncMLLP> {
+        let rt = rumtk_init_threads!();
+        let ip = RUMString::from(ip);
+        let result = rumtk_resolve_task!(&rt, AsyncMLLP::new(&ip, port, policy, server));
+        Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
+    }
+}
+
 ///
 /// Main API macros for interacting with the MLLP primitives in sync code. The idea is to abstract
 /// away details concerning MLLP message processing while maintaining async internals wherever
@@ -964,55 +988,25 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_listen {
         ( $policy:expr, $local:expr ) => {{
-            use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-            use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
-            use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!();
+            use rumtk_core::net::tcp::{ANYHOST, LOCALHOST};
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::create_async_mllp;
             let port = 0; // Select the next available port on the OS!
             match $local {
-                true => match rumtk_resolve_task!(&rt, AsyncMLLP::local(port, $policy, true)) {
-                    Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                    Err(e) => Err(e),
-                },
-                false => match rumtk_resolve_task!(&rt, AsyncMLLP::net(port, $policy, true)) {
-                    Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                    Err(e) => Err(e),
-                },
+                true => create_async_mllp(LOCALHOST, port, $policy, true),
+                false => create_async_mllp(ANYHOST, port, $policy, true),
             }
         }};
         ( $port:expr, $policy:expr, $local:expr ) => {{
-            use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-            use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
-            use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!();
+            use rumtk_core::net::tcp::{ANYHOST, LOCALHOST};
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::create_async_mllp;
             match $local {
-                true => match rumtk_resolve_task!(&rt, AsyncMLLP::local($port, $policy, true)) {
-                    Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                    Err(e) => Err(e),
-                },
-                false => match rumtk_resolve_task!(&rt, AsyncMLLP::net($port, $policy, true)) {
-                    Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                    Err(e) => Err(e),
-                },
+                true => create_async_mllp(LOCALHOST, $port, $policy, true),
+                false => create_async_mllp(ANYHOST, $port, $policy, true),
             }
         }};
         ( $ip:expr, $port:expr, $policy:expr, $local:expr ) => {{
-            use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-            use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
-            use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!();
-            match $local {
-                true => match rumtk_resolve_task!(&rt, AsyncMLLP::new($ip, $port, $policy, true)) {
-                    Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                    Err(e) => Err(e),
-                },
-                false => {
-                    match rumtk_resolve_task!(&rt, AsyncMLLP::new($ip, $port, $policy, true)) {
-                        Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                        Err(e) => Err(e),
-                    }
-                }
-            }
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::create_async_mllp;
+            create_async_mllp($ip, $port, $policy, true)
         }};
     }
 
