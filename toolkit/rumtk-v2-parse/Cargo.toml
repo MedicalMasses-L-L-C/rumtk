@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-rumtk-core = { path = "../rumtk-core" }
-rumtk-hl7-v2 = { path = "../rumtk-hl7-v2" }
+rumtk-core = { version = "0.9.13", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.8.6", path = "../rumtk-hl7-v2" }
 #rumtk-core = "0.9.7"
 #rumtk-hl7-v2 = "0.8.4"
 serde = { version = "1.0.219", features = ["derive", "std"] }
