@@ -23,16 +23,17 @@ mkdir demo
 mkdir demo/stdin_interface
 
 echo "Setting up Interface Chain"
-./target/debug/rumtk-v2-interface --port 55555 --local > demo/stdin_interface/out.log &
+./target/debug/rumtk-v2-interface --port 55555 --local > ./demo/stdin_interface/out.log &
 sleep 1
 
 echo "Pushing Message through PIPEs!"
-cat examples/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55555
+cat ./examples/hl7/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55555
 
 sleep 1
 
 echo "Output"
-DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/stdin_interface/out.log) )
+#(jq -S . ./examples/hl7/sample_hl7.json) for JSON inputs
+DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/stdin_interface/out.log) )
 
 echo "Clean up"
 pkill -i -e -f rumtk-v2-interface
