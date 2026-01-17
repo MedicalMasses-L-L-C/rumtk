@@ -22,7 +22,7 @@ use rumtk_core::core::RUMResult;
 use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::RUMString;
 use rumtk_core::{
-    rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_sleep, rumtk_write_stdout,
+    rumtk_deserialize, rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout,
 };
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
@@ -145,9 +145,7 @@ fn inbound_receive(channel: &SafeMLLPChannel) -> RUMResult<()> {
     let mut owned_channel = channel.lock().expect("Failed to lock channel");
     let raw_msg = owned_channel.receive_message()?;
     if !raw_msg.is_empty() {
-        let msg = V2Message::try_from_str(&raw_msg)?;
-        let serialized_message = rumtk_serialize!(&msg)?;
-        rumtk_write_stdout!(&serialized_message);
+        rumtk_write_stdout!(&raw_msg);
     } else {
         rumtk_sleep!(0.001);
     }
