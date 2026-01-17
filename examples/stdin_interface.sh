@@ -39,9 +39,6 @@ echo "Clean up"
 pkill -i -e -f rumtk-v2-interface
 rm -r demo/stdin_interface
 
-# temporary until I deal with a bug in the parser.
-exit 0
-
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"
     echo "Diff: $DIFF"

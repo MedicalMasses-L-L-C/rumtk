@@ -22,11 +22,10 @@ use rumtk_core::dependencies::clap;
 use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::RUMString;
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout};
+use rumtk_core::{rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
-use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{
-    rumtk_v2_generate_message, rumtk_v2_mllp_connect, rumtk_v2_mllp_iter_channels,
+    rumtk_v2_mllp_connect, rumtk_v2_mllp_iter_channels,
     rumtk_v2_mllp_listen,
 };
 
@@ -99,13 +98,8 @@ pub struct RUMTKInterfaceArgs {
 fn outbound_send(channel: &SafeMLLPChannel) -> RUMResult<()> {
     let stdin_msg = rumtk_read_stdin!()?;
     if !stdin_msg.is_empty() {
-        let msg: V2Message = match rumtk_deserialize!(&stdin_msg) {
-            Ok(msg) => msg,
-            Err(e) => V2Message::try_from_str(&stdin_msg)?,
-        };
-        let raw_message = rumtk_v2_generate_message!(&msg);
         let mut owned_channel = channel.lock().expect("Failed to lock channel");
-        return owned_channel.send_message(&raw_message);
+        return owned_channel.send_message(&stdin_msg);
     }
     Ok(())
 }
