@@ -26,6 +26,7 @@ use crate::utils::PageFunction;
 use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
+use std::ops::Deref;
 
 pub type PageCache = LazyRUMCache<RUMString, PageFunction>;
 pub type PageItem<'a> = (&'a str, PageFunction);
@@ -37,7 +38,13 @@ static DEFAULT_PAGE: PageFunction = index::index;
 
 pub fn register_page(name: &str, component_fxn: PageFunction) {
     let key = RUMString::from(name);
-    let _ = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
+    let r = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
+    println!(
+        "Registered page {} => page function [{}] == registered function [{}]",
+        name,
+        &r.deref(),
+        &component_fxn
+    );
 }
 
 pub fn get_page(name: &str) -> PageCacheItem {
