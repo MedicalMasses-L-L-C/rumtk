@@ -1,7 +1,15 @@
 [package]
 name = "rumtk-hl7-v2-parse"
 version = "0.1.0"
-edition = "2024"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+homepage = "https://github.com/kiseitai3/rumtk/tree/main/toolkit/rumtk-v2-parse"
+documentation = "https://docs.rs/rumtk-v2-parse"
+repository = "https://github.com/kiseitai3/rumtk"
+keywords = ["rumtk", "healthcare", "hl7", "v2", "parser"]
+categories = ["parsing", "science", "parser-implementations"]
+edition = "2021"
+rust-version = "1.81.0"
 
 [dependencies]
 rumtk-core = { version = "0.9.13", path = "../rumtk-core" }

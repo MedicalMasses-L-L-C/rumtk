@@ -13,17 +13,17 @@ communication and automation in medicine.
 
 [![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2)](https://crates.io/crates/rumtk-hl7-v2) [![Released API docs](https://docs.rs/rumtk-hl7-v2/badge.svg)](https://docs.rs/rumtk-hl7-v2) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
+## Rumtk-Web
+
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-web)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-web)](https://crates.io/crates/rumtk-web) [![Released API docs](https://docs.rs/rumtk-web/badge.svg)](https://docs.rs/rumtk-web) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+
 ## Rumtk-HL7-V2-Interface
 
 [![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-interface)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-interface)](https://crates.io/crates/rumtk-v2-interface) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-interface) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 ## Rumtk-HL7-V2-Parser
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-interface)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-interface)](https://crates.io/crates/rumtk-v2-interface) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-interface) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
-
-## Rumtk-Web
-
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-web)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-web)](https://crates.io/crates/rumtk-web) [![Released API docs](https://docs.rs/rumtk-web/badge.svg)](https://docs.rs/rumtk-web) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-parse)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-parse)](https://crates.io/crates/rumtk-v2-parse) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 # Goal
 
@@ -101,6 +101,12 @@ communication and automation in medicine.
     - [x] HL7 v2 Endpoint Interface utility
     - [x] HL7 v2 Client Interface utility
     - [ ] HL7 v2 Tests
+- [ ] HL7 v2 Parser
+    - [x] Basic parsing of v2 message from pipes to `V2Message` type.
+    - [x] Basic generation of v2 message from `V2Message` to pipes format.
+    - [x] Allow reading of JSON or HL7 messages
+    - [ ] Tests
+    - [ ] Fuzz Targets
 - [ ] HL7 v2 to FHIR Conversion
     - [ ] HL7 v2 to FHIR Basic Mapping
     - [ ] HL7 v2 to FHIR Custom Mappings
