@@ -29,6 +29,7 @@
 pub mod cache;
 pub mod cli;
 pub mod core;
+pub mod dependencies;
 pub mod hash;
 pub mod json;
 pub mod log;
@@ -39,6 +40,7 @@ pub mod scripting;
 pub mod search;
 pub mod strings;
 pub mod threading;
+pub mod types;
 
 #[cfg(test)]
 mod tests {
@@ -48,8 +50,8 @@ mod tests {
     use crate::strings::{
         rumtk_format, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
     };
+    use crate::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use compact_str::CompactString;
-    use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_json::to_string;
     use std::sync::Arc;
     use tokio::sync::RwLock;
@@ -646,7 +648,7 @@ mod tests {
 
     #[test]
     fn test_serialize_json() {
-        #[derive(Serialize)]
+        #[derive(RUMSerialize)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -664,10 +666,9 @@ mod tests {
 
     #[test]
     fn test_deserialize_serde_json() {
-        use serde::{Deserialize, Deserializer, Serialize, Serializer};
         use serde_json::{from_str, to_string};
 
-        #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+        #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -686,7 +687,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_json() {
-        #[derive(Serialize, Deserialize, PartialEq)]
+        #[derive(RUMSerialize, RUMDeserialize, PartialEq)]
         struct MyStruct {
             hello: RUMString,
         }

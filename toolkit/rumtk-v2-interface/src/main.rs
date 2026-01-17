@@ -17,13 +17,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use clap::Parser;
 use rumtk_core::core::RUMResult;
+use rumtk_core::dependencies::clap;
 use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::RUMString;
-use rumtk_core::{
-    rumtk_deserialize, rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout,
-};
+use rumtk_core::types::RUMCLIParser;
+use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{
@@ -55,7 +54,7 @@ const VXU_HL7_V2_MESSAGE: &str =
 ///
 /// HL7 V2 Interface CLI
 ///
-#[derive(Parser, Debug)]
+#[derive(RUMCLIParser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct RUMTKInterfaceArgs {
     ///

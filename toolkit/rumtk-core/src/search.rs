@@ -20,9 +20,10 @@
  */
 
 pub mod rumtk_search {
-    use crate::cache::{new_cache, AHashMap, LazyRUMCache};
+    use crate::cache::{new_cache, LazyRUMCache};
     use crate::rumtk_cache_fetch;
     use crate::strings::{CompactStringExt, RUMString};
+    use crate::types::RUMHashMap;
     use regex::Regex;
     /**************************** Globals **************************************/
     static mut re_cache: RegexCache = new_cache();
@@ -30,7 +31,7 @@ pub mod rumtk_search {
     const DEFAULT_REGEX_CACHE_PAGE_SIZE: usize = 10;
     /**************************** Types *****************************************/
     pub type RegexCache = LazyRUMCache<RUMString, Regex>;
-    pub type SearchGroups = AHashMap<RUMString, RUMString>;
+    pub type SearchGroups = RUMHashMap<RUMString, RUMString>;
     pub type CapturedList = Vec<RUMString>;
 
     /**************************** Traits ****************************************/

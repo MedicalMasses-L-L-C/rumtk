@@ -20,7 +20,7 @@
  */
 
 pub mod serialization {
-    pub use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    pub use crate::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     pub use serde_json::{from_str, to_string, to_string_pretty};
 
     ///
@@ -34,11 +34,11 @@ pub mod serialization {
     /// # Examples
     /// ## Pretty Print
     /// ```
-    /// pub use rumtk_core::json::serialization::{Serialize};
+    /// use rumtk_core::json::serialization::{RUMSerialize};
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::rumtk_serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(RUMSerialize)]
     /// struct MyStruct {
     ///     hello: RUMString
     /// }
@@ -52,11 +52,11 @@ pub mod serialization {
     ///
     /// ## Default
     /// ```
-    /// pub use rumtk_core::json::serialization::{Serialize};
+    /// use rumtk_core::json::serialization::{RUMSerialize};
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::rumtk_serialize;
     ///
-    /// #[derive(Serialize)]
+    /// #[derive(RUMSerialize)]
     /// struct MyStruct {
     ///     hello: RUMString
     /// }
@@ -106,11 +106,11 @@ pub mod serialization {
     /// # Example
     ///
     /// ```
-    /// use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    /// use rumtk_core::json::serialization::{RUMSerialize, RUMDeserialize};
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::{rumtk_serialize, rumtk_deserialize};
     ///
-    /// #[derive(Serialize, Deserialize, PartialEq)]
+    /// #[derive(RUMSerialize, RUMDeserialize, PartialEq)]
     /// struct MyStruct {
     ///     hello: RUMString
     /// }

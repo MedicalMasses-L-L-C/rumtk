@@ -44,7 +44,7 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use pyo3::exceptions::PyValueError;
-    pub use rumtk_core::cache::{get_or_set_from_cache, new_cache, AHashMap, LazyRUMCache};
+    use rumtk_core::cache::{get_or_set_from_cache, new_cache, LazyRUMCache};
     use rumtk_core::core::clamp_index;
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
@@ -52,8 +52,8 @@ pub mod v2_parser {
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
-
-    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    use rumtk_core::types::RUMOrderedMap;
+    use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
     /**************************** Globals ***************************************/
 
@@ -95,7 +95,7 @@ pub mod v2_parser {
     /// ```
     ///
     #[pyclass]
-    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Component {
         component: V2String,
     }
@@ -213,7 +213,7 @@ pub mod v2_parser {
     ///```
     ///
     #[pyclass]
-    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -307,7 +307,7 @@ pub mod v2_parser {
     /// ```
     ///
     #[pyclass]
-    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Segment {
         name: RUMString,
         description: RUMString,
@@ -436,10 +436,10 @@ pub mod v2_parser {
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
-    pub type SegmentMap = AHashMap<u8, V2SegmentGroup>;
+    pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
 
     #[pyclass]
-    #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,

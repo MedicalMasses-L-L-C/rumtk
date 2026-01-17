@@ -1,6 +1,6 @@
 [package]
 name = "rumtk-hl7-v2-parse"
-version = "0.1.0"
+version = "0.1.1"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 homepage = "https://github.com/kiseitai3/rumtk/tree/main/toolkit/rumtk-v2-parse"
@@ -12,11 +12,6 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.9.13", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.8.6", path = "../rumtk-hl7-v2" }
-#rumtk-core = "0.9.7"
-#rumtk-hl7-v2 = "0.8.4"
-serde = { version = "1.0.219", features = ["derive", "std"] }
-serde_json = "1.0.140"
+rumtk-core = { version = "0.9.14", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.8.8", path = "../rumtk-hl7-v2" }
 clap = { version = "4.5.38", features = ["derive"] }
-tokio = { version = "1.45.0", features = ["full"] }

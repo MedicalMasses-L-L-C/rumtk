@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-pub use ahash::AHashMap;
+use crate::types::RUMHashMap;
 use core::hash::Hash;
 pub use once_cell::unsync::Lazy;
 use std::sync::{Arc, MappedRwLockReadGuard, RwLock, RwLockReadGuard};
@@ -33,7 +33,7 @@ pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 /// Generic Cache store object. One use case will be to use a search string as the key and store
 /// the search parsing object here.
 ///
-pub type RUMCache<K, V> = AHashMap<K, V>;
+pub type RUMCache<K, V> = RUMHashMap<K, V>;
 pub type LazyRUMCache<K, V> = Lazy<Arc<RwLock<RUMCache<K, V>>>>;
 pub type LazyRUMCacheValue<V> = MappedRwLockReadGuard<'static, V>;
 

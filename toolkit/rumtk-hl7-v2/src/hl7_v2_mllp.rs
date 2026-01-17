@@ -1101,6 +1101,7 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_iter_channels {
         ( $safe_mllp:expr ) => {{
+            use rumtk_core::dependencies::tokio;
             use $crate::{
                 rumtk_v2_mllp_is_server, rumtk_v2_mllp_open_client_channel,
                 rumtk_v2_mllp_open_server_channels,

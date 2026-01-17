@@ -22,7 +22,7 @@
 pub mod cli_utils {
     use crate::core::RUMResult;
     use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
-    use clap::Parser;
+    use crate::types::RUMCLIParser;
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
     use std::num::NonZeroU16;
@@ -38,7 +38,7 @@ pub mod cli_utils {
     ///
     /// Note, this is only an example.
     ///
-    #[derive(Parser, Debug)]
+    #[derive(RUMCLIParser, Debug)]
     #[command(author, version, about, long_about = None)]
     pub struct RUMTKArgs {
         ///

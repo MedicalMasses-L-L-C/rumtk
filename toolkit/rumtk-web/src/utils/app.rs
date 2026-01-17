@@ -20,23 +20,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use rumtk_core::strings::RUMString;
-use rumtk_core::threading::threading_functions::get_default_system_thread_count;
-use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-
+use crate::components::UserComponents;
 use crate::css::DEFAULT_OUT_CSS_DIR;
+use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
+use crate::{rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
-use crate::{rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages};
+use rumtk_core::core::RUMResult;
+use rumtk_core::dependencies::clap;
+use rumtk_core::strings::RUMString;
+use rumtk_core::threading::threading_functions::get_default_system_thread_count;
+use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
+use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
 
-use crate::components::UserComponents;
-use crate::pages::UserPages;
 use axum::routing::get;
 use axum::Router;
-use clap::Parser;
-use rumtk_core::core::RUMResult;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
 use tracing::error;
@@ -44,7 +44,7 @@ use tracing::error;
 ///
 /// RUMTK WebApp CLI Args
 ///
-#[derive(Parser, Debug)]
+#[derive(RUMCLIParser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     ///
@@ -122,7 +122,7 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
         .with_state(state)
         .layer(comression_layer);
 
-    let listener = tokio::net::TcpListener::bind(&args.ip.as_str())
+    let listener = RUMTcpListener::bind(&args.ip.as_str())
         .await
         .expect("There was an issue biding the listener.");
     println!("listening on {}", listener.local_addr().unwrap());
@@ -137,8 +137,6 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
 }
 
 pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool) {
-    use clap::Parser;
-
     let args = Args::parse();
 
     rumtk_web_init_components!(components);

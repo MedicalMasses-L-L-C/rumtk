@@ -20,8 +20,6 @@
  */
 
 pub mod v2_base_types {
-    use serde::{Deserialize, Deserializer, Serialize, Serializer};
-
     use crate::hl7_v2_constants::{
         V2_DATETIME_MICRO_LENGTH, V2_DATETIME_THOUSAND_TICK, V2_MSHEADER_PATTERN,
         V2_SEARCH_EXPR_TYPE, V2_SEGMENT_IDS, V2_SEGMENT_TERMINATOR, V2_TRUNCATION_CHARACTER,
@@ -35,6 +33,7 @@ pub mod v2_base_types {
     };
     use rumtk_core::strings::{rumtk_format, ToCompactString};
     use rumtk_core::strings::{RUMString, RUMStringConversions, UTFStringExtensions};
+    use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 
     use std::fmt::Debug;
     /**************************** Constants**************************************/
@@ -51,7 +50,7 @@ pub mod v2_base_types {
     /// Basic type used to derive other types for the standard implementation.
     ///
     pub type V2String = RUMString;
-    #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+    #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
     pub struct V2ParserCharacters {
         pub segment_terminator: RUMString,
         pub field_separator: RUMString,

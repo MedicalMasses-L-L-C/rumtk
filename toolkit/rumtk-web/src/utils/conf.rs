@@ -25,7 +25,7 @@ use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
-use serde::{Deserialize, Serialize};
+use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 
@@ -39,14 +39,14 @@ pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
 pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNestedTextMap>;
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
     pub logo_size: RUMString,
     pub disable_navlinks: bool,
     pub disable_logo: bool,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct FooterConf {
     pub socials_list: RUMString,
     pub disable_contact_button: bool,
@@ -59,7 +59,7 @@ pub struct FooterConf {
 /// at runtime. The settings will dictate a few key project behaviors such as properly labeling
 /// some components with the company name or use the correct language text.
 ///
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
