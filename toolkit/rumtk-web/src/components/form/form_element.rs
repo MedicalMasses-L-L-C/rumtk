@@ -28,7 +28,7 @@ use askama::Template;
 #[derive(Template, Debug, Clone)]
 #[template(
     source = "
-        <{{element}} {{props.to_rumstring()}} class='{{css_class}}'>{{data}}</{{element}}>
+        <{{element}} {{props.to_rumstring()|safe}} class='{{css_class}}'>{{data}}</{{element}}>
     ",
     ext = "html"
 )]
