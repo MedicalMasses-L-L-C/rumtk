@@ -34,12 +34,15 @@ pub type UserPages<'a> = Vec<PageItem<'a>>;
 pub type PageCacheItem = LazyRUMCacheValue<PageFunction>;
 
 static mut PAGE_CACHE: PageCache = new_cache();
-pub static DEFAULT_PAGE: PageFunction = index::index;
+static mut DEFAULT_PAGE: PageFunction = index::index;
 pub const DEFAULT_PAGE_NAME: &str = "default";
 
 pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
     let key = RUMString::from(name);
     let r = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
+    unsafe {
+        DEFAULT_PAGE = component_fxn;
+    }
     println!(
         "Registered page {} => page function [{:?}] == registered function [{:?}]",
         name,
@@ -81,7 +84,7 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::pages::{register_page, get_page, DEFAULT_PAGE};
+/// use rumtk_web::pages::{register_page, get_page, get_default_function};
 /// use rumtk_web::utils::{SharedAppConf, RenderedPageComponents};
 /// use rumtk_web::{rumtk_web_render_component};
 ///
@@ -93,9 +96,9 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///     ]
 /// }
 ///
+/// let default = rumtk_format!("{:?}", get_default_function());
 /// let r = rumtk_format!("{:?}", &register_page("index", index));
 /// let p = rumtk_format!("{:?}", &get_page(""));
-/// let default = rumtk_format!("{:?}", &DEFAULT_PAGE);
 ///
 ///  assert_ne!(&default, &p, "{}", rumtk_format!("The default page matches the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
 ///  assert_eq!(&r, &p, "{}", rumtk_format!("The registered page does not match the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
@@ -103,14 +106,15 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 /// ```
 ///
 pub fn get_page(name: &str) -> PageCacheItem {
-    let default_page = rumtk_cache_get!(
+    rumtk_cache_get!(
         &raw mut PAGE_CACHE,
-        &RUMString::from(DEFAULT_PAGE_NAME),
-        &DEFAULT_PAGE
+        &RUMString::from(name),
+        get_default_function()
     )
-    .deref()
-    .clone();
-    rumtk_cache_get!(&raw mut PAGE_CACHE, &RUMString::from(name), &default_page)
+}
+
+pub fn get_default_function() -> &'static PageFunction {
+    unsafe { &DEFAULT_PAGE }
 }
 
 pub fn init_pages(user_components: &UserPages) {
