@@ -28,7 +28,7 @@ use askama::Template;
 #[derive(Template, Debug, Clone)]
 #[template(
     source = "
-        <{{element}} {{props.to_rumstring()}} class='{{css}}'>{{data|safe}}</{{element}}>
+        <{{element}} {{props.to_rumstring()}} class='{{css_class}}'>{{data}}</{{element}}>
     ",
     ext = "html"
 )]
@@ -36,14 +36,14 @@ pub struct FormElement<'a> {
     element: &'a str,
     data: &'a str,
     props: InputProps,
-    css: &'a str,
+    css_class: &'a str,
 }
 
-pub fn form_element(element: &str, data: &str, props: InputProps, css: &str) -> HTMLResult {
+pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
     rumtk_web_render_html!(FormElement {
         element,
         data,
         props,
-        css
+        css_class
     })
 }
