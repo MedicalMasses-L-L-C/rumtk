@@ -43,8 +43,8 @@ pub struct InputProps<'a> {
     pub required: bool,
 }
 
-impl InputProps {
-    fn get_handler_string(handlers: &EventHandlers) -> RUMString {
+impl InputProps<'_> {
+    fn get_handler_string(&self, handlers: &EventHandlers) -> RUMString {
         let mut handler_string = RUMString::default();
 
         for (handler_name, handler_function) in handlers {

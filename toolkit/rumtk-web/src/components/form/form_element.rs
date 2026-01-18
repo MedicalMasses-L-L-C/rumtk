@@ -35,7 +35,7 @@ use askama::Template;
 pub struct FormElement<'a> {
     element: &'a str,
     data: &'a str,
-    props: InputProps,
+    props: InputProps<'a>,
     css_class: &'a str,
 }
 
