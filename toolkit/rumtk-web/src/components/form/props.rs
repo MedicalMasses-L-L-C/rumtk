@@ -22,12 +22,17 @@
  */
 use rumtk_core::strings::{rumtk_format, RUMString};
 
+type EventHandler<'a> = (&'a str, &'a str);
+type EventHandlers<'a> = Vec<EventHandler<'a>>;
+
 #[derive(Debug, Clone, Default)]
-pub struct InputProps {
+pub struct InputProps<'a> {
     pub name: Option<RUMString>,
     pub typ: Option<RUMString>,
     pub value: Option<RUMString>,
     pub placeholder: Option<RUMString>,
+    pub pattern: Option<RUMString>,
+    pub event_handlers: Option<EventHandlers<'a>>,
     pub max_length: Option<usize>,
     pub min_length: Option<usize>,
     pub autocapitalize: bool,
@@ -39,36 +44,54 @@ pub struct InputProps {
 }
 
 impl InputProps {
+    fn get_handler_string(handlers: &EventHandlers) -> RUMString {
+        let mut handler_string = RUMString::default();
+
+        for (handler_name, handler_function) in handlers {
+            handler_string += &rumtk_format!(" {}={:?}", handler_name, handler_function);
+        }
+
+        handler_string
+    }
+
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
         rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} ",
+            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             match &self.name {
-                Some(name) => rumtk_format!("id={}", name),
+                Some(name) => rumtk_format!("id={:?}", name),
                 None => default_text.clone(),
             },
             match &self.name {
-                Some(name) => rumtk_format!("name={}", name),
+                Some(name) => rumtk_format!("name={:?}", name),
                 None => default_text.clone(),
             },
             match &self.typ {
-                Some(typ) => rumtk_format!("type={}", typ),
+                Some(typ) => rumtk_format!("type={:?}", typ),
                 None => default_text.clone(),
             },
             match &self.value {
-                Some(val) => rumtk_format!("value={}", val),
+                Some(val) => rumtk_format!("value={:?}", val),
                 None => default_text.clone(),
             },
             match &self.placeholder {
-                Some(placeholder) => rumtk_format!("placeholder={}", placeholder),
+                Some(placeholder) => rumtk_format!("placeholder={:?}", placeholder),
+                None => default_text.clone(),
+            },
+            match &self.pattern {
+                Some(pattern) => rumtk_format!("pattern={:?}", pattern),
+                None => default_text.clone(),
+            },
+            match &self.event_handlers {
+                Some(handlers) => self.get_handler_string(handlers),
                 None => default_text.clone(),
             },
             match self.max_length {
-                Some(max_length) => rumtk_format!("maxlength={}", max_length),
+                Some(max_length) => rumtk_format!("maxlength={:?}", max_length),
                 None => default_text.clone(),
             },
             match self.min_length {
-                Some(min_length) => rumtk_format!("minlength={}", min_length),
+                Some(min_length) => rumtk_format!("minlength={:?}", min_length),
                 None => default_text.clone(),
             },
             match self.autocapitalize {
