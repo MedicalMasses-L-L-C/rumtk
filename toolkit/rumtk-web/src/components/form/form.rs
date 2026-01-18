@@ -110,7 +110,7 @@ use askama::Template;
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
-        {% if !module.empty() %}
+        {% if !module.is_empty() %}
             <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
         {% endif %}
         </script>
