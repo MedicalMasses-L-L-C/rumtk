@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 rumtk-core = { version = "0.9.14", path = "../rumtk-core" }
-rumtk-web = { version = "0.3.1", path = "../rumtk-web" }
+rumtk-web = { version = "0.3.3", path = "../rumtk-web" }
