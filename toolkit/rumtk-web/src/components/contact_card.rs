@@ -21,11 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{
-    DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE,
+    DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE,
     SECTION_CONTACT,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, TextMap, URLParams, URLPath};
-use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
+use crate::utils::DEFAULT_TEXTMAP;
 use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
@@ -89,15 +89,13 @@ pub fn contact_card(
     params: URLParams,
     state: SharedAppConf,
 ) -> HTMLResult {
-    let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_CONTACT_ITEM);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let text_conf = rumtk_web_get_string!(state, SECTION_CONTACT);
-    let contact_item = rumtk_web_get_text_item!(&text_conf, section, &DEFAULT_NESTEDTEXTMAP());
-    let contact_lines: &TextMap = rumtk_web_get_text_item!(&contact_item, typ, &DEFAULT_TEXTMAP());
+    let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());
 
     rumtk_web_render_html!(ContactCard {
         contact_lines,

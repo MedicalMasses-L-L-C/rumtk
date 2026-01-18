@@ -21,11 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_DEFAULT,
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE,
     SECTION_TEXT,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
+use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
     rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, rumtk_web_render_markdown,
 };
@@ -66,8 +66,7 @@ pub fn formatted_label(
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
-    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
-    let itm = rumtk_web_get_text_item!(&en_text, typ, &DEFAULT_TEXTMAP());
+    let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = rumtk_web_render_markdown!(desc);
 

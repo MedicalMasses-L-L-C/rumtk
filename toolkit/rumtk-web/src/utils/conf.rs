@@ -25,14 +25,14 @@ use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
+use rumtk_core::types::RUMOrderedMap;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
-use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 
-pub type TextMap = HashMap<RUMString, RUMString>;
-pub type NestedTextMap = HashMap<RUMString, TextMap>;
-pub type NestedNestedTextMap = HashMap<RUMString, NestedTextMap>;
-pub type RootNestedNestedTextMap = HashMap<RUMString, NestedNestedTextMap>;
+pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
+pub type NestedTextMap = RUMOrderedMap<RUMString, TextMap>;
+pub type NestedNestedTextMap = RUMOrderedMap<RUMString, NestedTextMap>;
+pub type RootNestedNestedTextMap = RUMOrderedMap<RUMString, NestedNestedTextMap>;
 
 pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;

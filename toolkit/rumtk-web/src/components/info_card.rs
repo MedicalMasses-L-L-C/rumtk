@@ -22,10 +22,10 @@
  */
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
-    PARAMS_ITEM, SECTION_DEFAULT, SECTION_TEXT,
+    PARAMS_ITEM, SECTION_TEXT,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::utils::{DEFAULT_NESTEDTEXTMAP, DEFAULT_TEXTMAP};
+use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
     rumtk_web_get_param_eq, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
 };
@@ -76,8 +76,7 @@ pub fn info_card(_path_components: URLPath, params: URLParams, state: SharedAppC
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
-    let en_text = rumtk_web_get_text_item!(&text_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
-    let itm = rumtk_web_get_text_item!(&en_text, card_text_item, &DEFAULT_TEXTMAP());
+    let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP());
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
 

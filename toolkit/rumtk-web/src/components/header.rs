@@ -21,9 +21,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::components::navlink::navlink;
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_DEFAULT, SECTION_LINKS};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::utils::DEFAULT_NESTEDTEXTMAP;
 use crate::{
     rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html,
@@ -101,8 +100,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppConf
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
-    let en_link = rumtk_web_get_text_item!(&links_store, SECTION_DEFAULT, &DEFAULT_NESTEDTEXTMAP());
-    let nav_keys = en_link.keys().collect::<Vec<&RUMString>>();
+    let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
     let nav_links = match state
         .read()
         .expect("Lock failure")
