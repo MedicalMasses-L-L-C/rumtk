@@ -20,6 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+use crate::defaults::DEFAULT_NO_TEXT;
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
 };
@@ -135,7 +136,8 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let module = rumtk_web_get_conf!(state, SECTION_MODULES, module);
+    let module_store = rumtk_web_get_conf!(state, SECTION_MODULES);
+    let module_name = rumtk_web_get_text_item!(&module_store, module, DEFAULT_NO_TEXT);
 
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
@@ -143,7 +145,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
-        module: RUMString::from(module),
+        module: RUMString::from(module_name),
         elements: elements.iter().as_ref(),
         css_class: RUMString::from(css_class),
         custom_css_enabled

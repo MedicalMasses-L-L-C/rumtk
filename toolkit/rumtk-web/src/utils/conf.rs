@@ -177,12 +177,6 @@ macro_rules! rumtk_web_get_conf {
         let owned_state = $conf.read().expect("Lock failure");
         owned_state.get_conf($item)
     }};
-    ( $conf:expr, $item:expr, $field:expr ) => {{
-        use $crate::rumtk_web_get_text_item;
-        let owned_state = $conf.read().expect("Lock failure");
-        let conf_item = owned_state.get_conf($item);
-        rumtk_web_get_text_item!(&conf_item, &$field, &RUMString::default())
-    }};
 }
 
 /*
