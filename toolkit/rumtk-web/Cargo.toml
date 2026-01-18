@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-web"
 description = "Web framework part of the RUMTK framework that attempts to simplify and expedite dashboard development in Healthcare."
-version = "0.3.7"
+version = "0.3.8"
 readme = "README.md"
 license = "LGPL-2.1"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-web"
