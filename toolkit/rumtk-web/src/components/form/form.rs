@@ -20,10 +20,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::form::get_form;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
 #[derive(Template, Debug)]
@@ -130,7 +129,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
-    let elements = get_form(typ);
+    let elements = rumtk_web_get_form!(typ);
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
