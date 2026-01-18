@@ -20,9 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
+use crate::utils::defaults::{
+    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
+};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
-use crate::{rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{
+    rumtk_web_get_conf, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_html,
+};
 use askama::Template;
 
 #[derive(Template, Debug)]
@@ -106,7 +110,9 @@ use askama::Template;
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
-        <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
+        {% if !module.empty() %}
+            <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
+        {% endif %}
         </script>
         <form id='form' class='f18 centered form-default-container' class='form-{{css_class}}-container'>
             {% for element in elements %}
@@ -118,6 +124,7 @@ use askama::Template;
 )]
 struct Form<'a> {
     typ: RUMString,
+    module: RUMString,
     elements: &'a [RUMString],
     css_class: RUMString,
     custom_css_enabled: bool,
@@ -125,7 +132,10 @@ struct Form<'a> {
 
 pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
+    let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+    let module = rumtk_web_get_conf!(state, SECTION_MODULES, module);
 
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
@@ -133,6 +143,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
+        module: RUMString::from(module),
         elements: elements.iter().as_ref(),
         css_class: RUMString::from(css_class),
         custom_css_enabled
