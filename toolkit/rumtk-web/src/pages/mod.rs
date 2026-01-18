@@ -44,12 +44,40 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
         DEFAULT_PAGE = component_fxn;
     }
     println!(
-        "Registered page {} => page function [{:?}] == registered function [{:?}]",
-        name,
-        &r.deref(),
-        &component_fxn
+        "  ➡ Registered page {} => page function [{:?}]",
+        name, &component_fxn
     );
     r
+}
+
+pub fn get_page(name: &str) -> PageCacheItem {
+    rumtk_cache_get!(
+        &raw mut PAGE_CACHE,
+        &RUMString::from(name),
+        get_default_page()
+    )
+}
+
+pub fn get_default_page() -> &'static PageFunction {
+    unsafe { &DEFAULT_PAGE }
+}
+
+pub fn init_pages(user_components: &UserPages) {
+    println!("🗎 Registering user pages! 🗎");
+    /* Init any user prescribed components */
+    for itm in user_components {
+        let (name, value) = itm;
+        register_page(name, *value);
+    }
+    println!("🗎 ~~~~~~~~~~~~~~~~~~~~~~ 🗎");
+}
+
+#[macro_export]
+macro_rules! rumtk_web_register_page {
+    ( $key:expr, $fxn:expr ) => {{
+        use $crate::pages::register_page;
+        register_page($key, $fxn)
+    }};
 }
 
 ///
@@ -61,9 +89,8 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::pages::{register_page, get_page};
 /// use rumtk_web::utils::{SharedAppConf, RenderedPageComponents};
-/// use rumtk_web::{rumtk_web_render_component};
+/// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page};
 ///
 /// pub fn index(app_state: SharedAppConf) -> RenderedPageComponents {
 ///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
@@ -73,8 +100,8 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///     ]
 /// }
 ///
-/// let r = rumtk_format!("{:?}", &register_page("index", index));
-/// let p = rumtk_format!("{:?}", &get_page("index"));
+/// let r = rumtk_format!("{:?}", &rumtk_web_register_page!("index", index));
+/// let p = rumtk_format!("{:?}", &rumtk_web_get_page!("index"));
 ///
 ///  assert_eq!(&r, &p, "{}", rumtk_format!("The registered page does not match the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
 ///
@@ -84,9 +111,8 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::pages::{register_page, get_page, get_default_function};
 /// use rumtk_web::utils::{SharedAppConf, RenderedPageComponents};
-/// use rumtk_web::{rumtk_web_render_component};
+/// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page};
 ///
 /// pub fn index(app_state: SharedAppConf) -> RenderedPageComponents {
 ///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
@@ -96,43 +122,15 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
 ///     ]
 /// }
 ///
-/// let default = rumtk_format!("{:?}", get_default_function());
-/// let r = rumtk_format!("{:?}", &register_page("index", index));
-/// let p = rumtk_format!("{:?}", &get_page(""));
+/// let default = rumtk_format!("{:?}", rumtk_web_get_default_page!());
+/// let r = rumtk_format!("{:?}", &rumtk_web_register_page!("index", index));
+/// let p = rumtk_format!("{:?}", &rumtk_web_get_page!(""));
 ///
 ///  assert_ne!(&default, &p, "{}", rumtk_format!("The default page matches the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
 ///  assert_eq!(&r, &p, "{}", rumtk_format!("The registered page does not match the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
 ///
 /// ```
 ///
-pub fn get_page(name: &str) -> PageCacheItem {
-    rumtk_cache_get!(
-        &raw mut PAGE_CACHE,
-        &RUMString::from(name),
-        get_default_function()
-    )
-}
-
-pub fn get_default_function() -> &'static PageFunction {
-    unsafe { &DEFAULT_PAGE }
-}
-
-pub fn init_pages(user_components: &UserPages) {
-    /* Init any user prescribed components */
-    for itm in user_components {
-        let (name, value) = itm;
-        register_page(name, *value);
-    }
-}
-
-#[macro_export]
-macro_rules! rumtk_web_register_page {
-    ( $key:expr, $fxn:expr ) => {{
-        use $crate::pages::register_page;
-        register_page($key, $fxn)
-    }};
-}
-
 #[macro_export]
 macro_rules! rumtk_web_get_page {
     ( $key:expr ) => {{
@@ -141,6 +139,42 @@ macro_rules! rumtk_web_get_page {
     }};
 }
 
+///
+/// Returns the default page function that can be used for rendering that page
+///
+#[macro_export]
+macro_rules! rumtk_web_get_default_page {
+    ( ) => {{
+        use $crate::pages::get_default_page;
+        get_default_page()
+    }};
+}
+
+///
+/// Registers a set of pages provided by the user.
+///
+/// ## Example
+///
+///```
+/// use std::ops::Deref;
+/// use rumtk_core::strings::rumtk_format;
+/// use rumtk_web::utils::{SharedAppConf, RenderedPageComponents};
+/// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_pages, rumtk_web_get_page};
+///
+/// fn my_page(app_state: SharedAppConf) -> RenderedPageComponents {
+///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
+///
+///     vec![
+///         title_welcome,
+///     ]
+/// }
+///
+/// let my_page_name = "my_page";
+///
+/// rumtk_web_init_pages!(&vec![(my_page_name, my_page)]);
+///```
+///
+///
 #[macro_export]
 macro_rules! rumtk_web_init_pages {
     ( $pages:expr ) => {{
