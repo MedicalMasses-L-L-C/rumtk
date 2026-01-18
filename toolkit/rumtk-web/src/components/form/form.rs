@@ -115,7 +115,7 @@ use askama::Template;
             <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
         {% endif %}
         </script>
-        <form id='form' class='f18 centered form-default-container' class='form-{{css_class}}-container'>
+        <form id='form' class='f18 centered form-default-container gap10' class='form-{{css_class}}-container'>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
