@@ -35,7 +35,7 @@ mod contact_button;
 mod contact_card;
 pub mod div;
 mod footer;
-mod form;
+pub mod form;
 mod formatted_label;
 mod header;
 mod info_card;

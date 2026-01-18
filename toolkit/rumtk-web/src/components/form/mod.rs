@@ -38,6 +38,8 @@ pub type FormCache = LazyRUMCache<RUMString, FormElements>;
 pub type FormElementBuilder =
     fn(element: &str, data: &str, props: InputProps, css: &str) -> RUMString;
 pub type FormBuilderFunction = fn(builder: FormElementBuilder) -> FormElements;
+pub type FormItem<'a> = (&'a str, FormBuilderFunction);
+pub type Forms<'a> = Vec<FormItem<'a>>;
 pub type FormCacheItem = LazyRUMCacheValue<FormElements>;
 
 static mut FORM_CACHE: FormCache = new_cache();
@@ -51,11 +53,17 @@ fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -
     rumtk_web_render_component!(|| -> HTMLResult { form_element(element, data, props, css) })
 }
 
-pub fn register_form_elements(name: &str, element_builder: FormBuilderFunction) -> FormCacheItem {
+pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction) -> FormCacheItem {
     let key = RUMString::from(name);
     let _ = rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
     let data = element_builder(build_form_element);
     rumtk_cache_push!(&raw mut FORM_CACHE, &key, &data)
+}
+
+pub fn register_forms(forms: &Forms) {
+    for (form_name, form_builder) in forms {
+        let _ = register_form_elements(form_name, form_builder);
+    }
 }
 
 pub fn get_form(name: &str) -> FormCacheItem {
@@ -66,11 +74,11 @@ pub fn get_form(name: &str) -> FormCacheItem {
 /// This is an API macro for defining a form that can be used to render it later in your web pages.
 ///
 #[macro_export]
-macro_rules! rumtk_web_add_form {
-    ( $name:expr, $build_fxn:expr ) => {{
-        use $crate::components::form::register_form_elements;
+macro_rules! rumtk_web_init_forms {
+    ( $forms:expr ) => {{
+        use $crate::components::form::register_forms;
 
-        register_form_elements($name, $build_fxn)
+        register_forms($forms);
     }};
 }
 

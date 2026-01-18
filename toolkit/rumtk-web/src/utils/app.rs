@@ -20,12 +20,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::UserComponents;
+use crate::components::{form::Forms, UserComponents};
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_pages};
+use crate::{
+    rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_forms,
+    rumtk_web_init_pages,
+};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
 use rumtk_core::core::RUMResult;
@@ -136,11 +139,12 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
     Ok(())
 }
 
-pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool) {
+pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, skip_serve: bool) {
     let args = Args::parse();
 
     rumtk_web_init_components!(components);
     rumtk_web_init_pages!(pages);
+    rumtk_web_init_forms!(forms);
     rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
     let rt = rumtk_init_threads!(&args.threads);
@@ -183,11 +187,14 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool
 ///         rumtk_web_render_html,
 ///         rumtk_web_get_text_item
 ///     };
+///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppConf, RenderedPageComponents};
 ///     use rumtk_web::{URLPath, URLParams, HTMLResult, RUMString};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///
 ///     use askama::Template;
+///
+///
 ///
 ///     // About page
 ///     pub fn about(app_state: SharedAppConf) -> RenderedPageComponents {
@@ -245,12 +252,19 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, skip_serve: bool
 ///         })
 ///     }
 ///
+///     fn my_form (builder: FormElementBuilder) -> FormElements {
+///         vec![
+///             builder("input", "", InputProps::default(), "default")
+///         ]
+///     }
+///
 ///     //Requesting to immediately exit instead of indefinitely serving pages so this example can be used as a unit test.
 ///     let skip_serve = true;
 ///
 ///     let result = rumtk_web_run_app!(
 ///         vec![("about", about)],
 ///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
+///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
 ///         skip_serve //Omit in production code. This is used so that this example can work as a unit test.
 ///     );
 /// ```
@@ -260,21 +274,26 @@ macro_rules! rumtk_web_run_app {
     (  ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&vec![], &vec![], false)
+        app_main(&vec![], &vec![], &vec![], false)
     }};
     ( $pages:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &vec![], false)
+        app_main(&$pages, &vec![], &vec![], false)
     }};
     ( $pages:expr, $components:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, false)
+        app_main(&$pages, &$components, &vec![], false)
     }};
-    ( $pages:expr, $components:expr, $skip_serve:expr ) => {{
+    ( $pages:expr, $components:expr, $forms:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, $skip_serve)
+        app_main(&$pages, &$components, &$forms, false)
+    }};
+    ( $pages:expr, $components:expr, $forms:expr, $skip_serve:expr ) => {{
+        use $crate::utils::app::app_main;
+
+        app_main(&$pages, &$components, &$forms, $skip_serve)
     }};
 }
