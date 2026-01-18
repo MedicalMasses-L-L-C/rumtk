@@ -23,7 +23,7 @@ communication and automation in medicine.
 
 ## Rumtk-HL7-V2-Parser
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-parse)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-parse)](https://crates.io/crates/rumtk-v2-parse) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2-parse)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2-parse)](https://crates.io/crates/rumtk-hl7-v2-parse) [![Released API docs](https://docs.rs/rumtk-hl7-v2-parse/badge.svg)](https://docs.rs/rumtk-hl7-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 # Goal
 
