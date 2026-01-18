@@ -33,7 +33,6 @@ pub type TextMap = HashMap<RUMString, RUMString>;
 pub type NestedTextMap = HashMap<RUMString, TextMap>;
 pub type NestedNestedTextMap = HashMap<RUMString, NestedTextMap>;
 pub type RootNestedNestedTextMap = HashMap<RUMString, NestedNestedTextMap>;
-pub type RootRootNestedNestedTextMap = HashMap<RUMString, RootNestedNestedTextMap>;
 
 pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
@@ -71,7 +70,7 @@ pub struct AppConf {
     pub header_conf: HeaderConf,
     pub footer_conf: FooterConf,
 
-    strings: RootRootNestedNestedTextMap,
+    strings: RootNestedNestedTextMap,
     config: NestedNestedTextMap,
     //pub opts: TextMap,
 }
@@ -98,13 +97,13 @@ impl AppConf {
         }
     }
 
-    pub fn get_text(&self, item: &str) -> NestedNestedTextMap {
+    pub fn get_text(&self, item: &str) -> NestedTextMap {
         match self.strings.get(&self.lang) {
             Some(l) => match l.get(item) {
                 Some(i) => i.clone(),
-                None => NestedNestedTextMap::default(),
+                None => NestedTextMap::default(),
             },
-            None => NestedNestedTextMap::default(),
+            None => NestedTextMap::default(),
         }
     }
 
