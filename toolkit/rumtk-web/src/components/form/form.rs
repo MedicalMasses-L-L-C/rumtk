@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::DEFAULT_NO_TEXT;
+use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ENDPOINT};
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
 };
@@ -115,7 +115,8 @@ use askama::Template;
             <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
         {% endif %}
         </script>
-        <form id='form' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container'>
+        <form id='form' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' 
+      _='on htmx:xhr:progress(loaded, total) set #progress.value to (loaded/total)*100'>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
@@ -126,6 +127,7 @@ use askama::Template;
 struct Form<'a> {
     typ: RUMString,
     module: RUMString,
+    endpoint: RUMString,
     elements: &'a [RUMString],
     css_class: RUMString,
     custom_css_enabled: bool,
@@ -134,6 +136,7 @@ struct Form<'a> {
 pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
+    let module = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let module_store = rumtk_web_get_conf!(state, SECTION_MODULES);

@@ -30,6 +30,7 @@ pub struct InputProps<'a> {
     pub name: Option<RUMString>,
     pub typ: Option<RUMString>,
     pub value: Option<RUMString>,
+    pub max: Option<RUMString>,
     pub placeholder: Option<RUMString>,
     pub pattern: Option<RUMString>,
     pub event_handlers: Option<EventHandlers<'a>>,
@@ -57,7 +58,7 @@ impl InputProps<'_> {
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
         rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             match &self.name {
                 Some(name) => rumtk_format!("id={:?}", name),
                 None => default_text.clone(),
@@ -72,6 +73,10 @@ impl InputProps<'_> {
             },
             match &self.value {
                 Some(val) => rumtk_format!("value={:?}", val),
+                None => default_text.clone(),
+            },
+            match &self.max {
+                Some(val) => rumtk_format!("max={:?}", val),
                 None => default_text.clone(),
             },
             match &self.placeholder {

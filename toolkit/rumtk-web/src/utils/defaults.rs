@@ -60,6 +60,7 @@ pub const PARAMS_TARGET: &str = "target";
 pub const PARAMS_SIZE: &str = "size";
 pub const PARAMS_CONTENTS: &str = "contents";
 pub const PARAMS_MODULE: &str = "module";
+pub const PARAMS_ENDPOINT: &str = "endpoint";
 
 /*
    CONF SECTIONS
@@ -74,6 +75,7 @@ pub const SECTION_SERVICES: &str = "services";
 pub const SECTION_PRODUCTS: &str = "products";
 pub const SECTION_LINKS: &str = "links";
 pub const SECTION_MODULES: &str = "modules";
+pub const SECTION_ENDPOINTS: &str = "endpoint";
 pub const SECTION_DEFAULT: &str = "default";
 
 /*
