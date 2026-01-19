@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ENDPOINT};
+use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ENDPOINT, SECTION_ENDPOINTS};
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
 };
@@ -36,15 +36,23 @@ use askama::Template;
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
-        {% if !module.is_empty() %}
-            <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
-            </script>
-        {% endif %}
         <script>
-            htmx.on('#form', 'htmx:xhr:progress', function(evt) {
-              htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+            htmx.on('#form-{{typ}}', 'htmx:xhr:progress', function(evt) {
+              let progressValue = evt.detail.loaded/evt.detail.total * 100;
+              let progressElement = htmx.find('#progress');
+              progressElement.style.display = 'inline-block';
+
+              if (progressValue >= 100) {
+                 progressElement.style.display = 'none';
+              }
+
+              progressElement.setAttribute('value', progressValue);
             });
         </script>
+        {% if !module.is_empty() %}
+            <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
+            </script>
+        {% endif %}
         <form id='form-{{typ}}' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' >
             {% for element in elements %}
                 {{ element|safe }}
@@ -65,11 +73,14 @@ struct Form<'a> {
 pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
-    let module = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
+    let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let module_store = rumtk_web_get_conf!(state, SECTION_MODULES);
     let module_name = rumtk_web_get_text_item!(&module_store, module, DEFAULT_NO_TEXT);
+
+    let endpoint_store = rumtk_web_get_conf!(state, SECTION_ENDPOINTS);
+    let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
 
     let custom_css_enabled = state.read().expect("Lock failure").custom_css;
 
@@ -78,6 +89,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),
         module: RUMString::from(module_name),
+        endpoint: RUMString::from(endpoint_url),
         elements: elements.iter().as_ref(),
         css_class: RUMString::from(css_class),
         custom_css_enabled
