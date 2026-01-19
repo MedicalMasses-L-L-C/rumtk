@@ -20,27 +20,3 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-pub mod components;
-pub mod css;
-mod form_data;
-pub mod pages;
-pub mod static_components;
-pub mod utils;
-
-pub use utils::*;
-
-///
-/// Add utils unit tests here to ensure internal functions work.
-///
-#[cfg(test)]
-mod tests {
-    pub fn add(left: u64, right: u64) -> u64 {
-        left + right
-    }
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}

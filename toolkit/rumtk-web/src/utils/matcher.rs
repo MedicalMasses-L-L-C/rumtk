@@ -47,7 +47,7 @@ pub async fn default_page_matcher(
     };
 
     // Do not minify the page. we saved 0.3KB but transfer went from 5ms to 45ms
-    app_shell(&path_components, &params, state.clone())
+    app_shell(&path_components, &params, state)
 }
 
 pub async fn default_component_matcher(
@@ -67,5 +67,50 @@ pub async fn default_component_matcher(
 
     let component = rumtk_web_get_component!(component);
 
-    component(&path_components[1..], &params, state.clone())
+    component(&path_components[1..], &params, state)
+}
+
+#[macro_export]
+macro_rules! rumtk_web_fetch {
+    ( $matcher:expr ) => {{
+        use axum::extract::{Path, Query, State};
+        use axum::response::Html;
+        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterParams};
+
+        async |Path(path_params): RouterComponents,
+               Query(params): RouterParams,
+               State(state): RouterAppConf|
+               -> Html<String> {
+            match $matcher(path_params, params, state).await {
+                Ok(res) => res,
+                Err(e) => {
+                    error!("{}", e);
+                    return Html(String::default());
+                }
+            }
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_post {
+    ( $matcher:expr ) => {{
+        use axum::extract::{Multipart, Path, Query, State};
+        use axum::response::Html;
+        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterForm, RouterParams};
+
+        async |Path(path_params): RouterComponents,
+               Query(mut params): RouterParams,
+               State(state): RouterAppConf,
+               mut Multipart: RouterForm|
+               -> Html<String> {
+            match $matcher(path_params, params, state).await {
+                Ok(res) => res,
+                Err(e) => {
+                    error!("{}", e);
+                    return Html(String::default());
+                }
+            }
+        }
+    }};
 }

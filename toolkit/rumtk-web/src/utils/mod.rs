@@ -76,25 +76,3 @@ macro_rules! rumtk_web_params_map {
         params
     }};
 }
-
-#[macro_export]
-macro_rules! rumtk_web_fetch {
-    ( $matcher:expr ) => {{
-        use axum::extract::{Path, Query, State};
-        use axum::response::Html;
-        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterParams};
-
-        async |Path(path_params): RouterComponents,
-               Query(params): RouterParams,
-               State(state): RouterAppConf|
-               -> Html<String> {
-            match $matcher(path_params, params, state).await {
-                Ok(res) => res,
-                Err(e) => {
-                    error!("{}", e);
-                    return Html(String::default());
-                }
-            }
-        }
-    }};
-}

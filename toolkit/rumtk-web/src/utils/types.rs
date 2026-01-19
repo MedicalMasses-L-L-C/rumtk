@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 pub use super::conf::*;
-use axum::extract::{Path, Query};
+use axum::extract::{Multipart, Path, Query};
 use axum::response::Html;
 use phf::Map;
 use std::collections::HashMap;
@@ -30,15 +30,17 @@ use std::sync::Arc;
 pub use rumtk_core::strings::RUMString;
 pub use rumtk_core::strings::{CompactStringExt, RUMStringConversions, UTFStringExtensions};
 
+pub type RUMWebData = HashMap<RUMString, RUMString>;
 pub type URLPath<'a, 'b> = &'a [&'b str];
 pub type AsyncURLPath = Arc<Vec<RUMString>>;
-pub type URLParams<'a> = &'a HashMap<RUMString, RUMString>;
-pub type AsyncURLParams = Arc<HashMap<RUMString, RUMString>>;
+pub type URLParams<'a> = &'a RUMWebData;
+pub type AsyncURLParams = Arc<RUMWebData>;
 pub type HTMLResult = Result<Html<String>, RUMString>;
 pub type RenderedPageComponents = Vec<RUMString>;
 /* Router Match Types */
 pub type RouterComponents = Path<Vec<RUMString>>;
-pub type RouterParams = Query<HashMap<RUMString, RUMString>>;
+pub type RouterParams = Query<RUMWebData>;
+pub type RouterForm = Multipart;
 
 /* Config Types */
 pub type ComponentFunction = fn(URLPath, URLParams, SharedAppConf) -> HTMLResult;
