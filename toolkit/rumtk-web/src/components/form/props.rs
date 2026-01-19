@@ -41,6 +41,7 @@ pub struct InputProps<'a> {
     pub autocorrect: bool,
     pub autofocus: bool,
     pub disabled: bool,
+    pub hidden: bool,
     pub required: bool,
 }
 
@@ -58,7 +59,7 @@ impl InputProps<'_> {
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
         rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             match &self.name {
                 Some(name) => rumtk_format!("id={:?}", name),
                 None => default_text.clone(),
@@ -117,6 +118,10 @@ impl InputProps<'_> {
             },
             match self.disabled {
                 true => rumtk_format!("disabled"),
+                false => default_text.clone(),
+            },
+            match self.hidden {
+                true => rumtk_format!("hidden"),
                 false => default_text.clone(),
             },
             match self.required {
