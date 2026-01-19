@@ -33,90 +33,19 @@ use askama::Template;
 #[derive(Template, Debug)]
 #[template(
     source = "
-        <style>
-            :root {
-                --white: #ffffff;
-                --tropical-green: #00755E;
-                --spanish-red: #E60026;
-            }
-
-            .form-default-container {
-                display: flex;
-                flex-direction: column;
-
-                background-color: var(--color-indigo);
-                border-radius: 10px;
-
-                width: 70%;
-                min-width: 200px;
-                max-width: 650px;
-
-                justify-items: center;
-                justify-content: center;
-                align-items: center;
-                place-items: center;
-
-                padding: 20px;
-            }
-
-            .form-default-container > input{
-                width: 80%;
-            }
-
-            .form-default-container > input:invalid{
-                background-color: var(--spanish-red);
-                color: var(--white);
-            }
-
-            .form-default-container > input:invalid::placeholder{
-                color: var(--white);
-            }
-
-            .form-default-container > input:valid{
-                background-color: var(--tropical-green);
-                color: var(--white);
-            }
-
-            .form-default-container > input:valid::placeholder{
-                color: var(--white);
-            }
-
-            .form-default-container > textarea{
-                min-width: 90%;
-                min-height: 300px;
-                object-fit: scale-down;
-            }
-
-            .form-default-container > #submit {
-                width: 200px;
-                height: 100px;
-
-                border-radius: 10px;
-            }
-
-            form:valid > #submit {
-                opacity: 1.0;
-                pointer-events: auto;
-                background-color: var(--tropical-green);
-                color: var(--white);
-            }
-
-            form:invalid > #submit {
-                opacity: 0.5;
-                pointer-events: none;
-                background-color: var(--spanish-red);
-                color: var(--white);
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
         {% if !module.is_empty() %}
             <script type='module' id='form-script' src='/static/js/forms/{{typ}}.js'>
+            </script>
         {% endif %}
+        <script>
+            htmx.on('#form', 'htmx:xhr:progress', function(evt) {
+              htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+            });
         </script>
-        <form id='form' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' 
-      _='on htmx:xhr:progress(loaded, total) set #progress.value to (loaded/total)*100'>
+        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' >
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}

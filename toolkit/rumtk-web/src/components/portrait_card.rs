@@ -42,9 +42,6 @@ type PortraitGrid = Vec<Vec<PortraitItem>>;
 #[derive(Template, Debug)]
 #[template(
     source = "
-        <style>
-
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/portrait_card.css' rel='stylesheet'>
         {% endif %}

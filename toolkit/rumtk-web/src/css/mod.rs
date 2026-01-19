@@ -29,6 +29,7 @@ mod animations;
 mod basic;
 mod default;
 mod fonts;
+mod forms;
 mod gap;
 mod index;
 mod layout;
@@ -47,7 +48,8 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
     css += fonts::FONTS_CSS;
     css += gap::GAP_CSS;
     css += animations::ANIMATIONS_CSS;
-    css += layout::LAYOUT;
+    css += forms::FORM_CSS;
+    css += layout::LAYOUT_CSS;
 
     for source in sources {
         let css_data = fs::read_to_string(source).unwrap_or_default();

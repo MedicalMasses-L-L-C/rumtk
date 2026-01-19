@@ -28,9 +28,6 @@ use askama::Template;
 #[derive(Template, Debug, Clone)]
 #[template(
     source = "
-        <style>
-
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/item_card.css' rel='stylesheet'>
         {% endif %}
