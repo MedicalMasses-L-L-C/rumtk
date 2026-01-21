@@ -28,3 +28,4 @@ pub use serde::{
     Serializer as RUMSerializer,
 };
 pub use tokio::net::TcpListener as RUMTcpListener;
+pub use uuid::Uuid as RUMID;

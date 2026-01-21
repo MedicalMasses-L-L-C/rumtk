@@ -22,10 +22,12 @@ use crate::strings::rumtk_format;
 use crate::strings::RUMString;
 pub use smallvec::{smallvec, SmallVec};
 
+pub type RUMError = RUMString;
+
 ///
 /// Type used for propagating error messages.
 ///
-pub type RUMResult<T> = Result<T, RUMString>;
+pub type RUMResult<T> = Result<T, RUMError>;
 
 pub type RUMVec<T> = Vec<T>;
 
