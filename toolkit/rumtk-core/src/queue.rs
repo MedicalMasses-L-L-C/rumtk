@@ -20,18 +20,20 @@
  */
 pub mod queue {
     use crate::core::RUMResult;
+    use crate::strings::RUMString;
     use crate::threading::thread_primitives::*;
+    use crate::threading::threading_functions::async_sleep;
     use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
     use std::future::Future;
-    use std::thread::sleep;
-    use std::time::Duration;
+    use std::sync::Arc;
 
-    pub const DEFAULT_SLEEP_DURATION: Duration = Duration::from_millis(1);
-    pub const DEFAULT_QUEUE_CAPACITY: usize = 10;
+    pub const DEFAULT_SLEEP_DURATION: f32 = 5f32;
+    pub const DEFAULT_QUEUE_CAPACITY: usize = 1024;
     pub const DEFAULT_MICROTASK_QUEUE_CAPACITY: usize = 5;
 
     pub struct TaskQueue<R> {
-        tasks: AsyncTaskHandles<R>,
+        task_handles: AsyncTaskHandles<R>,
+        tasks: TaskTable<R>,
         runtime: SafeTokioRuntime,
     }
 
@@ -57,10 +59,12 @@ pub mod queue {
         /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskQueue<R>> {
-            let tasks = AsyncTaskHandles::with_capacity(DEFAULT_QUEUE_CAPACITY);
+            let tasks = TaskTable::<R>::with_capacity(DEFAULT_QUEUE_CAPACITY);
+            let task_handles = AsyncTaskHandles::with_capacity(DEFAULT_QUEUE_CAPACITY);
             let runtime = rumtk_init_threads!(&worker_num);
             Ok(TaskQueue {
                 tasks,
+                task_handles,
                 runtime: runtime.clone(),
             })
         }
@@ -69,13 +73,22 @@ pub mod queue {
         /// Add a task to the processing queue. The idea is that you can queue a processor function
         /// and list of args that will be picked up by one of the threads for processing.
         ///
-        pub fn add_task<F>(&mut self, task: F)
+        pub fn add_task<F>(&mut self, task: F) -> TaskID
         where
             F: Future<Output = TaskResult<R>> + Send + Sync + 'static,
-            F::Output: Send + 'static,
+            F::Output: Send + Sized + 'static,
         {
-            let handle = rumtk_spawn_task!(&self.runtime, task);
-            self.tasks.push(handle);
+            let id = TaskID::new_v4();
+            let job_handle = rumtk_spawn_task!(&self.runtime, task);
+            let task = Task {
+                id: id.clone(),
+                finished: false,
+                result: Err(RUMString::default()),
+                job: Arc::new(&job_handle),
+            };
+            self.task_handles.push(job_handle);
+            self.tasks.insert(id.clone(), task);
+            id
         }
 
         ///
@@ -103,6 +116,23 @@ pub mod queue {
             let results = self.gather();
             self.reset();
             results
+        }
+
+        pub async fn wait_for(&self, task_id: &TaskID) {
+            match self.tasks.get(task_id) {
+                Some(task) => {
+                    while !task.finished {
+                        async_sleep(DEFAULT_SLEEP_DURATION).await;
+                    }
+                }
+                None => {}
+            }
+        }
+
+        pub async fn wait_for_batch(&self, tasks: &TaskBatch) {
+            for task in tasks {
+                self.wait_for(task).await;
+            }
         }
 
         ///

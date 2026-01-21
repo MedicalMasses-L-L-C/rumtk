@@ -25,11 +25,12 @@
 pub mod thread_primitives {
     use crate::cache::{new_cache, LazyRUMCache};
     use crate::core::{RUMResult, RUMVec};
+    use crate::types::{RUMHashMap, RUMID};
+    use std::future::Future;
     use std::sync::Arc;
     use tokio::runtime::Runtime as TokioRuntime;
     use tokio::sync::RwLock;
     use tokio::task::JoinHandle;
-
     /**************************** Globals **************************************/
     pub static mut rt_cache: TokioRtCache = new_cache();
     /**************************** Helpers ***************************************/
@@ -53,13 +54,26 @@ pub mod thread_primitives {
     /// This type aliases a vector of T elements that will be used for passing arguments to the task processor.
     pub type TaskArgs<T> = TaskItems<T>;
     /// Type to use to define how task results are expected to be returned.
-    pub type TaskResult<R> = RUMResult<TaskItems<R>>;
+    pub type TaskResult<R> = RUMResult<R>;
     pub type TaskResults<R> = TaskItems<TaskResult<R>>;
     /// Function signature defining the interface of task processing logic.
     pub type SafeTaskArgs<T> = Arc<RwLock<TaskItems<T>>>;
     pub type AsyncTaskHandle<R> = JoinHandle<TaskResult<R>>;
     pub type AsyncTaskHandles<R> = Vec<AsyncTaskHandle<R>>;
     //pub type TaskProcessor<T, R, Fut: Future<Output = TaskResult<R>>> = impl FnOnce(&SafeTaskArgs<T>) -> Fut;
+    pub type TaskID = RUMID;
+    pub type RunningTask<R: Sized> = dyn Future<Output = TaskResult<R>>;
+
+    #[derive(PartialEq, Debug)]
+    pub struct Task<R> {
+        pub id: TaskID,
+        pub finished: bool,
+        pub result: TaskResult<R>,
+        pub job: Arc<RunningTask<R>>,
+    }
+
+    pub type TaskTable<R> = RUMHashMap<TaskID, Task<R>>;
+    pub type TaskBatch = RUMVec<TaskID>;
 }
 
 ///
