@@ -20,30 +20,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-pub use super::conf::*;
-use axum::extract::{Multipart, Path, Query};
-use axum::response::Html;
-use phf::Map;
-use std::sync::Arc;
 
-pub use rumtk_core::strings::RUMString;
-pub use rumtk_core::strings::{CompactStringExt, RUMStringConversions, UTFStringExtensions};
-use rumtk_core::types::RUMHashMap;
+use rumtk_core::cache::LazyRUMCache;
+use rumtk_core::core::{RUMResult, RUMVec};
+use rumtk_core::strings::RUMString;
+use rumtk_core::types::RUMID;
+use std::future::Future;
 
-pub type RUMWebData = RUMHashMap<RUMString, RUMString>;
-pub type URLPath<'a, 'b> = &'a [&'b str];
-pub type AsyncURLPath = Arc<Vec<RUMString>>;
-pub type URLParams<'a> = &'a RUMWebData;
-pub type AsyncURLParams = Arc<RUMWebData>;
-pub type HTMLResult = Result<Html<String>, RUMString>;
-pub type RenderedPageComponents = Vec<RUMString>;
-/* Router Match Types */
-pub type RouterComponents = Path<Vec<RUMString>>;
-pub type RouterParams = Query<RUMWebData>;
-pub type RouterForm = Multipart;
+pub type JobID = RUMID;
+pub type JobBuffer = RUMVec<u8>;
+pub type RUMWebJobBatch = Vec<RUMID>;
+pub type JobFunction = dyn Fn(&JobBuffer) -> RUMResult<JobBuffer>;
 
-/* Config Types */
-pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
-pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
-pub type ComponentMap = Map<&'static str, ComponentFunction>;
-pub type PageMap = Map<&'static str, PageFunction>;
+#[derive(PartialEq, Debug)]
+pub struct Job {
+    pub id: JobID,
+    pub finished: bool,
+    pub message_code: usize,
+    pub message: RUMString,
+    pub result: RUMResult<JobBuffer>,
+    pub job: dyn Future<Output = JobBuffer>,
+}
+
+pub type JobTable = LazyRUMCache<JobID, Job>;

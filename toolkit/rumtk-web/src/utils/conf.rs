@@ -25,8 +25,8 @@ use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
-use rumtk_core::types::RUMOrderedMap;
-use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
+use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
+use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use std::sync::{Arc, RwLock};
 
 pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
@@ -121,9 +121,15 @@ impl AppConf {
     }
 }
 
+///
+/// Main internal structure for holding the initial app configuration ([AppConf](crate::utils::AppConf)),
+/// the `clipboard` containing dynamically generated state ([TextMap](crate::utils::TextMap)),
+/// and the `jobs` field containing
+///
 pub struct AppState {
     pub config: AppConf,
     pub clipboard: TextMap,
+    pub jobs: RUMHashMap<RUMID, RUMID>,
 }
 
 pub type SharedAppState = Arc<RwLock<AppState>>;
