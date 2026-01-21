@@ -838,7 +838,7 @@ pub mod tcp {
                     ))
                 }
             };
-            Ok(vec![RUMClient::connect(ip, *port).await?])
+            Ok(RUMClient::connect(ip, *port).await?)
         }
         async fn get_address_helper(args: &SafeTaskArgs<ClientReceiveArgs>) -> Option<RUMString> {
             let owned_args = Arc::clone(args).clone();
@@ -1045,7 +1045,7 @@ pub mod tcp {
                     ))
                 }
             };
-            Ok(vec![RUMServer::new(ip, *port).await?])
+            Ok(RUMServer::new(ip, *port).await?)
         }
 
         async fn get_client_ids_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> ClientIDList {

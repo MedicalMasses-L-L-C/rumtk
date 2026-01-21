@@ -35,7 +35,6 @@ pub mod json;
 pub mod log;
 pub mod maths;
 pub mod net;
-pub mod queue;
 pub mod scripting;
 pub mod search;
 pub mod strings;
@@ -412,7 +411,7 @@ mod tests {
     use crate::net::tcp::LOCALHOST;
     use crate::threading::thread_primitives::{SafeTaskArgs, TaskItems, TaskResult};
     use crate::threading::threading_functions::sleep;
-    use queue::queue::*;
+    use crate::threading::threading_manager::*;
 
     #[test]
     fn test_queue_data() {

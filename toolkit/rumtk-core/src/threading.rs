@@ -24,13 +24,8 @@
 ///
 pub mod thread_primitives {
     use crate::cache::{new_cache, LazyRUMCache};
-    use crate::core::{RUMResult, RUMVec};
-    use crate::types::{RUMHashMap, RUMID};
-    use std::future::Future;
     use std::sync::Arc;
     use tokio::runtime::Runtime as TokioRuntime;
-    use tokio::sync::RwLock;
-    use tokio::task::JoinHandle;
     /**************************** Globals **************************************/
     pub static mut rt_cache: TokioRtCache = new_cache();
     /**************************** Helpers ***************************************/
@@ -50,12 +45,26 @@ pub mod thread_primitives {
     /**************************** Types ***************************************/
     pub type SafeTokioRuntime = Arc<TokioRuntime>;
     pub type TokioRtCache = LazyRUMCache<usize, SafeTokioRuntime>;
+}
+
+pub mod threading_manager {
+    use crate::core::{RUMResult, RUMVec};
+    use crate::strings::{rumtk_format, RUMString};
+    use crate::threading::thread_primitives::SafeTokioRuntime;
+    use crate::threading::threading_functions::async_sleep;
+    use crate::types::{RUMHashMap, RUMID};
+    use crate::{rumtk_init_threads, rumtk_resolve_task, threading};
+    use std::future::Future;
+    use std::sync::Arc;
+    use tokio::sync::RwLock;
+    use tokio::task::JoinHandle;
+
+    const DEFAULT_SLEEP_DURATION: f32 = 5f32;
+    const DEFAULT_TASK_CAPACITY: usize = 1024;
+
     pub type TaskItems<T> = RUMVec<T>;
     /// This type aliases a vector of T elements that will be used for passing arguments to the task processor.
     pub type TaskArgs<T> = TaskItems<T>;
-    /// Type to use to define how task results are expected to be returned.
-    pub type TaskResult<R> = RUMResult<R>;
-    pub type TaskResults<R> = TaskItems<TaskResult<R>>;
     /// Function signature defining the interface of task processing logic.
     pub type SafeTaskArgs<T> = Arc<RwLock<TaskItems<T>>>;
     pub type AsyncTaskHandle<R> = JoinHandle<TaskResult<R>>;
@@ -69,11 +78,216 @@ pub mod thread_primitives {
         pub id: TaskID,
         pub finished: bool,
         pub result: TaskResult<R>,
-        pub job: Arc<RunningTask<R>>,
+        pub handle: Arc<AsyncTaskHandle<R>>,
     }
 
-    pub type TaskTable<R> = RUMHashMap<TaskID, Task<R>>;
+    pub type SafeTask<R> = Arc<RwLock<Task<R>>>;
+    pub type TaskTable<R> = RUMHashMap<TaskID, SafeTask<R>>;
     pub type TaskBatch = RUMVec<TaskID>;
+    /// Type to use to define how task results are expected to be returned.
+    pub type TaskResult<R> = RUMResult<SafeTask<R>>;
+    pub type TaskResults<R> = TaskItems<TaskResult<R>>;
+
+    pub struct TaskManager<R> {
+        tasks: TaskTable<R>,
+        runtime: SafeTokioRuntime,
+    }
+
+    impl<R> TaskManager<R>
+    where
+        R: Sync + Send + Clone + 'static,
+    {
+        ///
+        /// This method creates a [`TaskQueue`] instance using sensible defaults.
+        ///
+        /// The `threads` field is computed from the number of cores present in system.
+        ///
+        pub fn default() -> RUMResult<TaskManager<R>> {
+            Self::new(&threading::threading_functions::get_default_system_thread_count())
+        }
+
+        ///
+        /// Creates an instance of [`ThreadedTaskQueue<T, R>`] in the form of [`SafeThreadedTaskQueue<T, R>`].
+        /// Expects you to provide the count of threads to spawn and the microtask queue size
+        /// allocated by each thread.
+        ///
+        /// This method calls [`Self::with_capacity()`] for the actual object creation.
+        /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
+        ///
+        pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
+            let tasks = TaskTable::<R>::with_capacity(DEFAULT_TASK_CAPACITY);
+            let runtime = rumtk_init_threads!(&worker_num);
+            Ok(TaskManager {
+                tasks,
+                runtime: runtime.clone(),
+            })
+        }
+
+        ///
+        /// Add a task to the processing queue. The idea is that you can queue a processor function
+        /// and list of args that will be picked up by one of the threads for processing.
+        ///
+        pub fn add_task<F>(&mut self, task: F) -> TaskID
+        where
+            F: Future<Output = TaskResult<R>> + Send + Sync + 'static,
+            F::Output: Send + Sized + 'static,
+        {
+            let id = TaskID::new_v4();
+            let mut safe_task = Arc::new(RwLock::new(Task {
+                id: id.clone(),
+                finished: false,
+                result: Err(RUMString::default()),
+                handle: Arc::new(task),
+            }));
+
+            let task_wrapper = async || -> TaskResult<R> {
+                // Run the task
+                let result = task.await;
+
+                // Cleanup task
+                let mut task = safe_task.write().await;
+                task.result = result;
+                task.finished = true;
+                result
+            };
+
+            self.tasks.insert(id.clone(), safe_task);
+            id
+        }
+
+        ///
+        /// This method waits until all queued tasks have been processed from the main queue.
+        ///
+        /// We poll the status of the main queue every [DEFAULT_SLEEP_DURATION](DEFAULT_SLEEP_DURATION) ms.
+        ///
+        /// Upon completion,
+        ///
+        /// 1. We collect the results generated (if any).
+        /// 2. We reset the main task and result internal queue states.
+        /// 3. Return the list of results ([TaskResults<R>](TaskResults)).
+        ///
+        /// This operation consumes all of the tasks.
+        ///
+        /// ### Note:
+        /// ```text
+        ///     Results returned here are not guaranteed to be in the same order as the order in which
+        ///     the tasks were queued for work. You will need to pass a type as T that automatically
+        ///     tracks its own id or has a way for you to resort results.
+        /// ```
+        pub fn wait(&mut self) -> TaskResults<R> {
+            let task_batch = self.tasks.keys().cloned().collect::<Vec<_>>();
+            let results = match rumtk_resolve_task!(self.runtime, self.wait_for_batch(&task_batch))
+            {
+                Some(results) => results,
+                None => vec![],
+            };
+
+            self.reset();
+            results
+        }
+
+        ///
+        /// This method waits until a queued task with [TaskID](TaskID) has been processed from the main queue.
+        ///
+        /// We poll the status of the task every [DEFAULT_SLEEP_DURATION](DEFAULT_SLEEP_DURATION) ms.
+        ///
+        /// Upon completion,
+        ///
+        /// 2. Return the result ([TaskResults<R>](TaskResults)).
+        ///
+        /// This operation consumes the task.
+        ///
+        /// ### Note:
+        /// ```text
+        ///     Results returned here are not guaranteed to be in the same order as the order in which
+        ///     the tasks were queued for work. You will need to pass a type as T that automatically
+        ///     tracks its own id or has a way for you to resort results.
+        /// ```
+        pub async fn wait_for(&mut self, task_id: &TaskID) -> TaskResult<R> {
+            let task = match self.tasks.remove(task_id) {
+                Some(task) => task.clone(),
+                None => return Err(rumtk_format!("No task with id {}", task_id)),
+            };
+
+            while !task.read().await.finished {
+                async_sleep(DEFAULT_SLEEP_DURATION).await;
+            }
+
+            Ok(task)
+        }
+
+        ///
+        /// This method waits until a set of queued tasks with [TaskID](TaskID) has been processed from the main queue.
+        ///
+        /// We poll the status of the task every [DEFAULT_SLEEP_DURATION](DEFAULT_SLEEP_DURATION) ms.
+        ///
+        /// Upon completion,
+        ///
+        /// 1. We collect the results generated (if any).
+        /// 2. Return the list of results ([TaskResults<R>](TaskResults)).
+        ///
+        /// ### Note:
+        /// ```text
+        ///     Results returned here are not guaranteed to be in the same order as the order in which
+        ///     the tasks were queued for work. You will need to pass a type as T that automatically
+        ///     tracks its own id or has a way for you to resort results.
+        /// ```
+        pub async fn wait_for_batch(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
+            let mut results = TaskResults::<R>::default();
+            for task in tasks {
+                results.push(self.wait_for(task).await);
+            }
+            results
+        }
+
+        ///
+        /// Check if all work has been completed from the task queue.
+        ///
+        /// ## Examples
+        ///
+        /// ### Sync Usage
+        ///
+        ///```
+        /// use rumtk_core::threading::threading_manager::TaskManager;
+        ///
+        /// let manager = TaskManager::new(4).unwrap();
+        ///
+        /// let all_done = manager.is_all_completed()
+        ///
+        /// ```
+        ///
+        pub fn is_all_completed(&self) -> bool {
+            rumtk_resolve_task!(self.runtime, self.is_all_completed_async()).unwrap_or_default()
+        }
+
+        pub async fn is_all_completed_async(&self) -> bool {
+            if self.tasks.is_empty() {
+                return false;
+            }
+
+            for (id, task) in self.tasks.iter() {
+                if !task.read().await.finished {
+                    return false;
+                }
+            }
+
+            true
+        }
+
+        ///
+        /// Reset task queue and results queue states.
+        ///
+        pub fn reset(&mut self) {
+            self.tasks.clear();
+        }
+
+        ///
+        /// Alias for [wait](TaskManager::wait).
+        ///
+        fn gather(&mut self) -> TaskResults<R> {
+            self.wait()
+        }
+    }
 }
 
 ///
@@ -128,7 +342,7 @@ pub mod threading_functions {
 ///
 pub mod threading_macros {
     use crate::threading::thread_primitives;
-    use crate::threading::thread_primitives::SafeTaskArgs;
+    use crate::threading::threading_manager::SafeTaskArgs;
 
     ///
     /// First, let's make sure we have *tokio* initialized at least once. The runtime created here
@@ -146,7 +360,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -165,7 +379,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -256,7 +470,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -350,7 +564,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -369,7 +583,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -388,7 +602,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     let result = rumtk_exec_task!(
     ///     async move |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
@@ -407,7 +621,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     let result = rumtk_exec_task!(
     ///     async || -> RUMResult<Vec<i32>> {
@@ -424,7 +638,7 @@ pub mod threading_macros {
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
     ///     use rumtk_core::core::RUMResult;
-    ///     use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
@@ -525,6 +739,17 @@ pub mod threading_macros {
         ( $dur:expr) => {{
             use $crate::threading::threading_functions::async_sleep;
             async_sleep($dur as f32)
+        }};
+    }
+
+    ///
+    ///
+    ///
+    #[macro_export]
+    macro_rules! rumtk_new_task_queue {
+        ( $worker_num:expr ) => {{
+            use $crate::threading::thread_primitives::TaskManager;
+            TaskManager::new($worker_num);
         }};
     }
 }
