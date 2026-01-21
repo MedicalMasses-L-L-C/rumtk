@@ -22,7 +22,9 @@
 use crate::types::RUMHashMap;
 use core::hash::Hash;
 pub use once_cell::unsync::Lazy;
-use std::sync::{Arc, MappedRwLockReadGuard, RwLock, RwLockReadGuard};
+use std::sync::{
+    Arc, MappedRwLockReadGuard, MappedRwLockWriteGuard, RwLock, RwLockReadGuard, RwLockWriteGuard,
+};
 /**************************** Constants**************************************/
 /// I don't think most scenarios will need more than 10 items worth of memory pre-allocated at a time.
 pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
@@ -36,6 +38,7 @@ pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 pub type RUMCache<K, V> = RUMHashMap<K, V>;
 pub type LazyRUMCache<K, V> = Lazy<Arc<RwLock<RUMCache<K, V>>>>;
 pub type LazyRUMCacheValue<V> = MappedRwLockReadGuard<'static, V>;
+pub type LazyRUMCacheMutValue<V> = MappedRwLockWriteGuard<'static, V>;
 
 /**************************** Traits ****************************************/
 
@@ -55,6 +58,23 @@ macro_rules! cache_unwrap {
         }
     }};
 }
+
+macro_rules! cache_mut_unwrap {
+    ( $k:expr ) => {{
+        |d| {
+            d.get_mut($k).expect("Item not found in cache despite having inserted it previously within this scope! This is completely unexpected and a fatal bug!")
+        }
+    }};
+    ( $k:expr, $default:expr ) => {{
+        |d| {
+            match d.get_mut($k) {
+                Some(val) => val,
+                None => $default
+            }
+        }
+    }};
+}
+
 pub const fn new_cache<K, V>() -> LazyRUMCache<K, V> {
     LazyRUMCache::new(|| {
         Arc::new(RwLock::new(RUMCache::with_capacity(
@@ -113,6 +133,20 @@ where
     let cache_entity = &mut *cache;
     let cache_ref = cache_entity.read().unwrap();
     RwLockReadGuard::map(cache_ref, cache_unwrap!(expr, default))
+}
+
+pub unsafe fn cache_get_mut<K, V>(
+    cache: *mut LazyRUMCache<K, V>,
+    expr: &K,
+    default: &'static mut V,
+) -> LazyRUMCacheMutValue<V>
+where
+    K: Hash + Eq + Clone + 'static,
+    V: Clone,
+{
+    let cache_entity = &mut *cache;
+    let cache_ref = cache_entity.write().unwrap();
+    RwLockWriteGuard::map(cache_ref, cache_mut_unwrap!(expr, default))
 }
 
 pub mod cache_macros {
@@ -211,8 +245,7 @@ pub mod cache_macros {
     }
 
     ///
-    /// Overrides contents in cache at key ```K```. No checks are performed for the existence of the
-    /// key in the cache. Be careful not to override necessary data.
+    /// Retrieves the cached item in immutable mode.
     ///
     /// ```
     /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get};
@@ -264,6 +297,67 @@ pub mod cache_macros {
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
                 cache_get($cache, $key, $default_function)
+            }
+        }};
+    }
+
+    ///
+    /// Retrieves the cached item in mutable mode. What this means is that the internal [Spin Lock](std::sync::RwLock)
+    /// is set to write. Therefore, this macro will block until `all read` requests are satisfied. Any further `read`
+    /// requests will be blocked until you finish making use of the item. Avoid using this macro often unless
+    /// the cache usage is limited to safe interfaces. You are essentially bypassing the no globals ethos and
+    /// thus these APIs should be used with care!!!!!!
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get, rumtk_cache_get_mut};
+    /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push, cache_get};
+    /// use std::sync::Arc;
+    ///
+    /// type StringCache = LazyRUMCache<String, Vec<String>>;
+    ///
+    /// fn init_cache(k: &String) -> Vec<String> {
+    ///    vec![]
+    /// }
+    ///
+    /// let mut cache: StringCache = new_cache();
+    /// static mut DEFAULT_VEC: Vec<String> = vec![];
+    ///
+    /// let test_key: String = String::from("Hello World");
+    /// let test_value: String = String::from("?????");
+    ///
+    /// rumtk_cache_fetch!(
+    ///     &raw mut cache,
+    ///     &test_key,
+    ///     init_cache
+    /// );
+    ///
+    /// rumtk_cache_get_mut!(
+    ///     &raw mut cache,
+    ///     &test_key,
+    ///     &mut DEFAULT_VEC
+    /// ).push(test_value.clone());
+    ///
+    /// let v = rumtk_cache_get!(
+    ///     &raw mut cache,
+    ///     &test_key,
+    ///     &DEFAULT_VEC
+    /// );
+    ///
+    /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
+    ///
+    ///
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_cache_get_mut {
+        ( $cache:expr, $key:expr, $default_function:expr ) => {{
+            use $crate::cache::cache_get_mut;
+            // Do not remove the clippy disable decorator here since we do intend to expand within
+            // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
+            // internal references due to compiler error
+            #[allow(clippy::macro_metavars_in_unsafe)]
+            unsafe {
+                cache_get_mut($cache, $key, $default_function)
             }
         }};
     }

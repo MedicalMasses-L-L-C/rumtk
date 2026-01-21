@@ -20,7 +20,6 @@
  */
 use crate::strings::rumtk_format;
 use crate::strings::RUMString;
-pub use smallvec::{smallvec, SmallVec};
 
 pub type RUMError = RUMString;
 
