@@ -24,7 +24,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
     PARAMS_ITEM, SECTION_TEXT,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
     rumtk_web_get_param_eq, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
@@ -65,12 +65,16 @@ pub struct InfoCard<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn info_card(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn info_card(
+    _path_components: URLPath,
+    params: URLParams,
+    state: SharedAppState,
+) -> HTMLResult {
     let card_text_item = rumtk_web_get_text_item!(params, PARAMS_ITEM, DEFAULT_TEXT_ITEM);
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP());

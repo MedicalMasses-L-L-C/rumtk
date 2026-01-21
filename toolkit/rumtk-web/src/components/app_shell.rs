@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
@@ -44,15 +44,15 @@ pub struct AppShell {
     body: RUMString,
 }
 
-pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let lang = rumtk_web_get_text_item!(params, "lang", LANG_EN);
     let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
     // TODO: We need to reevaluate how to validate the options that should be standardized to avoid parameter injection as an attack vector.
     //owned_state.opts = *params.clone();
 
     //Config App
-    state.write().expect("Lock failure").lang = RUMString::from(lang);
-    state.write().expect("Lock failure").theme = RUMString::from(theme);
+    state.write().expect("Lock failure").config.lang = RUMString::from(lang);
+    state.write().expect("Lock failure").config.theme = RUMString::from(theme);
 
     //Let's render the head component
     let head = rumtk_web_render_component!(|| -> HTMLResult {

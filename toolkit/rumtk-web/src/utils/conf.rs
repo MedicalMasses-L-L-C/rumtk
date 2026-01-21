@@ -121,8 +121,13 @@ impl AppConf {
     }
 }
 
-pub type SharedAppConf = Arc<RwLock<AppConf>>;
-pub type RouterAppConf = State<Arc<RwLock<AppConf>>>;
+pub struct AppState {
+    pub config: AppConf,
+    pub clipboard: TextMap,
+}
+
+pub type SharedAppState = Arc<RwLock<AppState>>;
+pub type RouterAppState = State<Arc<RwLock<AppState>>>;
 
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
@@ -130,19 +135,17 @@ macro_rules! rumtk_web_load_conf {
         rumtk_web_load_conf!($args, "./app.json")
     }};
     ( $args:expr, $path:expr ) => {{
+        use rumtk_core::rumtk_deserialize;
         use rumtk_core::strings::RUMStringConversions;
-        use rumtk_core::{rumtk_deserialize, rumtk_serialize};
         use std::fs;
         use std::sync::{Arc, RwLock};
-        use $crate::utils::AppConf;
+
+        use $crate::rumtk_web_save_conf;
+        use $crate::utils::{AppConf, AppState, TextMap};
 
         let json = match fs::read_to_string($path) {
             Ok(json) => json,
-            Err(err) => {
-                let json = rumtk_serialize!(AppConf::default(), true)?;
-                fs::write($path, &json);
-                json
-            }
+            Err(err) => rumtk_web_save_conf!($path),
         };
 
         let mut conf: AppConf = match rumtk_deserialize!(json) {
@@ -159,7 +162,24 @@ macro_rules! rumtk_web_load_conf {
             $args.company.clone(),
             $args.copyright.clone(),
         );
-        Arc::new(RwLock::new(conf))
+        Arc::new(RwLock::new(AppState {
+            config: conf,
+            clipboard: TextMap::default(),
+        }))
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_save_conf {
+    ( $path:expr ) => {{
+        use rumtk_core::rumtk_serialize;
+        use rumtk_core::strings::RUMStringConversions;
+        use std::fs;
+        use $crate::utils::AppConf;
+
+        let json = rumtk_serialize!(AppConf::default(), true)?;
+        fs::write($path, &json);
+        json
     }};
 }
 
@@ -167,7 +187,7 @@ macro_rules! rumtk_web_load_conf {
 macro_rules! rumtk_web_get_string {
     ( $conf:expr, $item:expr ) => {{
         let owned_state = $conf.read().expect("Lock failure");
-        owned_state.get_text($item)
+        owned_state.config.get_text($item)
     }};
 }
 
@@ -175,7 +195,7 @@ macro_rules! rumtk_web_get_string {
 macro_rules! rumtk_web_get_conf {
     ( $conf:expr, $item:expr ) => {{
         let owned_state = $conf.read().expect("Lock failure");
-        owned_state.get_conf($item)
+        owned_state.config.get_conf($item)
     }};
 }
 

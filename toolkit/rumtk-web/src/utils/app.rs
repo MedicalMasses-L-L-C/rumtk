@@ -191,7 +191,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///         rumtk_web_get_text_item
 ///     };
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
-///     use rumtk_web::{SharedAppConf, RenderedPageComponents};
+///     use rumtk_web::{SharedAppState, RenderedPageComponents};
 ///     use rumtk_web::{URLPath, URLParams, HTMLResult, RUMString};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///
@@ -200,7 +200,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///
 ///
 ///     // About page
-///     pub fn about(app_state: SharedAppConf) -> RenderedPageComponents {
+///     pub fn about(app_state: SharedAppState) -> RenderedPageComponents {
 ///         let title_coop = rumtk_web_render_component!("title", [("type", "coop_values")], app_state.clone());
 ///         let title_team = rumtk_web_render_component!("title", [("type", "meet_the_team")], app_state.clone());
 ///     
@@ -242,11 +242,11 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///         custom_css_enabled: bool,
 ///     }
 ///
-///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
-///         let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+///         let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 ///
 ///         rumtk_web_render_html!(MyDiv {
 ///             contents: RUMString::from(contents),

@@ -23,7 +23,7 @@
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST, SECTION_SOCIALS,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use rumtk_core::strings::{rumtk_format, RUMStringConversions};
@@ -65,7 +65,7 @@ pub struct Socials {
     custom_css_enabled: bool,
 }
 
-fn get_social_list(social_list: &str, state: &SharedAppConf) -> SocialsList {
+fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
     let data = social_list.to_lowercase();
     let sl_names = data.split(',').collect::<Vec<&str>>();
     let sl_urls = rumtk_web_get_conf!(state, SECTION_SOCIALS);
@@ -87,11 +87,11 @@ fn get_social_list(social_list: &str, state: &SharedAppConf) -> SocialsList {
     sl
 }
 
-pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
     let icons = get_social_list(&social_list, &state);
 

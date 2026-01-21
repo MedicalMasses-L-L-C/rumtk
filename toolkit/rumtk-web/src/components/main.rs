@@ -23,7 +23,7 @@
 use crate::defaults::DEFAULT_TEXT_ITEM;
 use crate::{
     rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component, rumtk_web_render_html,
-    HTMLResult, SharedAppConf, URLParams, URLPath,
+    HTMLResult, SharedAppState, URLParams, URLPath,
 };
 use askama::Template;
 use rumtk_core::strings::RUMString;
@@ -66,7 +66,7 @@ pub struct Main {
     contents: RUMString,
 }
 
-pub fn main(path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let page: RUMString =
         rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
 

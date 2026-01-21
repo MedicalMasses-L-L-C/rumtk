@@ -24,7 +24,7 @@ use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ENDPOINT, PARAMS_TARGET, SECTION_E
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_conf, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_html,
 };
@@ -73,7 +73,7 @@ struct Form<'a> {
     auto_hide_progress: bool,
 }
 
-pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
     let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
@@ -86,7 +86,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppConf) 
     let endpoint_store = rumtk_web_get_conf!(state, SECTION_ENDPOINTS);
     let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
     let elements = rumtk_web_get_form!(typ);
 

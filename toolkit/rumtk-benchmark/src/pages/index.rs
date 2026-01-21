@@ -19,7 +19,7 @@
 use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
-pub fn index(app_state: SharedAppConf) -> RenderedPageComponents {
+pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
     let title_welcome =
         rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
 

@@ -43,7 +43,7 @@ pub type RouterParams = Query<RUMWebData>;
 pub type RouterForm = Multipart;
 
 /* Config Types */
-pub type ComponentFunction = fn(URLPath, URLParams, SharedAppConf) -> HTMLResult;
-pub type PageFunction = fn(SharedAppConf) -> RenderedPageComponents;
+pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
+pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;

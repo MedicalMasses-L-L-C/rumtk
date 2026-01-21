@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::rumtk_web_render_html;
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
 use askama::Template;
 
 #[derive(Template)]
@@ -42,11 +42,11 @@ pub struct Meta {
     description: RUMString,
 }
 
-pub fn meta(state: SharedAppConf) -> HTMLResult {
+pub fn meta(state: SharedAppState) -> HTMLResult {
     let owned_state = state.read().expect("Lock failure");
 
     rumtk_web_render_html!(Meta {
-        title: owned_state.title.clone(),
-        description: owned_state.description.clone()
+        title: owned_state.config.title.clone(),
+        description: owned_state.config.description.clone()
     })
 }

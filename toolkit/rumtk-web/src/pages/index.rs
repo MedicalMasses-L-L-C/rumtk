@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::{RenderedPageComponents, SharedAppConf};
+use crate::{RenderedPageComponents, SharedAppState};
 use rumtk_core::strings::RUMString;
 
 const DEFAULT_INDEX_PAGE_HTML: &str = r"
@@ -28,6 +28,6 @@ const DEFAULT_INDEX_PAGE_HTML: &str = r"
         <h2>If you are seeing this message, you have not registered your index page!</h2>
     ";
 
-pub fn index(app_state: SharedAppConf) -> RenderedPageComponents {
+pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
     vec![RUMString::from(DEFAULT_INDEX_PAGE_HTML)]
 }

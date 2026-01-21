@@ -23,7 +23,7 @@
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
@@ -61,17 +61,18 @@ pub struct Footer {
     custom_css_enabled: bool,
 }
 
-pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
-    let company = state.read().expect("Lock failure").company.clone();
-    let copyright = state.read().expect("Lock failure").copyright.clone();
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let company = state.read().expect("Lock failure").config.company.clone();
+    let copyright = state.read().expect("Lock failure").config.copyright.clone();
 
     let contact_button = match state
         .read()
         .expect("Lock failure")
+        .config
         .footer_conf
         .disable_contact_button
     {

@@ -23,7 +23,7 @@
 use crate::components::app_shell::app_shell;
 use crate::rumtk_web_get_component;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
-use crate::utils::types::SharedAppConf;
+use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
 use axum::response::Html;
 use std::collections::HashMap;
@@ -31,7 +31,7 @@ use std::collections::HashMap;
 pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
     _params: HashMap<RUMString, RUMString>,
-    _state: SharedAppConf,
+    _state: SharedAppState,
 ) -> HTMLResult {
     Ok(Html::<String>::from(String::from(DEFAULT_ROBOT_TXT)))
 }
@@ -39,7 +39,7 @@ pub async fn default_robots_matcher(
 pub async fn default_page_matcher(
     path: Vec<RUMString>,
     params: HashMap<RUMString, RUMString>,
-    state: SharedAppConf,
+    state: SharedAppState,
 ) -> HTMLResult {
     let path_components = match path.first() {
         Some(x) => x.split('/').collect::<Vec<&str>>(),
@@ -53,7 +53,7 @@ pub async fn default_page_matcher(
 pub async fn default_component_matcher(
     path: Vec<RUMString>,
     params: HashMap<RUMString, RUMString>,
-    state: SharedAppConf,
+    state: SharedAppState,
 ) -> HTMLResult {
     let path_components = match path.first() {
         Some(x) => x.split('/').collect::<Vec<&str>>(),
@@ -75,11 +75,11 @@ macro_rules! rumtk_web_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
         use axum::response::Html;
-        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterParams};
+        use $crate::utils::types::{RouterAppState, RouterComponents, RouterParams};
 
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
-               State(state): RouterAppConf|
+               State(state): RouterAppState|
                -> Html<String> {
             match $matcher(path_params, params, state).await {
                 Ok(res) => res,
@@ -97,11 +97,11 @@ macro_rules! rumtk_web_post {
     ( $matcher:expr ) => {{
         use axum::extract::{Multipart, Path, Query, State};
         use axum::response::Html;
-        use $crate::utils::types::{RouterAppConf, RouterComponents, RouterForm, RouterParams};
+        use $crate::utils::types::{RouterAppState, RouterComponents, RouterForm, RouterParams};
 
         async |Path(path_params): RouterComponents,
                Query(mut params): RouterParams,
-               State(state): RouterAppConf,
+               State(state): RouterAppState,
                mut Multipart: RouterForm|
                -> Html<String> {
             match $matcher(path_params, params, state).await {

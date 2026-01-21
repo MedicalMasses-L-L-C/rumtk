@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::defaults::{PARAMS_SIZE, SECTION_DEFAULT};
-use crate::utils::types::{HTMLResult, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 
@@ -40,12 +40,12 @@ pub struct Spacer {
     custom_css_enabled: bool,
 }
 
-pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let size = rumtk_web_get_text_item!(params, PARAMS_SIZE, SECTION_DEFAULT)
         .parse::<usize>()
         .unwrap_or(0);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
     rumtk_web_render_html!(Spacer {
         size,

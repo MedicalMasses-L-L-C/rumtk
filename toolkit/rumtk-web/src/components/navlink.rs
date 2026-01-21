@@ -20,10 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::defaults::{
-    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET, SECTION_LINKS,
-};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET, SECTION_LINKS};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::{DEFAULT_TEXT, DEFAULT_TEXTMAP};
 use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
@@ -60,11 +58,11 @@ pub struct NavLink<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
     let itm = rumtk_web_get_text_item!(&links_store, target, &DEFAULT_TEXTMAP());

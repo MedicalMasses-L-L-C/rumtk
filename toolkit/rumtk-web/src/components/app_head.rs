@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppConf, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_render_component, rumtk_web_render_html};
 use askama::Template;
 
@@ -54,7 +54,11 @@ pub struct AppShellHead {
 ///      It is not ideal but it will allow continuance of service for websites during CDN outages
 ///      which do happen.
 ///
-pub fn app_head(_path_components: URLPath, _params: URLParams, state: SharedAppConf) -> HTMLResult {
+pub fn app_head(
+    _path_components: URLPath,
+    _params: URLParams,
+    state: SharedAppState,
+) -> HTMLResult {
     //Let's render the head component
     let html_meta = rumtk_web_render_component!(meta, state);
 
