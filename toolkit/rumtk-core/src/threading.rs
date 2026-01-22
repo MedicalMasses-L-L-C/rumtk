@@ -300,7 +300,7 @@ pub mod threading_manager {
         pub async fn wait_on_batch_async(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
             let mut results = TaskResults::<R>::default();
             for task in tasks {
-                results.push(self.wait_for(task).await);
+                results.push(self.wait_on_async(task).await);
             }
             results
         }
