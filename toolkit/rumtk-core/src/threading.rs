@@ -54,7 +54,7 @@ pub mod threading_manager {
     use crate::threading::thread_primitives::SafeTokioRuntime;
     use crate::threading::threading_functions::async_sleep;
     use crate::types::{RUMHashMap, RUMID};
-    use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
+    use crate::{rumtk_init_threads, rumtk_resolve_task, threading};
     use std::future::Future;
     use std::sync::Arc;
     use tokio::sync::RwLock;
@@ -83,6 +83,7 @@ pub mod threading_manager {
     pub type SafeTask<R> = Arc<Task<R>>;
     type SafeInternalTask<R> = Arc<RwLock<Task<R>>>;
     pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
+    pub type SafeAsyncTaskTable<R> = Arc<RwLock<TaskTable<R>>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
     pub type TaskResult<R> = RUMResult<SafeTask<R>>;
@@ -149,7 +150,7 @@ pub mod threading_manager {
     ///
     #[derive(Debug, Clone, Default)]
     pub struct TaskManager<R> {
-        tasks: TaskTable<R>,
+        tasks: SafeAsyncTaskTable<R>,
         workers: usize,
     }
 
@@ -175,7 +176,9 @@ pub mod threading_manager {
         /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
-            let tasks = TaskTable::<R>::with_capacity(DEFAULT_TASK_CAPACITY);
+            let tasks = SafeAsyncTaskTable::<R>::new(RwLock::new(TaskTable::with_capacity(
+                DEFAULT_TASK_CAPACITY,
+            )));
             Ok(TaskManager::<R> {
                 tasks,
                 workers: worker_num.to_owned(),
@@ -186,7 +189,9 @@ pub mod threading_manager {
         /// Add a task to the processing queue. The idea is that you can queue a processor function
         /// and list of args that will be picked up by one of the threads for processing.
         ///
-        pub fn add_task<F>(&mut self, task: F) -> TaskID
+        /// This is the async counterpart
+        ///
+        pub async fn add_task_async<F>(&mut self, task: F) -> TaskID
         where
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
@@ -197,7 +202,10 @@ pub mod threading_manager {
                 finished: false,
                 result: None,
             }));
-            self.tasks.insert(id.clone(), safe_task.clone());
+            self.tasks
+                .write()
+                .await
+                .insert(id.clone(), safe_task.clone());
 
             let task_wrapper = async move || {
                 // Run the task
@@ -208,46 +216,45 @@ pub mod threading_manager {
                 safe_task.write().await.finished = true;
             };
 
-            let rt = rumtk_init_threads!(&self.workers);
-            rumtk_spawn_task!(rt, task_wrapper());
+            tokio::spawn(task_wrapper());
 
             id
         }
 
         ///
-        /// This method waits until all queued tasks have been processed from the main queue.
+        /// See [add_task](Self::add_task)
         ///
-        /// We poll the status of the main queue every [DEFAULT_SLEEP_DURATION](DEFAULT_SLEEP_DURATION) ms.
-        ///
-        /// Upon completion,
-        ///
-        /// 1. We collect the results generated (if any).
-        /// 2. We reset the main task and result internal queue states.
-        /// 3. Return the list of results ([TaskResults<R>](TaskResults)).
-        ///
-        /// This operation consumes all the tasks.
-        ///
-        /// ### Note:
-        /// ```text
-        ///     Results returned here are not guaranteed to be in the same order as the order in which
-        ///     the tasks were queued for work. You will need to pass a type as T that automatically
-        ///     tracks its own id or has a way for you to resort results.
-        /// ```
-        pub fn wait(&mut self) -> TaskResults<R> {
-            let task_batch = self.tasks.keys().cloned().collect::<Vec<_>>();
-            self.wait_on_batch(&task_batch)
+        pub fn add_task<F>(&mut self, task: F) -> TaskID
+        where
+            F: Future<Output = R> + Send + Sync + 'static,
+            F::Output: Send + Sized + 'static,
+        {
+            let rt = rumtk_init_threads!(&self.workers);
+            rumtk_resolve_task!(rt, self.add_task_async(task))
         }
 
+        ///
+        /// See [wait_async](Self::wait_async)
+        ///
+        pub fn wait(&mut self) -> TaskResults<R> {
+            let rt = rumtk_init_threads!(&self.workers);
+            rumtk_resolve_task!(rt, self.wait_async())
+        }
+
+        ///
+        /// See [wait_on_batch_async](Self::wait_on_batch_async)
+        ///
         pub fn wait_on_batch(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
             let rt = rumtk_init_threads!(&self.workers);
-            let results = rumtk_resolve_task!(rt, self.wait_on_batch_async(&tasks));
-            results
+            rumtk_resolve_task!(rt, self.wait_on_batch_async(&tasks))
         }
 
+        ///
+        /// See [wait_on_async](Self::wait_on_async)
+        ///
         pub fn wait_on(&mut self, task_id: &TaskID) -> TaskResult<R> {
             let rt = rumtk_init_threads!(&self.workers);
-            let result = rumtk_resolve_task!(rt, self.wait_on_async(&task_id));
-            result
+            rumtk_resolve_task!(rt, self.wait_on_async(&task_id))
         }
 
         ///
@@ -268,7 +275,7 @@ pub mod threading_manager {
         ///     tracks its own id or has a way for you to resort results.
         /// ```
         pub async fn wait_on_async(&mut self, task_id: &TaskID) -> TaskResult<R> {
-            let task = match self.tasks.remove(task_id) {
+            let task = match self.tasks.write().await.remove(task_id) {
                 Some(task) => task.clone(),
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
@@ -306,6 +313,30 @@ pub mod threading_manager {
         }
 
         ///
+        /// This method waits until all queued tasks have been processed from the main queue.
+        ///
+        /// We poll the status of the main queue every [DEFAULT_SLEEP_DURATION](DEFAULT_SLEEP_DURATION) ms.
+        ///
+        /// Upon completion,
+        ///
+        /// 1. We collect the results generated (if any).
+        /// 2. We reset the main task and result internal queue states.
+        /// 3. Return the list of results ([TaskResults<R>](TaskResults)).
+        ///
+        /// This operation consumes all the tasks.
+        ///
+        /// ### Note:
+        /// ```text
+        ///     Results returned here are not guaranteed to be in the same order as the order in which
+        ///     the tasks were queued for work. You will need to pass a type as T that automatically
+        ///     tracks its own id or has a way for you to resort results.
+        /// ```
+        pub async fn wait_async(&mut self) -> TaskResults<R> {
+            let task_batch = self.tasks.read().await.keys().cloned().collect::<Vec<_>>();
+            self.wait_on_batch_async(&task_batch).await
+        }
+
+        ///
         /// Check if all work has been completed from the task queue.
         ///
         /// ## Examples
@@ -329,20 +360,13 @@ pub mod threading_manager {
         }
 
         pub async fn is_all_completed_async(&self) -> bool {
-            for (_, task) in self.tasks.iter() {
+            for (_, task) in self.tasks.read().await.iter() {
                 if !task.read().await.finished {
                     return false;
                 }
             }
 
             true
-        }
-
-        ///
-        /// Reset task queue and results queue states.
-        ///
-        pub fn reset(&mut self) {
-            self.tasks.clear();
         }
 
         ///
