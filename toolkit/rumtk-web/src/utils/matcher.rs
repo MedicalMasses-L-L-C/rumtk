@@ -21,16 +21,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::components::app_shell::app_shell;
-use crate::rumtk_web_get_component;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
+use crate::{rumtk_web_get_component, RUMWebData};
 use axum::response::Html;
-use std::collections::HashMap;
 
 pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
-    _params: HashMap<RUMString, RUMString>,
+    _params: RUMWebData,
     _state: SharedAppState,
 ) -> HTMLResult {
     Ok(Html::<String>::from(String::from(DEFAULT_ROBOT_TXT)))
@@ -38,7 +37,7 @@ pub async fn default_robots_matcher(
 
 pub async fn default_page_matcher(
     path: Vec<RUMString>,
-    params: HashMap<RUMString, RUMString>,
+    params: RUMWebData,
     state: SharedAppState,
 ) -> HTMLResult {
     let path_components = match path.first() {
@@ -52,7 +51,7 @@ pub async fn default_page_matcher(
 
 pub async fn default_component_matcher(
     path: Vec<RUMString>,
-    params: HashMap<RUMString, RUMString>,
+    params: RUMWebData,
     state: SharedAppState,
 ) -> HTMLResult {
     let path_components = match path.first() {

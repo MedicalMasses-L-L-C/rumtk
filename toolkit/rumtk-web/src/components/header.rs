@@ -25,12 +25,11 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_LINKS}
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html,
+    rumtk_web_render_html, RUMWebData,
 };
 use askama::Template;
 use axum::response::Html;
 use rumtk_core::strings::RUMStringConversions;
-use std::collections::HashMap;
 
 #[derive(Template, Debug, Clone)]
 #[template(
@@ -81,7 +80,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
         nav_links.push(
             navlink(
                 &[],
-                &HashMap::from([("target".to_rumstring(), key.to_rumstring())]),
+                &RUMWebData::from([("target".to_rumstring(), key.to_rumstring())]),
                 app_state.clone(),
             )
             .unwrap_or_else(|_| default_html.clone())

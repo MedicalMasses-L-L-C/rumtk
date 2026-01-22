@@ -20,26 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-use rumtk_core::cache::LazyRUMCache;
-use rumtk_core::core::{RUMResult, RUMVec};
-use rumtk_core::strings::RUMString;
+use rumtk_core::core::RUMVec;
 use rumtk_core::types::RUMID;
-use std::future::Future;
 
 pub type JobID = RUMID;
 pub type JobBuffer = RUMVec<u8>;
-pub type RUMWebJobBatch = Vec<RUMID>;
-pub type JobFunction = dyn Fn(&JobBuffer) -> RUMResult<JobBuffer>;
-
-#[derive(PartialEq, Debug)]
-pub struct Job {
-    pub id: JobID,
-    pub finished: bool,
-    pub message_code: usize,
-    pub message: RUMString,
-    pub result: RUMResult<JobBuffer>,
-    pub job: dyn Future<Output = JobBuffer>,
-}
-
-pub type JobTable = LazyRUMCache<JobID, Job>;

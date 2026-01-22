@@ -35,7 +35,7 @@ pub type PageCacheItem = LazyRUMCacheValue<PageFunction>;
 
 static mut PAGE_CACHE: PageCache = new_cache();
 static mut DEFAULT_PAGE: PageFunction = index::index;
-pub const DEFAULT_PAGE_NAME: &str = "default";
+pub const DEFAULT_PAGE_NAME: &str = "index";
 
 pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
     let key = RUMString::from(name);

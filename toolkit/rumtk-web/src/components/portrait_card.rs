@@ -25,10 +25,10 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_conf, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    RUMWebData,
 };
 use askama::Template;
 use rumtk_core::strings::RUMStringConversions;
-use std::collections::HashMap;
 
 #[derive(Debug)]
 struct PortraitItem {
@@ -85,7 +85,7 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> Po
                 portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, &i_name, "")),
                 contact: match contact_card(
                     &[],
-                    &HashMap::from([
+                    &RUMWebData::from([
                         ("section".to_rumstring(), section.to_rumstring()),
                         ("type".to_rumstring(), i_name),
                     ]),

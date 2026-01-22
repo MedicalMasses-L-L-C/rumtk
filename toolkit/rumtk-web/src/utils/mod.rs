@@ -65,8 +65,8 @@ macro_rules! rumtk_web_get_param {
 #[macro_export]
 macro_rules! rumtk_web_params_map {
     ( $params:expr ) => {{
-        use std::collections::HashMap;
-        let mut params = HashMap::<RUMString, RUMString>::with_capacity($params.len());
+        use $crate::types::RUMWebData;
+        let mut params = RUMWebData::with_capacity($params.len());
 
         for (k, v) in $params.iter() {
             params.insert(

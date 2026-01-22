@@ -20,11 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+use crate::jobs::JobBuffer;
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
+use rumtk_core::threading::threading_manager::TaskResult;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use std::sync::{Arc, RwLock};
@@ -129,7 +131,7 @@ impl AppConf {
 pub struct AppState {
     pub config: AppConf,
     pub clipboard: TextMap,
-    pub jobs: RUMHashMap<RUMID, RUMID>,
+    pub jobs: RUMHashMap<RUMID, TaskResult<JobBuffer>>,
 }
 
 pub type SharedAppState = Arc<RwLock<AppState>>;
@@ -143,6 +145,7 @@ macro_rules! rumtk_web_load_conf {
     ( $args:expr, $path:expr ) => {{
         use rumtk_core::rumtk_deserialize;
         use rumtk_core::strings::RUMStringConversions;
+        use rumtk_core::types::RUMHashMap;
         use std::fs;
         use std::sync::{Arc, RwLock};
 
@@ -171,6 +174,7 @@ macro_rules! rumtk_web_load_conf {
         Arc::new(RwLock::new(AppState {
             config: conf,
             clipboard: TextMap::default(),
+            jobs: RUMHashMap::default(),
         }))
     }};
 }
