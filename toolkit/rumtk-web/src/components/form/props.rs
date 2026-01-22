@@ -62,7 +62,7 @@ impl InputProps<'_> {
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
         rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             match &self.name {
                 Some(name) => rumtk_format!("id={:?}", name),
                 None => default_text.clone(),
