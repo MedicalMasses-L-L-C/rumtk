@@ -33,6 +33,9 @@ pub struct InputProps<'a> {
     pub max: Option<RUMString>,
     pub placeholder: Option<RUMString>,
     pub pattern: Option<RUMString>,
+    pub accept: Option<RUMString>,
+    pub alt: Option<RUMString>,
+    pub aria_label: Option<RUMString>,
     pub event_handlers: Option<EventHandlers<'a>>,
     pub max_length: Option<usize>,
     pub min_length: Option<usize>,
@@ -59,7 +62,7 @@ impl InputProps<'_> {
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
         rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
             match &self.name {
                 Some(name) => rumtk_format!("id={:?}", name),
                 None => default_text.clone(),
@@ -86,6 +89,18 @@ impl InputProps<'_> {
             },
             match &self.pattern {
                 Some(pattern) => rumtk_format!("pattern={:?}", pattern),
+                None => default_text.clone(),
+            },
+            match &self.accept {
+                Some(accept) => rumtk_format!("accept={:?}", accept),
+                None => default_text.clone(),
+            },
+            match &self.alt {
+                Some(alt) => rumtk_format!("alt={:?}", alt),
+                None => default_text.clone(),
+            },
+            match &self.aria_label {
+                Some(aria_label) => rumtk_format!("aria-label={:?}", aria_label),
                 None => default_text.clone(),
             },
             match &self.event_handlers {

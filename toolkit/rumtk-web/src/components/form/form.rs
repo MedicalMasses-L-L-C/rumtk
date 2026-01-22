@@ -40,7 +40,7 @@ use askama::Template;
             <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
             </script>
         {% endif %}
-        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' >
+        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form'>
             {% for element in elements %}
                 {{ element|safe }}
             {% endfor %}
