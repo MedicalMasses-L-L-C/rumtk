@@ -36,6 +36,15 @@ use askama::Template;
         {% if custom_css_enabled %}
             <link href='/static/components/form/form.css' rel='stylesheet'>
         {% endif %}
+        {% if !module.is_empty() %}
+            <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
+            </script>
+        {% endif %}
+        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' >
+            {% for element in elements %}
+                {{ element|safe }}
+            {% endfor %}
+        </form>
         <script>
             htmx.on('#form-{{typ}}', 'htmx:xhr:progress', function(evt) {
               let progressValue = evt.detail.loaded/evt.detail.total * 100;
@@ -51,15 +60,6 @@ use askama::Template;
               progressElement.setAttribute('value', progressValue);
             });
         </script>
-        {% if !module.is_empty() %}
-            <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
-            </script>
-        {% endif %}
-        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10' class='form-{{css_class}}-container' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' >
-            {% for element in elements %}
-                {{ element|safe }}
-            {% endfor %}
-        </form>
     ",
     ext = "html"
 )]
