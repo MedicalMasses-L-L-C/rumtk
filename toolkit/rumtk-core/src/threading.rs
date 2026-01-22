@@ -234,12 +234,20 @@ pub mod threading_manager {
         ///     tracks its own id or has a way for you to resort results.
         /// ```
         pub fn wait(&mut self) -> TaskResults<R> {
-            let rt = rumtk_init_threads!(&self.workers);
             let task_batch = self.tasks.keys().cloned().collect::<Vec<_>>();
-            let results = rumtk_resolve_task!(rt, self.wait_for_batch(&task_batch));
+            self.wait_on_batch(&task_batch)
+        }
 
-            self.reset();
+        pub fn wait_on_batch(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
+            let rt = rumtk_init_threads!(&self.workers);
+            let results = rumtk_resolve_task!(rt, self.wait_on_batch_async(&tasks));
             results
+        }
+
+        pub fn wait_on(&mut self, task_id: &TaskID) -> TaskResult<R> {
+            let rt = rumtk_init_threads!(&self.workers);
+            let result = rumtk_resolve_task!(rt, self.wait_on_async(&task_id));
+            result
         }
 
         ///
@@ -259,7 +267,7 @@ pub mod threading_manager {
         ///     the tasks were queued for work. You will need to pass a type as T that automatically
         ///     tracks its own id or has a way for you to resort results.
         /// ```
-        pub async fn wait_for(&mut self, task_id: &TaskID) -> TaskResult<R> {
+        pub async fn wait_on_async(&mut self, task_id: &TaskID) -> TaskResult<R> {
             let task = match self.tasks.remove(task_id) {
                 Some(task) => task.clone(),
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
@@ -289,7 +297,7 @@ pub mod threading_manager {
         ///     the tasks were queued for work. You will need to pass a type as T that automatically
         ///     tracks its own id or has a way for you to resort results.
         /// ```
-        pub async fn wait_for_batch(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
+        pub async fn wait_on_batch_async(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
             let mut results = TaskResults::<R>::default();
             for task in tasks {
                 results.push(self.wait_for(task).await);
