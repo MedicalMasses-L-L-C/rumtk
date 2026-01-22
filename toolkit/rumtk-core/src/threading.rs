@@ -60,7 +60,7 @@ pub mod threading_manager {
     use tokio::sync::RwLock;
     use tokio::task::JoinHandle;
 
-    const DEFAULT_SLEEP_DURATION: f32 = 5f32;
+    const DEFAULT_SLEEP_DURATION: f32 = 0.001f32;
     const DEFAULT_TASK_CAPACITY: usize = 1024;
 
     pub type TaskItems<T> = RUMVec<T>;
@@ -73,20 +73,81 @@ pub mod threading_manager {
     //pub type TaskProcessor<T, R, Fut: Future<Output = TaskResult<R>>> = impl FnOnce(&SafeTaskArgs<T>) -> Fut;
     pub type TaskID = RUMID;
 
+    #[derive(Debug, Clone, Default)]
     pub struct Task<R> {
         pub id: TaskID,
         pub finished: bool,
-        pub result: R,
+        pub result: Option<R>,
     }
 
     pub type SafeTask<R> = Arc<Task<R>>;
-    pub type TaskTable<R> = RUMHashMap<TaskID, SafeTask<R>>;
+    type SafeInternalTask<R> = Arc<RwLock<Task<R>>>;
+    pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
     pub type TaskResult<R> = RUMResult<SafeTask<R>>;
     pub type TaskResults<R> = TaskItems<TaskResult<R>>;
     pub type TaskRuntime = LazyRUMCacheValue<SafeTokioRuntime>;
 
+    ///
+    /// Manages asynchronous tasks submitted as micro jobs from synchronous code. This type essentially
+    /// gives the multithreading, asynchronous superpowers to synchronous logic.
+    ///
+    /// ## Example Usage
+    ///
+    /// ```
+    /// use std::sync::{Arc};
+    /// use tokio::sync::RwLock as AsyncRwLock;
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::threading::threading_manager::{SafeTaskArgs, TaskItems, TaskManager};
+    /// use rumtk_core::{rumtk_create_task, };
+    ///
+    /// let expected = vec![
+    ///     RUMString::from("Hello"),
+    ///     RUMString::from("World!"),
+    ///     RUMString::from("Overcast"),
+    ///     RUMString::from("and"),
+    ///     RUMString::from("Sad"),
+    ///  ];
+    ///
+    /// type TestResult = RUMResult<Vec<RUMString>>;
+    /// let mut queue: TaskManager<TestResult> = TaskManager::new(&5).unwrap();
+    ///
+    /// let locked_args = AsyncRwLock::new(expected.clone());
+    /// let task_args = SafeTaskArgs::<RUMString>::new(locked_args);
+    /// let processor = rumtk_create_task!(
+    ///     async |args: &SafeTaskArgs<RUMString>| -> TestResult {
+    ///         let owned_args = Arc::clone(args);
+    ///         let locked_args = owned_args.read().await;
+    ///         let mut results = TaskItems::<RUMString>::with_capacity(locked_args.len());
+    ///
+    ///         for arg in locked_args.iter() {
+    ///             results.push(RUMString::new(arg));
+    ///         }
+    ///
+    ///         Ok(results)
+    ///     },
+    ///     task_args
+    /// );
+    ///
+    /// queue.add_task::<_>(processor);
+    /// let results = queue.wait();
+    ///
+    /// let mut result_data = Vec::<RUMString>::with_capacity(5);
+    /// for r in results {
+    ///     for v in r.unwrap().result.clone().unwrap().iter() {
+    ///         for value in v.iter() {
+    ///             result_data.push(value.clone());
+    ///         }
+    ///     }
+    ///  }
+    ///
+    /// assert_eq!(result_data, expected, "Results do not match expected!");
+    ///
+    /// ```
+    ///
+    #[derive(Debug, Clone, Default)]
     pub struct TaskManager<R> {
         tasks: TaskTable<R>,
         workers: usize,
@@ -94,7 +155,7 @@ pub mod threading_manager {
 
     impl<R> TaskManager<R>
     where
-        R: Sync + Send + Clone + Default + 'static,
+        R: Sync + Send + Clone + 'static,
     {
         ///
         /// This method creates a [`TaskQueue`] instance using sensible defaults.
@@ -131,27 +192,25 @@ pub mod threading_manager {
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let mut safe_task = Arc::new(Task::<R> {
+            let mut safe_task = Arc::new(RwLock::new(Task::<R> {
                 id: id.clone(),
                 finished: false,
-                result: R::default(),
-            });
-            let mut task_ref = safe_task.clone();
+                result: None,
+            }));
+            self.tasks.insert(id.clone(), safe_task.clone());
 
             let task_wrapper = async move || {
                 // Run the task
                 let result = task.await;
 
                 // Cleanup task
-                let mut task_data = Arc::<Task<R>>::get_mut(&mut task_ref).unwrap();
-                task_data.result = result;
-                task_data.finished = true;
+                safe_task.write().await.result = Some(result);
+                safe_task.write().await.finished = true;
             };
 
             let rt = rumtk_init_threads!(&self.workers);
             rumtk_spawn_task!(rt, task_wrapper());
 
-            self.tasks.insert(id.clone(), safe_task.clone());
             id
         }
 
@@ -206,11 +265,12 @@ pub mod threading_manager {
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
 
-            while !task.finished {
+            while !task.read().await.finished {
                 async_sleep(DEFAULT_SLEEP_DURATION).await;
             }
 
-            Ok(task)
+            let x = Ok(Arc::new(task.write().await.clone()));
+            x
         }
 
         ///
@@ -262,7 +322,7 @@ pub mod threading_manager {
 
         pub async fn is_all_completed_async(&self) -> bool {
             for (_, task) in self.tasks.iter() {
-                if !task.finished {
+                if !task.read().await.finished {
                     return false;
                 }
             }
@@ -502,6 +562,28 @@ pub mod threading_macros {
     ///
     /// This macro creates an async body that calls the async closure and awaits it.
     ///
+    /// ## Example
+    ///
+    /// ```
+    /// use std::sync::{Arc, RwLock};
+    /// use tokio::sync::RwLock as AsyncRwLock;
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::threading::threading_manager::{SafeTaskArgs, TaskItems};
+    ///
+    /// pub type SafeTaskArgs2<T> = Arc<RwLock<TaskItems<T>>>;
+    /// let expected = vec![
+    ///     RUMString::from("Hello"),
+    ///     RUMString::from("World!"),
+    ///     RUMString::from("Overcast"),
+    ///     RUMString::from("and"),
+    ///     RUMString::from("Sad"),
+    ///  ];
+    /// let locked_args = AsyncRwLock::new(expected.clone());
+    /// let task_args = SafeTaskArgs::<RUMString>::new(locked_args);
+    ///
+    ///
+    /// ```
+    ///
     #[macro_export]
     macro_rules! rumtk_create_task {
         ( $func:expr ) => {{
@@ -511,10 +593,8 @@ pub mod threading_macros {
             }
         }};
         ( $func:expr, $args:expr ) => {{
-            async move {
-                let f = $func;
-                f(&$args).await
-            }
+            let f = $func;
+            async move { f(&$args).await }
         }};
     }
 

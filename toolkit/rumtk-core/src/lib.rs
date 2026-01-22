@@ -45,6 +45,7 @@ pub mod types;
 mod tests {
     use super::*;
     use crate::cache::RUMCache;
+    use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
     use crate::strings::{
         rumtk_format, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
@@ -303,7 +304,7 @@ mod tests {
     fn test_execute_job() {
         let rt = rumtk_init_threads!();
         let expected = vec![1, 2, 3];
-        let task_processor = async |args: &SafeTaskArgs<i32>| -> TaskResult<i32> {
+        let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
             let lock_future = owned_args.read();
             let locked_args = lock_future.await;
@@ -326,7 +327,7 @@ mod tests {
     fn test_execute_job_macros() {
         let rt = rumtk_init_threads!();
         let expected = vec![1, 2, 3];
-        let task_processor = async |args: &SafeTaskArgs<i32>| -> TaskResult<i32> {
+        let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
             let lock_future = owned_args.read();
             let locked_args = lock_future.await;
@@ -349,7 +350,7 @@ mod tests {
         let rt = rumtk_init_threads!();
         let expected = vec![1, 2, 3];
         let result = rumtk_exec_task!(
-            async |args: &SafeTaskArgs<i32>| -> TaskResult<i32> {
+            async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
                 let owned_args = Arc::clone(args);
                 let lock_future = owned_args.read();
                 let locked_args = lock_future.await;
@@ -407,9 +408,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::core::clamp_index;
     use crate::net::tcp::LOCALHOST;
-    use crate::threading::thread_primitives::{SafeTaskArgs, TaskItems, TaskResult};
     use crate::threading::threading_functions::sleep;
     use crate::threading::threading_manager::*;
 
@@ -422,11 +421,12 @@ mod tests {
             RUMString::from("and"),
             RUMString::from("Sad"),
         ];
-        let mut queue = TaskQueue::<RUMString>::new(&5).unwrap();
+        type TestResult = RUMResult<Vec<RUMString>>;
+        let mut queue: TaskManager<TestResult> = TaskManager::new(&5).unwrap();
         let locked_args = RwLock::new(expected.clone());
         let task_args = SafeTaskArgs::<RUMString>::new(locked_args);
         let processor = rumtk_create_task!(
-            async |args: &SafeTaskArgs<RUMString>| -> TaskResult<RUMString> {
+            async |args: &SafeTaskArgs<RUMString>| -> TestResult {
                 let owned_args = Arc::clone(args);
                 let lock_future = owned_args.read();
                 let locked_args = lock_future.await;
@@ -440,12 +440,16 @@ mod tests {
             },
             task_args
         );
+
         queue.add_task::<_>(processor);
         let results = queue.wait();
+
         let mut result_data = Vec::<RUMString>::with_capacity(5);
         for r in results {
-            for v in r.unwrap().iter() {
-                result_data.push(v.clone());
+            for v in r.unwrap().result.clone().unwrap().iter() {
+                for value in v.iter() {
+                    result_data.push(value.clone());
+                }
             }
         }
         assert_eq!(result_data, expected, "Results do not match expected!");
