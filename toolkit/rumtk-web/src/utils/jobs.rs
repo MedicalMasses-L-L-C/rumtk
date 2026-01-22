@@ -20,8 +20,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use rumtk_core::core::RUMVec;
-use rumtk_core::types::RUMID;
+use rumtk_core::core::{RUMResult, RUMVec};
+use rumtk_core::threading::threading_manager::{TaskID, TaskManager};
 
-pub type JobID = RUMID;
+pub type JobID = TaskID;
 pub type JobBuffer = RUMVec<u8>;
+type JobManager = TaskManager<JobBuffer>;
+
+static mut TASK_MANAGER: Option<JobManager> = None;
+
+pub fn init_job_manager(workers: &usize) -> RUMResult<()> {
+    let manager = TaskManager::<JobBuffer>::new(workers)?;
+    unsafe {
+        TASK_MANAGER = Some(manager);
+    }
+    Ok(())
+}
+
+pub fn get_manager() -> &'static mut JobManager {
+    let mut manager = unsafe { TASK_MANAGER.as_mut().unwrap() };
+    manager
+}
+
+#[macro_export]
+macro_rules! rumtk_web_init_job_manager {
+    ( $workers:expr ) => {{
+        use $crate::jobs::init_job_manager;
+        init_job_manager($workers)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_get_job_manager {
+    ( $pages:expr ) => {{
+        use $crate::pages::get_manager;
+        get_manager()
+    }};
+}
