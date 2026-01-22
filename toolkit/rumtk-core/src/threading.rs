@@ -20,14 +20,14 @@
  */
 
 ///
-/// This module provides all of the primitives needed to build a multithreaded application.
+/// This module provides all the primitives needed to build a multithreaded application.
 ///
 pub mod thread_primitives {
     use crate::cache::{new_cache, LazyRUMCache};
     use std::sync::Arc;
     use tokio::runtime::Runtime as TokioRuntime;
     /**************************** Globals **************************************/
-    pub static mut rt_cache: TokioRtCache = new_cache();
+    pub static mut RT_CACHE: TokioRtCache = new_cache();
     /**************************** Helpers ***************************************/
     pub fn init_cache(threads: &usize) -> SafeTokioRuntime {
         let mut builder = tokio::runtime::Builder::new_multi_thread();
@@ -50,7 +50,7 @@ pub mod thread_primitives {
 pub mod threading_manager {
     use crate::cache::LazyRUMCacheValue;
     use crate::core::{RUMResult, RUMVec};
-    use crate::strings::{rumtk_format, RUMString};
+    use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::SafeTokioRuntime;
     use crate::threading::threading_functions::async_sleep;
     use crate::types::{RUMHashMap, RUMID};
@@ -76,10 +76,10 @@ pub mod threading_manager {
     pub struct Task<R> {
         pub id: TaskID,
         pub finished: bool,
-        pub result: TaskResult<R>,
+        pub result: R,
     }
 
-    pub type SafeTask<R> = Arc<RwLock<Task<R>>>;
+    pub type SafeTask<R> = Arc<Task<R>>;
     pub type TaskTable<R> = RUMHashMap<TaskID, SafeTask<R>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
@@ -94,7 +94,7 @@ pub mod threading_manager {
 
     impl<R> TaskManager<R>
     where
-        R: Sync + Send + Clone + 'static,
+        R: Sync + Send + Clone + Default + 'static,
     {
         ///
         /// This method creates a [`TaskQueue`] instance using sensible defaults.
@@ -115,7 +115,7 @@ pub mod threading_manager {
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
             let tasks = TaskTable::<R>::with_capacity(DEFAULT_TASK_CAPACITY);
-            Ok(TaskManager {
+            Ok(TaskManager::<R> {
                 tasks,
                 workers: worker_num.to_owned(),
             })
@@ -127,23 +127,23 @@ pub mod threading_manager {
         ///
         pub fn add_task<F>(&mut self, task: F) -> TaskID
         where
-            F: Future<Output = TaskResult<R>> + Send + Sync + 'static,
+            F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let mut safe_task = Arc::new(RwLock::new(Task {
+            let mut safe_task = Arc::new(Task::<R> {
                 id: id.clone(),
                 finished: false,
-                result: Err(RUMString::default()),
-            }));
-            let task_ref = safe_task.clone();
+                result: R::default(),
+            });
+            let mut task_ref = safe_task.clone();
 
             let task_wrapper = async move || {
                 // Run the task
                 let result = task.await;
 
                 // Cleanup task
-                let mut task_data = task_ref.write().await;
+                let mut task_data = Arc::<Task<R>>::get_mut(&mut task_ref).unwrap();
                 task_data.result = result;
                 task_data.finished = true;
             };
@@ -166,7 +166,7 @@ pub mod threading_manager {
         /// 2. We reset the main task and result internal queue states.
         /// 3. Return the list of results ([TaskResults<R>](TaskResults)).
         ///
-        /// This operation consumes all of the tasks.
+        /// This operation consumes all the tasks.
         ///
         /// ### Note:
         /// ```text
@@ -206,7 +206,7 @@ pub mod threading_manager {
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
 
-            while !task.read().await.finished {
+            while !task.finished {
                 async_sleep(DEFAULT_SLEEP_DURATION).await;
             }
 
@@ -247,20 +247,22 @@ pub mod threading_manager {
         ///```
         /// use rumtk_core::threading::threading_manager::TaskManager;
         ///
-        /// let manager = TaskManager::new(4).unwrap();
+        /// let manager = TaskManager::<usize>::new(&4).unwrap();
         ///
-        /// let all_done = manager.is_all_completed()
+        /// let all_done = manager.is_all_completed();
+        ///
+        /// assert_eq!(all_done, true, "Empty TaskManager reports tasks are not completed!");
         ///
         /// ```
         ///
         pub fn is_all_completed(&self) -> bool {
             let rt = rumtk_init_threads!(&self.workers);
-            rumtk_resolve_task!(rt, self.is_all_completed_async())
+            rumtk_resolve_task!(rt, TaskManager::<R>::is_all_completed_async(self))
         }
 
         pub async fn is_all_completed_async(&self) -> bool {
-            for (id, task) in self.tasks.iter() {
-                if !task.read().await.finished {
+            for (_, task) in self.tasks.iter() {
+                if !task.finished {
                     return false;
                 }
             }
@@ -393,10 +395,10 @@ pub mod threading_macros {
     macro_rules! rumtk_init_threads {
         ( ) => {{
             use $crate::rumtk_cache_fetch;
-            use $crate::threading::thread_primitives::{init_cache, rt_cache};
+            use $crate::threading::thread_primitives::{init_cache, RT_CACHE};
             use $crate::threading::threading_functions::get_default_system_thread_count;
             let rt = rumtk_cache_fetch!(
-                &mut rt_cache,
+                &mut RT_CACHE,
                 &get_default_system_thread_count(),
                 init_cache
             );
@@ -404,8 +406,8 @@ pub mod threading_macros {
         }};
         ( $threads:expr ) => {{
             use $crate::rumtk_cache_fetch;
-            use $crate::threading::thread_primitives::{init_cache, rt_cache};
-            let rt = rumtk_cache_fetch!(&raw mut rt_cache, $threads, init_cache);
+            use $crate::threading::thread_primitives::{init_cache, RT_CACHE};
+            let rt = rumtk_cache_fetch!(&raw mut RT_CACHE, $threads, init_cache);
             rt
         }};
     }
