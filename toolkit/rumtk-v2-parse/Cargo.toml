@@ -13,6 +13,6 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.10.1", path = "../rumtk-core" }
+rumtk-core = { version = "0.10.3", path = "../rumtk-core" }
 rumtk-hl7-v2 = { version = "0.8.10", path = "../rumtk-hl7-v2" }
 clap = { version = "4.5.38", features = ["derive"] }
