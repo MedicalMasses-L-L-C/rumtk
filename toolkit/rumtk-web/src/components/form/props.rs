@@ -27,6 +27,7 @@ type EventHandlers<'a> = Vec<EventHandler<'a>>;
 
 #[derive(Debug, Clone, Default)]
 pub struct InputProps<'a> {
+    pub id: Option<RUMString>,
     pub name: Option<RUMString>,
     pub typ: Option<RUMString>,
     pub value: Option<RUMString>,
@@ -63,8 +64,8 @@ impl InputProps<'_> {
         let default_text = RUMString::default();
         rumtk_format!(
             "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
-            match &self.name {
-                Some(name) => rumtk_format!("id={:?}", name),
+            match &self.id {
+                Some(id) => rumtk_format!("id={:?}", id),
                 None => default_text.clone(),
             },
             match &self.name {
