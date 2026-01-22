@@ -201,7 +201,7 @@ pub mod mllp_v2 {
         basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString,
         RUMStringConversions, ToCompactString,
     };
-    use rumtk_core::threading::thread_primitives::SafeTaskArgs;
+    use rumtk_core::threading::threading_manager::SafeTaskArgs;
     use rumtk_core::{
         rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_init_threads,
         rumtk_resolve_task, rumtk_spawn_task,
