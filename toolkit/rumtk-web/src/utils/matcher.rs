@@ -24,15 +24,20 @@ use crate::components::app_shell::app_shell;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
-use crate::{rumtk_web_get_component, RUMWebData};
-use axum::response::Html;
+use crate::{rumtk_web_get_component, RUMWebData, RUMWebResponse};
+use axum::body::Body;
+use axum::http::Response;
+use axum::response::{Html, IntoResponse};
+use tracing::error;
 
 pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
     _params: RUMWebData,
     _state: SharedAppState,
 ) -> HTMLResult {
-    Ok(Html::<String>::from(String::from(DEFAULT_ROBOT_TXT)))
+    Ok(RUMWebResponse::GetResponse(Html::<String>::from(
+        String::from(DEFAULT_ROBOT_TXT),
+    )))
 }
 
 pub async fn default_page_matcher(
@@ -69,47 +74,37 @@ pub async fn default_component_matcher(
     component(&path_components[1..], &params, state)
 }
 
+pub fn match_maker(match_response: HTMLResult) -> Response<Body> {
+    match match_response {
+        Ok(res) => match res {
+            RUMWebResponse::GetResponse(r) => r.into_response(),
+            RUMWebResponse::RedirectResponse(r) => r.into_response(),
+            RUMWebResponse::RedirectTemporaryResponse(r) => r.into_response(),
+            RUMWebResponse::RedirectPermanentResponse(r) => r.into_response(),
+            None => Html(String::default()).into_response(),
+        },
+        Err(e) => {
+            error!("{}", e);
+            Html(String::default()).into_response()
+        }
+    }
+}
+
 #[macro_export]
 macro_rules! rumtk_web_fetch {
     ( $matcher:expr ) => {{
         use axum::extract::{Path, Query, State};
-        use axum::response::Html;
-        use $crate::utils::types::{RouterAppState, RouterComponents, RouterParams};
-
-        async |Path(path_params): RouterComponents,
-               Query(params): RouterParams,
-               State(state): RouterAppState|
-               -> Html<String> {
-            match $matcher(path_params, params, state).await {
-                Ok(res) => res,
-                Err(e) => {
-                    error!("{}", e);
-                    return Html(String::default());
-                }
-            }
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_web_post {
-    ( $matcher:expr ) => {{
-        use axum::extract::{Multipart, Path, Query, State};
-        use axum::response::Html;
+        use axum::response::{Html, Response};
+        use $crate::matcher::match_maker;
         use $crate::utils::types::{RouterAppState, RouterComponents, RouterForm, RouterParams};
 
         async |Path(path_params): RouterComponents,
-               Query(mut params): RouterParams,
+               Query(params): RouterParams,
                State(state): RouterAppState,
                mut Multipart: RouterForm|
-               -> Html<String> {
-            match $matcher(path_params, params, state).await {
-                Ok(res) => res,
-                Err(e) => {
-                    error!("{}", e);
-                    return Html(String::default());
-                }
-            }
+               -> Response {
+            let r = $matcher(path_params, params, state).await;
+            match_maker(r)
         }
     }};
 }

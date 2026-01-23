@@ -24,9 +24,9 @@ use crate::types::HTMLResult;
 use crate::{HTMLBody, RUMWebRedirect, RUMWebResponse, RedirectBody};
 use rumtk_core::strings::rumtk_format;
 
-pub fn rumtk_web_render_html<T: askama::Template>(
+pub fn rumtk_web_render_html<T: askama::Template, R>(
     template: T,
-    url: RUMWebRedirect<str>,
+    url: RUMWebRedirect<R>,
 ) -> HTMLResult {
     let result = template.render();
     match result {

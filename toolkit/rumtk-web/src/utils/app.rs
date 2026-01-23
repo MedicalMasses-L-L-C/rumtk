@@ -27,7 +27,7 @@ use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{
     rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_forms,
-    rumtk_web_init_pages, rumtk_web_post,
+    rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
@@ -42,7 +42,6 @@ use axum::routing::{get, post};
 use axum::Router;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
-use tracing::error;
 
 ///
 /// RUMTK WebApp CLI Args
@@ -121,8 +120,8 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
         .route("/", get(rumtk_web_fetch!(default_page_matcher)))
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
         /* Post Handling */
-        .route("/api/", post(rumtk_web_post!(default_page_matcher)))
-        .route("/api/{*page}", post(rumtk_web_post!(default_page_matcher)))
+        .route("/api/", post(rumtk_web_fetch!(default_page_matcher)))
+        .route("/api/{*page}", post(rumtk_web_fetch!(default_page_matcher)))
         /* Services */
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state)

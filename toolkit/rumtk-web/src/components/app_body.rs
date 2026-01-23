@@ -30,25 +30,6 @@ use askama::Template;
 #[derive(Template)]
 #[template(
     source = "
-        <div>
-            {% for element in elements %}
-                {{ element|safe }}
-            {% endfor %}
-        </div>
-    ",
-    ext = "html"
-)]
-pub struct AppBodyContents<'a> {
-    elements: &'a [RUMString],
-}
-
-fn app_body_contents(elements: &[RUMString]) -> HTMLResult {
-    rumtk_web_render_html!(AppBodyContents { elements })
-}
-
-#[derive(Template)]
-#[template(
-    source = "
         <body class='f12 theme-{{theme}}'>
             <a href='#main-content'>Skip to main content</a>
             {{header|safe}}
