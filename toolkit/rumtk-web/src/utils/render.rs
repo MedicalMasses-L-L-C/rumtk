@@ -35,6 +35,10 @@ pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedire
     }
 }
 
+pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
+    Ok(url.into_web_response(Some(String::default())))
+}
+
 #[macro_export]
 macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
@@ -77,6 +81,17 @@ macro_rules! rumtk_web_render_html {
         use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
 
         let closure = || -> HTMLResult { rumtk_web_render_html($page, $redirect_url) };
+
+        closure()
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_render_redirect {
+    ( $url:expr ) => {{
+        use $crate::utils::{rumtk_web_redirect, types::HTMLResult, RUMWebRedirect};
+
+        let closure = || -> HTMLResult { rumtk_web_redirect($url) };
 
         closure()
     }};
