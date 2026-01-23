@@ -48,3 +48,7 @@ pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResul
 pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
+
+/* API Types */
+pub type APIPath<'a> = &'a str;
+pub type APIFunction = fn(APIPath, URLParams, Multipart, SharedAppState) -> HTMLResult;

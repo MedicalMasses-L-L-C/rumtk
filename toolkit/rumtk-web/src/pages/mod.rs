@@ -68,9 +68,8 @@ pub fn get_default_page() -> &'static PageFunction {
 pub fn init_pages(user_components: &UserPages) {
     println!("🗎 Registering user pages! 🗎");
     /* Init any user prescribed components */
-    for itm in user_components {
-        let (name, value) = itm;
-        register_page(name, *value);
+    for (name, value) in user_components {
+        let _ = register_page(name, *value);
     }
     println!("🗎 ~~~~~~~~~~~~~~~~~~~~~~ 🗎");
 }
