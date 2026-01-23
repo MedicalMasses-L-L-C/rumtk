@@ -316,7 +316,7 @@ macro_rules! rumtk_web_run_app {
     ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, $apis, false)
+        app_main(&$pages, &$components, &$forms, &$apis, false)
     }};
     ( $pages:expr, $components:expr, $forms:expr, $apis:expr, $skip_serve:expr ) => {{
         use $crate::utils::app::app_main;
