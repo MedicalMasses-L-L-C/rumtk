@@ -107,8 +107,7 @@ macro_rules! rumtk_web_fetch {
 
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
-               State(state): RouterAppState,
-               Multipart: RouterForm|
+               State(state): RouterAppState|
                -> Response {
             let r = $matcher(path_params, params, state).await;
             match_maker(r)
