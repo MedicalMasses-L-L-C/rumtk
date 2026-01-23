@@ -38,27 +38,23 @@ pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedire
 #[macro_export]
 macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
-        use rumtk_core::strings::RUMStringConversions;
-        use $crate::RUMWebResponse;
+        use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn() {
             Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
-        use rumtk_core::strings::RUMStringConversions;
-        use $crate::RUMWebResponse;
+        use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn($app_state.clone()) {
             Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
     ( $component:expr, $params:expr, $app_state:expr ) => {{
-        use rumtk_core::strings::RUMStringConversions;
-        use $crate::RUMWebResponse;
+        use rumtk_core::strings::{RUMString, RUMStringConversions};
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
 
-        use $crate::RUMString;
         let component = rumtk_web_get_component!($component);
 
         match component(&[""], &rumtk_web_params_map!($params), $app_state.clone()) {
