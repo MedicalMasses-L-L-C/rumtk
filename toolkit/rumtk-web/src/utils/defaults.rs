@@ -75,7 +75,7 @@ pub const SECTION_SERVICES: &str = "services";
 pub const SECTION_PRODUCTS: &str = "products";
 pub const SECTION_LINKS: &str = "links";
 pub const SECTION_MODULES: &str = "modules";
-pub const SECTION_ENDPOINTS: &str = "endpoint";
+pub const SECTION_ENDPOINTS: &str = "endpoints";
 pub const SECTION_DEFAULT: &str = "default";
 
 /*
