@@ -40,8 +40,11 @@ pub const DEFAULT_PAGE_NAME: &str = "index";
 pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
     let key = RUMString::from(name);
     let r = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
-    unsafe {
-        DEFAULT_PAGE = component_fxn;
+
+    if key == DEFAULT_PAGE_NAME {
+        unsafe {
+            DEFAULT_PAGE = component_fxn;
+        }
     }
     println!(
         "  ➡ Registered page {} => page function [{:?}]",
