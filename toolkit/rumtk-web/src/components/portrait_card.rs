@@ -91,7 +91,7 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> Po
                     ]),
                     app_state.clone(),
                 ) {
-                    Ok(v) => v.0.to_rumstring(),
+                    Ok(v) => v.to_rumstring(),
                     Err(_) => default_html.clone(),
                 },
             });

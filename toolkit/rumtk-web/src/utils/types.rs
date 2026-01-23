@@ -35,7 +35,7 @@ pub type URLParams<'a> = &'a RUMWebData;
 pub type AsyncURLParams = Arc<RUMWebData>;
 
 /* Responses */
-use crate::utils::response::*;
+pub use crate::utils::response::*;
 
 pub type RenderedPageComponents = Vec<RUMString>;
 /* Router Match Types */

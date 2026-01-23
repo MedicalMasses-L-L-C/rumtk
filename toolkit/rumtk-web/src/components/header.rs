@@ -83,8 +83,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
                 &RUMWebData::from([("target".to_rumstring(), key.to_rumstring())]),
                 app_state.clone(),
             )
-            .unwrap_or_else(|_| default_html.clone())
-            .0
+            .unwrap_or_default()
             .to_rumstring(),
         );
     }

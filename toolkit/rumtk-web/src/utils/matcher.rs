@@ -76,13 +76,7 @@ pub async fn default_component_matcher(
 
 pub fn match_maker(match_response: HTMLResult) -> Response<Body> {
     match match_response {
-        Ok(res) => match res {
-            RUMWebResponse::GetResponse(r) => r.into_response(),
-            RUMWebResponse::RedirectResponse(r) => r.into_response(),
-            RUMWebResponse::RedirectTemporaryResponse(r) => r.into_response(),
-            RUMWebResponse::RedirectPermanentResponse(r) => r.into_response(),
-            None => Html(String::default()).into_response(),
-        },
+        Ok(res) => res.into_response(),
         Err(e) => {
             error!("{}", e);
             Html(String::default()).into_response()

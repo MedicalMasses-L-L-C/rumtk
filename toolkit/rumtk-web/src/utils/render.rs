@@ -21,33 +21,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::types::HTMLResult;
-use crate::{HTMLBody, RUMWebRedirect, RUMWebResponse, RedirectBody};
+use crate::RUMWebRedirect;
 use rumtk_core::strings::rumtk_format;
 
-pub fn rumtk_web_render_html<T: askama::Template, R>(
-    template: T,
-    url: RUMWebRedirect<R>,
-) -> HTMLResult {
+pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
-        Ok(html) => Ok({
-            match url {
-                RUMWebRedirect::Redirect(url) => {
-                    RUMWebResponse::RedirectResponse(RedirectBody::to(url.unwrap_or_default()))
-                }
-                RUMWebRedirect::RedirectTemporary(url) => {
-                    RUMWebResponse::RedirectTemporaryResponse(RedirectBody::temporary(
-                        url.unwrap_or_default(),
-                    ))
-                }
-                RUMWebRedirect::RedirectPermanent(url) => {
-                    RUMWebResponse::RedirectPermanentResponse(RedirectBody::permanent(
-                        url.unwrap_or_default(),
-                    ))
-                }
-                None => RUMWebResponse::GetResponse(HTMLBody::from(html)),
-            }
-        }),
+        Ok(html) => Ok(url.into_web_response(Some(html))),
         Err(e) => {
             let tn = std::any::type_name::<T>();
             Err(rumtk_format!("Template {tn} render failed: {e:?}"))
@@ -60,14 +40,14 @@ macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
         use rumtk_core::strings::RUMStringConversions;
         match $component_fxn() {
-            Ok(x) => x.0.to_rumstring(),
+            Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
         use rumtk_core::strings::RUMStringConversions;
         match $component_fxn($app_state.clone()) {
-            Ok(x) => x.0.to_rumstring(),
+            Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
@@ -80,7 +60,7 @@ macro_rules! rumtk_web_render_component {
         let component = rumtk_web_get_component!($component);
 
         match component(&[""], &rumtk_web_params_map!($params), $app_state.clone()) {
-            Ok(x) => x.0.to_rumstring(),
+            Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
     }};
@@ -89,9 +69,9 @@ macro_rules! rumtk_web_render_component {
 #[macro_export]
 macro_rules! rumtk_web_render_html {
     ( $page:expr ) => {{
-        use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
+        use $crate::utils::{rumtk_web_render_html, types::HTMLResult, RUMWebRedirect};
 
-        let closure = || -> HTMLResult { rumtk_web_render_html($page) };
+        let closure = || -> HTMLResult { rumtk_web_render_html($page, RUMWebRedirect::None) };
 
         closure()
     }};
