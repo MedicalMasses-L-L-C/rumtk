@@ -67,6 +67,10 @@ impl RUMWebResponse {
             _ => RUMString::default(),
         }
     }
+
+    pub fn into_html_result(self) -> HTMLResult {
+        Ok(self)
+    }
 }
 
 impl IntoResponse for RUMWebResponse {
