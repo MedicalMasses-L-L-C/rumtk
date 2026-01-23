@@ -26,8 +26,8 @@ use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{
-    rumtk_web_compile_css_bundle, rumtk_web_init_components, rumtk_web_init_forms,
-    rumtk_web_init_pages,
+    rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_components,
+    rumtk_web_init_forms, rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
@@ -38,6 +38,7 @@ use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
 use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
 
+use crate::api::UserAPIEndpoints;
 use axum::routing::{get, post};
 use axum::Router;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
@@ -141,12 +142,19 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
     Ok(())
 }
 
-pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, skip_serve: bool) {
+pub fn app_main(
+    pages: &UserPages,
+    components: &UserComponents,
+    forms: &Forms,
+    apis: &UserAPIEndpoints,
+    skip_serve: bool,
+) {
     let args = Args::parse();
 
     rumtk_web_init_components!(components);
     rumtk_web_init_pages!(pages);
     rumtk_web_init_forms!(forms);
+    rumtk_web_init_api_endpoints!(apis);
     rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
     let rt = rumtk_init_threads!(&args.threads);
@@ -183,6 +191,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///
 /// ### With Page and Component definition
 /// ```
+///     use rumtk_core::strings::{rumtk_format};
 ///     use rumtk_web::{
 ///         rumtk_web_run_app,
 ///         rumtk_web_render_component,
@@ -191,7 +200,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///     };
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppState, RenderedPageComponents};
-///     use rumtk_web::{URLPath, URLParams, HTMLResult, RUMString};
+///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///
 ///     use askama::Template;
@@ -260,6 +269,13 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///         ]
 ///     }
 ///
+///     fn my_api_handler(path: APIPath, params: URLParams, form: RouterForm, state: SharedAppState) -> HTMLResult {
+///         Err(rumtk_format!(
+///             "No handler registered for API endpoint => {}",
+///             path
+///         ))
+///     }
+///
 ///     //Requesting to immediately exit instead of indefinitely serving pages so this example can be used as a unit test.
 ///     let skip_serve = true;
 ///
@@ -267,6 +283,7 @@ pub fn app_main(pages: &UserPages, components: &UserComponents, forms: &Forms, s
 ///         vec![("about", about)],
 ///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
+///         vec![("v2/add", my_api_handler)], //Optional, can be omitted alongside the skip_serve flag
 ///         skip_serve //Omit in production code. This is used so that this example can work as a unit test.
 ///     );
 /// ```
@@ -276,26 +293,31 @@ macro_rules! rumtk_web_run_app {
     (  ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&vec![], &vec![], &vec![], false)
+        app_main(&vec![], &vec![], &vec![], &vec![], false)
     }};
     ( $pages:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &vec![], &vec![], false)
+        app_main(&$pages, &vec![], &vec![], &vec![], false)
     }};
     ( $pages:expr, $components:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &vec![], false)
+        app_main(&$pages, &$components, &vec![], &vec![], false)
     }};
     ( $pages:expr, $components:expr, $forms:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, false)
+        app_main(&$pages, &$components, &$forms, &vec![], false)
     }};
-    ( $pages:expr, $components:expr, $forms:expr, $skip_serve:expr ) => {{
+    ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, $skip_serve)
+        app_main(&$pages, &$components, &$forms, $apis, false)
+    }};
+    ( $pages:expr, $components:expr, $forms:expr, $apis:expr, $skip_serve:expr ) => {{
+        use $crate::utils::app::app_main;
+
+        app_main(&$pages, &$components, &$forms, &$apis, $skip_serve)
     }};
 }
