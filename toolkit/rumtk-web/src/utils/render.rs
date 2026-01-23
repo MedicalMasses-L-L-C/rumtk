@@ -20,14 +20,34 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::utils::types::HTMLResult;
-use axum::response::Html;
+use crate::types::HTMLResult;
+use crate::{HTMLBody, RUMWebRedirect, RUMWebResponse, RedirectBody};
 use rumtk_core::strings::rumtk_format;
 
-pub fn rumtk_web_render_html<T: askama::Template>(template: T) -> HTMLResult {
+pub fn rumtk_web_render_html<T: askama::Template>(
+    template: T,
+    url: RUMWebRedirect<str>,
+) -> HTMLResult {
     let result = template.render();
     match result {
-        Ok(html) => Ok(Html(html)),
+        Ok(html) => Ok({
+            match url {
+                RUMWebRedirect::Redirect(url) => {
+                    RUMWebResponse::RedirectResponse(RedirectBody::to(url.unwrap_or_default()))
+                }
+                RUMWebRedirect::RedirectTemporary(url) => {
+                    RUMWebResponse::RedirectTemporaryResponse(RedirectBody::temporary(
+                        url.unwrap_or_default(),
+                    ))
+                }
+                RUMWebRedirect::RedirectPermanent(url) => {
+                    RUMWebResponse::RedirectPermanentResponse(RedirectBody::permanent(
+                        url.unwrap_or_default(),
+                    ))
+                }
+                None => RUMWebResponse::GetResponse(HTMLBody::from(html)),
+            }
+        }),
         Err(e) => {
             let tn = std::any::type_name::<T>();
             Err(rumtk_format!("Template {tn} render failed: {e:?}"))
@@ -68,10 +88,17 @@ macro_rules! rumtk_web_render_component {
 
 #[macro_export]
 macro_rules! rumtk_web_render_html {
-    ( $component:expr ) => {{
+    ( $page:expr ) => {{
         use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
 
-        let closure = || -> HTMLResult { rumtk_web_render_html($component) };
+        let closure = || -> HTMLResult { rumtk_web_render_html($page) };
+
+        closure()
+    }};
+    ( $page:expr, $redirect_url:expr ) => {{
+        use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
+
+        let closure = || -> HTMLResult { rumtk_web_render_html($page, $redirect_url) };
 
         closure()
     }};
