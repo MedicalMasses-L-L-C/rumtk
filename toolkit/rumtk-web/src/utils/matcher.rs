@@ -24,7 +24,10 @@ use crate::components::app_shell::app_shell;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
-use crate::{rumtk_web_get_component, RUMWebData, RUMWebResponse};
+use crate::{
+    rumtk_web_get_api_endpoint, rumtk_web_get_component, RUMWebData, RUMWebResponse, RouterForm,
+    URLParams,
+};
 use axum::body::Body;
 use axum::http::Response;
 use axum::response::{Html, IntoResponse};
@@ -52,6 +55,16 @@ pub async fn default_page_matcher(
 
     // Do not minify the page. we saved 0.3KB but transfer went from 5ms to 45ms
     app_shell(&path_components, &params, state)
+}
+
+pub async fn default_api_matcher(
+    path: RUMString,
+    params: RUMWebData,
+    form: RouterForm,
+    state: SharedAppState,
+) -> HTMLResult {
+    let api_endpoint = rumtk_web_get_api_endpoint!(&path);
+    api_endpoint(&path, &params, form, state)
 }
 
 pub async fn default_component_matcher(
@@ -95,9 +108,28 @@ macro_rules! rumtk_web_fetch {
         async |Path(path_params): RouterComponents,
                Query(params): RouterParams,
                State(state): RouterAppState,
-               mut Multipart: RouterForm|
+               Multipart: RouterForm|
                -> Response {
             let r = $matcher(path_params, params, state).await;
+            match_maker(r)
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_api_process {
+    ( $matcher:expr ) => {{
+        use axum::extract::{Multipart, Path, Query, State};
+        use axum::response::{Html, Response};
+        use $crate::matcher::match_maker;
+        use $crate::utils::types::{RouterAPIPath, RouterAppState, RouterForm, RouterParams};
+
+        async |Path(path_params): RouterAPIPath,
+               Query(params): RouterParams,
+               State(state): RouterAppState,
+               form: RouterForm|
+               -> Response {
+            let r = $matcher(path_params, params, form, state).await;
             match_maker(r)
         }
     }};

@@ -26,8 +26,8 @@ use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{
-    rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_components,
-    rumtk_web_init_forms, rumtk_web_init_pages,
+    rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints,
+    rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
@@ -121,8 +121,11 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
         .route("/", get(rumtk_web_fetch!(default_page_matcher)))
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
         /* Post Handling */
-        .route("/api/", post(rumtk_web_fetch!(default_page_matcher)))
-        .route("/api/{*page}", post(rumtk_web_fetch!(default_page_matcher)))
+        .route("/api/", post(rumtk_web_api_process!(default_api_matcher)))
+        .route(
+            "/api/{*page}",
+            post(rumtk_web_api_process!(default_api_matcher)),
+        )
         /* Services */
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state)
