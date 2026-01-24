@@ -22,7 +22,8 @@
  */
 use crate::defaults::{PARAMS_ID, PARAMS_TYPE};
 use crate::utils::defaults::{
-    DEFAULT_TEXT_ITEM, FORM_DATA_TYPE_HTML, FORM_DATA_TYPE_PDF, PARAMS_CONTENTS, PARAMS_CSS_CLASS,
+    DEFAULT_TEXT_ITEM, FORM_DATA_TYPE_HTML, FORM_DATA_TYPE_PDF,
+    PARAMS_CONTENTS, PARAMS_CSS_CLASS,
 };
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
@@ -53,7 +54,6 @@ use rumtk_core::rumtk_generate_id;
                 {{contents}}
             </pre>
         {% endif %}
-        <div class='div-{{css_class}}'>{{contents|safe}}</div>
     ",
     ext = "html"
 )]

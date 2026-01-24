@@ -22,7 +22,21 @@
  */
 use crate::types::HTMLResult;
 use crate::RUMWebRedirect;
-use rumtk_core::strings::rumtk_format;
+use askama::Template;
+use rumtk_core::strings::{rumtk_format, RUMString};
+
+#[derive(Template)]
+#[template(
+    source = "
+        {% for element in elements %}
+           {{ element|safe }}
+        {% endfor %}
+    ",
+    ext = "html"
+)]
+struct ContentBlock<'a> {
+    elements: &'a [RUMString],
+}
 
 pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
@@ -33,6 +47,10 @@ pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedire
             Err(rumtk_format!("Template {tn} render failed: {e:?}"))
         }
     }
+}
+
+pub fn rumtk_web_render_contents(elements: &[RUMString]) -> HTMLResult {
+    rumtk_web_render_html(ContentBlock { elements }, RUMWebRedirect::None)
 }
 
 pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
@@ -71,29 +89,32 @@ macro_rules! rumtk_web_render_component {
 #[macro_export]
 macro_rules! rumtk_web_render_html {
     ( $page:expr ) => {{
-        use $crate::utils::{rumtk_web_render_html, types::HTMLResult, RUMWebRedirect};
+        use $crate::utils::{rumtk_web_render_html, RUMWebRedirect};
 
-        let closure = || -> HTMLResult { rumtk_web_render_html($page, RUMWebRedirect::None) };
-
-        closure()
+        rumtk_web_render_html($page, RUMWebRedirect::None)
     }};
     ( $page:expr, $redirect_url:expr ) => {{
-        use $crate::utils::{rumtk_web_render_html, types::HTMLResult};
+        use $crate::utils::rumtk_web_render_html;
 
-        let closure = || -> HTMLResult { rumtk_web_render_html($page, $redirect_url) };
+        rumtk_web_render_html($page, $redirect_url)
+    }};
+}
 
-        closure()
+#[macro_export]
+macro_rules! rumtk_web_render_page_contents {
+    ( $page_elements:expr ) => {{
+        use $crate::utils::rumtk_web_render_contents;
+
+        rumtk_web_render_contents($page_elements)
     }};
 }
 
 #[macro_export]
 macro_rules! rumtk_web_render_redirect {
     ( $url:expr ) => {{
-        use $crate::utils::{rumtk_web_redirect, types::HTMLResult, RUMWebRedirect};
+        use $crate::utils::rumtk_web_redirect;
 
-        let closure = || -> HTMLResult { rumtk_web_redirect($url) };
-
-        closure()
+        rumtk_web_redirect($url)
     }};
 }
 

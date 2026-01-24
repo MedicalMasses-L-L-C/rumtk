@@ -22,30 +22,12 @@
  */
 use crate::defaults::DEFAULT_TEXT_ITEM;
 use crate::{
-    rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component, rumtk_web_render_html,
-    HTMLResult, SharedAppState, URLParams, URLPath,
+    rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component,
+    rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, SharedAppState, URLParams,
+    URLPath,
 };
 use askama::Template;
 use rumtk_core::strings::RUMString;
-
-#[derive(Template)]
-#[template(
-    source = "
-        <div>
-            {% for element in elements %}
-                {{ element|safe }}
-            {% endfor %}
-        </div>
-    ",
-    ext = "html"
-)]
-pub struct MainContents<'a> {
-    elements: &'a [RUMString],
-}
-
-fn main_contents(elements: &[RUMString]) -> HTMLResult {
-    rumtk_web_render_html!(MainContents { elements })
-}
 
 #[derive(Template)]
 #[template(
@@ -72,8 +54,9 @@ pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) 
 
     //Let's render the main tag contents
     let body_components = rumtk_web_collect_page!(page, state);
-    let contents =
-        rumtk_web_render_component!(|| -> HTMLResult { main_contents(&body_components) });
+    let contents = rumtk_web_render_component!(|| -> HTMLResult {
+        rumtk_web_render_contents(&body_components)
+    });
 
     rumtk_web_render_html!(Main { contents })
 }
