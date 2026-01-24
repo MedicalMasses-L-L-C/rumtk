@@ -20,6 +20,7 @@
  */
 
 pub use ahash::AHashMap as RUMHashMap;
+pub use bytes::Bytes as RUMBuffer;
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
 pub use serde;
