@@ -20,8 +20,16 @@ use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
 pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
-    let title_welcome =
-        rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
+    let upload_form = rumtk_web_render_component!(
+        "form",
+        [
+            ("type", "upload"),
+            ("title", "welcome"),
+            ("target", "progress_hidden"),
+            ("endpoint", "pdf")
+        ],
+        app_state.clone()
+    );
 
-    vec![title_welcome]
+    vec![upload_form]
 }
