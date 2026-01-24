@@ -22,12 +22,14 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
+use crate::{
+    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
+};
 use askama::Template;
 
 use crate::components::{app_body::app_body, app_head::app_head};
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
         <!DOCTYPE html>

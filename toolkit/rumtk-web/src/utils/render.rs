@@ -21,11 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::types::HTMLResult;
-use crate::RUMWebRedirect;
+use crate::{RUMWebRedirect, RUMWebTemplate};
 use askama::Template;
 use rumtk_core::strings::{rumtk_format, RUMString};
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
         {% for element in elements %}

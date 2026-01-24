@@ -20,11 +20,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::rumtk_web_render_html;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
+use crate::{rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
             <meta charset='UTF-8'>

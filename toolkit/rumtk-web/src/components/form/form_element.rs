@@ -21,11 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::components::form::props::InputProps;
-use crate::rumtk_web_render_html;
 use crate::utils::types::HTMLResult;
+use crate::{rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
-#[derive(Template, Debug, Clone)]
+#[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         <{{element}} {{props.to_rumstring()|safe}} class='{{css_class}}'>{{data}}</{{element}}>

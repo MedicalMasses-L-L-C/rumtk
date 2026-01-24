@@ -20,8 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::rumtk_web_render_html;
 use crate::utils::types::HTMLResult;
+use crate::{rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
 #[derive(Debug)]
@@ -30,7 +30,7 @@ pub struct HTMXElement {
     sha: &'static str,
 }
 
-#[derive(Template, Debug)]
+#[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
         <script src='https://cdn.jsdelivr.net/npm/htmx.org@{{lib.version}}/dist/htmx.min.js' integrity='{{lib.sha}}' crossorigin='anonymous'></script>

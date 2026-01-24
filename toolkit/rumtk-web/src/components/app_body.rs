@@ -23,11 +23,12 @@
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_param, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_param, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_render_html, RUMWebTemplate,
 };
 use askama::Template;
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
         <body class='f12 theme-{{theme}}'>

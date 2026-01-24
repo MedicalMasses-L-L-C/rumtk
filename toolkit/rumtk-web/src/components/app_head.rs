@@ -22,10 +22,10 @@
  */
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_render_component, rumtk_web_render_html};
+use crate::{rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
         <head>

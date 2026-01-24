@@ -29,11 +29,11 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_conf, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html,
+    rumtk_web_render_html, RUMWebTemplate,
 };
 use askama::Template;
 
-#[derive(Template, Debug)]
+#[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
         <div id='form-{{typ}}-box'>

@@ -205,8 +205,8 @@ pub fn app_main(
 ///     use rumtk_web::{SharedAppState, RenderedPageComponents};
 ///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
+///     use rumtk_web::utils::types::RUMWebTemplate;
 ///
-///     use askama::Template;
 ///
 ///
 ///
@@ -234,7 +234,7 @@ pub fn app_main(
 ///     }
 ///
 ///     //Custom component
-///     #[derive(Template, Debug)]
+///     #[derive(RUMWebTemplate, Debug)]
 ///     #[template(
 ///             source = "
 ///                <style>

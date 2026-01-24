@@ -24,7 +24,7 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST, SECTION_SOCIALS,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 use rumtk_core::strings::{rumtk_format, RUMStringConversions};
 
@@ -37,7 +37,7 @@ struct Social {
 
 type SocialsList = Vec<Social>;
 
-#[derive(Template, Debug, Clone)]
+#[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         <style>

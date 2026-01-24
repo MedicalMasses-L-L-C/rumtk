@@ -23,13 +23,13 @@
 use crate::defaults::DEFAULT_TEXT_ITEM;
 use crate::{
     rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component,
-    rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, SharedAppState, URLParams,
-    URLPath,
+    rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, RUMWebTemplate, SharedAppState,
+    URLParams, URLPath,
 };
 use askama::Template;
 use rumtk_core::strings::RUMString;
 
-#[derive(Template)]
+#[derive(RUMWebTemplate)]
 #[template(
     source = "
         <main class='' id='main-content'>

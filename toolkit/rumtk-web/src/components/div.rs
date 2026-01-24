@@ -22,10 +22,10 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
-#[derive(Template, Debug)]
+#[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
         {% if custom_css_enabled %}

@@ -24,10 +24,12 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
+use crate::{
+    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
+};
 use askama::Template;
 
-#[derive(Template, Debug, Clone)]
+#[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         <style>

@@ -25,7 +25,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_conf, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
-    RUMWebData,
+    RUMWebData, RUMWebTemplate,
 };
 use askama::Template;
 use rumtk_core::strings::RUMStringConversions;
@@ -39,7 +39,7 @@ struct PortraitItem {
 
 type PortraitGrid = Vec<Vec<PortraitItem>>;
 
-#[derive(Template, Debug)]
+#[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
         {% if custom_css_enabled %}
