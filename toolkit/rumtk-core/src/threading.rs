@@ -430,6 +430,23 @@ pub mod threading_manager {
         }
 
         ///
+        /// Check if a task completed
+        ///
+        pub fn is_finished(&self, id: &TaskID) -> bool {
+            match self.tasks.blocking_read().get(id) {
+                Some(t) => t.blocking_read().finished,
+                None => false,
+            }
+        }
+
+        pub async fn is_finished_async(&self, id: &TaskID) -> bool {
+            match self.tasks.read().await.get(id) {
+                Some(task) => task.read().await.finished,
+                None => true,
+            }
+        }
+
+        ///
         /// Alias for [wait](TaskManager::wait).
         ///
         fn gather(&mut self) -> TaskResults<R> {
@@ -637,7 +654,6 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_resolve_task {
         ( $rt:expr, $future:expr ) => {{
-            use $crate::strings::rumtk_format;
             // Fun tidbit, the expression rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task)), where
             // rt is the tokio runtime yields async move { { &rt.spawn(task) } }. However, the whole thing
             // is technically moved into the async closure and captured so things like mutex guards
@@ -648,6 +664,13 @@ pub mod threading_macros {
             // moving into the closure. DO NOT REMOVE OR "SIMPLIFY" THE let future = $future LINE!!!
             let future = $future;
             $rt.block_on(async move { future.await })
+        }};
+    }
+
+    #[macro_export]
+    macro_rules! rumtk_resolve_task_from_async {
+        ( $rt:expr, $future:expr ) => {{
+            let handle = $rt.spawn_blocking(async move { future.await })
         }};
     }
 
