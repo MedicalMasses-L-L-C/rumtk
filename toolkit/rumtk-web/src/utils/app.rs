@@ -27,7 +27,8 @@ use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{
     rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints,
-    rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_pages,
+    rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_job_manager,
+    rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
@@ -161,6 +162,7 @@ pub fn app_main(
     rumtk_web_compile_css_bundle!(&args.css_source_dir);
 
     let rt = rumtk_init_threads!(&args.threads);
+    rumtk_web_init_job_manager!(&args.threads);
     let task = run_app(&args, skip_serve);
     rumtk_resolve_task!(rt, task);
 }
