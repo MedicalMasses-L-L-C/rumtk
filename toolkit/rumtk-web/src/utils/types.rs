@@ -50,6 +50,7 @@ pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
 
 /* API Types */
+pub use crate::utils::form_data::{FormBuffer, FormData};
 pub type RouterAPIPath = Path<RUMString>;
 pub type APIPath<'a> = &'a str;
-pub type APIFunction = fn(APIPath, URLParams, Multipart, SharedAppState) -> HTMLResult;
+pub type APIFunction = fn(APIPath, URLParams, FormData, SharedAppState) -> HTMLResult;

@@ -23,6 +23,7 @@
 pub mod app;
 pub mod conf;
 pub mod defaults;
+mod form_data;
 pub mod jobs;
 pub mod matcher;
 pub mod packaging;

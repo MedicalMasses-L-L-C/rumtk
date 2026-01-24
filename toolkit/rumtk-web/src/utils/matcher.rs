@@ -22,6 +22,7 @@
  */
 use crate::components::app_shell::app_shell;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
+use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
 use crate::{
@@ -60,11 +61,12 @@ pub async fn default_page_matcher(
 pub async fn default_api_matcher(
     path: RUMString,
     params: RUMWebData,
-    form: RouterForm,
+    mut form: RouterForm,
     state: SharedAppState,
 ) -> HTMLResult {
+    let form_data = compile_form_data(&mut form).await?;
     let api_endpoint = rumtk_web_get_api_endpoint!(&path);
-    api_endpoint(&path, &params, form, state)
+    api_endpoint(&path, &params, form_data, state)
 }
 
 pub async fn default_component_matcher(
@@ -126,7 +128,7 @@ macro_rules! rumtk_web_api_process {
         async |Path(path_params): RouterAPIPath,
                Query(params): RouterParams,
                State(state): RouterAppState,
-               form: RouterForm|
+               mut form: RouterForm|
                -> Response {
             let r = $matcher(path_params, params, form, state).await;
             match_maker(r)

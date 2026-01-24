@@ -79,6 +79,19 @@ pub const SECTION_ENDPOINTS: &str = "endpoints";
 pub const SECTION_DEFAULT: &str = "default";
 
 /*
+   Content Types
+*/
+pub const CONTENT_TYPE_PDF: &str = "application/pdf";
+pub const CONTENT_TYPE_HTML: &str = "text/html";
+
+/*
+   Form Data Types
+*/
+pub const FORM_DATA_TYPE_PDF: &str = "pdf";
+pub const FORM_DATA_TYPE_HTML: &str = "html";
+pub const FORM_DATA_TYPE_DEFAULT: &str = "text";
+
+/*
    LANGUAGES
 */
 pub const LANG_EN: &str = "en";

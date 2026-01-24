@@ -21,8 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use crate::utils::APIFunction;
-use crate::{APIPath, HTMLResult, SharedAppState, URLParams};
-use axum::extract::Multipart;
+use crate::{APIPath, FormData, HTMLResult, SharedAppState, URLParams};
 use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
 use rumtk_core::strings::{rumtk_format, RUMString};
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
@@ -34,7 +33,7 @@ pub type APICacheItem = LazyRUMCacheValue<APIFunction>;
 
 static mut API_CACHE: APICache = new_cache();
 const DEFAULT_API_HANDLER: APIFunction =
-    |path: APIPath, params: URLParams, form: Multipart, state: SharedAppState| -> HTMLResult {
+    |path: APIPath, params: URLParams, form: FormData, state: SharedAppState| -> HTMLResult {
         Err(rumtk_format!(
             "No handler registered for API endpoint => {}",
             path
