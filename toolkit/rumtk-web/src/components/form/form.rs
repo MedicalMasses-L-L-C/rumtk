@@ -33,7 +33,7 @@ use askama::Template;
 #[derive(Template, Debug)]
 #[template(
     source = "
-        <div id='form-{{typ}}-box>
+        <div id='form-{{typ}}-box'>
             {% if custom_css_enabled %}
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
