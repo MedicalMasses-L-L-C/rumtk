@@ -109,3 +109,10 @@ pub const DEFAULT_ROBOT_TXT: &str = r"
 User-agent: *
 Disallow: /static/
 ";
+
+/*
+   JS Module Types
+*/
+pub const DEFAULT_SCRIPT: &str = "default";
+pub const DEFAULT_SCRIPT_MODULE: &str = "module";
+pub const DEFAULT_SCRIPT_IMPORT: &str = "import";

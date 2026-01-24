@@ -20,23 +20,26 @@ use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
 const APP_SCRIPT: &str = r"
-    var globalCache = new Map();
+    var pdfData = {
+        filename: '',
+        contents: ''
+    };
 
     document.getElementById('file').addEventListener('change', function(event) {
             const selectedFile = event.target.files[0];
             if (selectedFile) {
               // You can use the FileReader API to read the contents if needed
               const reader = new FileReader();
+              pdfData.filename = selectedFile.name;
 
               // Define what happens when the file is loaded
               reader.onload = function(e) {
-                const contents = e.target.result;
-                globalCache.set('pdf', contents);
-                console.log(globalCache);
+                pdfData.contents = e.target.result;
+                console.log(pdfData);
               };
 
               // Read the file as text (or use readAsDataURL for images)
-              FileReader.readAsDataURL();
+              reader.readAsDataURL(selectedFile);
             }
         }
     );
