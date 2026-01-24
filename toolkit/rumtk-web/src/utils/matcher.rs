@@ -66,7 +66,7 @@ pub async fn default_api_matcher(
 ) -> HTMLResult {
     let form_data = compile_form_data(&mut form).await?;
     let api_endpoint = rumtk_web_get_api_endpoint!(&path);
-    api_endpoint(&path, &params, form_data, state)
+    api_endpoint(path, params, form_data, state)
 }
 
 pub async fn default_component_matcher(

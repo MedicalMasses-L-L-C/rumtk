@@ -20,11 +20,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use rumtk_core::core::{RUMResult, RUMVec};
+use rumtk_core::core::RUMResult;
 use rumtk_core::threading::threading_manager::{TaskID, TaskManager};
+use rumtk_core::types::RUMBuffer;
 
 pub type JobID = TaskID;
-pub type JobBuffer = RUMVec<u8>;
+pub type JobBuffer = RUMBuffer;
 type JobManager = TaskManager<JobBuffer>;
 
 static mut TASK_MANAGER: Option<JobManager> = None;

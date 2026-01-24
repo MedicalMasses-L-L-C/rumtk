@@ -52,7 +52,7 @@ pub type PageMap = Map<&'static str, PageFunction>;
 /* API Types */
 pub use crate::utils::form_data::{FormBuffer, FormData};
 pub type RouterAPIPath = Path<RUMString>;
-pub type APIPath<'a> = &'a str;
-pub type APIFunction = fn(APIPath, URLParams, FormData, SharedAppState) -> HTMLResult;
+pub type APIPath = RUMString;
+pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTMLResult;
 
 pub use askama::Template as RUMWebTemplate;
