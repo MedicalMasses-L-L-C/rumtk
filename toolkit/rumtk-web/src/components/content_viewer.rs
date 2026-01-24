@@ -70,7 +70,8 @@ pub fn content_viewer(
     params: URLParams,
     state: SharedAppState,
 ) -> HTMLResult {
-    let id = rumtk_web_get_text_item!(params, PARAMS_ID, rumtk_generate_id!().as_str());
+    let default_id = rumtk_generate_id!();
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, default_id.as_str());
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
