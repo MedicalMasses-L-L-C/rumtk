@@ -33,6 +33,7 @@ pub mod app_shell;
 // Components
 mod contact_button;
 mod contact_card;
+mod content_viewer;
 pub mod div;
 mod footer;
 pub mod form;
@@ -92,6 +93,7 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("form", form::form::form);
     register_component("spacer", spacer::spacer);
     register_component("script", script::script);
+    register_component("content_viewer", content_viewer::content_viewer);
     register_component("div", div::div);
 
     /* Init any user prescribed components */

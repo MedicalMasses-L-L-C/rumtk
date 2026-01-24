@@ -89,6 +89,7 @@ pub const CONTENT_TYPE_HTML: &str = "text/html";
 */
 pub const FORM_DATA_TYPE_PDF: &str = "pdf";
 pub const FORM_DATA_TYPE_HTML: &str = "html";
+pub const FORM_DATA_TYPE_MARKDOWN: &str = "markdown";
 pub const FORM_DATA_TYPE_DEFAULT: &str = "text";
 
 /*
