@@ -31,6 +31,7 @@ pub mod cli;
 pub mod core;
 pub mod dependencies;
 pub mod hash;
+pub mod id;
 pub mod json;
 pub mod log;
 pub mod maths;
