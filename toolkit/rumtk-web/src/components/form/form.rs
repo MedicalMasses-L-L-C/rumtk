@@ -33,33 +33,35 @@ use askama::Template;
 #[derive(Template, Debug)]
 #[template(
     source = "
-        {% if custom_css_enabled %}
-            <link href='/static/components/form/form.css' rel='stylesheet'>
-        {% endif %}
-        {% if !module.is_empty() %}
-            <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
+        <div id='form-{{typ}}-box>
+            {% if custom_css_enabled %}
+                <link href='/static/components/form/form.css' rel='stylesheet'>
+            {% endif %}
+            {% if !module.is_empty() %}
+                <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
+                </script>
+            {% endif %}
+            <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='innerHTML' hx-target='main-content'>
+                {% for element in elements %}
+                    {{ element|safe }}
+                {% endfor %}
+            </form>
+            <script>
+                htmx.on('#form-{{typ}}', 'htmx:xhr:progress', function(evt) {
+                  let progressValue = evt.detail.loaded/evt.detail.total * 100;
+                  let progressElement = htmx.find('#progress');
+
+                  {% if auto_hide_progress %}
+                  progressElement.hidden = false;
+                  if (progressValue >= 100) {
+                     progressElement.hidden = true;
+                  }
+                  {% endif %}
+
+                  progressElement.setAttribute('value', progressValue);
+                });
             </script>
-        {% endif %}
-        <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form'>
-            {% for element in elements %}
-                {{ element|safe }}
-            {% endfor %}
-        </form>
-        <script>
-            htmx.on('#form-{{typ}}', 'htmx:xhr:progress', function(evt) {
-              let progressValue = evt.detail.loaded/evt.detail.total * 100;
-              let progressElement = htmx.find('#progress');
-
-              {% if auto_hide_progress %}
-              progressElement.hidden = false;
-              if (progressValue >= 100) {
-                 progressElement.hidden = true;
-              }
-              {% endif %}
-
-              progressElement.setAttribute('value', progressValue);
-            });
-        </script>
+        </div>
     ",
     ext = "html"
 )]

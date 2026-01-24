@@ -45,6 +45,7 @@ mod logo;
 mod main;
 mod navlink;
 mod portrait_card;
+mod script;
 mod socials;
 mod spacer;
 mod text_card;
@@ -90,6 +91,7 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("text_card", text_card::text_card);
     register_component("form", form::form::form);
     register_component("spacer", spacer::spacer);
+    register_component("script", script::script);
     register_component("div", div::div);
 
     /* Init any user prescribed components */
