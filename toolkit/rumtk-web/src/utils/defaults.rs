@@ -48,6 +48,7 @@ pub const OPT_INVERTED_DIRECTION: &str = "inverted";
 /*
    Params
 */
+pub const PARAMS_ID: &str = "id";
 pub const PARAMS_TITLE: &str = "title";
 pub const PARAMS_TYPE: &str = "type";
 pub const PARAMS_CSS_CLASS: &str = "class";

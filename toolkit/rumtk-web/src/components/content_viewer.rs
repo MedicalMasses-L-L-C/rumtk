@@ -20,15 +20,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::PARAMS_TYPE;
+use crate::defaults::{PARAMS_ID, PARAMS_TYPE};
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, FORM_DATA_TYPE_HTML, FORM_DATA_TYPE_PDF, PARAMS_CONTENTS, PARAMS_CSS_CLASS,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
 use askama::Template;
 use rumtk_core::rumtk_generate_id;
-use rumtk_core::strings::RUMStringConversions;
 
 #[derive(Template, Debug)]
 #[template(
@@ -59,7 +58,7 @@ use rumtk_core::strings::RUMStringConversions;
     ext = "html"
 )]
 pub struct ContentViewer<'a> {
-    id: RUMString,
+    id: &'a str,
     typ: &'a str,
     contents: &'a str,
     css_class: &'a str,
@@ -71,7 +70,7 @@ pub fn content_viewer(
     params: URLParams,
     state: SharedAppState,
 ) -> HTMLResult {
-    let id = rumtk_generate_id!().to_rumstring();
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, rumtk_generate_id!().as_str());
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
