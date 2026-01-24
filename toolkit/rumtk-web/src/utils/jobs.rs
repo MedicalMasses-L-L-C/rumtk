@@ -53,7 +53,7 @@ macro_rules! rumtk_web_init_job_manager {
 #[macro_export]
 macro_rules! rumtk_web_get_job_manager {
     (  ) => {{
-        use $crate::pages::get_manager;
+        use $crate::jobs::get_manager;
         get_manager()
     }};
 }
