@@ -13,7 +13,7 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.10.8", path = "../rumtk-core" }
+rumtk-core = { version = "0.10.9", path = "../rumtk-core" }
 askama = "0.15.1"
 axum = { version = "0.8.8", features = ["multipart"] }
 tower-http = { version = "0.6.7", features = ["fs", "compression-full", "cors"] }
