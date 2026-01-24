@@ -47,7 +47,7 @@ use askama::Template;
             {% if !title.is_empty() %}
                 {{title|safe}}
             {% endif %}
-            <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='innerHTML' hx-target='#form-{{typ}}-box'>
+            <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='outerHTML' hx-target='#form-{{typ}}-box'>
                 {% for element in elements %}
                     {{ element|safe }}
                 {% endfor %}
