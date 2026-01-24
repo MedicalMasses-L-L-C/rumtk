@@ -19,6 +19,29 @@
 use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
+const APP_SCRIPT: &str = r"
+    var globalCache = new Map();
+
+    document.getElementById('file').addEventListener('change', function(event) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+              // You can use the FileReader API to read the contents if needed
+              const reader = new FileReader();
+
+              // Define what happens when the file is loaded
+              reader.onload = function(e) {
+                const contents = e.target.result;
+                globalCache.set('pdf', contents);
+                console.log(globalCache);
+              };
+
+              // Read the file as text (or use readAsDataURL for images)
+              FileReader.readAsDataURL();
+            }
+        }
+    );
+";
+
 pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
     let upload_form = rumtk_web_render_component!(
         "form",
@@ -30,6 +53,8 @@ pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
         ],
         app_state.clone()
     );
+    let cache_script =
+        rumtk_web_render_component!("script", [("contents", APP_SCRIPT)], app_state.clone());
 
-    vec![upload_form]
+    vec![upload_form, cache_script]
 }

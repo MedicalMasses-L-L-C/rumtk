@@ -1,0 +1,88 @@
+use rumtk_core::strings::RUMString;
+use rumtk_web::components::form::{FormElementBuilder, FormElements, props::InputProps};
+
+pub fn upload_form(builder: FormElementBuilder) -> FormElements {
+    vec![
+        builder(
+            "input",
+            "",
+            InputProps {
+                id: Some(RUMString::from("file")),
+                name: Some(RUMString::from("file")),
+                typ: Some(RUMString::from("file")),
+                value: None,
+                max: None,
+                placeholder: Some(RUMString::from("path/to/file")),
+                pattern: None,
+                accept: Some(RUMString::from(".pdf,application/pdf")),
+                alt: None,
+                aria_label: Some(RUMString::from("PDF File Picker")),
+                event_handlers: None,
+                max_length: None,
+                min_length: None,
+                autocapitalize: false,
+                autocomplete: false,
+                autocorrect: false,
+                autofocus: false,
+                disabled: false,
+                hidden: false,
+                required: true,
+            },
+            ""
+        ),
+        builder(
+            "input",
+            "",
+            InputProps {
+                id: Some(RUMString::from("submit")),
+                name: None,
+                typ: Some(RUMString::from("submit")),
+                value: Some(RUMString::from("Send")),
+                max: None,
+                placeholder: None,
+                pattern: None,
+                accept: None,
+                alt: None,
+                aria_label: Some(RUMString::from("PDF File Submit Button")),
+                event_handlers: None,
+                max_length: None,
+                min_length: None,
+                autocapitalize: false,
+                autocomplete: false,
+                autocorrect: false,
+                autofocus: false,
+                disabled: false,
+                hidden: false,
+                required: false,
+            },
+            "f18"
+        ),
+        builder(
+            "progress",
+            "",
+            InputProps {
+                id: Some(RUMString::from("progress")),
+                name: None,
+                typ: None,
+                value: Some(RUMString::from("0")),
+                max: Some(RUMString::from("100")),
+                placeholder: None,
+                pattern: None,
+                accept: None,
+                alt: None,
+                aria_label: Some(RUMString::from("PDF File Submit Progress Bar")),
+                event_handlers: None,
+                max_length: None,
+                min_length: None,
+                autocapitalize: false,
+                autocomplete: false,
+                autocorrect: false,
+                autofocus: false,
+                disabled: false,
+                hidden: true,
+                required: false,
+            },
+            ""
+        ),
+    ]
+}
