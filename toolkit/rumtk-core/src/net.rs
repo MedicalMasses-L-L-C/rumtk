@@ -28,7 +28,7 @@
 pub mod tcp {
     use crate::core::RUMResult;
     use crate::strings::{rumtk_format, RUMString};
-    use crate::threading::thread_primitives::SafeTokioRuntime;
+    pub use crate::threading::thread_primitives::*;
     use crate::threading::threading_functions::get_default_system_thread_count;
     use crate::threading::threading_manager::SafeTaskArgs;
     use crate::{
@@ -39,13 +39,7 @@ pub mod tcp {
     use compact_str::ToCompactString;
     use std::collections::VecDeque;
     use std::sync::Arc;
-    use tokio::io;
-    use tokio::io::{AsyncReadExt, AsyncWriteExt};
     pub use tokio::net::{TcpListener, TcpStream};
-    pub use tokio::sync::{
-        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock, RwLockReadGuard,
-        RwLockWriteGuard,
-    };
 
     const MESSAGE_BUFFER_SIZE: usize = 1024;
 

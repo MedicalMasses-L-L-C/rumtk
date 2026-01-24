@@ -25,7 +25,13 @@
 pub mod thread_primitives {
     use crate::cache::{new_cache, LazyRUMCache};
     use std::sync::Arc;
+    pub use tokio::io;
+    pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::runtime::Runtime as TokioRuntime;
+    pub use tokio::sync::{
+        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock, RwLockReadGuard,
+        RwLockWriteGuard,
+    };
     /**************************** Globals **************************************/
     pub static mut RT_CACHE: TokioRtCache = new_cache();
     /**************************** Helpers ***************************************/
@@ -57,17 +63,18 @@ pub mod threading_manager {
     use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
     use std::future::Future;
     use std::sync::Arc;
-    use tokio::sync::RwLock;
+    pub use std::sync::RwLock as SyncRwLock;
+    use tokio::sync::RwLock as AsyncRwLock;
     use tokio::task::JoinHandle;
 
     const DEFAULT_SLEEP_DURATION: f32 = 0.001f32;
-    const DEFAULT_TASK_CAPACITY: usize = 1024;
+    const DEFAULT_TASK_CAPACITY: usize = 100;
 
     pub type TaskItems<T> = RUMVec<T>;
     /// This type aliases a vector of T elements that will be used for passing arguments to the task processor.
     pub type TaskArgs<T> = TaskItems<T>;
     /// Function signature defining the interface of task processing logic.
-    pub type SafeTaskArgs<T> = Arc<RwLock<TaskItems<T>>>;
+    pub type SafeTaskArgs<T> = Arc<AsyncRwLock<TaskItems<T>>>;
     pub type AsyncTaskHandle<R> = JoinHandle<TaskResult<R>>;
     pub type AsyncTaskHandles<R> = Vec<AsyncTaskHandle<R>>;
     //pub type TaskProcessor<T, R, Fut: Future<Output = TaskResult<R>>> = impl FnOnce(&SafeTaskArgs<T>) -> Fut;
@@ -81,9 +88,9 @@ pub mod threading_manager {
     }
 
     pub type SafeTask<R> = Arc<Task<R>>;
-    type SafeInternalTask<R> = Arc<RwLock<Task<R>>>;
+    type SafeInternalTask<R> = Arc<AsyncRwLock<Task<R>>>;
     pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
-    pub type SafeAsyncTaskTable<R> = Arc<RwLock<TaskTable<R>>>;
+    pub type SafeAsyncTaskTable<R> = Arc<AsyncRwLock<TaskTable<R>>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
     pub type TaskResult<R> = RUMResult<SafeTask<R>>;
@@ -176,7 +183,7 @@ pub mod threading_manager {
         /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
-            let tasks = SafeAsyncTaskTable::<R>::new(RwLock::new(TaskTable::with_capacity(
+            let tasks = SafeAsyncTaskTable::<R>::new(AsyncRwLock::new(TaskTable::with_capacity(
                 DEFAULT_TASK_CAPACITY,
             )));
             Ok(TaskManager::<R> {
@@ -272,7 +279,7 @@ pub mod threading_manager {
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let mut safe_task = Arc::new(RwLock::new(Task::<R> {
+            let mut safe_task = Arc::new(AsyncRwLock::new(Task::<R> {
                 id: id.clone(),
                 finished: false,
                 result: None,
@@ -284,8 +291,9 @@ pub mod threading_manager {
                 let result = task.await;
 
                 // Cleanup task
-                safe_task.write().await.result = Some(result);
-                safe_task.write().await.finished = true;
+                let mut lock = safe_task.write().await;
+                lock.result = Some(result);
+                lock.finished = true;
             };
 
             tokio::spawn(task_wrapper());
