@@ -20,6 +20,7 @@
  */
 use crate::types::RUMID;
 use nanoid::nanoid;
+use uuid::Uuid;
 
 pub const DEFAULT_ID_SIZE: usize = 16;
 pub enum RUMID_TYPE {
@@ -34,6 +35,10 @@ pub fn generate_id(typ: RUMID_TYPE, size: usize) -> String {
         }
         RUMID_TYPE::None => RUMID::new_v4().to_string(),
     }
+}
+
+pub fn id_to_uuid(id: &str) -> RUMID {
+    Uuid::parse_str(id).unwrap()
 }
 
 #[macro_export]

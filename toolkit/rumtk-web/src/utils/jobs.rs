@@ -21,6 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 use rumtk_core::core::RUMResult;
+use rumtk_core::id::id_to_uuid;
 use rumtk_core::threading::threading_manager::{TaskID, TaskManager};
 use rumtk_core::types::RUMBuffer;
 
@@ -29,6 +30,10 @@ pub type JobBuffer = RUMBuffer;
 type JobManager = TaskManager<JobBuffer>;
 
 static mut TASK_MANAGER: Option<JobManager> = None;
+
+pub fn job_str_id_to_id(id: &str) -> JobID {
+    id_to_uuid(id)
+}
 
 pub fn init_job_manager(workers: &usize) -> RUMResult<()> {
     let manager = TaskManager::<JobBuffer>::new(workers)?;
@@ -56,5 +61,13 @@ macro_rules! rumtk_web_get_job_manager {
     (  ) => {{
         use $crate::jobs::get_manager;
         get_manager()
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_generate_job_id {
+    ( $id:expr ) => {{
+        use $crate::jobs::job_str_id_to_id;
+        job_str_id_to_id($id)
     }};
 }
