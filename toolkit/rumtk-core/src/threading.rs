@@ -54,7 +54,7 @@ pub mod threading_manager {
     use crate::threading::thread_primitives::SafeTokioRuntime;
     use crate::threading::threading_functions::async_sleep;
     use crate::types::{RUMHashMap, RUMID};
-    use crate::{rumtk_init_threads, rumtk_resolve_task, threading};
+    use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
     use std::future::Future;
     use std::sync::Arc;
     use tokio::sync::RwLock;
@@ -197,27 +197,61 @@ pub mod threading_manager {
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let mut safe_task = Arc::new(RwLock::new(Task::<R> {
-                id: id.clone(),
-                finished: false,
-                result: None,
-            }));
-            self.tasks
-                .write()
-                .await
-                .insert(id.clone(), safe_task.clone());
+            Self::_add_task_async(id.clone(), self.tasks.clone(), task).await
+        }
 
-            let task_wrapper = async move || {
-                // Run the task
-                let result = task.await;
-
-                // Cleanup task
-                safe_task.write().await.result = Some(result);
-                safe_task.write().await.finished = true;
-            };
-
-            tokio::spawn(task_wrapper());
-
+        ///
+        /// See [add_task](Self::add_task)
+        ///
+        /// Unlike `add_task`, this method does not block which is key to avoiding panicking
+        /// the tokio runtim if trying to add task to queue from a normal function called from an
+        /// async environment.
+        ///
+        /// ## Example
+        ///
+        /// ```
+        /// use rumtk_core::threading::threading_manager::{TaskManager};
+        /// use rumtk_core::{rumtk_init_threads, strings::rumtk_format};
+        /// use std::sync::{Arc};
+        /// use tokio::sync::Mutex;
+        ///
+        /// type JobManager = Arc<Mutex<TaskManager<usize>>>;
+        ///
+        /// async fn called_fn() -> usize {
+        ///     5
+        /// }
+        ///
+        /// fn push_job(manager: &mut TaskManager<usize>) -> usize {
+        ///     manager.spawn_task(called_fn());
+        ///     1
+        /// }
+        ///
+        /// async fn call_sync_fn(mut manager: JobManager) -> usize {
+        ///     let mut owned = manager.lock().await;
+        ///     push_job(&mut owned)
+        /// }
+        ///
+        /// let workers = 5;
+        /// let rt = rumtk_init_threads!(&workers);
+        /// let mut manager = Arc::new(Mutex::new(TaskManager::new(&workers).unwrap()));
+        ///
+        /// manager.blocking_lock().spawn_task(call_sync_fn(manager.clone()));
+        ///
+        /// let result_raw = manager.blocking_lock().wait();
+        ///
+        /// ```
+        ///
+        pub fn spawn_task<F>(&mut self, task: F) -> TaskID
+        where
+            F: Future<Output = R> + Send + Sync + 'static,
+            F::Output: Send + Sized + 'static,
+        {
+            let id = TaskID::new_v4();
+            let rt = rumtk_init_threads!(&self.workers);
+            rumtk_spawn_task!(
+                rt,
+                Self::_add_task_async(id.clone(), self.tasks.clone(), task)
+            );
             id
         }
 
@@ -231,6 +265,32 @@ pub mod threading_manager {
         {
             let rt = rumtk_init_threads!(&self.workers);
             rumtk_resolve_task!(rt, self.add_task_async(task))
+        }
+
+        async fn _add_task_async<F>(id: TaskID, tasks: SafeAsyncTaskTable<R>, task: F) -> TaskID
+        where
+            F: Future<Output = R> + Send + Sync + 'static,
+            F::Output: Send + Sized + 'static,
+        {
+            let mut safe_task = Arc::new(RwLock::new(Task::<R> {
+                id: id.clone(),
+                finished: false,
+                result: None,
+            }));
+            tasks.write().await.insert(id.clone(), safe_task.clone());
+
+            let task_wrapper = async move || {
+                // Run the task
+                let result = task.await;
+
+                // Cleanup task
+                safe_task.write().await.result = Some(result);
+                safe_task.write().await.finished = true;
+            };
+
+            tokio::spawn(task_wrapper());
+
+            id
         }
 
         ///
