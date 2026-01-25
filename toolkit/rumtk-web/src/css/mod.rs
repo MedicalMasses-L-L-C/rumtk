@@ -27,6 +27,7 @@ use std::{fs, path};
 
 mod animations;
 mod basic;
+mod components;
 mod default;
 mod fonts;
 mod forms;
@@ -49,6 +50,7 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
     css += gap::GAP_CSS;
     css += animations::ANIMATIONS_CSS;
     css += forms::FORM_CSS;
+    css += components::LIST_CSS;
     css += layout::LAYOUT_CSS;
 
     for source in sources {
