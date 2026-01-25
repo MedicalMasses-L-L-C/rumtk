@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::{PARAMS_ID, PARAMS_TYPE};
+use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ID, PARAMS_TYPE};
 use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, FORM_DATA_TYPE_HTML, FORM_DATA_TYPE_PDF, PARAMS_CONTENTS, PARAMS_CSS_CLASS,
 };
@@ -71,7 +71,7 @@ pub fn content_viewer(
     let default_id = rumtk_generate_id!();
     let id = rumtk_web_get_text_item!(params, PARAMS_ID, default_id.as_str());
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
+    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
