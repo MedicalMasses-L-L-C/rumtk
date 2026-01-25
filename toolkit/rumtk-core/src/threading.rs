@@ -88,9 +88,10 @@ pub mod threading_manager {
     }
 
     pub type SafeTask<R> = Arc<Task<R>>;
-    type SafeInternalTask<R> = Arc<AsyncRwLock<Task<R>>>;
+    type SafeInternalTask<R> = Arc<SyncRwLock<Task<R>>>;
     pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
     pub type SafeAsyncTaskTable<R> = Arc<AsyncRwLock<TaskTable<R>>>;
+    pub type SafeSyncTaskTable<R> = Arc<SyncRwLock<TaskTable<R>>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
     pub type TaskResult<R> = RUMResult<SafeTask<R>>;
@@ -157,7 +158,7 @@ pub mod threading_manager {
     ///
     #[derive(Debug, Clone, Default)]
     pub struct TaskManager<R> {
-        tasks: SafeAsyncTaskTable<R>,
+        tasks: SafeSyncTaskTable<R>,
         workers: usize,
     }
 
@@ -183,7 +184,7 @@ pub mod threading_manager {
         /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
-            let tasks = SafeAsyncTaskTable::<R>::new(AsyncRwLock::new(TaskTable::with_capacity(
+            let tasks = SafeSyncTaskTable::<R>::new(SyncRwLock::new(TaskTable::with_capacity(
                 DEFAULT_TASK_CAPACITY,
             )));
             Ok(TaskManager::<R> {
@@ -274,24 +275,24 @@ pub mod threading_manager {
             rumtk_resolve_task!(rt, self.add_task_async(task))
         }
 
-        async fn _add_task_async<F>(id: TaskID, tasks: SafeAsyncTaskTable<R>, task: F) -> TaskID
+        async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
         where
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let mut safe_task = Arc::new(AsyncRwLock::new(Task::<R> {
+            let mut safe_task = Arc::new(SyncRwLock::new(Task::<R> {
                 id: id.clone(),
                 finished: false,
                 result: None,
             }));
-            tasks.write().await.insert(id.clone(), safe_task.clone());
+            tasks.write().unwrap().insert(id.clone(), safe_task.clone());
 
             let task_wrapper = async move || {
                 // Run the task
                 let result = task.await;
 
                 // Cleanup task
-                let mut lock = safe_task.write().await;
+                let mut lock = safe_task.write().unwrap();
                 lock.result = Some(result);
                 lock.finished = true;
             };
@@ -343,16 +344,16 @@ pub mod threading_manager {
         ///     tracks its own id or has a way for you to resort results.
         /// ```
         pub async fn wait_on_async(&mut self, task_id: &TaskID) -> TaskResult<R> {
-            let task = match self.tasks.write().await.remove(task_id) {
+            let task = match self.tasks.write().unwrap().remove(task_id) {
                 Some(task) => task.clone(),
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
 
-            while !task.read().await.finished {
+            while !task.read().unwrap().finished {
                 async_sleep(DEFAULT_SLEEP_DURATION).await;
             }
 
-            let x = Ok(Arc::new(task.write().await.clone()));
+            let x = Ok(Arc::new(task.write().unwrap().clone()));
             x
         }
 
@@ -400,7 +401,13 @@ pub mod threading_manager {
         ///     tracks its own id or has a way for you to resort results.
         /// ```
         pub async fn wait_async(&mut self) -> TaskResults<R> {
-            let task_batch = self.tasks.read().await.keys().cloned().collect::<Vec<_>>();
+            let task_batch = self
+                .tasks
+                .read()
+                .unwrap()
+                .keys()
+                .cloned()
+                .collect::<Vec<_>>();
             self.wait_on_batch_async(&task_batch).await
         }
 
@@ -428,8 +435,8 @@ pub mod threading_manager {
         }
 
         pub async fn is_all_completed_async(&self) -> bool {
-            for (_, task) in self.tasks.read().await.iter() {
-                if !task.read().await.finished {
+            for (_, task) in self.tasks.read().unwrap().iter() {
+                if !task.read().unwrap().finished {
                     return false;
                 }
             }
@@ -441,15 +448,15 @@ pub mod threading_manager {
         /// Check if a task completed
         ///
         pub fn is_finished(&self, id: &TaskID) -> bool {
-            match self.tasks.blocking_read().get(id) {
-                Some(t) => t.blocking_read().finished,
+            match self.tasks.read().unwrap().get(id) {
+                Some(t) => t.read().unwrap().finished,
                 None => false,
             }
         }
 
         pub async fn is_finished_async(&self, id: &TaskID) -> bool {
-            match self.tasks.read().await.get(id) {
-                Some(task) => task.read().await.finished,
+            match self.tasks.read().unwrap().get(id) {
+                Some(task) => task.read().unwrap().finished,
                 None => true,
             }
         }
