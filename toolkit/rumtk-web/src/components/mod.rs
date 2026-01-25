@@ -40,8 +40,8 @@ pub mod form;
 mod formatted_label;
 mod header;
 mod info_card;
-mod item_card;
 mod label;
+mod list;
 mod logo;
 mod main;
 mod navlink;
@@ -85,7 +85,7 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("contact_card", contact_card::contact_card);
     register_component("contact_button", contact_button::contact_button);
     register_component("socials", socials::socials);
-    register_component("item_card", item_card::item_card);
+    register_component("list", list::list);
     register_component("navlink", navlink::navlink);
     register_component("label", label::label);
     register_component("formatted_label", formatted_label::formatted_label);

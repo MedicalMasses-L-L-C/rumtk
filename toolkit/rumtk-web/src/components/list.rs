@@ -20,25 +20,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ID};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
 use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
-use askama::Template;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         {% if custom_css_enabled %}
-            <link href='/static/components/item_card.css' rel='stylesheet'>
+            <link href='/static/components/list.css' rel='stylesheet'>
         {% endif %}
-        <div class='item-card-{{css_class}}-container'>
+        <div class='item-{{css_class}}-container'>
             {% for (service_name, service_description) in services %}
             <div>
                 <details>
-                    <summary class='f16 item-card-{{css_class}}-title'>
+                    <summary class='f16 item-{{css_class}}-title'>
                         {{ service_name.to_uppercase() }}
                     </summary>
-                    <pre class='item-card-{{css_class}}-details'>
+                    <pre class='item-{{css_class}}-details'>
                         {{ service_description }}
                     </pre>
                 </details>
@@ -48,26 +48,27 @@ use askama::Template;
     ",
     ext = "html"
 )]
-pub struct ItemCard {
-    services: TextMap,
-    css_class: RUMString,
+pub struct List<'a> {
+    items: &'a TextMap,
+    css_class: &'a str,
     custom_css_enabled: bool,
 }
 
-pub fn item_card(
-    _path_components: URLPath,
-    params: URLParams,
-    state: SharedAppState,
-) -> HTMLResult {
+pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
+    let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-    let services = rumtk_web_get_conf!(state, typ);
+
+    let items = match state.read().unwrap().clipboard.get(clipboard_id) {
+        Some(items) => items,
+        None => &rumtk_web_get_conf!(state, typ),
+    };
 
     let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
 
-    rumtk_web_render_html!(ItemCard {
-        services,
-        css_class: RUMString::from(css_class),
+    rumtk_web_render_html!(List {
+        items,
+        css_class,
         custom_css_enabled
     })
 }
