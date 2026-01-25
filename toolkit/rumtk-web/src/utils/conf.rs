@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::jobs::JobBuffer;
+use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use axum::extract::State;
@@ -125,7 +125,6 @@ impl AppConf {
 }
 
 pub type ClipboardID = RUMString;
-pub type ClipboardSlice = (ClipboardID, Option<TextMap>);
 ///
 /// Main internal structure for holding the initial app configuration ([AppConf](crate::utils::AppConf)),
 /// the `clipboard` containing dynamically generated state ([NestedTextMap](crate::utils::NestedTextMap)),
@@ -134,15 +133,46 @@ pub type ClipboardSlice = (ClipboardID, Option<TextMap>);
 pub struct AppState {
     config: AppConf,
     clipboard: NestedTextMap,
-    jobs: RUMHashMap<RUMID, Option<JobBuffer>>,
+    jobs: RUMHashMap<RUMID, Job>,
 }
 
+pub type SafeAppState = Arc<RwLock<AppState>>;
+
 impl AppState {
+    pub fn new() -> AppState {
+        AppState {
+            config: AppConf::default(),
+            clipboard: NestedTextMap::default(),
+            jobs: RUMHashMap::default(),
+        }
+    }
+
+    pub fn new_safe() -> SafeAppState {
+        Arc::new(RwLock::new(AppState::new()))
+    }
+
+    pub fn from_safe(conf: AppConf) -> SafeAppState {
+        Arc::new(RwLock::new(AppState::from(conf)))
+    }
+
     pub fn get_config(&self) -> &AppConf {
         &self.config
     }
-    pub fn push_job_result(&mut self, id: &RUMID, job: JobBuffer) {
-        self.jobs.insert(id.clone(), Some(job));
+
+    pub fn get_config_mut(&mut self) -> &mut AppConf {
+        &mut self.config
+    }
+
+    pub fn has_clipboard(&self, id: &ClipboardID) -> bool {
+        self.clipboard.contains_key(id)
+    }
+
+    pub fn has_job(&self, id: &JobID) -> bool {
+        self.jobs.contains_key(id)
+    }
+
+    pub fn push_job_result(&mut self, id: &JobID, job: Job) {
+        self.jobs.insert(id.clone(), job);
     }
 
     pub fn push_to_clipboard(&mut self, data: TextMap) -> ClipboardID {
@@ -151,12 +181,29 @@ impl AppState {
         clipboard_id
     }
 
-    pub fn request_clipboard_slice(&mut self) -> ClipboardSlice {
+    pub fn request_clipboard_slice(&mut self) -> ClipboardID {
         let clipboard_id = rumtk_generate_id!().to_rumstring();
-        let v = self
-            .clipboard
+        self.clipboard
             .insert(clipboard_id.clone(), TextMap::default());
-        (clipboard_id, v)
+        clipboard_id
+    }
+
+    pub fn pop_job(&mut self, id: &RUMID) -> Option<Job> {
+        self.jobs.remove(id)
+    }
+
+    pub fn pop_clipboard(&mut self, id: &ClipboardID) -> Option<TextMap> {
+        self.clipboard.shift_remove(id)
+    }
+}
+
+impl From<AppConf> for AppState {
+    fn from(config: AppConf) -> Self {
+        AppState {
+            config,
+            clipboard: NestedTextMap::default(),
+            jobs: RUMHashMap::default(),
+        }
     }
 }
 
@@ -173,7 +220,6 @@ macro_rules! rumtk_web_load_conf {
         use rumtk_core::strings::RUMStringConversions;
         use rumtk_core::types::RUMHashMap;
         use std::fs;
-        use std::sync::{Arc, RwLock};
 
         use $crate::rumtk_web_save_conf;
         use $crate::utils::{AppConf, AppState, TextMap};
@@ -197,11 +243,7 @@ macro_rules! rumtk_web_load_conf {
             $args.company.clone(),
             $args.copyright.clone(),
         );
-        Arc::new(RwLock::new(AppState {
-            config: conf,
-            clipboard: TextMap::default(),
-            jobs: RUMHashMap::default(),
-        }))
+        AppState::from_safe(conf)
     }};
 }
 
@@ -223,7 +265,7 @@ macro_rules! rumtk_web_save_conf {
 macro_rules! rumtk_web_get_string {
     ( $conf:expr, $item:expr ) => {{
         let owned_state = $conf.read().expect("Lock failure");
-        owned_state.config.get_text($item)
+        owned_state.get_config().get_text($item)
     }};
 }
 
@@ -231,7 +273,7 @@ macro_rules! rumtk_web_get_string {
 macro_rules! rumtk_web_get_conf {
     ( $conf:expr, $item:expr ) => {{
         let owned_state = $conf.read().expect("Lock failure");
-        owned_state.config.get_conf($item)
+        owned_state.get_config().get_conf($item)
     }};
 }
 

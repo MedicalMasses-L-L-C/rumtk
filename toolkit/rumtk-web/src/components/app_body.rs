@@ -64,7 +64,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
             state
                 .read()
                 .expect("Lock failure")
-                .config
+                .get_config()
                 .footer_conf
                 .socials_list
                 .clone()

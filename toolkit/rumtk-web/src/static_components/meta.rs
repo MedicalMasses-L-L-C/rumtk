@@ -46,7 +46,7 @@ pub fn meta(state: SharedAppState) -> HTMLResult {
     let owned_state = state.read().expect("Lock failure");
 
     rumtk_web_render_html!(Meta {
-        title: owned_state.config.title.clone(),
-        description: owned_state.config.description.clone()
+        title: owned_state.get_config().title.clone(),
+        description: owned_state.get_config().description.clone()
     })
 }

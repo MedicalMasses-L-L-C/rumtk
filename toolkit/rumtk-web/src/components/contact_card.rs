@@ -90,7 +90,7 @@ pub fn contact_card(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let text_conf = rumtk_web_get_string!(state, SECTION_CONTACT);
     let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());

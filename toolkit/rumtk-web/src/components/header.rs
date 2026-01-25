@@ -94,15 +94,20 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
 pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let company = state.read().expect("Lock failure").config.company.clone();
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let company = state
+        .read()
+        .expect("Lock failure")
+        .get_config()
+        .company
+        .clone();
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
     let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
     let nav_links = match state
         .read()
         .expect("Lock failure")
-        .config
+        .get_config()
         .header_conf
         .disable_navlinks
     {
@@ -110,7 +115,12 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
             "title",
             [(
                 "type",
-                &state.read().expect("Lock failure").config.title.clone()
+                &state
+                    .read()
+                    .expect("Lock failure")
+                    .get_config()
+                    .title
+                    .clone()
             )],
             state
         )],
@@ -120,7 +130,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let disable_logo = state
         .read()
         .expect("Lock failure")
-        .config
+        .get_config()
         .header_conf
         .disable_logo;
     let logo = match disable_logo {
@@ -134,7 +144,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
                     state
                         .read()
                         .expect("Lock failure")
-                        .config
+                        .get_config()
                         .header_conf
                         .logo_size
                         .as_str()

@@ -63,7 +63,7 @@ pub fn formatted_label(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());

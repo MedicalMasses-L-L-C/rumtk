@@ -75,7 +75,7 @@ pub fn info_card(
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP());

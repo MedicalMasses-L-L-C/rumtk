@@ -83,7 +83,7 @@ pub fn contact_button(
     let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let title = rumtk_web_render_component!("title", [("type", typ)], state);
 

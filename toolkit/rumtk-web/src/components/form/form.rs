@@ -101,7 +101,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let endpoint_store = rumtk_web_get_conf!(state, SECTION_ENDPOINTS);
     let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     let elements = rumtk_web_get_form!(typ);
 

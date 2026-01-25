@@ -22,11 +22,12 @@
  */
 use rumtk_core::core::RUMResult;
 use rumtk_core::id::id_to_uuid;
-use rumtk_core::threading::threading_manager::{TaskID, TaskManager};
+use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
 use rumtk_core::types::RUMBuffer;
 
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
+pub type Job = Task<JobBuffer>;
 type JobManager = TaskManager<JobBuffer>;
 
 static mut TASK_MANAGER: Option<JobManager> = None;

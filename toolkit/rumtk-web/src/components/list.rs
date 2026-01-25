@@ -24,6 +24,7 @@ use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ID};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
 use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
 use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use rumtk_core::strings::RUMStringConversions;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -32,14 +33,14 @@ use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, 
             <link href='/static/components/list.css' rel='stylesheet'>
         {% endif %}
         <div class='item-{{css_class}}-container'>
-            {% for (service_name, service_description) in services %}
+            {% for (item_name, item_description) in items %}
             <div>
                 <details>
                     <summary class='f16 item-{{css_class}}-title'>
-                        {{ service_name.to_uppercase() }}
+                        {{ item_name.to_uppercase() }}
                     </summary>
                     <pre class='item-{{css_class}}-details'>
-                        {{ service_description }}
+                        {{ item_description }}
                     </pre>
                 </details>
             </div>
@@ -49,7 +50,7 @@ use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, 
     ext = "html"
 )]
 pub struct List<'a> {
-    items: &'a TextMap,
+    items: TextMap,
     css_class: &'a str,
     custom_css_enabled: bool,
 }
@@ -59,12 +60,16 @@ pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let items = match state.read().unwrap().clipboard.get(clipboard_id) {
+    let items = match state
+        .write()
+        .unwrap()
+        .pop_clipboard(&clipboard_id.to_rumstring())
+    {
         Some(items) => items,
-        None => &rumtk_web_get_conf!(state, typ),
+        None => rumtk_web_get_conf!(state, typ),
     };
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
 
     rumtk_web_render_html!(List {
         items,

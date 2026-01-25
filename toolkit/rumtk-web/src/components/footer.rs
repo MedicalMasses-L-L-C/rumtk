@@ -67,14 +67,24 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").config.custom_css;
-    let company = state.read().expect("Lock failure").config.company.clone();
-    let copyright = state.read().expect("Lock failure").config.copyright.clone();
+    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let company = state
+        .read()
+        .expect("Lock failure")
+        .get_config()
+        .company
+        .clone();
+    let copyright = state
+        .read()
+        .expect("Lock failure")
+        .get_config()
+        .copyright
+        .clone();
 
     let contact_button = match state
         .read()
         .expect("Lock failure")
-        .config
+        .get_config()
         .footer_conf
         .disable_contact_button
     {
