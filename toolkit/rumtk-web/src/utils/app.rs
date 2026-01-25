@@ -205,7 +205,7 @@ pub fn app_main(
 ///     };
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppState, RenderedPageComponents};
-///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData};
+///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///     use rumtk_web::utils::types::RUMWebTemplate;
 ///
@@ -274,7 +274,7 @@ pub fn app_main(
 ///         ]
 ///     }
 ///
-///     fn my_api_handler(path: APIPath, params: URLParams, form: FormData, state: SharedAppState) -> HTMLResult {
+///     fn my_api_handler(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
 ///         Err(rumtk_format!(
 ///             "No handler registered for API endpoint => {}",
 ///             path
