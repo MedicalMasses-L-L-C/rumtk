@@ -26,6 +26,8 @@ use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
+use rumtk_core::rumtk_generate_id;
+use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use std::sync::{Arc, RwLock};
@@ -122,15 +124,40 @@ impl AppConf {
     }
 }
 
+pub type ClipboardID = RUMString;
+pub type ClipboardSlice = (ClipboardID, Option<TextMap>);
 ///
 /// Main internal structure for holding the initial app configuration ([AppConf](crate::utils::AppConf)),
-/// the `clipboard` containing dynamically generated state ([TextMap](crate::utils::TextMap)),
+/// the `clipboard` containing dynamically generated state ([NestedTextMap](crate::utils::NestedTextMap)),
 /// and the `jobs` field containing
 ///
 pub struct AppState {
-    pub config: AppConf,
-    pub clipboard: TextMap,
-    pub jobs: RUMHashMap<RUMID, Option<JobBuffer>>,
+    config: AppConf,
+    clipboard: NestedTextMap,
+    jobs: RUMHashMap<RUMID, Option<JobBuffer>>,
+}
+
+impl AppState {
+    pub fn get_config(&self) -> &AppConf {
+        &self.config
+    }
+    pub fn push_job_result(&mut self, id: &RUMID, job: JobBuffer) {
+        self.jobs.insert(id.clone(), Some(job));
+    }
+
+    pub fn push_to_clipboard(&mut self, data: TextMap) -> ClipboardID {
+        let clipboard_id = rumtk_generate_id!().to_rumstring();
+        self.clipboard.insert(clipboard_id.clone(), data);
+        clipboard_id
+    }
+
+    pub fn request_clipboard_slice(&mut self) -> ClipboardSlice {
+        let clipboard_id = rumtk_generate_id!().to_rumstring();
+        let v = self
+            .clipboard
+            .insert(clipboard_id.clone(), TextMap::default());
+        (clipboard_id, v)
+    }
 }
 
 pub type SharedAppState = Arc<RwLock<AppState>>;
