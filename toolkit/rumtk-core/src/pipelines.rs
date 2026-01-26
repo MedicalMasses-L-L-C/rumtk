@@ -47,6 +47,7 @@ pub mod pipeline_types {
     use crate::core::{RUMResult, RUMVec};
     use std::process::{Child, Command};
 
+    #[derive(Default, Debug, Clone)]
     pub struct RUMCommand {
         pub path: RUMString,
         pub args: Vec<RUMString>,
@@ -79,7 +80,20 @@ pub mod pipeline_functions {
     /// ## Example
     ///
     /// ```
-    /// use rumtk_core::
+    /// use std::any::{Any, TypeId};
+    ///
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
+    /// use rumtk_core::pipelines::pipeline_functions::pipeline_generate_command;
+    ///
+    /// let command_name = "ls";
+    /// let mut command = RUMCommand::default();
+    /// command.path = RUMString::from(command_name);
+    ///
+    /// let sys_command = pipeline_generate_command(&command);
+    ///
+    /// assert_eq!(sys_command.get_program().to_str().unwrap(), command_name, "");
+    ///
     /// ```
     ///
     pub fn pipeline_generate_command(command: &RUMCommand) -> RUMPipelineCommand {
