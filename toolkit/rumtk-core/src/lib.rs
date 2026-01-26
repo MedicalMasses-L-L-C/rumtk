@@ -36,6 +36,7 @@ pub mod json;
 pub mod log;
 pub mod maths;
 pub mod net;
+pub mod pipelines;
 pub mod scripting;
 pub mod search;
 pub mod strings;
