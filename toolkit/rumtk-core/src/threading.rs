@@ -58,7 +58,7 @@ pub mod threading_manager {
     use crate::core::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::SafeTokioRuntime;
-    use crate::threading::threading_functions::async_sleep;
+    use crate::threading::threading_functions::{async_sleep, sleep};
     use crate::types::{RUMHashMap, RUMID};
     use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
     use std::future::Future;
@@ -305,25 +305,52 @@ pub mod threading_manager {
         ///
         /// See [wait_async](Self::wait_async)
         ///
+        /// Duplicated here because we can't request the tokio runtime to do a quick exec for us if
+        /// this function happens to be called from the async context.
+        ///
         pub fn wait(&mut self) -> TaskResults<R> {
-            let rt = rumtk_init_threads!(&self.workers);
-            rumtk_resolve_task!(rt, self.wait_async())
+            let task_batch = self
+                .tasks
+                .read()
+                .unwrap()
+                .keys()
+                .cloned()
+                .collect::<Vec<_>>();
+            self.wait_on_batch(&task_batch)
         }
 
         ///
         /// See [wait_on_batch_async](Self::wait_on_batch_async)
         ///
+        /// Duplicated here because we can't request the tokio runtime to do a quick exec for us if
+        /// this function happens to be called from the async context.
+        ///
         pub fn wait_on_batch(&mut self, tasks: &TaskBatch) -> TaskResults<R> {
-            let rt = rumtk_init_threads!(&self.workers);
-            rumtk_resolve_task!(rt, self.wait_on_batch_async(&tasks))
+            let mut results = TaskResults::<R>::default();
+            for task in tasks {
+                results.push(self.wait_on(task));
+            }
+            results
         }
 
         ///
         /// See [wait_on_async](Self::wait_on_async)
         ///
+        /// Duplicated here because we can't request the tokio runtime to do a quick exec for us if
+        /// this function happens to be called from the async context.
+        ///
         pub fn wait_on(&mut self, task_id: &TaskID) -> TaskResult<R> {
-            let rt = rumtk_init_threads!(&self.workers);
-            rumtk_resolve_task!(rt, self.wait_on_async(&task_id))
+            let task = match self.tasks.write().unwrap().remove(task_id) {
+                Some(task) => task.clone(),
+                None => return Err(rumtk_format!("No task with id {}", task_id)),
+            };
+
+            while !task.read().unwrap().finished {
+                sleep(DEFAULT_SLEEP_DURATION);
+            }
+
+            let x = Ok(Arc::new(task.write().unwrap().clone()));
+            x
         }
 
         ///
