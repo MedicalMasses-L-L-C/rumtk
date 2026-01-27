@@ -618,6 +618,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run_async!(
