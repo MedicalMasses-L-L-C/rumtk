@@ -29,10 +29,13 @@ use rumtk_core::types::RUMBuffer;
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
+#[derive(Default, Debug, Clone)]
 pub enum JobResultType {
     File(JobBuffer),
     JSON(RUMString),
     TEXT(RUMString),
+    #[default]
+    NONE,
 }
 
 pub type JobResult = RUMResult<JobResultType>;
@@ -46,7 +49,7 @@ pub fn job_str_id_to_id(id: &str) -> JobID {
 }
 
 pub fn init_job_manager(workers: &usize) -> RUMResult<()> {
-    let manager = TaskManager::<JobBuffer>::new(workers)?;
+    let manager = TaskManager::<JobResult>::new(workers)?;
     unsafe {
         TASK_MANAGER = Some(manager);
     }
