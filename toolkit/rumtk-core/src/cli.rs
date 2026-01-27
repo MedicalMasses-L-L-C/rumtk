@@ -96,6 +96,7 @@ pub mod cli_utils {
         dry_run: bool,
     }
 
+    //TODO: Example + unit test with reading raw vs. reading text
     pub fn read_stdin() -> RUMResult<RUMBuffer> {
         let mut stdin_lock = stdin().lock();
         let mut stdin_buffer: Vec<u8> = Vec::with_capacity(BUFFER_SIZE);
