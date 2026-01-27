@@ -30,10 +30,11 @@ pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
 #[derive(Default, Debug, Clone)]
-pub enum JobResultType {
+pub enum JobResultType<T = RUMString> {
     File(JobBuffer),
     JSON(RUMString),
     TEXT(RUMString),
+    RustType(T),
     #[default]
     NONE,
 }
