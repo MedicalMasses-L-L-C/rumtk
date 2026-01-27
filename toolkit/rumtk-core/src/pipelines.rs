@@ -52,16 +52,23 @@ pub mod pipeline_types {
     #[derive(Default, Debug, Clone)]
     pub struct RUMCommand {
         pub path: RUMString,
+        pub data: Option<RUMBuffer>,
         pub args: RUMCommandArgs,
         pub env: RUMCommandEnv,
     }
 
     impl RUMCommand {
-        pub fn new(prog: &str, args: &RUMCommandArgs, env: &RUMCommandEnv) -> Self {
+        pub fn new(
+            prog: &str,
+            data: &Option<RUMBuffer>,
+            args: &RUMCommandArgs,
+            env: &RUMCommandEnv,
+        ) -> Self {
             RUMCommand {
                 path: prog.to_rumstring(),
                 args: args.clone(),
                 env: env.clone(),
+                data: data.clone(),
             }
         }
     }
@@ -77,7 +84,7 @@ pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::core::RUMResult;
     use crate::strings::rumtk_format;
-    use std::io::Read;
+    use std::io::{Read, Write};
 
     use crate::threading::threading_functions::async_sleep;
     use crate::types::RUMBuffer;
@@ -256,12 +263,61 @@ pub mod pipeline_functions {
         }
     }
 
+    ///
+    /// Pipe data into a process.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_into_process, pipeline_spawn_process};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let ls_name = "ls";
+    /// let mut ls_command = RUMCommand::default();
+    /// ls_command.path = RUMString::from(ls_name);
+    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
+    /// pipeline_pipe_into_process(&mut sys_ls_process, &Some(RUMBuffer::default())).unwrap();
+    ///
+    /// let out = sys_ls_process.wait_with_output().unwrap();
+    ///
+    /// assert_eq!(out.stdout.is_empty(), false, "Piped command returned an empty buffer? => {:?}", String::from_utf8_lossy(out.stdout.as_slice()))
+    /// ```
+    ///
+    pub fn pipeline_pipe_into_process(
+        process: &mut RUMPipelineProcess,
+        data: &Option<RUMBuffer>,
+    ) -> RUMResult<()> {
+        match data {
+            Some(data) => match process.stdin {
+                Some(ref mut stdin) => match stdin.write_all(&data) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(rumtk_format!(
+                            "Failed to pipe data to stdin of process because => {}",
+                            e
+                        ))
+                    }
+                },
+                None => {}
+            },
+            None => {}
+        }
+        Ok(())
+    }
+
     pub fn pipeline_connect_processes<'a>(
         root: &'a mut RUMPipelineCommand,
         piped: &'a mut RUMPipelineCommand,
+        data: &'a Option<RUMBuffer>,
     ) -> RUMResult<RUMPipelineProcess> {
         let mut root_process = pipeline_spawn_process(root)?;
         pipeline_pipe_process(&mut root_process, piped)?;
+
+        pipeline_pipe_into_process(&mut root_process, data)?;
+
         Ok(root_process)
     }
 
@@ -294,7 +350,9 @@ pub mod pipeline_functions {
     /// ```
     ///
     pub fn pipeline_generate_pipeline(commands: &RUMCommandLine) -> RUMResult<RUMPipeline> {
-        let mut root = pipeline_generate_command(commands.first().unwrap());
+        let first_command = commands.first().unwrap();
+        let mut root = pipeline_generate_command(&first_command);
+        let mut data = first_command.data.clone();
         let mut parent_process;
 
         // Setup pipeline
@@ -303,9 +361,10 @@ pub mod pipeline_functions {
 
         for cmd in commands.iter().skip(1) {
             let mut new_root = pipeline_generate_command(cmd);
-            parent_process = pipeline_connect_processes(&mut root, &mut new_root)?;
+            parent_process = pipeline_connect_processes(&mut root, &mut new_root, &data)?;
             pipeline.push(parent_process);
             root = new_root;
+            data = None;
         }
 
         pipeline.push(pipeline_spawn_process(&mut root)?);
@@ -427,7 +486,6 @@ pub mod pipeline_functions {
 }
 
 pub mod pipeline_macros {
-
     ///
     /// Creates a pipeline command out of the provided parameters. Parameters include `path`, `args`,
     /// and `env`. The command has [RUMCommand](super::pipeline_types::RUMCommand).
@@ -445,33 +503,60 @@ pub mod pipeline_macros {
     /// let command = rumtk_pipeline_command!("ls");
     /// ```
     ///
+    /// ### Program with Piped Data
+    ///
+    /// ```
+    /// use rumtk_core::rumtk_pipeline_command;
+    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::strings::RUMStringConversions;
+    ///
+    /// let command = rumtk_pipeline_command!("ls", RUMBuffer::default());
+    /// ```
+    ///
     /// ### Program with Args
     ///
     /// ```
     /// use rumtk_core::rumtk_pipeline_command;
+    /// use rumtk_core::types::RUMBuffer;
     /// use rumtk_core::strings::RUMStringConversions;
     ///
-    /// let command = rumtk_pipeline_command!("ls", &vec![
+    /// let command = rumtk_pipeline_command!("ls", RUMBuffer::default(), &vec![
     ///     "-l".to_rumstring()
     /// ]);
     /// ```
     ///
     #[macro_export]
     macro_rules! rumtk_pipeline_command {
-        ( $path:expr, $args:expr, $env:expr ) => {{
+        ( $path:expr, $data:expr, $args:expr, $env:expr ) => {{
             use $crate::pipelines::pipeline_types::RUMCommand;
 
-            RUMCommand::new($path, $args, $env)
+            RUMCommand::new($path, &Some($data), $args, $env)
         }};
-        ( $path:expr, $args:expr ) => {{
+        ( $path:expr, $data:expr, $args:expr ) => {{
             use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandEnv};
 
-            RUMCommand::new($path, $args, &RUMCommandEnv::default())
+            RUMCommand::new($path, &Some($data), $args, &RUMCommandEnv::default())
+        }};
+        ( $path:expr, $data:expr ) => {{
+            use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandArgs, RUMCommandEnv};
+
+            RUMCommand::new(
+                $path,
+                &Some($data),
+                &RUMCommandArgs::default(),
+                &RUMCommandEnv::default(),
+            )
         }};
         ( $path:expr ) => {{
             use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandArgs, RUMCommandEnv};
+            use $crate::types::RUMBuffer;
 
-            RUMCommand::new($path, &RUMCommandArgs::default(), &RUMCommandEnv::default())
+            RUMCommand::new(
+                $path,
+                &None,
+                &RUMCommandArgs::default(),
+                &RUMCommandEnv::default(),
+            )
         }};
     }
 
@@ -489,10 +574,11 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run!(
-    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("ls", RUMBuffer::default()),
     ///         rumtk_pipeline_command!("wc")
     ///     )?;
     ///
@@ -535,7 +621,7 @@ pub mod pipeline_macros {
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("ls", RUMBuffer::default()),
     ///         rumtk_pipeline_command!("wc")
     ///     )?;
     ///
