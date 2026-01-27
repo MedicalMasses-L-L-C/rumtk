@@ -125,6 +125,10 @@ pub mod pipeline_functions {
 
         cmd.envs(command.env.iter());
 
+        cmd.stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+
         cmd
     }
 
@@ -260,6 +264,39 @@ pub mod pipeline_functions {
     }
 
     ///
+    /// Closes the `stdin` standard in file for process. Useful to trigger a resolution of the pipeline.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::pipelines::pipeline_functions::pipeline_close_process_stdin;
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_into_process, pipeline_spawn_process};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let ls_name = "ls";
+    /// let mut ls_command = RUMCommand::default();
+    /// ls_command.path = RUMString::from(ls_name);
+    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
+    ///
+    /// pipeline_close_process_stdin(&mut sys_ls_process);
+    ///
+    ///
+    /// ```
+    ///
+    pub fn pipeline_close_process_stdin(process: &mut RUMPipelineProcess) {
+        // Do not change into an expect() or such unwrap. We just want to ignore and assume stdin is closed.
+        match process.stdin.take() {
+            Some(stdin) => {
+                drop(stdin);
+            }
+            None => {}
+        };
+    }
+
+    ///
     /// Pipe data into a process.
     ///
     /// ## Example
@@ -340,9 +377,6 @@ pub mod pipeline_functions {
 
         //Bootstrap first process in chain
         let mut root = pipeline_generate_command(&first_command);
-        root.stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped());
         let mut parent_process = pipeline_spawn_process(&mut root)?;
         pipeline_pipe_into_process(&mut parent_process, &mut first_command.data.clone())?;
         pipeline.push(parent_process);
@@ -390,6 +424,11 @@ pub mod pipeline_functions {
     /// ```
     ///
     pub async fn pipeline_await_pipeline(mut pipeline: RUMPipeline) -> RUMPipelineResult {
+        // Let's make sure the stdin is closed on the first process to make sure it exits instead of
+        // remain waiting for EOF in the stdin stream.
+        pipeline_close_process_stdin(pipeline.first_mut().unwrap());
+
+        // Now let's visit each process and await their completion!
         for p in pipeline.iter_mut() {
             loop {
                 match p.try_wait() {
@@ -449,6 +488,11 @@ pub mod pipeline_functions {
     /// ```
     ///
     pub fn pipeline_wait_pipeline(mut pipeline: RUMPipeline) -> RUMPipelineResult {
+        // Let's make sure the stdin is closed on the first process to make sure it exits instead of
+        // remain waiting for EOF in the stdin stream.
+        pipeline_close_process_stdin(pipeline.first_mut().unwrap());
+
+        // Now let's visit each process and await their completion!
         for p in pipeline.iter_mut() {
             match p.wait() {
                 Ok(code) => {
