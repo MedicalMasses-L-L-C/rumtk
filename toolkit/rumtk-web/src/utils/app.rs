@@ -99,7 +99,7 @@ struct Args {
     ///
     /// Specify the size limit for a file upload post request.
     ///
-    #[arg(long, default_value = DEFAULT_UPLOAD_LIMIT)]
+    #[arg(long, default_value_t = DEFAULT_UPLOAD_LIMIT)]
     pub upload_limit: usize,
     ///
     /// How many threads to use to serve the website. By default, we use
