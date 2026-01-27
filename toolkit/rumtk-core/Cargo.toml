@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-core"
 description = "Core library for providing general functionality to support the other RUMTK crates. See rumtk-hl7-v2 crate as example"
-version = "0.11.3"
+version = "0.11.4"
 license = "LGPL-2.1"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-core"
 documentation = "https://docs.rs/rumtk-core"
@@ -36,3 +36,4 @@ uuid = { version = "1.19.0", features = [
 pyo3-ffi = "0.27.1"
 bytes = "1.11.0"
 nanoid = "0.4.0"
+getrandom = "0.3.4"

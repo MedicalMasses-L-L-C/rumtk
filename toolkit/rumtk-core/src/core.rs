@@ -20,6 +20,7 @@
  */
 use crate::strings::rumtk_format;
 use crate::strings::RUMString;
+use crate::types::RUMBuffer;
 
 pub type RUMError = RUMString;
 
@@ -116,4 +117,30 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
         neg_max_indx,
         max_size
     ))
+}
+
+///
+/// Generates a new random buffer using the `getrandom` crate and wrapped inside a [RUMBuffer](RUMBuffer).
+/// The buffer will be exactly 1024 bytes.
+///
+/// ## Example
+///
+/// ```
+/// use rumtk_core::core::new_random_buffer;
+///
+/// const BUFFER_SIZE: usize = 1024;
+///
+/// let buffer = new_random_buffer();
+///
+/// assert_eq!(buffer.is_empty(), false, "Function returned an empty random buffer which was unexpected!");
+/// assert_eq!(buffer.len(), BUFFER_SIZE, "The new random buffer does not have the expected size!");
+/// ```
+///
+pub fn new_random_buffer() -> RUMBuffer {
+    let mut buffer = [0u8; 1024];
+    match getrandom::fill(&mut buffer) {
+        Ok(_) => {}
+        Err(_) => {}
+    };
+    RUMBuffer::copy_from_slice(buffer.as_slice())
 }

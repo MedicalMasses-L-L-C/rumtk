@@ -572,13 +572,13 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::core::{RUMResult, new_random_buffer};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run!(
-    ///         rumtk_pipeline_command!("ls", RUMBuffer::default()),
+    ///         rumtk_pipeline_command!("ls", new_random_buffer()),
     ///         rumtk_pipeline_command!("wc")
     ///     )?;
     ///
@@ -616,15 +616,15 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::core::{RUMResult, new_random_buffer};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("ls", RUMBuffer::default()),
+    ///         rumtk_pipeline_command!("ls", new_random_buffer()),
     ///         rumtk_pipeline_command!("wc")
-    ///     )?;
+    ///     ).await?;
     ///
     ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     ///     Ok(())
@@ -643,7 +643,7 @@ pub mod pipeline_macros {
                 $($command),+
             ])?;
 
-            pipeline_await_pipeline(pipeline).await
+            pipeline_await_pipeline(pipeline)
         }};
     }
 }
