@@ -55,6 +55,7 @@ mod tests {
     use crate::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use compact_str::CompactString;
     use serde_json::to_string;
+    use std::process::Stdio;
     use std::sync::Arc;
     use tokio::sync::RwLock;
 
@@ -411,6 +412,10 @@ mod tests {
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
+    use crate::pipelines::pipeline_functions::{
+        pipeline_generate_command, pipeline_pipe_process, pipeline_spawn_process,
+    };
+    use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::sleep;
     use crate::threading::threading_manager::*;
 
@@ -747,6 +752,32 @@ mod tests {
     #[test]
     fn test_print_license_notice() {
         print_license_notice("RUMTK", "2025", &vec!["Luis M. Santos, M.D."]);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////Pipeline Tests/////////////////////////////////
+
+    #[test]
+    fn test_pipe_processes() {
+        let ls_name = "ls";
+        let mut ls_command = RUMCommand::default();
+        ls_command.path = RUMString::from(ls_name);
+        let mut sys_ls_command = pipeline_generate_command(&ls_command);
+        sys_ls_command.stdin(Stdio::piped());
+        sys_ls_command.stdout(Stdio::piped());
+
+        let wc_name = "wc";
+        let mut wc_command = RUMCommand::default();
+        wc_command.path = RUMString::from(wc_name);
+        let mut sys_wc_command = pipeline_generate_command(&wc_command);
+
+        let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
+        pipeline_pipe_process(&mut sys_ls_process, &mut sys_wc_command).unwrap();
+        let mut sys_wc_process = pipeline_spawn_process(&mut sys_wc_command).unwrap();
+
+        sys_ls_process.wait();
+        sys_wc_process.wait();
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

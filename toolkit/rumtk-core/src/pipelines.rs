@@ -41,18 +41,31 @@
  */
 
 pub mod pipeline_types {
-    use crate::strings::RUMString;
+    use crate::strings::{RUMString, RUMStringConversions};
     use crate::types::{RUMBuffer, RUMHashMap};
 
     use crate::core::{RUMResult, RUMVec};
     use std::process::{Child, Command};
 
+    pub type RUMCommandArgs = Vec<RUMString>;
+    pub type RUMCommandEnv = RUMHashMap<RUMString, RUMString>;
     #[derive(Default, Debug, Clone)]
     pub struct RUMCommand {
         pub path: RUMString,
-        pub args: Vec<RUMString>,
-        pub env: RUMHashMap<RUMString, RUMString>,
+        pub args: RUMCommandArgs,
+        pub env: RUMCommandEnv,
     }
+
+    impl RUMCommand {
+        pub fn new(prog: &str, args: &RUMCommandArgs, env: &RUMCommandEnv) -> Self {
+            RUMCommand {
+                path: prog.to_rumstring(),
+                args: args.clone(),
+                env: env.clone(),
+            }
+        }
+    }
+
     pub type RUMCommandLine = RUMVec<RUMCommand>;
     pub type RUMPipelineCommand = Command;
     pub type RUMPipelineProcess = Child;
@@ -410,5 +423,140 @@ pub mod pipeline_functions {
 
         let result = pipeline_get_stdout(pipeline)?;
         Ok(result)
+    }
+}
+
+pub mod pipeline_macros {
+
+    ///
+    /// Creates a pipeline command out of the provided parameters. Parameters include `path`, `args`,
+    /// and `env`. The command has [RUMCommand](super::pipeline_types::RUMCommand).
+    ///
+    /// `env` is a map of type [RUMCommandEnv](super::pipeline_types::RUMCommandEnv) containing a set of
+    /// key value pair strings that we can use to update the process environment.
+    ///
+    /// ## Example
+    ///
+    /// ### Program Only
+    ///
+    /// ```
+    /// use rumtk_core::rumtk_pipeline_command;
+    ///
+    /// let command = rumtk_pipeline_command!("ls");
+    /// ```
+    ///
+    /// ### Program with Args
+    ///
+    /// ```
+    /// use rumtk_core::rumtk_pipeline_command;
+    /// use rumtk_core::strings::RUMStringConversions;
+    ///
+    /// let command = rumtk_pipeline_command!("ls", &vec![
+    ///     "-l".to_rumstring()
+    /// ]);
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_pipeline_command {
+        ( $path:expr, $args:expr, $env:expr ) => {{
+            use $crate::pipelines::pipeline_types::RUMCommand;
+
+            RUMCommand::new($path, $args, $env)
+        }};
+        ( $path:expr, $args:expr ) => {{
+            use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandEnv};
+
+            RUMCommand::new($path, $args, &RUMCommandEnv::default())
+        }};
+        ( $path:expr ) => {{
+            use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandArgs, RUMCommandEnv};
+
+            RUMCommand::new($path, &RUMCommandArgs::default(), &RUMCommandEnv::default())
+        }};
+    }
+
+    ///
+    /// Given a series of [RUMCommand](super::pipeline_types::RUMCommand) passed to this macro, prepare
+    /// and execute the commands in a pipeline. A pipeline here refers to the Unix style pipeline which is the
+    /// terminal form of a pipeline. The pipeline behaves like it would in the terminal => `ls | wc`.
+    ///
+    /// See [this article](https://cscie26.dce.harvard.edu/~dce-lib113/reference/unix/unix2.html)
+    /// and the [Unix Philosophy](https://cscie2x.dce.harvard.edu/hw/ch01s06.html) to learn more!
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::RUMStringConversions;
+    ///
+    /// let f = || -> RUMResult<()> {
+    ///     let result = rumtk_pipeline_run!(
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     )?;
+    ///
+    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
+    ///     Ok(())
+    /// };
+    ///
+    /// f().unwrap();
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_pipeline_run {
+        ( $($command:expr),+ ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
+
+            let pipeline = pipeline_generate_pipeline(&vec![
+                $($command),+
+            ])?;
+
+            pipeline_wait_pipeline(pipeline)
+        }};
+    }
+
+    ///
+    /// Given a series of [RUMCommand](super::pipeline_types::RUMCommand) passed to this macro, prepare
+    /// and execute the commands in a pipeline. A pipeline here refers to the Unix style pipeline which is the
+    /// terminal form of a pipeline. The pipeline behaves like it would in the terminal => `ls | wc`.
+    ///
+    /// See [this article](https://cscie26.dce.harvard.edu/~dce-lib113/reference/unix/unix2.html)
+    /// and the [Unix Philosophy](https://cscie2x.dce.harvard.edu/hw/ch01s06.html) to learn more!
+    ///
+    /// This is the `async` flavor.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::RUMStringConversions;
+    ///
+    /// let f = async || -> RUMResult<()> {
+    ///     let result = rumtk_pipeline_run_async!(
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     )?;
+    ///
+    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
+    ///     Ok(())
+    /// };
+    ///
+    /// let rt = rumtk_init_threads!(&5);
+    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_pipeline_run_async {
+        ( $($command:expr),+ ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
+
+            let pipeline = pipeline_generate_pipeline(&vec![
+                $($command),+
+            ])?;
+
+            pipeline_await_pipeline(pipeline).await
+        }};
     }
 }
