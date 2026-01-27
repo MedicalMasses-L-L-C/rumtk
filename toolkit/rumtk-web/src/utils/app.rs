@@ -31,7 +31,6 @@ use crate::{
     rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
-use axum::extract::DefaultBodyLimit;
 
 use rumtk_core::core::RUMResult;
 use rumtk_core::dependencies::clap;
@@ -131,12 +130,12 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
         /* Post Handling */
         .route("/api/", post(rumtk_web_api_process!(default_api_matcher)))
-        .layer(DefaultBodyLimit::max(args.upload_limit))
+        //.layer(DefaultBodyLimit::max(args.upload_limit))
         .route(
             "/api/{*page}",
             post(rumtk_web_api_process!(default_api_matcher)),
         )
-        .layer(DefaultBodyLimit::max(args.upload_limit))
+        //.layer(DefaultBodyLimit::max(args.upload_limit))
         /* Services */
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state)
