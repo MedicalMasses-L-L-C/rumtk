@@ -16,9 +16,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#![feature(str_as_str)]
 
 use rumtk_core::core::RUMResult;
-use rumtk_core::strings::RUMString;
+use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
 use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
@@ -50,7 +51,7 @@ pub struct RUMTKInterfaceArgs {
 }
 
 fn process_message(pretty_print: bool) -> RUMResult<()> {
-    let stdin_msg = rumtk_read_stdin!()?;
+    let stdin_msg = rumtk_read_stdin!()?.as_slice().to_rumstring();
     if !stdin_msg.is_empty() {
         let out_data = match rumtk_deserialize!(&stdin_msg) {
             Ok(msg) => {

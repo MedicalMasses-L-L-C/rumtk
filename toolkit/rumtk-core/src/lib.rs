@@ -25,6 +25,7 @@
 #![feature(unboxed_closures)]
 #![feature(buf_read_has_data_left)]
 #![feature(mapped_lock_guards)]
+#![feature(str_as_str)]
 
 pub mod cache;
 pub mod cli;

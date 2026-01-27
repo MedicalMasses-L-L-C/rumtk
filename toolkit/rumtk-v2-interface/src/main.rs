@@ -16,18 +16,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#![feature(str_as_str)]
 
 use rumtk_core::core::RUMResult;
 use rumtk_core::dependencies::clap;
 use rumtk_core::net::tcp::LOCALHOST;
-use rumtk_core::strings::RUMString;
+use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
 use rumtk_core::{rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
-use rumtk_hl7_v2::{
-    rumtk_v2_mllp_connect, rumtk_v2_mllp_iter_channels,
-    rumtk_v2_mllp_listen,
-};
+use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_iter_channels, rumtk_v2_mllp_listen};
 
 ///
 /// HL7 V2 Interface CLI
@@ -99,7 +97,7 @@ fn outbound_send(channel: &SafeMLLPChannel) -> RUMResult<()> {
     let stdin_msg = rumtk_read_stdin!()?;
     if !stdin_msg.is_empty() {
         let mut owned_channel = channel.lock().expect("Failed to lock channel");
-        return owned_channel.send_message(&stdin_msg);
+        return owned_channel.send_message(&stdin_msg.as_slice().to_rumstring());
     }
     Ok(())
 }

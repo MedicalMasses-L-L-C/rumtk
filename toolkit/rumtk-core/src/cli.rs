@@ -21,8 +21,8 @@
 
 pub mod cli_utils {
     use crate::core::RUMResult;
-    use crate::strings::{rumtk_format, EscapeExceptions, RUMArrayConversions, RUMString};
-    use crate::types::RUMCLIParser;
+    use crate::strings::{rumtk_format, EscapeExceptions, RUMString};
+    use crate::types::{RUMBuffer, RUMCLIParser};
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
     use std::num::NonZeroU16;
@@ -96,7 +96,7 @@ pub mod cli_utils {
         dry_run: bool,
     }
 
-    pub fn read_stdin() -> RUMResult<RUMString> {
+    pub fn read_stdin() -> RUMResult<RUMBuffer> {
         let mut stdin_lock = stdin().lock();
         let mut stdin_buffer: Vec<u8> = Vec::with_capacity(BUFFER_SIZE);
         let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
@@ -109,7 +109,8 @@ pub mod cli_utils {
                 filtered.push(c);
             }
         }
-        Ok(filtered.to_rumstring())
+
+        Ok(RUMBuffer::from(filtered))
     }
 
     pub fn read_some_stdin(input: &mut StdinLock, buf: &mut BufferSlice) -> RUMResult<usize> {
@@ -123,6 +124,7 @@ pub mod cli_utils {
         }
     }
 
+    //TODO: Turn into a RUMBuffer for future tools.
     pub fn write_stdout(data: &RUMString) -> RUMResult<()> {
         let mut stdout_handle = stdout();
         match stdout_handle.write_all(data.as_bytes()) {
