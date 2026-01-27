@@ -570,6 +570,30 @@ pub mod pipeline_macros {
     ///
     /// ## Example
     ///
+    /// ### Simple
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::{RUMResult};
+    /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let f = async || -> RUMResult<()> {
+    ///     let result = rumtk_pipeline_run!(
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     ).unwrap();
+    ///
+    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
+    ///     Ok(())
+    /// };
+    ///
+    /// let rt = rumtk_init_threads!(&5);
+    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// ```
+    ///
+    /// ### With Buffer Piped In
+    ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::{RUMResult, new_random_buffer};
@@ -613,6 +637,30 @@ pub mod pipeline_macros {
     /// This is the `async` flavor.
     ///
     /// ## Example
+    ///
+    /// ### Simple
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::{RUMResult};
+    /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let f = async || -> RUMResult<()> {
+    ///     let result = rumtk_pipeline_run_async!(
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     ).await?;
+    ///
+    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
+    ///     Ok(())
+    /// };
+    ///
+    /// let rt = rumtk_init_threads!(&5);
+    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// ```
+    ///
+    /// ### With Buffer Piped In
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
