@@ -103,14 +103,8 @@ pub mod cli_utils {
         while s == BUFFER_CHUNK_SIZE {
             s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
         }
-        let mut filtered = Vec::<u8>::with_capacity(stdin_buffer.len());
-        for c in stdin_buffer {
-            if c != 0 {
-                filtered.push(c);
-            }
-        }
 
-        Ok(RUMBuffer::from(filtered))
+        Ok(RUMBuffer::from(stdin_buffer))
     }
 
     pub fn read_some_stdin(input: &mut StdinLock, buf: &mut BufferSlice) -> RUMResult<usize> {
