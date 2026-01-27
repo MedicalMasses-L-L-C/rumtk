@@ -31,6 +31,7 @@ use crate::{
     rumtk_web_init_pages,
 };
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
+use axum::extract::DefaultBodyLimit;
 
 use rumtk_core::core::RUMResult;
 use rumtk_core::dependencies::clap;
@@ -44,6 +45,8 @@ use axum::routing::{get, post};
 use axum::Router;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
+
+const DEFAULT_UPLOAD_LIMIT: usize = 10240;
 
 ///
 /// RUMTK WebApp CLI Args
@@ -94,6 +97,11 @@ struct Args {
     #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
     pub ip: RUMString,
     ///
+    /// Specify the size limit for a file upload post request.
+    ///
+    #[arg(long, default_value = DEFAULT_UPLOAD_LIMIT)]
+    pub upload_limit: usize,
+    ///
     /// How many threads to use to serve the website. By default, we use
     /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
     /// cpus available. We use the system's total count of cpus by default.
@@ -123,10 +131,12 @@ async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
         /* Post Handling */
         .route("/api/", post(rumtk_web_api_process!(default_api_matcher)))
+        .layer(DefaultBodyLimit::max(args.upload_limit))
         .route(
             "/api/{*page}",
             post(rumtk_web_api_process!(default_api_matcher)),
         )
+        .layer(DefaultBodyLimit::max(args.upload_limit))
         /* Services */
         .nest_service("/static", ServeDir::new("static"))
         .with_state(state)
