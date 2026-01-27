@@ -125,10 +125,6 @@ pub mod pipeline_functions {
 
         cmd.envs(command.env.iter());
 
-        cmd.stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .stdin(Stdio::piped());
-
         cmd
     }
 
@@ -308,19 +304,6 @@ pub mod pipeline_functions {
         Ok(())
     }
 
-    pub fn pipeline_connect_processes<'a>(
-        root: &'a mut RUMPipelineCommand,
-        piped: &'a mut RUMPipelineCommand,
-        data: &'a Option<RUMBuffer>,
-    ) -> RUMResult<RUMPipelineProcess> {
-        let mut root_process = pipeline_spawn_process(root)?;
-        pipeline_pipe_process(&mut root_process, piped)?;
-
-        pipeline_pipe_into_process(&mut root_process, data)?;
-
-        Ok(root_process)
-    }
-
     ///
     /// Builds an executable pipeline out of a list of [RUMCommand](RUMCommand).
     ///
@@ -351,23 +334,25 @@ pub mod pipeline_functions {
     ///
     pub fn pipeline_generate_pipeline(commands: &RUMCommandLine) -> RUMResult<RUMPipeline> {
         let first_command = commands.first().unwrap();
-        let mut root = pipeline_generate_command(&first_command);
-        let mut data = first_command.data.clone();
-        let mut parent_process;
 
         // Setup pipeline
         let mut pipeline = vec![];
-        root.stdin(Stdio::piped()).stdout(Stdio::piped());
+
+        //Bootstrap first process in chain
+        let mut root = pipeline_generate_command(&first_command);
+        root.stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        let mut parent_process = pipeline_spawn_process(&mut root)?;
+        pipeline_pipe_into_process(&mut parent_process, &mut first_command.data.clone())?;
+        pipeline.push(parent_process);
 
         for cmd in commands.iter().skip(1) {
             let mut new_root = pipeline_generate_command(cmd);
-            parent_process = pipeline_connect_processes(&mut root, &mut new_root, &data)?;
+            pipeline_pipe_process(pipeline.last_mut().unwrap(), &mut new_root)?;
+            parent_process = pipeline_spawn_process(&mut new_root)?;
             pipeline.push(parent_process);
-            root = new_root;
-            data = None;
         }
-
-        pipeline.push(pipeline_spawn_process(&mut root)?);
 
         Ok(pipeline)
     }
