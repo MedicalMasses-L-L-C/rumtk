@@ -71,6 +71,10 @@ pub fn init_pages(user_components: &UserPages) {
     for (name, value) in user_components {
         let _ = register_page(name, *value);
     }
+    println!(
+        "  ➡ Default page => page function [{:?}]",
+        &get_default_page()
+    );
     println!("🗎 ~~~~~~~~~~~~~~~~~~~~~~ 🗎");
 }
 
