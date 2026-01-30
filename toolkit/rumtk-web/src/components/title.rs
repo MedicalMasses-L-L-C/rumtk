@@ -29,35 +29,6 @@ use askama::Template;
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <style>
-            .title-default-container {
-                display: block;
-                height: 40px;
-                align-content: center;
-                margin-block: 20px 20px;
-            }
-
-            .title-default {
-                display: block;
-                margin-block: 0;
-            }
-
-            .title-default-overlay {
-                position: relative;
-                margin-block: 0;
-                z-index: var(--mid-layer);
-                bottom: 1.25em;
-
-                background-image: var(--img-glitch-0);
-                background-repeat: repeat;
-                background-clip: text;
-                color: transparent;
-                background-position: center;
-                filter: blur(5px);
-
-                animation: slide 30s infinite linear;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/title.css' rel='stylesheet'>
         {% endif %}

@@ -34,12 +34,6 @@ use askama::Template;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <style>
-            .label-default {
-                text-wrap: wrap;
-                margin: auto;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/label.css' rel='stylesheet'>
         {% endif %}

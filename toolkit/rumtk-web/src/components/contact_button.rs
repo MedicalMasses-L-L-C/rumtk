@@ -32,22 +32,6 @@ use askama::Template;
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <style>
-            .contact-centered-button-container {
-                max-width: fit-content;
-                margin-inline: auto;
-
-                height: 90px;
-            }
-
-            .contact-centered-button {
-                background: radial-gradient(circle,var(--color-darkpurple) 0%, var(--color-indigo) 70%);
-
-                color: var(--color-bg-white);
-
-                border-radius: 15px;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/contact_button.css' rel='stylesheet'>
         {% endif %}

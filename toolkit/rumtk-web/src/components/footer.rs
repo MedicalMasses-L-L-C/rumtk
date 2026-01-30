@@ -32,15 +32,6 @@ use askama::Template;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <style>
-            .footer-default-container, #footer {
-                display: grid;
-                background-color: var(--color-indigo);
-                color: white;
-                padding: 1em;
-                justify-items: center;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}

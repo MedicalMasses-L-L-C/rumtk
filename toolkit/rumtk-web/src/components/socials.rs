@@ -40,14 +40,6 @@ type SocialsList = Vec<Social>;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <style>
-            .socials-default-container {
-                display: flex;
-                color: var(--color-bg-white);
-                padding: 1em;
-                filter: contrast(10%);
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/socials.css' rel='stylesheet'>
         {% endif %}

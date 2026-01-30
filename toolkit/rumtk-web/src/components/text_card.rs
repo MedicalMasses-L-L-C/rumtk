@@ -30,15 +30,6 @@ use askama::Template;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <style>
-            .text-card-default {
-                max-width: 1700px;
-                padding: 20px;
-                background-color: var(--color-indigo);
-
-                border-radius: 15px;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/text_card.css' rel='stylesheet'>
         {% endif %}

@@ -34,13 +34,6 @@ use rumtk_core::strings::RUMStringConversions;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <style>
-            .brand-name {
-                background-image: linear-gradient(to right, var(--color-darkpurple), var(--color-ticklemepink), var(--color-cerulean), var(--color-turqoise));
-                background-clip: text;
-                color: transparent;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}

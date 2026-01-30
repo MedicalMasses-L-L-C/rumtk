@@ -106,4 +106,95 @@ pub const LIST_CSS: &str = r"
     .contact-card-centered-container > p {
         margin: 0;
     }
+    
+    .socials-default-container {
+        display: flex;
+        color: var(--color-bg-white);
+        padding: 1em;
+        filter: contrast(10%);
+    }
+    
+    .text-card-default {
+        max-width: 1700px;
+        padding: 20px;
+        background-color: var(--color-indigo);
+
+        border-radius: 15px;
+    }
+    
+    .title-default-container {
+        display: block;
+        height: 40px;
+        align-content: center;
+        margin-block: 20px 20px;
+    }
+    
+    .title-default {
+        display: block;
+        margin-block: 0;
+    }
+    
+    .title-default-overlay {
+        position: relative;
+        margin-block: 0;
+        z-index: var(--mid-layer);
+        bottom: 1.25em;
+    
+        background-image: var(--img-glitch-0);
+        background-repeat: repeat;
+        background-clip: text;
+        color: transparent;
+        background-position: center;
+        filter: blur(5px);
+    
+        animation: slide 30s infinite linear;
+    }
+    
+    .navlink:link, .navlink:visited {
+        color: var(--color-navlink);
+    }
+    
+    .navlink:hover {
+        background-color: var(--color-darkpurple);
+        border-radius: 10px;
+    }
+    
+    .label-default {
+        text-wrap: wrap;
+        margin: auto;
+    }
+    
+    .brand-name {
+        background-image: linear-gradient(to right, var(--color-darkpurple), var(--color-ticklemepink), var(--color-cerulean), var(--color-turqoise));
+        background-clip: text;
+        color: transparent;
+    }
+    
+    .formatted-label-default {
+        text-wrap: wrap;
+        margin: auto;
+    }
+    
+    .footer-default-container, #footer {
+        display: grid;
+        background-color: var(--color-indigo);
+        color: white;
+        padding: 1em;
+        justify-items: center;
+    }
+    
+    .contact-centered-button-container {
+        max-width: fit-content;
+        margin-inline: auto;
+    
+        height: 90px;
+    }
+    
+    .contact-centered-button {
+        background: radial-gradient(circle,var(--color-darkpurple) 0%, var(--color-indigo) 70%);
+    
+        color: var(--color-bg-white);
+    
+        border-radius: 15px;
+    }
 ";
