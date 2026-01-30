@@ -60,11 +60,11 @@ pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let items = match state
+    let item_list = state
         .write()
         .unwrap()
-        .pop_clipboard(&clipboard_id.to_rumstring())
-    {
+        .pop_clipboard(&clipboard_id.to_rumstring());
+    let items = match item_list {
         Some(items) => items,
         None => rumtk_web_get_conf!(state, typ),
     };
