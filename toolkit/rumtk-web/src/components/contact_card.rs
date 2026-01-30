@@ -20,33 +20,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+use crate::defaults::SECTION_ALT;
 use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_CONTACT,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, TextMap, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use crate::{
+    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
+    DEFAULT_TEXT,
+};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <style>
-            .contact-card-default-container {
-            }
-
-            .contact-card-default-container > p {
-                margin: 0;
-            }
-
-            .contact-card-centered-container {
-                max-width: fit-content;
-                margin-inline: auto;
-            }
-
-            .contact-card-centered-container > p {
-                margin: 0;
-            }
-        </style>
         {% if custom_css_enabled %}
             <link href='/static/components/contact_card.css' rel='stylesheet'>
         {% endif %}
@@ -65,6 +52,8 @@ use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html
                     <p>
                         <a  class='f14 no-text-color' href='tel:{{ details_data }}'>{{ details_data }}</a>
                     </p>
+                    {% else if details_typ == &\"portrait\" && !details_data.is_empty() %}
+                    <img src='{{ details_data }}' alt='{{ alt }}' class='contact-card-{{ css_class }}-portrait' fetchpriority='low' />
                     {% else if !details_data.is_empty() %}
                     <p class='f14' >
                         {{ details_data }}
@@ -77,6 +66,7 @@ use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html
     ext = "html"
 )]
 pub struct ContactCard<'a> {
+    alt: &'a str,
     contact_lines: &'a TextMap,
     css_class: RUMString,
     custom_css_enabled: bool,
@@ -94,8 +84,10 @@ pub fn contact_card(
 
     let text_conf = rumtk_web_get_string!(state, SECTION_CONTACT);
     let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());
+    let alt_text = rumtk_web_get_text_item!(&contact_lines, SECTION_ALT, &DEFAULT_TEXT());
 
     rumtk_web_render_html!(ContactCard {
+        alt: &alt_text,
         contact_lines,
         css_class: RUMString::from(css_class),
         custom_css_enabled

@@ -40,4 +40,70 @@ pub const LIST_CSS: &str = r"
         text-align: left;
         text-wrap: wrap;
     }
+
+    .portrait-card-default-container {
+        align-content: center;
+        align-items: center;
+        justify-items: center;
+        max-width: 100%;
+        width: fit-content;
+        padding: 10px;
+    }
+
+    .portrait-card-default-container > table > tbody {
+        display: flex;
+        justify-items: center;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: center;
+        flex-direction: column;
+        vertical-align: top;
+    }
+
+    .portrait-card-default-row {
+        display: flex;
+        flex-wrap: wrap;
+        /* min-width: 200px; */
+        background-color: transparent;
+        justify-content: space-around;
+        justify-items: center;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    @media screen
+    and (width > 700px) {
+        .portrait-card-default-row {
+            flex-direction: row;
+        }
+    }
+
+    .portrait-card-default-item {
+        width: 300px;
+        padding: 50px;
+    }
+    
+    .contact-card-default-portrait {
+        height: 250px;
+        border-radius: 5%;
+        border-width: 5px;
+        border-style: groove;
+        border-color: var(--color-darkpurple);
+    }
+
+    .contact-card-default-container {
+    }
+
+    .contact-card-default-container > p {
+        margin: 0;
+    }
+
+    .contact-card-centered-container {
+        max-width: fit-content;
+        margin-inline: auto;
+    }
+
+    .contact-card-centered-container > p {
+        margin: 0;
+    }
 ";

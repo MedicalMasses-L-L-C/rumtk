@@ -20,24 +20,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::components::contact_card::contact_card;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
-    RUMWebData, RUMWebTemplate,
+    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_render_html, RUMWebData, RUMWebTemplate,
 };
 use askama::Template;
 use rumtk_core::strings::RUMStringConversions;
 
-#[derive(Debug)]
-struct PortraitItem {
-    user: RUMString,
-    portrait: RUMString,
-    contact: RUMString,
-}
-
-type PortraitGrid = Vec<Vec<PortraitItem>>;
+type PortraitGrid = Vec<Vec<RUMString>>;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -53,8 +45,7 @@ type PortraitGrid = Vec<Vec<PortraitItem>>;
                     <tr class='portrait-card-{{ css_class }}-row'>
                         {% for item in row %}
                         <td class='portrait-card-{{ css_class }}-item'>
-                            <img src='{{ item.portrait }}' alt='{{ item.user }}' class='portrait-card-{{ css_class }}-item-portrait' fetchpriority='low' />
-                            {{item.contact|safe}}
+                            {{item|safe}}
                         </td>
                         {% endfor %}
                     </tr>
@@ -72,29 +63,21 @@ pub struct PortraitCard {
 }
 
 fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> PortraitGrid {
-    let img_conf = rumtk_web_get_conf!(app_state, typ);
     let text_conf = rumtk_web_get_string!(app_state, typ);
 
     let mut grid = Vec::with_capacity(text_conf.len());
-    let default_html = RUMString::default();
     for (_r_name, r_list) in text_conf {
         let mut grid_row = Vec::with_capacity(r_list.len());
         for (i_name, _i_item) in r_list {
-            grid_row.push(PortraitItem {
-                user: i_name.clone(),
-                portrait: RUMString::from(rumtk_web_get_text_item!(&img_conf, &i_name, "")),
-                contact: match contact_card(
-                    &[],
-                    &RUMWebData::from([
-                        ("section".to_rumstring(), section.to_rumstring()),
-                        ("type".to_rumstring(), i_name),
-                    ]),
-                    app_state.clone(),
-                ) {
-                    Ok(v) => v.to_rumstring(),
-                    Err(_) => default_html.clone(),
-                },
-            });
+            let item = rumtk_web_render_component!(
+                "contact_card",
+                [
+                    ("section".to_rumstring(), section.to_rumstring()),
+                    ("type".to_rumstring(), i_name.clone()),
+                ],
+                app_state.clone()
+            );
+            grid_row.push(item);
         }
         grid.push(grid_row);
     }
