@@ -107,6 +107,13 @@ struct Args {
     ///
     #[arg(long, default_value_t = get_default_system_thread_count())]
     pub threads: usize,
+    ///
+    /// How many threads to use to serve the website. By default, we use
+    /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
+    /// cpus available. We use the system's total count of cpus by default.
+    ///
+    #[arg(long, default_value_t = true)]
+    pub skip_default_css: bool,
 }
 
 async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
@@ -161,6 +168,7 @@ pub fn app_main(
     forms: &Forms,
     apis: &UserAPIEndpoints,
     skip_serve: bool,
+    skip_default_css: bool,
 ) {
     let args = Args::parse();
 
@@ -168,7 +176,10 @@ pub fn app_main(
     rumtk_web_init_pages!(pages);
     rumtk_web_init_forms!(forms);
     rumtk_web_init_api_endpoints!(apis);
-    rumtk_web_compile_css_bundle!(&args.css_source_dir);
+    rumtk_web_compile_css_bundle!(
+        &args.css_source_dir,
+        &args.skip_default_css | skip_default_css
+    );
 
     let rt = rumtk_init_threads!(&args.threads);
     rumtk_web_init_job_manager!(&args.threads);

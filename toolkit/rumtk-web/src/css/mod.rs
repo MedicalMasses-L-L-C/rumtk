@@ -32,6 +32,7 @@ mod default;
 mod fonts;
 mod forms;
 mod gap;
+mod imgs;
 mod index;
 mod layout;
 mod theme;
@@ -39,19 +40,22 @@ mod theme;
 pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
 pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
 
-pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str) {
+pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_default_css: bool) {
     let mut css: RUMString = RUMString::default();
 
-    css += theme::THEME;
-    css += index::BODY;
-    css += basic::BASIC_CSS;
-    css += default::DEFAULT_CSS;
-    css += fonts::FONTS_CSS;
-    css += gap::GAP_CSS;
-    css += animations::ANIMATIONS_CSS;
-    css += forms::FORM_CSS;
-    css += components::LIST_CSS;
-    css += layout::LAYOUT_CSS;
+    if !skip_default_css {
+        css += theme::THEME;
+        css += index::BODY;
+        css += basic::BASIC_CSS;
+        css += default::DEFAULT_CSS;
+        css += fonts::FONTS_CSS;
+        css += gap::GAP_CSS;
+        css += animations::ANIMATIONS_CSS;
+        css += forms::FORM_CSS;
+        css += components::LIST_CSS;
+        css += layout::LAYOUT_CSS;
+        css += imgs::IMGS;
+    }
 
     for source in sources {
         let css_data = fs::read_to_string(source).unwrap_or_default();
@@ -117,15 +121,22 @@ pub fn collect_css_sources(root: &str, depth: u8) -> Vec<String> {
 #[macro_export]
 macro_rules! rumtk_web_compile_css_bundle {
     (  ) => {{
-        use $crate::css::{bundle_css, collect_css_sources};
-        use $crate::css::{DEFAULT_OUT_CSS, DEFAULT_OUT_CSS_DIR};
+        use $crate::css::DEFAULT_OUT_CSS_DIR;
         let sources = collect_css_sources(DEFAULT_OUT_CSS_DIR, 0);
-        bundle_css(&sources, DEFAULT_OUT_CSS_DIR, DEFAULT_OUT_CSS);
+        rumtk_web_compile_css_bundle!(DEFAULT_OUT_CSS_DIR, true);
     }};
     ( $static_dir_path:expr ) => {{
+        rumtk_web_compile_css_bundle!($static_dir_path, true);
+    }};
+    ( $static_dir_path:expr, $default_css:expr ) => {{
         use $crate::css::{bundle_css, collect_css_sources};
         use $crate::css::{DEFAULT_OUT_CSS, DEFAULT_OUT_CSS_DIR};
         let sources = collect_css_sources($static_dir_path, 0);
-        bundle_css(&sources, DEFAULT_OUT_CSS_DIR, DEFAULT_OUT_CSS);
+        bundle_css(
+            &sources,
+            DEFAULT_OUT_CSS_DIR,
+            DEFAULT_OUT_CSS,
+            $skip_default_css,
+        );
     }};
 }

@@ -23,25 +23,25 @@
 
 pub const THEME: &str = r"
     :root {
-            --color-indigo: #431089;
-            --color-turqoise: #49e2f4;
-            --color-bg-pink: #b296da;
-            --color-bg-light-pink: #c791c6;
-            --color-bg-neutral: #e2a1b9;
-            --color-bg-light-blue: #8bbbd7;
-            --color-bg-white: #c3e4e8;
-            --color-darkpurple: #93268F;
-            --color-cerulean: #077ABD;
-            --color-cerulean-light: #0982c9;
-            --color-ticklemepink: #ff7bac;
-            --color-jaguar: #0c0b0e;
+        --color-indigo: #431089;
+        --color-turqoise: #49e2f4;
+        --color-bg-pink: #b296da;
+        --color-bg-light-pink: #c791c6;
+        --color-bg-neutral: #e2a1b9;
+        --color-bg-light-blue: #8bbbd7;
+        --color-bg-white: #c3e4e8;
+        --color-darkpurple: #93268F;
+        --color-cerulean: #077ABD;
+        --color-cerulean-light: #0982c9;
+        --color-ticklemepink: #ff7bac;
+        --color-jaguar: #0c0b0e;
         
-            --color-nepal: #93a7b5;
-            --color-snuff: #fed3fd;
-            --color-heliotrope: #c46ded;
-            --color-glacier: #72abc6;
-            --color-magnolia: #f6edfb;
+        --color-nepal: #93a7b5;
+        --color-snuff: #fed3fd;
+        --color-heliotrope: #c46ded;
+        --color-glacier: #72abc6;
+        --color-magnolia: #f6edfb;
         
-            --color-navlink: var(--color-bg-white);
-        }
+        --color-navlink: var(--color-bg-white);
+    }
 ";
