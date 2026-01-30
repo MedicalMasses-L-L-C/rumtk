@@ -112,7 +112,7 @@ struct Args {
     /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
     /// cpus available. We use the system's total count of cpus by default.
     ///
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = false)]
     pub skip_default_css: bool,
 }
 
@@ -303,13 +303,15 @@ pub fn app_main(
 ///
 ///     //Requesting to immediately exit instead of indefinitely serving pages so this example can be used as a unit test.
 ///     let skip_serve = true;
+///     let skip_default_css = false;
 ///
 ///     let result = rumtk_web_run_app!(
 ///         vec![("about", about)],
 ///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("v2/add", my_api_handler)], //Optional, can be omitted alongside the skip_serve flag
-///         skip_serve //Omit in production code. This is used so that this example can work as a unit test.
+///         skip_serve, //Omit in production code. This is used so that this example can work as a unit test.
+///         skip_default_css //Omit in production code. This is used so that this example can work as a unit test.
 ///     );
 /// ```
 ///
@@ -318,31 +320,38 @@ macro_rules! rumtk_web_run_app {
     (  ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&vec![], &vec![], &vec![], &vec![], false)
+        app_main(&vec![], &vec![], &vec![], &vec![], false, false)
     }};
     ( $pages:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &vec![], &vec![], &vec![], false)
+        app_main(&$pages, &vec![], &vec![], &vec![], false, false)
     }};
     ( $pages:expr, $components:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &vec![], &vec![], false)
+        app_main(&$pages, &$components, &vec![], &vec![], false, false)
     }};
     ( $pages:expr, $components:expr, $forms:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, &vec![], false)
+        app_main(&$pages, &$components, &$forms, &vec![], false, false)
     }};
     ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, &$apis, false)
+        app_main(&$pages, &$components, &$forms, &$apis, false, false)
     }};
-    ( $pages:expr, $components:expr, $forms:expr, $apis:expr, $skip_serve:expr ) => {{
+    ( $pages:expr, $components:expr, $forms:expr, $apis:expr, $skip_serve:expr, $skip_default_css:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, &$apis, $skip_serve)
+        app_main(
+            &$pages,
+            &$components,
+            &$forms,
+            &$apis,
+            $skip_serve,
+            $skip_default_css,
+        )
     }};
 }
