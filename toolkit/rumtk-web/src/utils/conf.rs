@@ -111,8 +111,8 @@ impl AppConf {
     }
 
     pub fn get_conf(&self, section: &str) -> TextMap {
-        match self.config.get(section) {
-            Some(l) => match l.get(&self.lang) {
+        match self.config.get(&self.lang) {
+            Some(l) => match l.get(section) {
                 Some(i) => i.clone(),
                 None => match l.get(DEFAULT_TEXT_ITEM) {
                     Some(i) => i.clone(),
