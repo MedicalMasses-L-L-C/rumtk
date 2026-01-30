@@ -114,12 +114,12 @@ impl AppConf {
         match self.config.get(&self.lang) {
             Some(l) => match l.get(section) {
                 Some(i) => i.clone(),
-                None => match l.get(DEFAULT_TEXT_ITEM) {
-                    Some(i) => i.clone(),
-                    None => TextMap::default(),
-                },
+                None => TextMap::default(),
             },
-            None => TextMap::default(),
+            None => match l.get(DEFAULT_TEXT_ITEM) {
+                Some(i) => i.clone(),
+                None => TextMap::default(),
+            },
         }
     }
 }
