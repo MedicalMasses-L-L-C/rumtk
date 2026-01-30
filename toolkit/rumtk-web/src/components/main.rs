@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::DEFAULT_TEXT_ITEM;
+use crate::defaults::DEFAULT_NO_TEXT;
 use crate::{
     rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component,
     rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, RUMWebTemplate, SharedAppState,
@@ -50,7 +50,7 @@ pub struct Main {
 
 pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let page: RUMString =
-        rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
+        rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_NO_TEXT));
 
     //Let's render the main tag contents
     let body_components = rumtk_web_collect_page!(page, state);

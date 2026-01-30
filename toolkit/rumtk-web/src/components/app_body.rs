@@ -23,7 +23,7 @@
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_param, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html, RUMWebTemplate,
 };
 use askama::Template;
@@ -48,14 +48,12 @@ pub struct AppBody {
 }
 
 pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
-    let page: RUMString =
-        rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_TEXT_ITEM));
     let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
     let header = rumtk_web_render_component!("header", [("", "")], state);
-    let main = rumtk_web_render_component!("main", [("", "")], state);
+    let main = rumtk_web_render_component!("main", path_components, [("", "")], state);
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
     let footer = rumtk_web_render_component!(
         "footer",

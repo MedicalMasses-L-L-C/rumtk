@@ -8,13 +8,26 @@
   "custom_css": false,
   "header_conf": {
     "logo_size": "small",
-    "disable_navlinks": true,
+    "disable_navlinks": false,
     "disable_logo": true
   },
   "footer_conf": {
     "socials_list": "",
     "disable_contact_button": true
   },
-  "strings": {},
+  "strings": {
+    "en": {
+      "links": {
+        "index": {
+          "title": "Home",
+          "url": "./"
+        },
+        "other": {
+          "title": "Other",
+          "url": "/other"
+        }
+      }
+    }
+  },
   "config": {}
 }

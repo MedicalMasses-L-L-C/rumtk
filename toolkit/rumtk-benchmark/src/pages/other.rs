@@ -16,5 +16,12 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub mod index;
-pub mod other;
+use rumtk_web::rumtk_web_render_component;
+use rumtk_web::utils::*;
+
+pub fn other(app_state: SharedAppState) -> RenderedPageComponents {
+    let title_coop =
+        rumtk_web_render_component!("title", [("type", "coop_values")], app_state.clone());
+
+    vec![title_coop]
+}

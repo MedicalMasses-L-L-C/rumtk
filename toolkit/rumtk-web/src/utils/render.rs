@@ -74,12 +74,15 @@ macro_rules! rumtk_web_render_component {
         }
     }};
     ( $component:expr, $params:expr, $app_state:expr ) => {{
+        rumtk_web_render_component!($component, &[""], $params, $app_state)
+    }};
+    ( $component:expr, $path:expr, $params:expr, $app_state:expr ) => {{
         use rumtk_core::strings::{RUMString, RUMStringConversions};
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
 
         let component = rumtk_web_get_component!($component);
 
-        match component(&[""], &rumtk_web_params_map!($params), $app_state.clone()) {
+        match component($path, &rumtk_web_params_map!($params), $app_state.clone()) {
             Ok(x) => x.to_rumstring(),
             _ => RUMString::default(),
         }
