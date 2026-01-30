@@ -142,7 +142,6 @@ macro_rules! rumtk_web_render_markdown {
         let parser = Parser::new_ext(&input, options);
         let mut html_output = String::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
-        println!("{}", &html_output);
 
         html_output.to_rumstring()
     }};
