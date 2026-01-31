@@ -24,19 +24,18 @@ use crate::components::form::props::InputProps;
 use crate::utils::types::HTMLResult;
 use crate::{rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
-use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <{{element}} {{props.to_rumstring().replace(\"\\\\\", \"\\\")|safe}} class='{{css_class}}'>{{data}}</{{element}}>
+        <{{element}} {{props|safe}} class='{{css_class}}'>{{data}}</{{element}}>
     ",
     ext = "html"
 )]
 pub struct FormElement<'a> {
     element: &'a str,
     data: &'a str,
-    props: InputProps<'a>,
+    props: &'a str,
     css_class: &'a str,
 }
 
@@ -44,7 +43,7 @@ pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &st
     rumtk_web_render_html!(FormElement {
         element,
         data,
-        props,
+        props: &props.to_rumstring().replace("\\\\", "\\"),
         css_class
     })
 }
