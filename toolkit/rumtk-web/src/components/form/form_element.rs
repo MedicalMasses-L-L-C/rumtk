@@ -24,11 +24,12 @@ use crate::components::form::props::InputProps;
 use crate::utils::types::HTMLResult;
 use crate::{rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <{{element}} {{props.to_rumstring()|safe}} class='{{css_class}}'>{{data}}</{{element}}>
+        <{{element}} {{props.to_rumstring().replace('\\\\', '\\')|safe}} class='{{css_class}}'>{{data}}</{{element}}>
     ",
     ext = "html"
 )]
