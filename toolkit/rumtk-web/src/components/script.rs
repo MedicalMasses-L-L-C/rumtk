@@ -20,7 +20,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::defaults::{DEFAULT_SCRIPT, DEFAULT_SCRIPT_MODULE, PARAMS_TYPE};
+use crate::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_SCRIPT, DEFAULT_SCRIPT_MODULE, PARAMS_ID, PARAMS_TYPE,
+};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
@@ -30,25 +32,28 @@ use askama::Template;
 #[template(
     source = "
         {% if typ.is_empty() || typ == DEFAULT_SCRIPT %}
-            <script>{{script|safe}}</script>
+            <script id={{id}}>{{script|safe}}</script>
         {% else if typ == DEFAULT_SCRIPT_MODULE %}
-            <script type='module'>{{script|safe}}</script>
+            <script type='module' id={{id}}>{{script|safe}}</script>
         {% else %}
-            <script type='module' src='{{script|safe}}'></script>
+            <script type='module' src='{{script|safe}}' id={{id}}></script>
         {% endif %}
     ",
     ext = "html"
 )]
 pub struct Script<'a> {
+    id: &'a str,
     typ: &'a str,
     script: RUMString,
 }
 
 pub fn script(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_SCRIPT);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 
     rumtk_web_render_html!(Script {
+        id,
         typ,
         script: RUMString::from(contents),
     })
