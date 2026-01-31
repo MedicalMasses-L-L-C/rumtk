@@ -29,7 +29,7 @@ use rumtk_core::strings::RUMString;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <{{element}} {{props.to_rumstring().replace('\\\\', '\\')|safe}} class='{{css_class}}'>{{data}}</{{element}}>
+        <{{element}} {{props.to_rumstring().replace(\"\\\\\", \"\\\")|safe}} class='{{css_class}}'>{{data}}</{{element}}>
     ",
     ext = "html"
 )]
