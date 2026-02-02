@@ -20,15 +20,15 @@
  */
 
 pub mod cli_utils {
-    use crate::core::RUMResult;
+    use crate::core::{RUMResult, RUMVec};
     use crate::strings::{rumtk_format, EscapeExceptions, RUMString};
     use crate::types::{RUMBuffer, RUMCLIParser};
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
     use std::num::NonZeroU16;
 
-    const BUFFER_SIZE: usize = 1024 * 4;
-    const BUFFER_CHUNK_SIZE: usize = 512;
+    pub const BUFFER_SIZE: usize = 1024 * 4;
+    pub const BUFFER_CHUNK_SIZE: usize = 512;
 
     pub static CLI_ESCAPE_EXCEPTIONS: EscapeExceptions =
         &[("\\n", "\n"), ("\\r", "\r"), ("\\\\", "\\")];
@@ -96,18 +96,59 @@ pub mod cli_utils {
         dry_run: bool,
     }
 
-    //TODO: Example + unit test with reading raw vs. reading text
+    ///
+    /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size
+    /// until no more bytes are present.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::cli::cli_utils::{read_stdin};
+    ///
+    /// let stdin_data = read_stdin().unwrap();
+    ///
+    /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
+    /// ```
+    ///
     pub fn read_stdin() -> RUMResult<RUMBuffer> {
         let mut stdin_lock = stdin().lock();
-        let mut stdin_buffer: Vec<u8> = Vec::with_capacity(BUFFER_SIZE);
+        let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
         let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
-        while s == BUFFER_CHUNK_SIZE {
-            s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
+
+        if s > 0 {
+            while s > 0 {
+                s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
+            }
+
+            return Ok(RUMBuffer::from(stdin_buffer));
         }
 
-        Ok(RUMBuffer::from(stdin_buffer))
+        Ok(RUMBuffer::default())
     }
 
+    ///
+    /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use std::io::stdin;
+    /// use std::io::prelude::*;
+    /// use std::process::{Command, Stdio};
+    /// use rumtk_core::cli::cli_utils::{read_some_stdin, BUFFER_SIZE, BUFFER_CHUNK_SIZE};
+    ///
+    /// let mut stdin_lock = stdin().lock();
+    /// let mut stdin_buffer: Vec<u8> = Vec::with_capacity(BUFFER_SIZE);
+    /// let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer).unwrap();
+    /// let mut totas_s = s;
+    /// while s > 0 {
+    ///    s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer).unwrap();
+    ///    totas_s += s;
+    /// }
+    ///
+    /// assert_eq!(totas_s, 0, "Returned data with {} size even though we expected 0 bytes!", totas_s)
+    /// ```
+    ///
     pub fn read_some_stdin(input: &mut StdinLock, buf: &mut BufferSlice) -> RUMResult<usize> {
         let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
         match input.read(&mut chunk) {
