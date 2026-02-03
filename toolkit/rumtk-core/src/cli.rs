@@ -115,15 +115,11 @@ pub mod cli_utils {
         let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
         let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
 
-        if s > 0 {
-            while s > 0 {
-                s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
-            }
-
-            return Ok(RUMBuffer::from(stdin_buffer));
+        while s > 0 {
+            s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
         }
 
-        Ok(RUMBuffer::default())
+        Ok(RUMBuffer::from(stdin_buffer))
     }
 
     ///
@@ -153,7 +149,9 @@ pub mod cli_utils {
         let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
         match input.read(&mut chunk) {
             Ok(s) => {
-                buf.extend_from_slice(&chunk);
+                if s > 0 {
+                    buf.extend_from_slice(&chunk[0..s]);
+                }
                 Ok(s)
             }
             Err(e) => Err(rumtk_format!("Error reading stdin chunk because {}!", e)),

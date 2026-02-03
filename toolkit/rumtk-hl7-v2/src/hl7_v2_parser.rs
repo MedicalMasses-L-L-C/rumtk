@@ -95,7 +95,7 @@ pub mod v2_parser {
     /// ```
     ///
     #[pyclass]
-    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Component {
         component: V2String,
     }
@@ -213,7 +213,7 @@ pub mod v2_parser {
     ///```
     ///
     #[pyclass]
-    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -307,7 +307,7 @@ pub mod v2_parser {
     /// ```
     ///
     #[pyclass]
-    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Segment {
         name: RUMString,
         description: RUMString,
@@ -439,7 +439,7 @@ pub mod v2_parser {
     pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
 
     #[pyclass]
-    #[derive(Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,
@@ -449,6 +449,15 @@ pub mod v2_parser {
         pub fn from_str(raw_msg: &str) -> Self {
             Self::try_from_str(raw_msg).expect("If calls to from_str are failing for V2Message, consider using try_from_str or the TryFrom trait! You should not see this message.")
         }
+
+        ///
+        /// Attempts to parse incoming raw HL7 v2 message into an instance of [V2Message](V2Message).
+        ///
+        /// ## Example
+        ///
+        /// ```
+        /// ```
+        ///
         pub fn try_from_str(raw_msg: &str) -> V2Result<Self> {
             let clean_msg = V2Message::sanitize(raw_msg);
             let segment_tokens = V2Message::tokenize_segments(clean_msg.as_str());
@@ -462,6 +471,12 @@ pub mod v2_parser {
             })
         }
 
+        ///
+        /// Generates a raw V2 message from a [V2Message](V2Message) instance. Do keep in mind that
+        /// printing this generated message in Unix will look as if the message was not parsed correctly
+        /// but this is an artefact of following the standard and forcing all linefeed characters into
+        /// carriage return characters as terminator.
+        ///
         pub fn to_string(&self) -> V2String {
             let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
             for segment_key in self.segment_groups.keys() {
@@ -573,13 +588,44 @@ pub mod v2_parser {
             Err("No MSH segment found! The message is malformed or incomplete!".to_rumstring())
         }
 
-        pub fn sanitize(raw_message: &str) -> RUMString {
-            let rr_string = raw_message.replace("\n", "\r");
-            let mut n_string = rr_string.replace("\r\r", "\r");
-            while n_string.contains("\r\r") {
-                n_string = n_string.replace("\r\r", "\r");
+        ///
+        /// Sanitizes incoming raw HL7 V2 message. In particular, this method ensures that the message
+        /// only contains [V2_SEGMENT_TERMINATOR](V2_SEGMENT_TERMINATOR) as the newline terminator
+        /// instead of a mixture of `\r\r`, `\r\n`, and `\n`.
+        ///
+        /// ## Example
+        ///
+        /// ```
+        /// use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
+        ///
+        /// const RAW_MSG: &str = r"MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO
+        /// PID|1||PATID14567^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Hernandez^Maria^^^^^L||19880906|F||2054-5^Black or   African American^HL70005|3248 E  FlorenceAve^^Huntington Park^CA^90255^^H||^^PH^^^323^5825421|||||||||H^Hispanic or Latino^HL70189
+        /// ORC|NW|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130116090021-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
+        /// OBR|1|ORD231-1^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||34555-3^Creatinine 24H renal clearance panel^LN^^^^^^CreatinineClearance|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
+        /// DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2
+        /// DG1|2||O10.93^Unspecified pre-existing hypertension complicating the puerperium^I10C^^^^^^Pregnancy with chronic hypertension|||W|||||||||1
+        /// OBX|1|CWE|67471-3^Pregnancy status^LN^1903^Pregnancy status^99USL^2.44^^Isthe patient pregnant?||Y^Yes^HL70136^1^Yes, confirmed less than 12 weeks^99USL^2.5.1^^early pregnancy (pre 12 weeks)||||||O|||20130115|||||||||||||||SCI
+        /// OBX|2|NM|3167-4^Volume of   24   hour Urine^LN^1904^Urine Volume of 24 hour collection^99USL^2.44^^Urine Volume 24hour collection||1250|mL^milliliter^UCUM^ml^mililiter^L^1.7^^ml|||||O|||20130116|||||||||||||||SCI
+        /// OBX|3|NM|3141-9^Body weight Measured^LN^BWm^Body weight Measured^99USL^2.44^^patient weight measured in kg||59.5|kg^kilogram^UCUM|||||O|||20130116|||||||||||||||SCI
+        /// SPM|1|S-2312987-1&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||276833005^24 hour urine sample (specimen)^SCT^UR24H^24hr Urine^99USL^^^24 hour urine|||||||||||||201301151130-0800^201301160912-0800
+        /// SPM|2|S-2312987-2&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||119297000^Blood Specimen^SCT|||||||||||||201301160912-0800ORC|NW|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO|||||||20130115102146-0800|||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
+        /// OBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
+        /// DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
+        ///
+        /// let sanitized = V2Message::sanitize(RAW_MSG);
+        ///
+        /// assert_ne!(sanitized, RAW_MSG, "V2Message's sanitize method did not change newlines into carriage return characters. \\n {} vs. \\r {}", RAW_MSG.contains("\n"), sanitized.contains("\r"));
+        /// assert_eq!(sanitized, RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
+        /// ```
+        ///
+        pub fn sanitize(raw_message: &str) -> V2String {
+            let mut rr_string = raw_message.replace("\n", "\r");
+
+            while rr_string.contains("\r\r") {
+                rr_string = rr_string.replace("\r\r", "\r");
             }
-            n_string.to_rumstring()
+
+            rr_string.to_rumstring()
         }
 
         pub fn tokenize_segments(raw_message: &str) -> Vec<&str> {
