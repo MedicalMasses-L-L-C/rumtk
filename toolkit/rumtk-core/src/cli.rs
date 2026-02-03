@@ -190,10 +190,10 @@ pub mod macros {
     /// # Example
     /// ```
     /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMBuffer;
     /// use rumtk_core::rumtk_read_stdin;
     ///
-    /// fn test_read_stdin() -> RUMResult<RUMString> {
+    /// fn test_read_stdin() -> RUMResult<RUMBuffer> {
     ///     rumtk_read_stdin!()
     /// }
     ///

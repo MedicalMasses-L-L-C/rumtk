@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-hl7-v2-parse"
 description = "HL7 V2 Parser utility based on the RUMTK framework."
-version = "0.1.3"
+version = "0.1.4"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 homepage = "https://github.com/kiseitai3/rumtk/tree/main/toolkit/rumtk-v2-parse"
@@ -14,5 +14,5 @@ rust-version = "1.81.0"
 
 [dependencies]
 rumtk-core = { version = "0.11.8", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.8.11", path = "../rumtk-hl7-v2" }
+rumtk-hl7-v2 = { version = "0.8.12", path = "../rumtk-hl7-v2" }
 clap = { version = "4.5.38", features = ["derive"] }
