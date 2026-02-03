@@ -23,8 +23,12 @@
 /// This module provides all the primitives needed to build a multithreaded application.
 ///
 pub mod thread_primitives {
-    use crate::cache::{new_cache, LazyRUMCache};
+    use crate::core::RUMResult;
+    use crate::strings::rumtk_format;
     use std::sync::Arc;
+    pub use std::sync::Mutex as SyncMutex;
+    pub use std::sync::MutexGuard as SyncMutexGuard;
+    pub use std::sync::RwLock as SyncRwLock;
     pub use tokio::io;
     pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::runtime::Runtime as TokioRuntime;
@@ -32,25 +36,35 @@ pub mod thread_primitives {
         Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock, RwLockReadGuard,
         RwLockWriteGuard,
     };
+
+    pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
+    /**************************** Types ***************************************/
+    pub type SafeTokioRuntime = Arc<SyncMutex<TokioRuntime>>;
     /**************************** Globals **************************************/
-    pub static mut RT_CACHE: TokioRtCache = new_cache();
+    pub static mut DEFAULT_RUNTIME: Option<SafeTokioRuntime> = None;
     /**************************** Helpers ***************************************/
-    pub fn init_cache(threads: &usize) -> SafeTokioRuntime {
-        let mut builder = tokio::runtime::Builder::new_multi_thread();
-        builder.worker_threads(*threads);
-        builder.enable_all();
-        match builder.build() {
-            Ok(handle) => Arc::new(handle),
-            Err(e) => panic!(
-                "Unable to initialize threading tokio runtime because {}!",
-                &e
-            ),
+    pub fn init_runtime(workers: usize) -> RUMResult<RuntimeGuard<'static>> {
+        unsafe {
+            match DEFAULT_RUNTIME {
+                Some(ref runtime) => Ok(runtime.lock().unwrap()),
+                None => {
+                    let mut builder = tokio::runtime::Builder::new_multi_thread();
+                    builder.worker_threads(workers);
+                    builder.enable_all();
+                    match builder.build() {
+                        Ok(handle) => {
+                            DEFAULT_RUNTIME.replace(Arc::new(SyncMutex::new(handle)));
+                            init_runtime(workers)
+                        }
+                        Err(e) => Err(rumtk_format!(
+                            "Unable to initialize threading tokio runtime because {}!",
+                            &e
+                        )),
+                    }
+                }
+            }
         }
     }
-
-    /**************************** Types ***************************************/
-    pub type SafeTokioRuntime = Arc<TokioRuntime>;
-    pub type TokioRtCache = LazyRUMCache<usize, SafeTokioRuntime>;
 }
 
 pub mod threading_manager {
@@ -167,7 +181,7 @@ pub mod threading_manager {
         R: Sync + Send + Clone + 'static,
     {
         ///
-        /// This method creates a [`TaskQueue`] instance using sensible defaults.
+        /// This method creates a [`TaskManager`] instance using sensible defaults.
         ///
         /// The `threads` field is computed from the number of cores present in system.
         ///
@@ -176,12 +190,12 @@ pub mod threading_manager {
         }
 
         ///
-        /// Creates an instance of [`ThreadedTaskQueue<T, R>`] in the form of [`SafeThreadedTaskQueue<T, R>`].
+        /// Creates an instance of [`TaskManager<R>`].
         /// Expects you to provide the count of threads to spawn and the microtask queue size
         /// allocated by each thread.
         ///
-        /// This method calls [`Self::with_capacity()`] for the actual object creation.
-        /// The main queue capacity is pre-allocated to [`DEFAULT_QUEUE_CAPACITY`].
+        /// This method calls [`TaskTable::with_capacity()`](TaskTable::with_capacity) for the actual object creation.
+        /// The main queue capacity is pre-allocated to [`DEFAULT_TASK_CAPACITY`].
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
             let tasks = SafeSyncTaskTable::<R>::new(SyncRwLock::new(TaskTable::with_capacity(
@@ -209,7 +223,7 @@ pub mod threading_manager {
         }
 
         ///
-        /// See [add_task](Self::add_task)
+        /// See [`Self::add_task_async`]
         ///
         /// Unlike `add_task`, this method does not block which is key to avoiding panicking
         /// the tokio runtim if trying to add task to queue from a normal function called from an
@@ -249,30 +263,30 @@ pub mod threading_manager {
         ///
         /// ```
         ///
-        pub fn spawn_task<F>(&mut self, task: F) -> TaskID
+        pub fn spawn_task<F>(&mut self, task: F) -> RUMResult<TaskID>
         where
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let rt = rumtk_init_threads!(&self.workers);
+            let rt = rumtk_init_threads!(self.workers)?;
             rumtk_spawn_task!(
                 rt,
                 Self::_add_task_async(id.clone(), self.tasks.clone(), task)
             );
-            id
+            Ok(id)
         }
 
         ///
-        /// See [add_task](Self::add_task)
+        /// See [add_task_async](Self::add_task_async)
         ///
-        pub fn add_task<F>(&mut self, task: F) -> TaskID
+        pub fn add_task<F>(&mut self, task: F) -> RUMResult<TaskID>
         where
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let rt = rumtk_init_threads!(&self.workers);
-            rumtk_resolve_task!(rt, self.add_task_async(task))
+            let rt = rumtk_init_threads!(self.workers)?;
+            Ok(rumtk_resolve_task!(rt, self.add_task_async(task)))
         }
 
         async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
@@ -457,7 +471,10 @@ pub mod threading_manager {
         /// ```
         ///
         pub fn is_all_completed(&self) -> bool {
-            let rt = rumtk_init_threads!(&self.workers);
+            let rt = match rumtk_init_threads!(self.workers) {
+                Ok(rt) => rt,
+                Err(_) => return true,
+            };
             rumtk_resolve_task!(rt, TaskManager::<R>::is_all_completed_async(self))
         }
 
@@ -605,21 +622,14 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_init_threads {
         ( ) => {{
-            use $crate::rumtk_cache_fetch;
-            use $crate::threading::thread_primitives::{init_cache, RT_CACHE};
+            use $crate::threading::thread_primitives::init_runtime;
             use $crate::threading::threading_functions::get_default_system_thread_count;
-            let rt = rumtk_cache_fetch!(
-                &mut RT_CACHE,
-                &get_default_system_thread_count(),
-                init_cache
-            );
-            rt
+            init_runtime(get_default_system_thread_count())
         }};
         ( $threads:expr ) => {{
             use $crate::rumtk_cache_fetch;
-            use $crate::threading::thread_primitives::{init_cache, RT_CACHE};
-            let rt = rumtk_cache_fetch!(&raw mut RT_CACHE, $threads, init_cache);
-            rt
+            use $crate::threading::thread_primitives::init_runtime;
+            init_runtime($threads)
         }};
     }
 
@@ -634,7 +644,7 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_spawn_task {
         ( $func:expr ) => {{
-            let rt = rumtk_init_threads!();
+            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             rt.spawn($func)
         }};
         ( $rt:expr, $func:expr ) => {{
@@ -756,7 +766,7 @@ pub mod threading_macros {
     }
 
     ///
-    /// Creates an instance of [SafeTaskArgs] with the arguments passed.
+    /// Creates an instance of [SafeTaskArgs](SafeTaskArgs) with the arguments passed.
     ///
     /// ## Note
     ///
@@ -891,26 +901,20 @@ pub mod threading_macros {
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
-            let rt = rumtk_init_threads!();
+            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             let task = rumtk_create_task!($func);
             rumtk_resolve_task!(&rt, task)
         }};
         ($func:expr, $args:expr ) => {{
-            use tokio::sync::RwLock;
-            use $crate::{
-                rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
-            };
-            let rt = rumtk_init_threads!();
-            let args = SafeTaskArgs::new(RwLock::new($args));
-            let task = rumtk_create_task!($func, args);
-            rumtk_resolve_task!(&rt, task)
+            use $crate::threading::threading_functions::get_default_system_thread_count;
+            rumtk_exec_task!($func, $args, get_default_system_thread_count())
         }};
         ($func:expr, $args:expr , $threads:expr ) => {{
             use tokio::sync::RwLock;
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
-            let rt = rumtk_init_threads!(&$threads);
+            let rt = rumtk_init_threads!($threads).expect("Runtime is not initialized!");
             let args = SafeTaskArgs::new(RwLock::new($args));
             let task = rumtk_create_task!($func, args);
             rumtk_resolve_task!(&rt, task)

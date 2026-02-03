@@ -844,7 +844,7 @@ pub mod mllp_v2_helpers {
         policy: MLLP_FILTER_POLICY,
         server: bool,
     ) -> RUMResult<SafeAsyncMLLP> {
-        let rt = rumtk_init_threads!();
+        let rt = rumtk_init_threads!()?;
         let ip = RUMString::from(ip);
         let result = rumtk_resolve_task!(&rt, AsyncMLLP::new(&ip, port, policy, server));
         Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
@@ -957,7 +957,7 @@ pub mod mllp_v2_api {
             use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
             use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
             use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!();
+            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             match rumtk_resolve_task!(&rt, AsyncMLLP::local($port, $policy, false)) {
                 Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
                 Err(e) => Err(e),
@@ -967,7 +967,7 @@ pub mod mllp_v2_api {
             use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
             use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
             use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!();
+            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             match rumtk_resolve_task!(&rt, AsyncMLLP::new($ip, $port, $policy, false)) {
                 Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
                 Err(e) => Err(e),

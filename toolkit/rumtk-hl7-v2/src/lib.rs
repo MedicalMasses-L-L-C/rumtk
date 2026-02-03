@@ -55,7 +55,7 @@ mod tests {
     use crate::{
         rumtk_v2_find_component, rumtk_v2_generate_message, rumtk_v2_mllp_connect,
         rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_iter_channels,
-        rumtk_v2_mllp_listen, rumtk_v2_mllp_send, rumtk_v2_parse_message,
+        rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
@@ -1060,18 +1060,21 @@ mod tests {
                 rumtk_sleep!(1);
                 client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
             }
-            let client_id = client_ids.get(0).unwrap();
+            let client_id = client_ids.get(0).unwrap().clone();
 
             println!("{}", &client_id);
-            Ok(RUMString::default())
-            //Ok(rumtk_v2_mllp_receive!(&safe_listener, client_id)?)
+            Ok(rumtk_v2_mllp_receive!(&safe_listener, client_id)?)
         });
 
         let send_h = thread::spawn(|| -> RUMResult<()> {
-            rumtk_sleep!(1);
             let message = RUMString::new("Hello World");
             let safe_client = rumtk_v2_mllp_connect!(PORT, MLLP_FILTER_POLICY::NONE).unwrap();
-            Ok(rumtk_v2_mllp_send!(&safe_client, "", message.clone())?)
+            let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_client);
+            Ok(rumtk_v2_mllp_send!(
+                &safe_client,
+                rumtk_format!("{}:{}", ip, port),
+                message.clone()
+            )?)
         });
 
         send_h

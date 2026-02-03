@@ -29,7 +29,6 @@ pub mod tcp {
     use crate::core::RUMResult;
     use crate::strings::{rumtk_format, RUMString};
     pub use crate::threading::thread_primitives::*;
-    use crate::threading::threading_functions::get_default_system_thread_count;
     use crate::threading::threading_manager::SafeTaskArgs;
     use crate::{
         rumtk_async_sleep, rumtk_create_task, rumtk_create_task_args, rumtk_init_threads,
@@ -747,12 +746,11 @@ pub mod tcp {
 
     ///
     /// Handle struct containing a reference to the global Tokio runtime and an instance of
-    /// [SafeClient]. This handle allows sync codebases to interact with the async primitives built
+    /// [SafeClient](SafeClient). This handle allows sync codebases to interact with the async primitives built
     /// on top of Tokio. Specifically, this handle allows wrapping of the async connect, send, and
-    /// receive methods implemented in [RUMClient].
+    /// receive methods implemented in [RUMClient](RUMClient).
     ///
     pub struct RUMClientHandle {
-        runtime: SafeTokioRuntime,
         client: SafeClient,
     }
 
@@ -765,13 +763,12 @@ pub mod tcp {
         }
 
         pub fn new(ip: &str, port: u16) -> RUMResult<RUMClientHandle> {
-            let runtime = rumtk_init_threads!(&1);
+            let runtime = rumtk_init_threads!()?;
             let con: ConnectionInfo = (RUMString::from(ip), port);
             let args = rumtk_create_task_args!(con);
             let client = rumtk_wait_on_task!(&runtime, RUMClientHandle::new_helper, &args)?;
             Ok(RUMClientHandle {
                 client: SafeClient::new(AsyncRwLock::new(client)),
-                runtime: runtime.clone(),
             })
         }
 
@@ -779,25 +776,31 @@ pub mod tcp {
         /// Queues a message send via the tokio runtime.
         ///
         pub fn send(&mut self, msg: &RUMNetMessage) -> RUMResult<()> {
+            let runtime = rumtk_init_threads!()?;
             let mut client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!((client_ref, msg));
-            rumtk_wait_on_task!(&self.runtime, RUMClientHandle::send_helper, &args)
+            rumtk_wait_on_task!(&runtime, RUMClientHandle::send_helper, &args)
         }
 
         ///
         /// Checks if there are any messages received by the [RUMClient] via the tokio runtime.
         ///
         pub fn receive(&mut self) -> RUMResult<RUMNetMessage> {
+            let runtime = rumtk_init_threads!()?;
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
-            rumtk_wait_on_task!(&self.runtime, RUMClientHandle::receive_helper, &args)
+            rumtk_wait_on_task!(&runtime, RUMClientHandle::receive_helper, &args)
         }
 
         /// Returns the peer address:port as a string.
         pub fn get_address(&self) -> Option<RUMString> {
+            let runtime = match rumtk_init_threads!() {
+                Ok(runtime) => runtime,
+                Err(_) => return None,
+            };
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
-            rumtk_wait_on_task!(&self.runtime, RUMClientHandle::get_address_helper, &args)
+            rumtk_wait_on_task!(&runtime, RUMClientHandle::get_address_helper, &args)
         }
 
         async fn send_helper(args: &SafeTaskArgs<ClientSendArgs<'_>>) -> RUMResult<()> {
@@ -855,7 +858,6 @@ pub mod tcp {
     /// own message.
     ///
     pub struct RUMServerHandle {
-        runtime: SafeTokioRuntime,
         server: SafeServer,
     }
 
@@ -865,36 +867,35 @@ pub mod tcp {
 
     impl RUMServerHandle {
         ///
-        /// Constructs a [RUMServerHandle] using the detected number of parallel units/threads on
+        /// Constructs a [RUMServerHandle](RUMServerHandle) using the detected number of parallel units/threads on
         /// this machine. This method automatically binds to IP 0.0.0.0. Meaning, your server may
         /// become visible to the outside world.
         ///
         pub fn default(port: u16) -> RUMResult<RUMServerHandle> {
-            RUMServerHandle::new(ANYHOST, port, get_default_system_thread_count())
+            RUMServerHandle::new(ANYHOST, port)
         }
 
         ///
-        /// Constructs a [RUMServerHandle] using the detected number of parallel units/threads on
+        /// Constructs a [RUMServerHandle](RUMServerHandle) using the detected number of parallel units/threads on
         /// this machine. This method automatically binds to **localhost**. Meaning, your server
         /// remains private in your machine.
         ///
         pub fn default_local(port: u16) -> RUMResult<RUMServerHandle> {
-            RUMServerHandle::new(LOCALHOST, port, get_default_system_thread_count())
+            RUMServerHandle::new(LOCALHOST, port)
         }
 
         ///
-        /// General purpose constructor for [RUMServerHandle]. It takes an ip and port and binds it.
+        /// General purpose constructor for [RUMServerHandle](RUMServerHandle). It takes an ip and port and binds it.
         /// You can also control how many threads are spawned under the hood for this server handle.
         ///
-        pub fn new(ip: &str, port: u16, threads: usize) -> RUMResult<RUMServerHandle> {
-            let runtime = rumtk_init_threads!(&threads);
+        pub fn new(ip: &str, port: u16) -> RUMResult<RUMServerHandle> {
+            let runtime = rumtk_init_threads!()?;
             let con: ConnectionInfo = (RUMString::from(ip), port);
             let args = rumtk_create_task_args!(con);
             let task_result = rumtk_wait_on_task!(&runtime, RUMServerHandle::new_helper, &args)?;
             let server = task_result;
             Ok(RUMServerHandle {
                 server: Arc::new(AsyncRwLock::new(server)),
-                runtime: runtime.clone(),
             })
         }
 
@@ -904,12 +905,13 @@ pub mod tcp {
         /// shipped to clients. You can start the server in a blocking and non_blocking manner.
         ///
         pub fn start(&mut self, blocking: bool) -> RUMResult<()> {
+            let runtime = rumtk_init_threads!()?;
             let args = rumtk_create_task_args!(Arc::clone(&mut self.server));
             let task = rumtk_create_task!(RUMServerHandle::start_helper, args);
             if blocking {
-                rumtk_resolve_task!(&self.runtime, task);
+                rumtk_resolve_task!(&runtime, task);
             } else {
-                rumtk_spawn_task!(&self.runtime, task);
+                rumtk_spawn_task!(&runtime, task);
             }
             Ok(())
         }
@@ -918,24 +920,23 @@ pub mod tcp {
         /// Sync API method for signalling the server to stop operations.
         ///
         pub fn stop(&mut self) -> RUMResult<RUMString> {
+            let runtime = rumtk_init_threads!()?;
             let args = rumtk_create_task_args!(Arc::clone(&mut self.server));
-            rumtk_wait_on_task!(&self.runtime, RUMServerHandle::stop_helper, &args)
+            rumtk_wait_on_task!(&runtime, RUMServerHandle::stop_helper, &args)
         }
 
         ///
         /// Sync API method for queueing a message to send a client on the server.
         ///
         pub fn send(&mut self, client_id: &RUMString, msg: &RUMNetMessage) -> RUMResult<()> {
+            let runtime = rumtk_init_threads!()?;
             let args = rumtk_create_task_args!((
                 Arc::clone(&mut self.server),
                 client_id.clone(),
                 msg.clone()
             ));
             let task = rumtk_create_task!(RUMServerHandle::send_helper, args);
-            match rumtk_resolve_task!(
-                self.runtime.clone(),
-                rumtk_spawn_task!(self.runtime.clone(), task)
-            ) {
+            match rumtk_resolve_task!(runtime, rumtk_spawn_task!(runtime, task)) {
                 Ok(_) => Ok(()),
                 Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
             }
@@ -948,9 +949,10 @@ pub mod tcp {
         /// Returns the next available [RUMNetMessage]
         ///
         pub fn receive(&mut self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
+            let runtime = rumtk_init_threads!()?;
             let args = rumtk_create_task_args!((Arc::clone(&mut self.server), client_id.clone()));
             let task = rumtk_create_task!(RUMServerHandle::receive_helper, args);
-            match rumtk_resolve_task!(self.runtime.clone(), rumtk_spawn_task!(self.runtime, task)) {
+            match rumtk_resolve_task!(runtime, rumtk_spawn_task!(runtime, task)) {
                 Ok(msg) => msg,
                 Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
             }
@@ -960,27 +962,36 @@ pub mod tcp {
         /// Sync API method for obtaining the client list of the server.
         ///
         pub fn get_clients(&self) -> ClientList {
+            let runtime = match rumtk_init_threads!() {
+                Ok(runtime) => runtime,
+                Err(_) => return ClientList::default(),
+            };
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
             let task = rumtk_create_task!(RUMServerHandle::get_clients_helper, args);
-            rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task)).unwrap()
+            rumtk_resolve_task!(&runtime, rumtk_spawn_task!(&runtime, task)).unwrap()
         }
 
         ///
         /// Sync API method for obtaining the client list of the server.
         ///
         pub fn get_client_ids(&self) -> ClientIDList {
+            let runtime = match rumtk_init_threads!() {
+                Ok(runtime) => runtime,
+                Err(_) => return ClientIDList::default(),
+            };
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
             let task = rumtk_create_task!(RUMServerHandle::get_client_ids_helper, args);
-            rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task)).unwrap()
+            rumtk_resolve_task!(&runtime, rumtk_spawn_task!(&runtime, task)).unwrap()
         }
 
         ///
         /// Garbage Collection API method for dropping clients flagged as disconnected.
         ///
         pub fn gc_clients(&self) -> RUMResult<()> {
+            let runtime = rumtk_init_threads!()?;
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
             let task = rumtk_create_task!(RUMServerHandle::gc_clients_helper, args);
-            match rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task)) {
+            match rumtk_resolve_task!(&runtime, rumtk_spawn_task!(&runtime, task)) {
                 Ok(_) => Ok(()),
                 Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
             }
@@ -990,9 +1001,13 @@ pub mod tcp {
         /// Get the Address:Port info for this socket.
         ///
         pub fn get_address_info(&self) -> Option<RUMString> {
+            let runtime = match rumtk_init_threads!() {
+                Ok(runtime) => runtime,
+                Err(_) => return None,
+            };
             let args = rumtk_create_task_args!(Arc::clone(&self.server));
             let task = rumtk_create_task!(RUMServerHandle::get_address_helper, args);
-            rumtk_resolve_task!(&self.runtime, rumtk_spawn_task!(&self.runtime, task))
+            rumtk_resolve_task!(&runtime, rumtk_spawn_task!(&runtime, task))
                 .expect("Expected an address:port for this client.")
         }
 
