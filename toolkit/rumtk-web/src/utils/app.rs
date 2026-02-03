@@ -181,8 +181,9 @@ pub fn app_main(
         &args.skip_default_css | skip_default_css
     );
 
-    let rt = rumtk_init_threads!(&args.threads);
     rumtk_web_init_job_manager!(&args.threads);
+    let rt = rumtk_init_threads!(args.threads)
+        .expect("Failed to initialize the tokio runtime for the website.");
     let task = run_app(&args, skip_serve);
     rumtk_resolve_task!(rt, task);
 }

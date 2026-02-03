@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn test_execute_job() {
-        let rt = rumtk_init_threads!();
+        let rt = rumtk_init_threads!().unwrap();
         let expected = vec![1, 2, 3];
         let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
@@ -329,7 +329,7 @@ mod tests {
 
     #[test]
     fn test_execute_job_macros() {
-        let rt = rumtk_init_threads!();
+        let rt = rumtk_init_threads!().unwrap();
         let expected = vec![1, 2, 3];
         let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
@@ -479,7 +479,7 @@ mod tests {
     #[test]
     fn test_server_send() {
         let msg = RUMString::from("Hello World!");
-        let mut server = match rumtk_create_server!(LOCALHOST, 0, 1) {
+        let mut server = match rumtk_create_server!(LOCALHOST, 0) {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };

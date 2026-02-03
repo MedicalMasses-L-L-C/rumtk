@@ -1131,12 +1131,7 @@ pub mod tcp_macros {
         }};
         ( $ip:expr, $port:expr ) => {{
             use $crate::net::tcp::RUMServerHandle;
-            use $crate::threading::threading_functions::get_default_system_thread_count;
-            RUMServerHandle::new($ip, $port, get_default_system_thread_count())
-        }};
-        ( $ip:expr, $port:expr, $threads:expr ) => {{
-            use $crate::net::tcp::RUMServerHandle;
-            RUMServerHandle::new($ip, $port, $threads)
+            RUMServerHandle::new($ip, $port)
         }};
     }
 
