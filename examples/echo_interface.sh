@@ -39,7 +39,7 @@ DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/echo_interface/ou
 
 echo "Clean up"
 pkill -i -e -f rumtk-v2-interface
-rm -r demo/echo_interface
+#rm -r demo/echo_interface
 
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"

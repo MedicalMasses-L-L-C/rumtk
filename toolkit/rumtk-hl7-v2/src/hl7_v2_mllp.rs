@@ -644,7 +644,7 @@ pub mod mllp_v2 {
         ///
         /// Handles the actual logic for receiving messages.
         ///
-        /// * If the message is an [ACK] or [NACK], ignore since that is weird and nonesensical.
+        /// * If the message is an [ACK] or [NACK], ignore since that is weird and nonsensical.
         ///     Remember, [AsyncMLLP::wait_for_send_ack] loop inside [AsyncMLLP::send_message]
         ///     already polls the transmission queue for the presence of acks.
         /// * If the message is not empty, return it out.
@@ -856,15 +856,18 @@ pub mod mllp_v2_helpers {
 /// away details concerning MLLP message processing while maintaining async internals wherever
 /// possible for performance reasons. I think this should keep the complexity for users lower than
 /// if they had to manually import the types and manage the messages. With that said, consider
-/// using the types in [crate::hl7_v2_mllp::mllp_v2] if your needs are not currently met by this
+/// using the types in [mllp_v2](crate::hl7_v2_mllp::mllp_v2) if your needs are not currently met by this
 /// module's architecture.
 ///
 /// As you will see, most of the macros here provide an interface to the async primitives for sync
-/// code contexts. Only [rumtk_v2_mllp_listen] and [rumtk_v2_mllp_connect] are universally useful.
-/// Meaning, both sync and async code can use since they build instances of [SafeAsyncMLLP].
+/// code contexts. Only [rumtk_v2_mllp_listen](crate::rumtk_v2_mllp_listen) and
+/// [rumtk_v2_mllp_connect](crate::rumtk_v2_mllp_connect) are universally useful.
+/// Meaning, both sync and async code can use since they build instances of
+/// [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
 /// The MLLP instances already have the interface ready to be consumed in the pure async context.
-/// [crate::hl7_v2_mllp::mllp_v2] provides the async equivalent to [SafeMLLPChannel] in the form of
-/// [SafeAsyncMLLPChannel].
+/// [mllp_v2](crate::hl7_v2_mllp::mllp_v2) provides the async equivalent to
+/// [SafeMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeMLLPChannel) in the form of
+/// [SafeAsyncMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel).
 ///
 pub mod mllp_v2_api {
     ///
