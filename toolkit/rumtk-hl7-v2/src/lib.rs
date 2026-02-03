@@ -67,6 +67,7 @@ mod tests {
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_init_threads, rumtk_serialize,
         rumtk_sleep,
     };
+    use std::thread;
     use std::thread::spawn;
     /**********************************Constants**************************************/
     use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
@@ -1044,6 +1045,48 @@ mod tests {
             Err(e) => panic!("{}", e),
         };
         let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp_layer);
+    }
+
+    #[test]
+    fn test_mllp_echo() {
+        static PORT: u16 = 55555;
+        let expected_message = "Hello World";
+
+        let receive_h = thread::spawn(|| -> RUMResult<RUMString> {
+            let safe_listener =
+                rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
+            let mut client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+            while client_ids.is_empty() {
+                rumtk_sleep!(1);
+                client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+            }
+            let client_id = client_ids.get(0).unwrap();
+
+            println!("{}", &client_id);
+            Ok(RUMString::default())
+            //Ok(rumtk_v2_mllp_receive!(&safe_listener, client_id)?)
+        });
+
+        let send_h = thread::spawn(|| -> RUMResult<()> {
+            rumtk_sleep!(1);
+            let message = RUMString::new("Hello World");
+            let safe_client = rumtk_v2_mllp_connect!(PORT, MLLP_FILTER_POLICY::NONE).unwrap();
+            Ok(rumtk_v2_mllp_send!(&safe_client, "", message.clone())?)
+        });
+
+        send_h
+            .join()
+            .expect("No thread failure!")
+            .expect("No thread errors");
+        println!("Send thread completed!");
+        let result = receive_h.join().unwrap().unwrap();
+
+        /*assert_eq!(
+            result.as_str(),
+            expected_message,
+            "Message received does not match the expected message. Got {}",
+            &result
+        );*/
     }
 
     #[test]

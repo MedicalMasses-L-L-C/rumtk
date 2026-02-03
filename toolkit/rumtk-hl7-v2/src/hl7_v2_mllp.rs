@@ -217,18 +217,18 @@ pub mod mllp_v2 {
     /// Acknowledgement.
     ///
     /// Defaults to 30
-    pub const TIMEOUT_SOURCE: u8 = 30;
+    pub const TIMEOUT_SOURCE: u32 = 30000;
     /// Timout step interval between checks for ACK. If we reach [TIMEOUT_SOURCE], give up and mark
     /// no ACK received.
-    pub const TIMEOUT_STEP_SOURCE: u8 = 1;
+    pub const TIMEOUT_STEP_SOURCE: f32 = 0.001;
     /// It is recommended that the Destination use a timeout that is at least
     /// twice as high as the Source's timeout (e.g. 40 seconds or more) before flushing its inbound
     /// buffer.
     ///
     /// Defaults to 60
-    pub const TIMEOUT_DESTINATION: u8 = 60;
+    pub const TIMEOUT_DESTINATION: u32 = 60000;
     /// Same as [TIMEOUT_STEP_SOURCE], but with a cut off relative to [TIMEOUT_DESTINATION].
-    pub const TIMEOUT_STEP_DESTINATION: u8 = 1;
+    pub const TIMEOUT_STEP_DESTINATION: f32 = 0.001;
     /// Start Block character (1 byte). ASCII <VT>, i.e., <0x0B>.
     /// This should not be confused with the ASCII characters SOH or STX.
     pub const SB: u8 = 0x0b;
@@ -542,11 +542,11 @@ pub mod mllp_v2 {
 
         ///
         /// Attempts to send a message and then waits for a response.
-        /// This method returns successfully if neither the response is a [NACK] nor the timeout
-        /// [TIMEOUT_SOURCE] is reached.
+        /// This method returns successfully if neither the response is a [NACK](NACK) nor the timeout
+        /// [TIMEOUT_SOURCE](TIMEOUT_SOURCE) is reached.
         ///
-        /// We reattempt sending the message every [TIMEOUT_STEP_SOURCE] seconds until we receive
-        /// a valid response or reach the maximum timeout defined in [TIMEOUT_SOURCE].
+        /// We reattempt sending the message every [TIMEOUT_STEP_SOURCE](TIMEOUT_STEP_SOURCE) seconds until we receive
+        /// a valid response or reach the maximum timeout defined in [TIMEOUT_SOURCE](TIMEOUT_SOURCE).
         ///
         pub async fn send_message(&mut self, message: &str, endpoint: &RUMString) -> RUMResult<()> {
             let mut last_error = RUMString::new("");
@@ -573,11 +573,11 @@ pub mod mllp_v2 {
         /// Handles send acknowledgement logic.
         /// After sending a message, we expect an [ACK] or [NACK] response.
         ///
-        /// * If [ACK] is received, we kill the timeout loop and return true.
-        /// * If [NACK] is received, we kill the timeout loop and return an Error making it clear
+        /// * If [ACK](ACK) is received, we kill the timeout loop and return true.
+        /// * If [NACK](NACK) is received, we kill the timeout loop and return an Error making it clear
         ///     there was a response but the target had issues processing it.
-        /// * For all other cases, we sleep [TIMEOUT_STEP_SOURCE] seconds and check again for
-        ///     [TIMEOUT_SOURCE] times. Upon meeting this overall timeout, error out with message
+        /// * For all other cases, we sleep [TIMEOUT_STEP_SOURCE](TIMEOUT_STEP_SOURCE) seconds and check again for
+        ///     [TIMEOUT_SOURCE](TIMEOUT_SOURCE) times. Upon meeting this overall timeout, error out with message
         ///     explaining we reached the timeout.
         ///
         pub async fn wait_for_send_ack(&mut self, endpoint: &RUMString) -> RUMResult<bool> {
@@ -654,7 +654,7 @@ pub mod mllp_v2 {
         pub async fn wait_on_message(
             &mut self,
             endpoint: &RUMString,
-            timeout: u8,
+            timeout: u32,
         ) -> RUMResult<RUMString> {
             for i in 0..timeout {
                 let message = self.receive(endpoint).await?;
@@ -868,6 +868,40 @@ pub mod mllp_v2_helpers {
 /// [mllp_v2](crate::hl7_v2_mllp::mllp_v2) provides the async equivalent to
 /// [SafeMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeMLLPChannel) in the form of
 /// [SafeAsyncMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel).
+///
+/// ## Example
+///
+/// ```
+///     use std::thread;
+///     use rumtk_core::core::RUMResult;
+///     use rumtk_core::rumtk_sleep;
+///     use rumtk_core::strings::{rumtk_format, RUMString};
+///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, MLLP_FILTER_POLICY};
+///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_send, rumtk_v2_mllp_receive, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port};
+///
+///     static port: u16 = 55555;
+///     let expected_message = "Hello World";
+///
+///     let receive_h = thread::spawn(|| -> RUMResult<RUMString> {
+///         let safe_listener = rumtk_v2_mllp_listen!(port, MLLP_FILTER_POLICY::NONE, true).unwrap();
+///         let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+///         let client_id = client_ids.get(0).unwrap().clone();
+///         Ok(rumtk_v2_mllp_receive!(&safe_listener, client_id)?)
+///     });
+///
+///     let send_h = thread::spawn(|| -> RUMResult<()> {
+///         //rumtk_sleep!();
+///         let message = RUMString::new("Hello World");
+///         let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
+///         Ok(rumtk_v2_mllp_send!(&safe_client, "", message.clone())?)
+///     });
+///
+///     send_h.join();
+///     println!("Send thread completed!");
+///     let result = receive_h.join().unwrap().unwrap();
+///
+///     assert_eq!(result.as_str(), expected_message, "Message received does not match the expected message. Got {}", &result);
+/// ```
 ///
 pub mod mllp_v2_api {
     ///
