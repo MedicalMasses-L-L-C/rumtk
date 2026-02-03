@@ -351,7 +351,6 @@ mod tests {
 
     #[test]
     fn test_execute_job_macros_one_line() {
-        let rt = rumtk_init_threads!();
         let expected = vec![1, 2, 3];
         let result = rumtk_exec_task!(
             async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
