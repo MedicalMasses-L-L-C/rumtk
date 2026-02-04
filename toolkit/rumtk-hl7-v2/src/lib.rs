@@ -60,8 +60,7 @@ mod tests {
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{
-        basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions,
-        StringUtils,
+        basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils,
     };
     use rumtk_core::{
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_serialize, rumtk_sleep,
@@ -1026,7 +1025,7 @@ mod tests {
             Ok(mllp_layer) => mllp_layer,
             Err(e) => panic!("{}", e),
         };
-        let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp_layer);
+        let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp_layer);
         let client_id = rumtk_exec_task!(async || -> RUMResult<RUMString> {
             Ok(mllp_layer.lock().await.get_address_info().await.unwrap())
         });
@@ -1054,10 +1053,10 @@ mod tests {
         let receive_h = thread::spawn(|| -> RUMResult<RUMString> {
             let safe_listener =
                 rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
-            let mut client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+            let mut client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener)?;
             while client_ids.is_empty() {
                 rumtk_sleep!(1);
-                client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+                client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener)?;
             }
             let client_id = client_ids.get(0).unwrap().clone();
 

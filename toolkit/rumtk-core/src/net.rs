@@ -767,7 +767,7 @@ pub mod tcp {
             let args = rumtk_create_task_args!(con);
             let client = rumtk_wait_on_task!(RUMClientHandle::new_helper, args)?;
             Ok(RUMClientHandle {
-                client: SafeClient::new(AsyncRwLock::new(client)),
+                client: SafeClient::new(AsyncRwLock::new(client?)),
             })
         }
 
@@ -777,7 +777,7 @@ pub mod tcp {
         pub fn send(&mut self, msg: RUMNetMessage) -> RUMResult<()> {
             let mut client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!((client_ref, msg));
-            rumtk_wait_on_task!(RUMClientHandle::send_helper, args.clone())
+            rumtk_wait_on_task!(RUMClientHandle::send_helper, args.clone())?
         }
 
         ///
@@ -786,7 +786,7 @@ pub mod tcp {
         pub fn receive(&mut self) -> RUMResult<RUMNetMessage> {
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
-            rumtk_wait_on_task!(RUMClientHandle::receive_helper, args.clone())
+            rumtk_wait_on_task!(RUMClientHandle::receive_helper, args.clone())?
         }
 
         /// Returns the peer address:port as a string.
@@ -794,6 +794,7 @@ pub mod tcp {
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
             rumtk_wait_on_task!(RUMClientHandle::get_address_helper, args.clone())
+                .unwrap_or_default()
         }
 
         async fn send_helper(args: SafeTaskArgs<ClientSendArgs<'_>>) -> RUMResult<()> {
@@ -881,7 +882,7 @@ pub mod tcp {
             let task_result = rumtk_wait_on_task!(RUMServerHandle::new_helper, &args)?;
             let server = task_result;
             Ok(RUMServerHandle {
-                server: Arc::new(AsyncRwLock::new(server)),
+                server: Arc::new(AsyncRwLock::new(server?)),
             })
         }
 
@@ -906,7 +907,7 @@ pub mod tcp {
         ///
         pub fn stop(&mut self) -> RUMResult<RUMString> {
             let args = rumtk_create_task_args!(Arc::clone(&mut self.server));
-            rumtk_wait_on_task!(RUMServerHandle::stop_helper, &args)
+            rumtk_wait_on_task!(RUMServerHandle::stop_helper, &args)?
         }
 
         ///
@@ -933,11 +934,7 @@ pub mod tcp {
         ///
         pub fn receive(&mut self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
             let args = rumtk_create_task_args!((Arc::clone(&mut self.server), client_id.clone()));
-            let task = rumtk_create_task!(RUMServerHandle::receive_helper, args);
-            match rumtk_resolve_task!(rumtk_spawn_task!(task)) {
-                Ok(msg) => msg,
-                Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
-            }
+            rumtk_resolve_task!(RUMServerHandle::receive_helper(&args))?
         }
 
         ///
@@ -945,8 +942,7 @@ pub mod tcp {
         ///
         pub fn get_clients(&self) -> ClientList {
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            let task = rumtk_create_task!(RUMServerHandle::get_clients_helper, args);
-            rumtk_resolve_task!(rumtk_spawn_task!(task)).unwrap()
+            rumtk_resolve_task!(RUMServerHandle::get_clients_helper(&args)).unwrap_or_default()
         }
 
         ///
@@ -954,8 +950,7 @@ pub mod tcp {
         ///
         pub fn get_client_ids(&self) -> ClientIDList {
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            let task = rumtk_create_task!(RUMServerHandle::get_client_ids_helper, args);
-            rumtk_resolve_task!(rumtk_spawn_task!(task)).unwrap()
+            rumtk_resolve_task!(RUMServerHandle::get_client_ids_helper(&args)).unwrap_or_default()
         }
 
         ///
@@ -963,11 +958,7 @@ pub mod tcp {
         ///
         pub fn gc_clients(&self) -> RUMResult<()> {
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            let task = rumtk_create_task!(RUMServerHandle::gc_clients_helper, args);
-            match rumtk_resolve_task!(rumtk_spawn_task!(task)) {
-                Ok(_) => Ok(()),
-                Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
-            }
+            rumtk_resolve_task!(RUMServerHandle::gc_clients_helper(&args))?
         }
 
         ///
@@ -975,9 +966,7 @@ pub mod tcp {
         ///
         pub fn get_address_info(&self) -> Option<RUMString> {
             let args = rumtk_create_task_args!(Arc::clone(&self.server));
-            let task = rumtk_create_task!(RUMServerHandle::get_address_helper, args);
-            rumtk_resolve_task!(rumtk_spawn_task!(task))
-                .expect("Expected an address:port for this client.")
+            rumtk_resolve_task!(RUMServerHandle::get_address_helper(&args)).unwrap_or_default()
         }
 
         async fn send_helper(args: &SafeTaskArgs<ServerSendArgs>) -> RUMResult<()> {
@@ -1072,6 +1061,23 @@ pub mod tcp {
     }
 }
 
+pub mod tcp_helpers {
+    use crate::net::tcp::ConnectionInfo;
+    use crate::strings::RUMStringConversions;
+
+    pub fn to_ip_port(address_str: &str) -> ConnectionInfo {
+        let mut components = address_str.split(':');
+        (
+            components.next().unwrap_or_default().to_rumstring(),
+            components
+                .next()
+                .unwrap_or("0")
+                .parse::<u16>()
+                .unwrap_or_default(),
+        )
+    }
+}
+
 ///
 /// This module provides the preferred API for interacting and simplifying work with the [tcp]
 /// module's primitives.
@@ -1163,12 +1169,8 @@ pub mod tcp_macros {
     #[macro_export]
     macro_rules! rumtk_get_ip_port {
         ( $address_str:expr ) => {{
-            use $crate::strings::RUMStringConversions;
-            let mut components = $address_str.split(':');
-            (
-                components.next().unwrap().to_rumstring(),
-                components.next().unwrap().parse::<u16>().unwrap(),
-            )
+            use $crate::net::tcp_helpers::to_ip_port;
+            to_ip_port(&$address_str)
         }};
     }
 }

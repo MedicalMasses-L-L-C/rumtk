@@ -286,11 +286,8 @@ pub mod threading_manager {
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            Ok(rumtk_resolve_task!(Self::_add_task_async(
-                id.clone(),
-                self.tasks.clone(),
-                task
-            )))
+            let tasks = self.tasks.clone();
+            rumtk_resolve_task!(Self::_add_task_async(id.clone(), tasks, task))
         }
 
         async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
@@ -525,7 +522,9 @@ pub mod threading_manager {
 /// The sleep family of functions are also here.
 ///
 pub mod threading_functions {
+    use crate::core::RUMResult;
     use crate::rumtk_sleep;
+    use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::init_runtime;
     use num_cpus;
     use std::future::Future;
@@ -567,7 +566,7 @@ pub mod threading_functions {
         tokio_sleep(duration).await;
     }
 
-    pub fn block_on_task<R, F>(task: F) -> R
+    pub fn block_on_task<R, F>(task: F) -> RUMResult<R>
     where
         F: Future<Output = R> + Send + 'static,
         F::Output: Send + 'static,
@@ -582,10 +581,16 @@ pub mod threading_functions {
             rumtk_sleep!(DEFAULT_SLEEP_DURATION);
         }
 
-        init_runtime(default_system_thread_count)
+        match init_runtime(default_system_thread_count)
             .expect("Failed to initialize runtime")
             .block_on(handle)
-            .unwrap()
+        {
+            Ok(r) => Ok(r),
+            Err(e) => Err(rumtk_format!(
+                "Issue peaking into task in the runtime because => {}",
+                &e
+            )),
+        }
     }
 }
 
@@ -747,8 +752,8 @@ pub mod threading_macros {
             // into the async closure. To ensure that happens regardless of given expression, we do
             // a variable assignment below to force the "future" macro expressions to resolve before
             // moving into the closure. DO NOT REMOVE OR "SIMPLIFY" THE let future = $future LINE!!!
-            let future = $future;
-            block_on_task(async move { future.await })
+            //let future = $future;
+            block_on_task(async move { $future.await })
         }};
     }
 

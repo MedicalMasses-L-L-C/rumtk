@@ -789,7 +789,7 @@ pub mod mllp_v2 {
                     message.to_rumstring(),
                     self.peer.clone()
                 )]
-            )
+            )?
         }
 
         pub fn receive_message(&mut self) -> RUMResult<RUMString> {
@@ -802,7 +802,7 @@ pub mod mllp_v2 {
                     result
                 },
                 vec![(self.channel.clone(), self.peer.clone())]
-            )
+            )?
         }
 
         pub fn get_address_info(&mut self) -> RUMResult<RUMString> {
@@ -819,7 +819,7 @@ pub mod mllp_v2 {
                     }
                 },
                 vec![self.channel.clone()]
-            )
+            )?
         }
     }
 
@@ -830,8 +830,10 @@ pub mod mllp_v2 {
 pub mod mllp_v2_helpers {
     use crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, AsyncMutex, SafeAsyncMLLP, MLLP_FILTER_POLICY};
     use rumtk_core::core::RUMResult;
-    use rumtk_core::rumtk_resolve_task;
-    use rumtk_core::strings::RUMString;
+    use rumtk_core::net::tcp::ConnectionInfo;
+    use rumtk_core::net::tcp_helpers::to_ip_port;
+    use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+    use rumtk_core::{rumtk_exec_task, rumtk_resolve_task};
 
     ///
     /// Helper function for creating a thread-safe MLLP connection or listener layer.
@@ -845,9 +847,23 @@ pub mod mllp_v2_helpers {
         server: bool,
     ) -> RUMResult<SafeAsyncMLLP> {
         let ip = RUMString::from(ip);
-        let result = rumtk_resolve_task!(AsyncMLLP::new(ip, port, policy, server));
+        let result = rumtk_resolve_task!(AsyncMLLP::new(ip, port, policy, server))?;
         Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
     }
+
+    pub fn mllp_get_ip_port(mllp: SafeAsyncMLLP) -> RUMResult<ConnectionInfo> {
+        let address_str = rumtk_exec_task!(async move || -> RUMResult<RUMString> {
+            match mllp.lock().await.get_address_info().await {
+                Some(ip) => Ok(ip.to_rumstring()),
+                None => Err(rumtk_format!(
+                    "MLLP instance is missing an IP address. This is not expected!!!"
+                )),
+            }
+        })?;
+        Ok(to_ip_port(&address_str?))
+    }
+    
+    pub fn 
 }
 
 ///
@@ -974,47 +990,51 @@ pub mod mllp_v2_api {
 
     ///
     /// Create a server listener for MLLP communications.
-    /// Returns [SafeAsyncMLLP].
+    /// Returns [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
     ///
-    /// A minimum of two parameters are needed; the [MLLP_FILTER_POLICY] and a boolean signifying if
-    /// to initialize the listener locally or exposed outbound (localhost vs. 0.0.0.0 interface).
+    /// A minimum of two parameters are needed; the [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY) 
+    /// and a boolean signifying if to initialize the listener locally or exposed outbound 
+    /// (`localhost` vs. `0.0.0.0` interface).
     ///
-    /// If you want to specify a port, then the signature is `port`, [MLLP_FILTER_POLICY], `local`
+    /// If you want to specify a port, then the signature is `port`, 
+    /// [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY), `local`.
+    /// 
+    /// See [create_async_mllp](crate::hl7_v2_mllp::mllp_v2_helpers::create_async_mllp).
     ///
-    /// # Example Usage
-    /// ## Local Instance
+    /// ## Example Usage
+    /// ### Local Instance
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     assert!( port > 0, "Port is 0. Expected a non zero port => {}:{}", &ip, &port)
     /// ```
     ///
-    /// ## Open to Network
+    /// ### Open to Network
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, false).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     assert!( port > 0, "Port is 0. Expected a non zero port => {}:{}", &ip, &port)
     /// ```
     ///
-    /// ## Open to Network + Port Specified
+    /// ### Open to Network + Port Specified
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!(55555, MLLP_FILTER_POLICY::NONE, false).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     assert_eq!(port, 55555,"Port requested is 55555. Got => {}:{}", &ip, &port)
     /// ```
     ///
-    /// ## Listening on Specific NIC + Port
+    /// ### Listening on Specific NIC + Port
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!("0.0.0.0", 55555, MLLP_FILTER_POLICY::NONE, false).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     assert_eq!(ip, "0.0.0.0", "IP requested is 0.0.0.0. Got => {}:{}", &ip, &port);
     ///     assert_eq!(port, 55555,"Port requested is 55555. Got => {}:{}", &ip, &port);
     /// ```
@@ -1150,7 +1170,9 @@ pub mod mllp_v2_api {
     }
 
     ///
-    /// Convenience macro for obtaining the ip and port off an instance of [SafeAsyncMLLP].
+    /// Convenience macro for obtaining the ip and port off an instance of [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
+    ///
+    /// See [mllp_get_ip_port](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_get_ip_port)
     ///
     /// # Example Usage
     ///
@@ -1161,30 +1183,15 @@ pub mod mllp_v2_api {
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
     ///
     /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp);
+    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp);
     /// assert!(port > 0, "Expected non-zero port!");
     /// ```
     ///
     #[macro_export]
     macro_rules! rumtk_v2_mllp_get_ip_port {
         ( $safe_mllp:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-            use rumtk_core::{rumtk_exec_task, rumtk_get_ip_port};
-            let mllp_ref = $safe_mllp.clone();
-            let address_str = rumtk_exec_task!(async || -> RUMResult<RUMString> {
-                match mllp_ref.lock().await.get_address_info().await {
-                    Some(ip) => Ok(ip.to_rumstring()),
-                    None => Err(rumtk_format!(
-                        "MLLP instance is missing an IP address. This is not expected!!!"
-                    )),
-                }
-            });
-            let ip = match address_str {
-                Ok(ip) => ip,
-                Err(e) => "".to_rumstring(),
-            };
-            rumtk_get_ip_port!(ip)
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_get_ip_port;
+            mllp_get_ip_port($safe_mllp.clone())
         }};
     }
 
