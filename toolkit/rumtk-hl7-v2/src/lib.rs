@@ -64,8 +64,7 @@ mod tests {
         StringUtils,
     };
     use rumtk_core::{
-        rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_init_threads, rumtk_serialize,
-        rumtk_sleep,
+        rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_serialize, rumtk_sleep,
     };
     use std::thread;
     use std::thread::spawn;
@@ -1132,7 +1131,7 @@ mod tests {
         rumtk_sleep!(1);
         let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
         let client_id = client_ids.get(0).unwrap();
-        let mut server_channels = rumtk_v2_mllp_iter_channels!(&safe_client);
+        let mut server_channels = rumtk_v2_mllp_iter_channels!(safe_client);
         let mut server_channel = server_channels.get_mut(0).unwrap().clone();
         let channel_address = server_channel.lock().unwrap().get_address_info().unwrap();
         assert_eq!(
@@ -1153,15 +1152,15 @@ mod tests {
             Ok(mllp_layer) => mllp_layer,
             Err(e) => panic!("{}", e),
         };
-        let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+        let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener);
         let safe_client = match rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE) {
             Ok(client) => client,
             Err(e) => panic!("{}", e),
         };
         rumtk_sleep!(1);
-        let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
-        let client_id = client_ids.get(0).unwrap();
-        let mut server_channels = rumtk_v2_mllp_iter_channels!(&safe_client);
+        let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+        let client_id = client_ids.get(0).unwrap().clone();
+        let mut server_channels = rumtk_v2_mllp_iter_channels!(safe_client);
         let mut server_channel = server_channels.get_mut(0).unwrap().clone();
         let expected_message = RUMString::from("I ❤ my wife!");
         let message_copy = expected_message.clone();
@@ -1208,15 +1207,17 @@ mod tests {
             Ok(mllp_listener) => mllp_listener,
             Err(e) => panic!("{}", e),
         };
-        let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+        let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener);
         let safe_client = match rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE) {
             Ok(client) => client,
             Err(e) => panic!("{}", e),
         };
         rumtk_sleep!(1);
-        let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
-        let client_id = client_ids.get(0).unwrap();
-        let mut server_channels = rumtk_v2_mllp_iter_channels!(&safe_client);
+        let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+        let client_id = client_ids.get(0).unwrap().clone();
+        let client_id_copy = client_id.clone();
+        let client_id_copy2 = client_id.clone();
+        let mut server_channels = rumtk_v2_mllp_iter_channels!(safe_client);
         let mut server_channel = server_channels.get_mut(0).unwrap().clone();
         let server_channel_copy = server_channel.clone();
         let send_thread = spawn(move || -> RUMResult<()> {
@@ -1253,7 +1254,6 @@ mod tests {
                 &received_message
             )
         );
-        let client_id_copy = client_id.clone();
         let safe_listener_copy2 = safe_listener.clone();
         println!("Echoing message back to client!");
         let echo_thread = spawn(move || {
@@ -1264,9 +1264,17 @@ mod tests {
         rumtk_sleep!(1);
         let echoed_message = rumtk_exec_task!(async || -> RUMResult<RUMString> {
             println!("Echoing message back to client!");
-            let mut echoed_message = safe_client.lock().await.receive_message(&client_id).await?;
+            let mut echoed_message = safe_client
+                .lock()
+                .await
+                .receive_message(&client_id_copy2)
+                .await?;
             while echoed_message.len() == 0 {
-                echoed_message = safe_client.lock().await.receive_message(&client_id).await?;
+                echoed_message = safe_client
+                    .lock()
+                    .await
+                    .receive_message(&client_id_copy2)
+                    .await?;
             }
             println!("Echoed message: {}", &echoed_message);
             Ok(echoed_message)

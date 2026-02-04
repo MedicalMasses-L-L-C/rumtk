@@ -216,7 +216,7 @@ pub mod threading_manager {
         pub async fn add_task_async<F>(&mut self, task: F) -> TaskID
         where
             F: Future<Output = R> + Send + Sync + 'static,
-            F::Output: Send + Sized + 'static,
+            F::Output: Send + 'static,
         {
             let id = TaskID::new_v4();
             Self::_add_task_async(id.clone(), self.tasks.clone(), task).await
@@ -285,8 +285,12 @@ pub mod threading_manager {
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let rt = rumtk_init_threads!(self.workers)?;
-            Ok(rumtk_resolve_task!(rt, self.add_task_async(task)))
+            let id = TaskID::new_v4();
+            Ok(rumtk_resolve_task!(Self::_add_task_async(
+                id.clone(),
+                self.tasks.clone(),
+                task
+            )))
         }
 
         async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
@@ -471,14 +475,14 @@ pub mod threading_manager {
         /// ```
         ///
         pub fn is_all_completed(&self) -> bool {
-            let rt = match rumtk_init_threads!(self.workers) {
-                Ok(rt) => rt,
-                Err(_) => return true,
-            };
-            rumtk_resolve_task!(rt, TaskManager::<R>::is_all_completed_async(self))
+            self._is_all_completed_async()
         }
 
         pub async fn is_all_completed_async(&self) -> bool {
+            self._is_all_completed_async()
+        }
+
+        fn _is_all_completed_async(&self) -> bool {
             for (_, task) in self.tasks.read().unwrap().iter() {
                 if !task.read().unwrap().finished {
                     return false;
@@ -521,7 +525,10 @@ pub mod threading_manager {
 /// The sleep family of functions are also here.
 ///
 pub mod threading_functions {
+    use crate::rumtk_sleep;
+    use crate::threading::thread_primitives::init_runtime;
     use num_cpus;
+    use std::future::Future;
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
     use tokio::time::sleep as tokio_sleep;
@@ -529,6 +536,8 @@ pub mod threading_functions {
     pub const NANOS_PER_SEC: u64 = 1000000000;
     pub const MILLIS_PER_SEC: u64 = 1000;
     pub const MICROS_PER_SEC: u64 = 1000000;
+
+    const DEFAULT_SLEEP_DURATION: f32 = 0.001;
 
     pub fn get_default_system_thread_count() -> usize {
         let cpus: usize = num_cpus::get();
@@ -556,6 +565,25 @@ pub mod threading_functions {
         let rounded_ns = ns.round() as u64;
         let duration = Duration::from_nanos(rounded_ns);
         tokio_sleep(duration).await;
+    }
+
+    pub fn block_on_task<R, F>(task: F) -> R
+    where
+        F: Future<Output = R> + Send + 'static,
+        F::Output: Send + 'static,
+    {
+        let handle = init_runtime(0)
+            .expect("Failed to initialize runtime")
+            .spawn(task);
+
+        while !handle.is_finished() {
+            rumtk_sleep!(DEFAULT_SLEEP_DURATION);
+        }
+
+        init_runtime(0)
+            .expect("Failed to initialize runtime")
+            .block_on(handle)
+            .unwrap()
     }
 }
 
@@ -663,13 +691,15 @@ pub mod threading_macros {
     ///
     #[macro_export]
     macro_rules! rumtk_wait_on_task {
-        ( $rt:expr, $func:expr ) => {{
-            $rt.block_on(async move {
+        ( $func:expr ) => {{
+            use $crate::threading::threading_functions::block_on_task;
+            block_on_task(async move {
                 $func().await
             })
         }};
-        ( $rt:expr, $func:expr, $($arg_items:expr),+ ) => {{
-            $rt.block_on(async move {
+        ( $func:expr, $($arg_items:expr),+ ) => {{
+            use $crate::threading::threading_functions::block_on_task;
+            block_on_task(async move {
                 $func($($arg_items),+).await
             })
         }};
@@ -705,7 +735,8 @@ pub mod threading_macros {
     ///
     #[macro_export]
     macro_rules! rumtk_resolve_task {
-        ( $rt:expr, $future:expr ) => {{
+        ( $future:expr ) => {{
+            use $crate::threading::threading_functions::block_on_task;
             // Fun tidbit, the expression rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task)), where
             // rt is the tokio runtime yields async move { { &rt.spawn(task) } }. However, the whole thing
             // is technically moved into the async closure and captured so things like mutex guards
@@ -715,7 +746,7 @@ pub mod threading_macros {
             // a variable assignment below to force the "future" macro expressions to resolve before
             // moving into the closure. DO NOT REMOVE OR "SIMPLIFY" THE let future = $future LINE!!!
             let future = $future;
-            $rt.block_on(async move { future.await })
+            block_on_task(async move { future.await })
         }};
     }
 
@@ -776,13 +807,13 @@ pub mod threading_macros {
     macro_rules! rumtk_create_task_args {
         ( ) => {{
             use $crate::threading::threading_manager::{TaskArgs, SafeTaskArgs, TaskItems};
-            use tokio::sync::RwLock;
-            SafeTaskArgs::new(RwLock::new(vec![]))
+            use $crate::threading::thread_primitives::AsyncRwLock;
+            SafeTaskArgs::new(AsyncRwLock::new(vec![]))
         }};
         ( $($args:expr),+ ) => {{
             use $crate::threading::threading_manager::{SafeTaskArgs};
-            use tokio::sync::RwLock;
-            SafeTaskArgs::new(RwLock::new(vec![$($args),+]))
+            use $crate::threading::thread_primitives::AsyncRwLock;
+            SafeTaskArgs::new(AsyncRwLock::new(vec![$($args),+]))
         }};
     }
 
@@ -901,9 +932,8 @@ pub mod threading_macros {
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
-            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             let task = rumtk_create_task!($func);
-            rumtk_resolve_task!(&rt, task)
+            rumtk_resolve_task!(task)
         }};
         ($func:expr, $args:expr ) => {{
             use $crate::threading::threading_functions::get_default_system_thread_count;
@@ -914,10 +944,9 @@ pub mod threading_macros {
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
-            let rt = rumtk_init_threads!($threads).expect("Runtime is not initialized!");
             let args = SafeTaskArgs::new(RwLock::new($args));
             let task = rumtk_create_task!($func, args);
-            rumtk_resolve_task!(&rt, task)
+            rumtk_resolve_task!(task)
         }};
     }
 

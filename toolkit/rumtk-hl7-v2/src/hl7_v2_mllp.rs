@@ -502,7 +502,7 @@ pub mod mllp_v2 {
             filter_policy: MLLP_FILTER_POLICY,
             server: bool,
         ) -> RUMResult<AsyncMLLP> {
-            AsyncMLLP::new(ANYHOST, port, filter_policy, server).await
+            AsyncMLLP::new(ANYHOST.to_rumstring(), port, filter_policy, server).await
         }
 
         ///
@@ -513,20 +513,20 @@ pub mod mllp_v2 {
             filter_policy: MLLP_FILTER_POLICY,
             server: bool,
         ) -> RUMResult<AsyncMLLP> {
-            AsyncMLLP::new(LOCALHOST, port, filter_policy, server).await
+            AsyncMLLP::new(LOCALHOST.to_rumstring(), port, filter_policy, server).await
         }
 
         ///
         /// Establish an [AsyncMLLP] connection on the specified IP/Host and Port.
         ///
         pub async fn new(
-            ip: &str,
+            ip: RUMString,
             port: u16,
             filter_policy: MLLP_FILTER_POLICY,
             server: bool,
         ) -> RUMResult<AsyncMLLP> {
             let transport_layer =
-                Arc::new(AsyncMutex::new(LowerLayer::init(ip, port, server).await?));
+                Arc::new(AsyncMutex::new(LowerLayer::init(&ip, port, server).await?));
             let server_handle = transport_layer.lock().await.start().await;
             Ok(AsyncMLLP {
                 transport_layer,
@@ -830,8 +830,8 @@ pub mod mllp_v2 {
 pub mod mllp_v2_helpers {
     use crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, AsyncMutex, SafeAsyncMLLP, MLLP_FILTER_POLICY};
     use rumtk_core::core::RUMResult;
+    use rumtk_core::rumtk_resolve_task;
     use rumtk_core::strings::RUMString;
-    use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
 
     ///
     /// Helper function for creating a thread-safe MLLP connection or listener layer.
@@ -844,9 +844,8 @@ pub mod mllp_v2_helpers {
         policy: MLLP_FILTER_POLICY,
         server: bool,
     ) -> RUMResult<SafeAsyncMLLP> {
-        let rt = rumtk_init_threads!()?;
         let ip = RUMString::from(ip);
-        let result = rumtk_resolve_task!(&rt, AsyncMLLP::new(&ip, port, policy, server));
+        let result = rumtk_resolve_task!(AsyncMLLP::new(ip, port, policy, server));
         Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
     }
 }
@@ -906,12 +905,12 @@ pub mod mllp_v2_helpers {
 pub mod mllp_v2_api {
     ///
     /// Attempt to connect to an MLLP server.
-    /// Returns [SafeAsyncMLLP].
+    /// Returns [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
     ///
-    /// A minimum of two parameters are needed; the `port` and the [MLLP_FILTER_POLICY].
+    /// A minimum of two parameters are needed; the `port` and the [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY).
     ///
-    /// If you want to specify an ip address, then the signature is 'ip', `port`, and
-    /// [MLLP_FILTER_POLICY]
+    /// If you want to specify an ip address, then the signature is `ip`, `port`, and
+    /// [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY)
     ///
     /// # Example Usage
     ///
@@ -957,8 +956,7 @@ pub mod mllp_v2_api {
             use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
             use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
             use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
-            match rumtk_resolve_task!(&rt, AsyncMLLP::local($port, $policy, false)) {
+            match rumtk_resolve_task!(AsyncMLLP::local($port, $policy, false)) {
                 Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
                 Err(e) => Err(e),
             }
@@ -967,8 +965,7 @@ pub mod mllp_v2_api {
             use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
             use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
             use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
-            match rumtk_resolve_task!(&rt, AsyncMLLP::new($ip, $port, $policy, false)) {
+            match rumtk_resolve_task!(AsyncMLLP::new($ip, $port, $policy, false)) {
                 Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
                 Err(e) => Err(e),
             }
@@ -1048,10 +1045,11 @@ pub mod mllp_v2_api {
     }
 
     ///
-    /// Create vector iterable using the shared [MLLP] instance to obtain a single
-    /// [SafeAsyncMLLPChannel] to the endpoint listening interface. In other words, this macro creates
-    /// a thread safe instance of [SafeAsyncMLLPChannel] from the client to the server. The channel
-    /// provides bidirectional communication.
+    /// Create vector iterable using the shared [MLLP](crate::hl7_v2_mllp::mllp_v2) instance to obtain a single
+    /// [SafeAsyncMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel) to the endpoint
+    /// listening interface. In other words, this macro creates
+    /// a thread safe instance of [SafeAsyncMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel)
+    /// from the client to the server. The channel provides bidirectional communication.
     ///
     /// # Example Usage
     ///
