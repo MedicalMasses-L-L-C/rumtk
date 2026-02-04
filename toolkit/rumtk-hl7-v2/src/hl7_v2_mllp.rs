@@ -959,7 +959,7 @@ pub mod mllp_v2_helpers {
 ///
 ///     let receive_h = thread::spawn(|| -> RUMResult<RUMString> {
 ///         let safe_listener = rumtk_v2_mllp_listen!(port, MLLP_FILTER_POLICY::NONE, true).unwrap();
-///         let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+///         let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
 ///         let client_id = client_ids.get(0).unwrap().clone();
 ///         Ok(rumtk_v2_mllp_receive!(&safe_listener, client_id)?)
 ///     });
@@ -999,13 +999,13 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_get_client_ids};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener).unwrap();
     ///     println!("IP & Port => {}:{}", &ip, &port);
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
     ///     rumtk_sleep!(1);
-    ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(&safe_client);
+    ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
     ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
-    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
+    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
     ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
     /// ```
@@ -1017,13 +1017,13 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_get_client_ids};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     println!("IP & Port => {}:{}", &ip, &port);
     ///     let safe_client = rumtk_v2_mllp_connect!("127.0.0.1", port, MLLP_FILTER_POLICY::NONE).unwrap();
     ///     rumtk_sleep!(1);
-    ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(&safe_client);
+    ///     let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
     ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
-    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(&safe_listener);
+    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
     ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
     /// ```
@@ -1132,9 +1132,9 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_open_client_channel, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
-    ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE);
-    ///     let channel = rumtk_v2_mllp_open_client_channel!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
+    ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
+    ///     let channel = rumtk_v2_mllp_open_client_channel!(safe_listener).unwrap();
     /// ```
     ///
     #[macro_export]
@@ -1187,7 +1187,7 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_iter_channels, rumtk_v2_mllp_listen};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let channels = rumtk_v2_mllp_iter_channels!(&safe_listener);
+    ///     let channels = rumtk_v2_mllp_iter_channels!(safe_listener);
     ///
     ///     for channel in channels.iter() {
     ///         // Add your logic here!
@@ -1216,7 +1216,7 @@ pub mod mllp_v2_api {
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
     ///
     /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp);
+    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp).unwrap();
     /// assert!(port > 0, "Expected non-zero port!");
     /// ```
     ///
@@ -1243,11 +1243,11 @@ pub mod mllp_v2_api {
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
     ///
     /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp);
+    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp).unwrap();
     /// let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
-    /// let results = rumtk_v2_mllp_get_client_ids!(&mllp);
+    /// let results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
     /// let client_id = results.get(0).unwrap();
-    /// let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client);
+    /// let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
     /// let expected = rumtk_format!("{}:{}", client_ip, client_port);
     /// assert_eq!(expected, client_id, "Expected to see client with ID: {}", expected);
     /// ```
@@ -1274,8 +1274,8 @@ pub mod mllp_v2_api {
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
     ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
-    ///     let is_listener_server = rumtk_v2_mllp_is_server!(&safe_listener);
-    ///     let is_client_server = rumtk_v2_mllp_is_server!(&safe_client);
+    ///     let is_listener_server = rumtk_v2_mllp_is_server!(safe_listener);
+    ///     let is_client_server = rumtk_v2_mllp_is_server!(safe_client);
     ///
     ///     assert_eq!(true, is_listener_server, "Expected listener to reply as server!");
     ///     assert_eq!(false, is_client_server, "Expected connecting client to reply as client!");
@@ -1302,12 +1302,12 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_receive, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port};
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
     ///
-    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
-    ///     let result = rumtk_v2_mllp_receive!(&safe_listener, client_id.as_str());
+    ///     let result = rumtk_v2_mllp_receive!(&safe_listener, client_id.as_str()).unwrap();
     ///
     ///     // This bit of the example might look odd. Thing is, we never allow the automatic logic
     ///     // to process send, receive, ack/nack loops on the message, so they timeout awaiting.
@@ -1338,9 +1338,9 @@ pub mod mllp_v2_api {
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_send, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port};
     ///     let message = RUMString::new("Hello World");
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_listener);
+    ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
-    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener);
+    ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
     ///     // This bit of the example might look odd. Thing is, we never allow the automatic logic
     ///     // to process send, receive, ack/nack loops on the message, so they timeout awaiting.

@@ -401,7 +401,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
-    /// use rumtk_core::{rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::{rumtk_resolve_task};
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -417,8 +417,7 @@ pub mod pipeline_functions {
     /// ];
     ///
     /// let pipeline = pipeline_generate_pipeline(&commands).unwrap();
-    /// let rt = rumtk_init_threads!(&5);
-    /// let result = rumtk_resolve_task!(rt, pipeline_await_pipeline(pipeline)).unwrap();
+    /// let result = rumtk_resolve_task!(pipeline_await_pipeline(pipeline)).unwrap().unwrap();
     ///
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
@@ -617,8 +616,7 @@ pub mod pipeline_macros {
     ///     Ok(())
     /// };
     ///
-    /// let rt = rumtk_init_threads!(&5);
-    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
     /// ### With Buffer Piped In
@@ -685,8 +683,7 @@ pub mod pipeline_macros {
     ///     Ok(())
     /// };
     ///
-    /// let rt = rumtk_init_threads!(&5);
-    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
     /// ### With Buffer Piped In
@@ -707,8 +704,7 @@ pub mod pipeline_macros {
     ///     Ok(())
     /// };
     ///
-    /// let rt = rumtk_init_threads!(&5);
-    /// rumtk_resolve_task!(rt, f()).unwrap();
+    /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
     #[macro_export]

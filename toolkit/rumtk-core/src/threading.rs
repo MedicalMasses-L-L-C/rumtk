@@ -25,9 +25,9 @@
 pub mod thread_primitives {
     use crate::core::RUMResult;
     use crate::strings::rumtk_format;
-    use std::sync::Arc;
     pub use std::sync::Mutex as SyncMutex;
     pub use std::sync::MutexGuard as SyncMutexGuard;
+    use std::sync::OnceLock;
     pub use std::sync::RwLock as SyncRwLock;
     pub use tokio::io;
     pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -39,39 +39,35 @@ pub mod thread_primitives {
 
     pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
     /**************************** Types ***************************************/
-    pub type SafeTokioRuntime = Arc<SyncMutex<TokioRuntime>>;
+    pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
     /**************************** Globals **************************************/
-    pub static mut DEFAULT_RUNTIME: Option<SafeTokioRuntime> = None;
+    static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
     /**************************** Helpers ***************************************/
     pub fn init_runtime(workers: usize) -> RUMResult<RuntimeGuard<'static>> {
         unsafe {
-            match DEFAULT_RUNTIME {
-                Some(ref runtime) => Ok(runtime.lock().unwrap()),
-                None => {
-                    let mut builder = tokio::runtime::Builder::new_multi_thread();
-                    builder.worker_threads(workers);
-                    builder.enable_all();
-                    match builder.build() {
-                        Ok(handle) => {
-                            DEFAULT_RUNTIME.replace(Arc::new(SyncMutex::new(handle)));
-                            init_runtime(workers)
-                        }
-                        Err(e) => Err(rumtk_format!(
-                            "Unable to initialize threading tokio runtime because {}!",
-                            &e
-                        )),
-                    }
+            let handle = DEFAULT_RUNTIME.get_or_init(|| {
+                let mut builder = tokio::runtime::Builder::new_multi_thread();
+                builder.worker_threads(workers);
+                builder.enable_all();
+                match builder.build() {
+                    Ok(handle) => SyncMutex::new(handle),
+                    Err(e) => panic!(
+                        "Unable to initialize threading tokio runtime because {}!",
+                        &e
+                    ),
                 }
+            });
+            match handle.lock() {
+                Ok(guard) => Ok(guard),
+                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime!")),
             }
         }
     }
 }
 
 pub mod threading_manager {
-    use crate::cache::LazyRUMCacheValue;
     use crate::core::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
-    use crate::threading::thread_primitives::SafeTokioRuntime;
     use crate::threading::threading_functions::{async_sleep, sleep};
     use crate::types::{RUMHashMap, RUMID};
     use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
@@ -110,7 +106,6 @@ pub mod threading_manager {
     /// Type to use to define how task results are expected to be returned.
     pub type TaskResult<R> = RUMResult<SafeTask<R>>;
     pub type TaskResults<R> = TaskItems<TaskResult<R>>;
-    pub type TaskRuntime = LazyRUMCacheValue<SafeTokioRuntime>;
 
     ///
     /// Manages asynchronous tasks submitted as micro jobs from synchronous code. This type essentially
@@ -254,7 +249,6 @@ pub mod threading_manager {
         /// }
         ///
         /// let workers = 5;
-        /// let rt = rumtk_init_threads!(&workers);
         /// let mut manager = Arc::new(Mutex::new(TaskManager::new(&workers).unwrap()));
         ///
         /// manager.blocking_lock().spawn_task(call_sync_fn(manager.clone()));
@@ -655,10 +649,9 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }
     ///
-    ///     let rt = rumtk_init_threads!();                                      // Creates runtime instance
     ///     let args = rumtk_create_task_args!(1);                               // Creates a vector of i32s
     ///     let task = rumtk_create_task!(test, args);                           // Creates a standard task which consists of a function or closure accepting a Vec<T>
-    ///     let result = rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task)); // Spawn's task and waits for it to conclude.
+    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task)); // Spawn's task and waits for it to conclude.
     /// ```
     ///
     /// ```
@@ -675,10 +668,9 @@ pub mod threading_macros {
     ///     }
     ///
     ///     let thread_count: usize = 10;
-    ///     let rt = rumtk_init_threads!(&thread_count);
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task));
+    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
     /// ```
     #[macro_export]
     macro_rules! rumtk_init_threads {
@@ -760,10 +752,9 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }
     ///
-    ///     let rt = rumtk_init_threads!();
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task));
+    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
     /// ```
     ///
     #[macro_export]
@@ -878,7 +869,7 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }
     ///
-    ///     let result = rumtk_exec_task!(test, vec![5]);
+    ///     let result = rumtk_exec_task!(test, vec![5]).unwrap();
     ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
     ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
@@ -897,7 +888,7 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }
     ///
-    ///     let result = rumtk_exec_task!(test, vec![5], 5);
+    ///     let result = rumtk_exec_task!(test, vec![5], 5).unwrap();
     ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
     ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
@@ -916,7 +907,7 @@ pub mod threading_macros {
     ///         }
     ///         Ok(result)
     ///     },
-    ///     vec![5]);
+    ///     vec![5]).unwrap();
     ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
     ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
@@ -931,7 +922,7 @@ pub mod threading_macros {
     ///     async || -> RUMResult<Vec<i32>> {
     ///         let mut result = Vec::<i32>::new();
     ///         Ok(result)
-    ///     });
+    ///     }).unwrap();
     ///     let empty = Vec::<i32>::new();
     ///     assert_eq!(&result.clone().unwrap(), &empty, "Results mismatch");
     ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
@@ -952,10 +943,9 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }
     ///
-    ///     let rt = rumtk_init_threads!();
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(&rt, rumtk_spawn_task!(&rt, task));
+    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
     /// ```
     ///
     #[macro_export]
