@@ -566,6 +566,14 @@ pub mod threading_functions {
         tokio_sleep(duration).await;
     }
 
+    ///
+    /// Given a closure task, push it onto the current `tokio` runtime for execution.
+    /// Every [DEFAULT_SLEEP_DURATION] seconds, we check if the task has concluded.
+    /// Once the task has concluded, we call [tokio::block_on](tokio::task::block_in_place) to resolve and extract the task
+    /// result.
+    ///
+    /// Because this helper function can fail, the return value is wrapped inside a [RUMResult].
+    ///
     pub fn block_on_task<R, F>(task: F) -> RUMResult<R>
     where
         F: Future<Output = R> + Send + 'static,
@@ -581,16 +589,18 @@ pub mod threading_functions {
             rumtk_sleep!(DEFAULT_SLEEP_DURATION);
         }
 
-        match init_runtime(default_system_thread_count)
-            .expect("Failed to initialize runtime")
-            .block_on(handle)
-        {
-            Ok(r) => Ok(r),
-            Err(e) => Err(rumtk_format!(
-                "Issue peaking into task in the runtime because => {}",
-                &e
-            )),
-        }
+        tokio::task::block_in_place(move || {
+            match init_runtime(default_system_thread_count)
+                .expect("Failed to initialize runtime")
+                .block_on(handle)
+            {
+                Ok(r) => Ok(r),
+                Err(e) => Err(rumtk_format!(
+                    "Issue peeking into task in the runtime because => {}",
+                    &e
+                )),
+            }
+        })
     }
 }
 
@@ -935,7 +945,6 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_exec_task {
         ($func:expr ) => {{
-            use tokio::sync::RwLock;
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
@@ -947,11 +956,11 @@ pub mod threading_macros {
             rumtk_exec_task!($func, $args, get_default_system_thread_count())
         }};
         ($func:expr, $args:expr , $threads:expr ) => {{
-            use tokio::sync::RwLock;
+            use $crate::threading::thread_primitives::AsyncRwLock;
             use $crate::{
                 rumtk_create_task, rumtk_create_task_args, rumtk_init_threads, rumtk_resolve_task,
             };
-            let args = SafeTaskArgs::new(RwLock::new($args));
+            let args = SafeTaskArgs::new(AsyncRwLock::new($args));
             let task = rumtk_create_task!($func, args);
             rumtk_resolve_task!(task)
         }};

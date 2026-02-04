@@ -207,7 +207,6 @@ pub mod mllp_v2 {
         rumtk_resolve_task, rumtk_spawn_task,
     };
     use std::sync::{Arc, Mutex};
-    use tokio::sync::RwLock;
     use tokio::task::JoinHandle;
 
     /// Times to attempt sending message again upon initial error or lack of ACK
@@ -828,12 +827,16 @@ pub mod mllp_v2 {
 }
 
 pub mod mllp_v2_helpers {
-    use crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, AsyncMutex, SafeAsyncMLLP, MLLP_FILTER_POLICY};
+    use crate::hl7_v2_mllp::mllp_v2::{
+        AsyncMLLP, AsyncMutex, MLLPChannel, MLLPChannels, SafeAsyncMLLP, SafeMLLPChannel,
+        MLLP_FILTER_POLICY,
+    };
     use rumtk_core::core::RUMResult;
-    use rumtk_core::net::tcp::ConnectionInfo;
+    use rumtk_core::net::tcp::{ClientIDList, ConnectionInfo};
     use rumtk_core::net::tcp_helpers::to_ip_port;
-    use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-    use rumtk_core::{rumtk_exec_task, rumtk_resolve_task};
+    use rumtk_core::strings::{rumtk_format, RUMString};
+    use rumtk_core::threading::thread_primitives::SyncMutex;
+    use rumtk_core::threading::threading_functions::block_on_task;
 
     ///
     /// Helper function for creating a thread-safe MLLP connection or listener layer.
@@ -847,14 +850,14 @@ pub mod mllp_v2_helpers {
         server: bool,
     ) -> RUMResult<SafeAsyncMLLP> {
         let ip = RUMString::from(ip);
-        let result = rumtk_resolve_task!(AsyncMLLP::new(ip, port, policy, server))?;
+        let result = block_on_task(AsyncMLLP::new(ip, port, policy, server))?;
         Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
     }
 
     pub fn mllp_get_ip_port(mllp: SafeAsyncMLLP) -> RUMResult<ConnectionInfo> {
-        let address_str = rumtk_exec_task!(async move || -> RUMResult<RUMString> {
+        let address_str = block_on_task(async move {
             match mllp.lock().await.get_address_info().await {
-                Some(ip) => Ok(ip.to_rumstring()),
+                Some(ip) => Ok(ip),
                 None => Err(rumtk_format!(
                     "MLLP instance is missing an IP address. This is not expected!!!"
                 )),
@@ -862,8 +865,65 @@ pub mod mllp_v2_helpers {
         })?;
         Ok(to_ip_port(&address_str?))
     }
-    
-    pub fn 
+
+    pub fn mllp_get_client_ids(mllp: SafeAsyncMLLP) -> RUMResult<ClientIDList> {
+        block_on_task(async move { Ok(mllp.lock().await.get_client_ids().await) })?
+    }
+
+    pub fn mllp_is_server(mllp: SafeAsyncMLLP) -> bool {
+        block_on_task(async move { mllp.lock().await.is_server().await }).unwrap_or_default()
+    }
+
+    pub fn mllp_receive(mllp: SafeAsyncMLLP, ep: &str) -> RUMResult<RUMString> {
+        let endpoint = RUMString::from(ep);
+        block_on_task(async move { mllp.lock().await.receive_message(&endpoint).await })?
+    }
+
+    pub fn mllp_send(mllp: SafeAsyncMLLP, ep: &str, msg: &str) -> RUMResult<()> {
+        let endpoint = RUMString::from(ep);
+        let message = RUMString::from(msg);
+        block_on_task(async move { mllp.lock().await.send_message(&message, &endpoint).await })?
+    }
+
+    pub fn mllp_open_client_channel(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
+        let endpoints = mllp_get_client_ids(mllp.clone())?;
+        let endpoint = endpoints.get(0).unwrap();
+        let new_channel = SafeMLLPChannel::new(SyncMutex::new(MLLPChannel::open(&endpoint, &mllp)));
+        Ok(vec![new_channel])
+    }
+
+    pub fn mllp_open_server_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
+        let endpoints = mllp_get_client_ids(mllp.clone())?;
+        let mut channels = MLLPChannels::with_capacity(endpoints.len());
+        for endpoint in endpoints.iter() {
+            let new_channel =
+                SafeMLLPChannel::new(SyncMutex::new(MLLPChannel::open(&endpoint, &mllp)));
+            channels.push(new_channel);
+        }
+        Ok(channels)
+    }
+
+    pub fn mllp_iter_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
+        let is_server = mllp_is_server(mllp.clone());
+        match is_server {
+            true => mllp_open_server_channels(mllp),
+            false => mllp_open_client_channel(mllp),
+        }
+    }
+
+    pub fn mllp_client_connect(
+        ip: &str,
+        port: u16,
+        policy: MLLP_FILTER_POLICY,
+        server: bool,
+        local: bool,
+    ) -> RUMResult<SafeAsyncMLLP> {
+        let handle = match local {
+            true => block_on_task(AsyncMLLP::local(port, policy, server))??,
+            false => block_on_task(AsyncMLLP::new(RUMString::from(ip), port, policy, server))??,
+        };
+        Ok(SafeAsyncMLLP::new(AsyncMutex::new(handle)))
+    }
 }
 
 ///
@@ -928,6 +988,8 @@ pub mod mllp_v2_api {
     /// If you want to specify an ip address, then the signature is `ip`, `port`, and
     /// [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY)
     ///
+    /// See [mllp_connect](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_connect).
+    ///
     /// # Example Usage
     ///
     /// ## With Port only
@@ -969,22 +1031,13 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_connect {
         ( $port:expr, $policy:expr ) => {{
-            use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-            use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
-            use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            match rumtk_resolve_task!(AsyncMLLP::local($port, $policy, false)) {
-                Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                Err(e) => Err(e),
-            }
+            use $crate::hl7_v2_mllp::mllp_v2::LOCALHOST;
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_client_connect;
+            mllp_client_connect(LOCALHOST, $port, $policy, false, true)
         }};
         ( $ip:expr, $port:expr, $policy:expr ) => {{
-            use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
-            use $crate::hl7_v2_mllp::mllp_v2::AsyncMutex;
-            use $crate::hl7_v2_mllp::mllp_v2::{AsyncMLLP, SafeAsyncMLLP};
-            match rumtk_resolve_task!(AsyncMLLP::new($ip, $port, $policy, false)) {
-                Ok(mllp) => Ok(SafeAsyncMLLP::new(AsyncMutex::new(mllp))),
-                Err(e) => Err(e),
-            }
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_client_connect;
+            mllp_client_connect($ip, $port, $policy, false, false)
         }};
     }
 
@@ -992,13 +1045,13 @@ pub mod mllp_v2_api {
     /// Create a server listener for MLLP communications.
     /// Returns [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
     ///
-    /// A minimum of two parameters are needed; the [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY) 
-    /// and a boolean signifying if to initialize the listener locally or exposed outbound 
+    /// A minimum of two parameters are needed; the [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY)
+    /// and a boolean signifying if to initialize the listener locally or exposed outbound
     /// (`localhost` vs. `0.0.0.0` interface).
     ///
-    /// If you want to specify a port, then the signature is `port`, 
+    /// If you want to specify a port, then the signature is `port`,
     /// [MLLP_FILTER_POLICY](crate::hl7_v2_mllp::mllp_v2::MLLP_FILTER_POLICY), `local`.
-    /// 
+    ///
     /// See [create_async_mllp](crate::hl7_v2_mllp::mllp_v2_helpers::create_async_mllp).
     ///
     /// ## Example Usage
@@ -1071,6 +1124,8 @@ pub mod mllp_v2_api {
     /// a thread safe instance of [SafeAsyncMLLPChannel](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel)
     /// from the client to the server. The channel provides bidirectional communication.
     ///
+    /// See [mllp_open_client_channel](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_open_client_channel).
+    ///
     /// # Example Usage
     ///
     /// ```
@@ -1085,22 +1140,19 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_open_client_channel {
         ( $safe_mllp:expr ) => {{
-            use std::sync::{Arc, Mutex};
-            use $crate::hl7_v2_mllp::mllp_v2::{MLLPChannel, SafeMLLPChannel};
-            use $crate::rumtk_v2_mllp_get_client_ids;
-            let endpoints = rumtk_v2_mllp_get_client_ids!(&$safe_mllp);
-            let endpoint = endpoints.get(0).unwrap();
-            let new_channel =
-                SafeMLLPChannel::new(Mutex::new(MLLPChannel::open(&endpoint, &$safe_mllp)));
-            vec![new_channel]
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_open_client_channel;
+            mllp_open_client_channel($safe_mllp.clone())
         }};
     }
 
     ///
-    /// Create vector iterable using the shared [SafeAsyncMLLP] instance to obtain channels to clients.
-    /// This macro creates thread safe instances of [SafeAsyncMLLPChannels]. These are channels from
+    /// Create vector iterable using the shared [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP)
+    /// instance to obtain channels to clients. This macro creates thread safe instances of
+    /// [SafeAsyncMLLPChannels](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLPChannel). These are channels from
     /// the server to the clients. These channels provide bidirectional communication with the
     /// clients.
+    ///
+    /// See [mllp_open_server_channels](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_open_server_channels).
     ///
     /// # Example Usage
     ///
@@ -1118,27 +1170,16 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_open_server_channels {
         ( $safe_mllp:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::rumtk_exec_task;
-            use std::sync::{Arc, Mutex};
-            use $crate::hl7_v2_mllp::mllp_v2::{
-                AsyncMutex, ClientIDList, MLLPChannel, MLLPChannels, SafeMLLPChannel,
-            };
-            use $crate::rumtk_v2_mllp_get_client_ids;
-            let endpoints = rumtk_v2_mllp_get_client_ids!(&$safe_mllp);
-            let mut channels = MLLPChannels::with_capacity(endpoints.len());
-            for endpoint in endpoints.iter() {
-                let new_channel =
-                    SafeMLLPChannel::new(Mutex::new(MLLPChannel::open(&endpoint, &$safe_mllp)));
-                channels.push(new_channel);
-            }
-            channels
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_open_server_channels;
+            mllp_open_server_channels($safe_mllp.clone())
         }};
     }
 
     ///
-    /// Convenience macro for generating [MLLPChannels] that you can use to communicate with the
-    /// peer endpoint(s).
+    /// Convenience macro for generating [MLLPChannels](crate::hl7_v2_mllp::mllp_v2::MLLPChannel)
+    /// that you can use to communicate with the peer endpoint(s).
+    ///
+    /// See [mllp_iter_channels](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_iter_channels)
     ///
     /// # Example Usage
     /// ## Basic Usage
@@ -1156,16 +1197,8 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_iter_channels {
         ( $safe_mllp:expr ) => {{
-            use rumtk_core::dependencies::tokio;
-            use $crate::{
-                rumtk_v2_mllp_is_server, rumtk_v2_mllp_open_client_channel,
-                rumtk_v2_mllp_open_server_channels,
-            };
-            let is_server = rumtk_v2_mllp_is_server!($safe_mllp);
-            match is_server {
-                true => rumtk_v2_mllp_open_server_channels!($safe_mllp),
-                false => rumtk_v2_mllp_open_client_channel!($safe_mllp),
-            }
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_iter_channels;
+            mllp_iter_channels($safe_mllp)
         }};
     }
 
@@ -1196,7 +1229,10 @@ pub mod mllp_v2_api {
     }
 
     ///
-    /// Convenience macro for obtaining the client id list ([ClientIDList]) off an instance of [SafeAsyncMLLP].
+    /// Convenience macro for obtaining the client id list
+    /// ([ClientIDList](crate::hl7_v2_mllp::mllp_v2::ClientIDList)) off an instance of [SafeAsyncMLLP](crate::hl7_v2_mllp::mllp_v2::SafeAsyncMLLP).
+    ///
+    /// See [mllp_get_client_ids](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_get_client_ids).
     ///
     /// # Example Usage
     ///
@@ -1219,25 +1255,16 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_get_client_ids {
         ( $safe_mllp:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-            use $crate::hl7_v2_mllp::mllp_v2::ClientIDList;
-            let mllp_ref = $safe_mllp.clone();
-            let endpoint_list = rumtk_exec_task!(async || -> RUMResult<ClientIDList> {
-                Ok(mllp_ref.lock().await.get_client_ids().await)
-            });
-            let endpoints = match endpoint_list {
-                Ok(endpoints) => endpoints,
-                Err(e) => vec![],
-            };
-            endpoints
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_get_client_ids;
+            mllp_get_client_ids($safe_mllp.clone())
         }};
     }
 
     ///
-    /// Convenience macro for querying if an [AsyncMLLP] instance is a server instance or a client
-    /// instance.
+    /// Convenience macro for querying if an [AsyncMLLP](crate::hl7_v2_mllp::mllp_v2::AsyncMLLP)
+    /// instance is a server instance or a client instance.
+    ///
+    /// See [mllp_is_server](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_is_server).
     ///
     /// # Example Usage
     /// ```
@@ -1257,25 +1284,17 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_is_server {
         ( $safe_mllp:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-            use $crate::hl7_v2_mllp::mllp_v2::ClientIDList;
-            let mllp_ref = $safe_mllp.clone();
-            let result = rumtk_exec_task!(async || -> RUMResult<bool> {
-                Ok(mllp_ref.lock().await.is_server().await)
-            });
-            match result {
-                Ok(is_server) => is_server,
-                Err(e) => false,
-            }
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_is_server;
+            mllp_is_server($safe_mllp.clone())
         }};
     }
 
     ///
-    /// Convenience macro for receiving a message via an [AsyncMLLP] instance.
+    /// Convenience macro for receiving a message via an [AsyncMLLP](crate::hl7_v2_mllp::mllp_v2::AsyncMLLP) instance.
     /// This macro, like the underlying function it calls, retrieves an optional which may be None
     /// if no message was available in the internal queue buffer.
+    ///
+    /// See [mllp_receive](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_receive)
     ///
     /// # Example Usage
     /// ```no_run
@@ -1301,19 +1320,16 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_receive {
         ( $safe_mllp:expr, $endpoint:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::RUMString;
-            let mllp_ref = $safe_mllp.clone();
-            let endpoint = RUMString::from($endpoint);
-            rumtk_exec_task!(async || -> RUMResult<RUMString> {
-                mllp_ref.lock().await.receive_message(&endpoint).await
-            })
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_receive;
+            mllp_receive($safe_mllp.clone(), $endpoint)
         }};
     }
 
     ///
-    /// Convenience macro for sending a message via an [AsyncMLLP] instance.
+    /// Convenience macro for sending a message via an [AsyncMLLP](crate::hl7_v2_mllp::mllp_v2::AsyncMLLP)
+    /// instance.
+    ///
+    /// See [mllp_send](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_send).
     ///
     /// # Example Usage
     /// ```no_run
@@ -1339,19 +1355,8 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_send {
         ( $safe_mllp:expr, $endpoint:expr, $message:expr ) => {{
-            use rumtk_core::core::RUMResult;
-            use rumtk_core::rumtk_exec_task;
-            use rumtk_core::strings::RUMString;
-            let mllp_ref = $safe_mllp.clone();
-            let endpoint = RUMString::from($endpoint);
-            let message = RUMString::from($message);
-            rumtk_exec_task!(async || -> RUMResult<()> {
-                mllp_ref
-                    .lock()
-                    .await
-                    .send_message(&message, &endpoint)
-                    .await
-            })
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_send;
+            mllp_send($safe_mllp.clone(), $endpoint, $message)
         }};
     }
 }
