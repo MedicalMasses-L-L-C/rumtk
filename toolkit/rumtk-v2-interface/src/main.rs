@@ -124,7 +124,7 @@ fn inbound_receive(channel: &SafeMLLPChannel) -> RUMResult<()> {
 
 fn inbound_loop(listener: &SafeAsyncMLLP) {
     loop {
-        for channel in rumtk_v2_mllp_iter_channels!(listener.clone()) {
+        for channel in rumtk_v2_mllp_iter_channels!(listener.clone()).unwrap() {
             match inbound_receive(&channel) {
                 Ok(()) => continue,
                 Err(e) => println!("{}", e), // TODO: log call
@@ -150,9 +150,10 @@ fn main() {
         };
         let port = args.port.expect("Must provide a port number");
         let client =
-            rumtk_v2_mllp_connect!(ip, port, mllp_filter_policy).expect("MLLP connection failed");
-        let channel_option = rumtk_v2_mllp_iter_channels!(client);
-        let channel = channel_option.get(0).expect("MLLP connection failed");
+            rumtk_v2_mllp_connect!(&ip, port, mllp_filter_policy).expect("MLLP connection failed");
+        let channel_option = rumtk_v2_mllp_iter_channels!(client)
+            .expect("Issue getting list of outbound connections.");
+        let channel = channel_option.get(0).expect("No MLLP Connections");
 
         if args.daemon {
             outbound_loop(&channel);

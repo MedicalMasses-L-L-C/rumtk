@@ -322,7 +322,7 @@ mod tests {
         let locked_args = RwLock::new(expected.clone());
         let task_args = SafeTaskArgs::<i32>::new(locked_args);
         let task_result = rumtk_wait_on_task!(task_processor, &task_args);
-        let result = task_result.unwrap();
+        let result = task_result.unwrap().unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
@@ -343,7 +343,7 @@ mod tests {
         };
         let task_args = rumtk_create_task_args!(1, 2, 3);
         let task_result = rumtk_wait_on_task!(task_processor, &task_args);
-        let result = task_result.unwrap();
+        let result = task_result.unwrap().unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
@@ -365,6 +365,7 @@ mod tests {
             },
             vec![1, 2, 3]
         )
+        .unwrap()
         .unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
