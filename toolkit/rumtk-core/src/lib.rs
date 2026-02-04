@@ -306,7 +306,6 @@ mod tests {
 
     #[test]
     fn test_execute_job() {
-        let rt = rumtk_init_threads!().unwrap();
         let expected = vec![1, 2, 3];
         let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
@@ -322,14 +321,13 @@ mod tests {
         };
         let locked_args = RwLock::new(expected.clone());
         let task_args = SafeTaskArgs::<i32>::new(locked_args);
-        let task_result = rumtk_wait_on_task!(rt, task_processor, &task_args);
+        let task_result = rumtk_wait_on_task!(task_processor, &task_args);
         let result = task_result.unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
     #[test]
     fn test_execute_job_macros() {
-        let rt = rumtk_init_threads!().unwrap();
         let expected = vec![1, 2, 3];
         let task_processor = async |args: &SafeTaskArgs<i32>| -> RUMResult<Vec<i32>> {
             let owned_args = Arc::clone(args);
@@ -344,7 +342,7 @@ mod tests {
             Ok(results)
         };
         let task_args = rumtk_create_task_args!(1, 2, 3);
-        let task_result = rumtk_wait_on_task!(rt, task_processor, &task_args);
+        let task_result = rumtk_wait_on_task!(task_processor, &task_args);
         let result = task_result.unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
@@ -532,7 +530,7 @@ mod tests {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match client.send(&msg.to_raw()) {
+        match client.send(msg.to_raw()) {
             Ok(_) => (),
             Err(e) => panic!("Failed to send message because {}", e),
         };
@@ -631,7 +629,7 @@ mod tests {
             Err(e) => panic!("Failed to create server because {}", e),
         };
         rumtk_sleep!(2);
-        match client.send(&msg.to_raw()) {
+        match client.send(msg.to_raw()) {
             Ok(_) => (),
             Err(e) => panic!("Failed to send message because {}", e),
         };

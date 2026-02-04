@@ -34,10 +34,10 @@ use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
 use rumtk_core::core::RUMResult;
 use rumtk_core::dependencies::clap;
+use rumtk_core::rumtk_resolve_task;
 use rumtk_core::strings::RUMString;
 use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
-use rumtk_core::{rumtk_init_threads, rumtk_resolve_task};
 
 use crate::api::UserAPIEndpoints;
 use axum::routing::{get, post};
@@ -116,7 +116,7 @@ struct Args {
     pub skip_default_css: bool,
 }
 
-async fn run_app(args: &Args, skip_serve: bool) -> RUMResult<()> {
+async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
     let state = rumtk_web_load_conf!(&args);
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
@@ -182,17 +182,15 @@ pub fn app_main(
     );
 
     rumtk_web_init_job_manager!(&args.threads);
-    let rt = rumtk_init_threads!(args.threads)
-        .expect("Failed to initialize the tokio runtime for the website.");
-    let task = run_app(&args, skip_serve);
-    rumtk_resolve_task!(rt, task);
+    let task = run_app(args, skip_serve);
+    rumtk_resolve_task!(task);
 }
 
 ///
 /// This is the main macro for defining your applet and launching it.
 /// Usage is very simple and the only decision from a user is whether to pass a list of
-/// [UserPages](crate::pages::UserPages) or a list of [UserPages](crate::pages::UserPages) and a list
-/// of [UserComponents](crate::components::UserComponents).
+/// [UserPages](UserPages) or a list of [UserPages](UserPages) and a list
+/// of [UserComponents](UserComponents).
 ///
 /// These lists are used to automatically register your pages
 /// (e.g. `/index => ('index', my_index_function)`) and your custom components
@@ -260,9 +258,6 @@ pub fn app_main(
 ///     #[derive(RUMWebTemplate, Debug)]
 ///     #[template(
 ///             source = "
-///                <style>
-///
-///                </style>
 ///                {% if custom_css_enabled %}
 ///                    <link href='/static/components/div.css' rel='stylesheet'>
 ///                {% endif %}

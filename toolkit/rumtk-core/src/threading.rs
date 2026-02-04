@@ -190,12 +190,12 @@ pub mod threading_manager {
         }
 
         ///
-        /// Creates an instance of [`TaskManager<R>`].
+        /// Creates an instance of [`TaskManager<R>`](TaskManager<R>).
         /// Expects you to provide the count of threads to spawn and the microtask queue size
         /// allocated by each thread.
         ///
         /// This method calls [`TaskTable::with_capacity()`](TaskTable::with_capacity) for the actual object creation.
-        /// The main queue capacity is pre-allocated to [`DEFAULT_TASK_CAPACITY`].
+        /// The main queue capacity is pre-allocated to [`DEFAULT_TASK_CAPACITY`](DEFAULT_TASK_CAPACITY).
         ///
         pub fn new(worker_num: &usize) -> RUMResult<TaskManager<R>> {
             let tasks = SafeSyncTaskTable::<R>::new(SyncRwLock::new(TaskTable::with_capacity(
@@ -572,7 +572,9 @@ pub mod threading_functions {
         F: Future<Output = R> + Send + 'static,
         F::Output: Send + 'static,
     {
-        let handle = init_runtime(0)
+        let default_system_thread_count = get_default_system_thread_count();
+
+        let handle = init_runtime(default_system_thread_count)
             .expect("Failed to initialize runtime")
             .spawn(task);
 
@@ -580,7 +582,7 @@ pub mod threading_functions {
             rumtk_sleep!(DEFAULT_SLEEP_DURATION);
         }
 
-        init_runtime(0)
+        init_runtime(default_system_thread_count)
             .expect("Failed to initialize runtime")
             .block_on(handle)
             .unwrap()
