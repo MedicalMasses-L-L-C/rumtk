@@ -525,7 +525,7 @@ pub mod threading_functions {
     use crate::core::RUMResult;
     use crate::rumtk_sleep;
     use crate::strings::rumtk_format;
-    use crate::threading::thread_primitives::init_runtime;
+    pub use crate::threading::thread_primitives::init_runtime;
     use num_cpus;
     use std::future::Future;
     use std::thread::{available_parallelism, sleep as std_sleep};
@@ -573,6 +573,22 @@ pub mod threading_functions {
     /// result.
     ///
     /// Because this helper function can fail, the return value is wrapped inside a [RUMResult].
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use rumtk_core::threading::threading_functions::{init_runtime, block_on_task};
+    ///
+    /// const Hello: &str = "World!";
+    ///
+    /// init_runtime(5);
+    ///
+    /// let result = block_on_task(async {
+    ///     Hello
+    /// }).unwrap();
+    ///
+    /// assert_eq!(Hello, result, "Result mismatches expected! {} vs. {}", Hello, result);
+    /// ```
     ///
     pub fn block_on_task<R, F>(task: F) -> RUMResult<R>
     where
