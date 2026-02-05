@@ -55,7 +55,7 @@ mod tests {
     use crate::{
         rumtk_v2_find_component, rumtk_v2_generate_message, rumtk_v2_mllp_connect,
         rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_iter_channels,
-        rumtk_v2_mllp_listen, rumtk_v2_mllp_send, rumtk_v2_parse_message,
+        rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
@@ -65,6 +65,7 @@ mod tests {
     use rumtk_core::{
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_serialize, rumtk_sleep,
     };
+    use std::thread;
     use std::thread::spawn;
     /**********************************Constants**************************************/
     use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
@@ -1045,32 +1046,12 @@ mod tests {
         let (ip, port) = rumtk_v2_mllp_get_ip_port!(&mllp_layer).unwrap();
     }
 
-    /*
     #[test]
     fn test_mllp_echo() {
         static PORT: u16 = 55555;
         static EXPECTED_MESSAGE: &str = "Hello World";
 
-        let receive_h = thread::spawn(|| -> RUMResult<RUMString> {
-            let safe_listener =
-                rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
-            let mut client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener)?;
-            while client_ids.is_empty() {
-                rumtk_sleep!(1);
-                client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener)?;
-            }
-            let client_id = client_ids.get(0).unwrap().clone();
-
-            println!("{}", &client_id);
-            let r = rumtk_v2_mllp_receive!(&safe_listener, &client_id).unwrap();
-            assert_eq!(
-                r.as_str(),
-                EXPECTED_MESSAGE,
-                "Message received does not match the expected message. Got {}",
-                &r
-            );
-            Ok(r)
-        });
+        let safe_listener = rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
 
         let send_h = thread::spawn(|| -> RUMResult<()> {
             let message = RUMString::new("Hello World");
@@ -1080,12 +1061,16 @@ mod tests {
             rumtk_v2_mllp_send!(&safe_client, &endpoint, &message)
         });
 
-        send_h
-            .join()
-            .expect("No thread failure!")
-            .expect("No thread errors");
+        let mut client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
+        while client_ids.is_empty() {
+            rumtk_sleep!(1);
+            client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
+        }
+        let client_id = client_ids.get(0).unwrap().clone();
+
+        println!("{}", &client_id);
+        let result = rumtk_v2_mllp_receive!(&safe_listener, &client_id).unwrap();
         println!("Send thread completed!");
-        let result = receive_h.join().unwrap().unwrap();
 
         assert_eq!(
             result.as_str(),
@@ -1094,7 +1079,6 @@ mod tests {
             &result
         );
     }
-     */
 
     #[test]
     fn test_mllp_connect() {
