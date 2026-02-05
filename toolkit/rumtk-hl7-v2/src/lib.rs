@@ -65,7 +65,6 @@ mod tests {
     use rumtk_core::{
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_serialize, rumtk_sleep,
     };
-    use std::thread;
     use std::thread::spawn;
     /**********************************Constants**************************************/
     use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
@@ -1053,7 +1052,7 @@ mod tests {
 
         let safe_listener = rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
 
-        let send_h = thread::spawn(|| -> RUMResult<()> {
+        let send_h = spawn(|| -> RUMResult<()> {
             let message = RUMString::new("Hello World");
             let safe_client = rumtk_v2_mllp_connect!(PORT, MLLP_FILTER_POLICY::NONE)?;
             let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_client)?;

@@ -474,7 +474,7 @@ pub mod v2_parser {
         ///
         /// Generates a raw V2 message from a [V2Message](V2Message) instance. Do keep in mind that
         /// printing this generated message in Unix will look as if the message was not parsed correctly
-        /// but this is an artefact of following the standard and forcing all linefeed characters into
+        /// but this is an artifact of following the standard and forcing all linefeed characters into
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
@@ -485,6 +485,7 @@ pub mod v2_parser {
                     msg.push(segment.to_string(&self.separators));
                 }
             }
+
             msg.join_compact(self.separators.segment_terminator.as_str())
         }
 
