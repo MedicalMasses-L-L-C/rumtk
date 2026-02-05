@@ -115,7 +115,7 @@ fn inbound_receive(channel: &SafeMLLPChannel) -> RUMResult<()> {
     let mut owned_channel = channel.lock().expect("Failed to lock channel");
     let raw_msg = owned_channel.receive_message()?;
     if !raw_msg.is_empty() {
-        rumtk_write_stdout!(&raw_msg);
+        rumtk_write_stdout!(raw_msg);
     } else {
         rumtk_sleep!(0.001);
     }

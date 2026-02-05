@@ -21,7 +21,9 @@
 
 pub mod cli_utils {
     use crate::core::{RUMResult, RUMVec};
-    use crate::strings::{rumtk_format, EscapeExceptions, RUMString};
+    use crate::strings::{
+        basic_escape, rumtk_format, EscapeExceptions, RUMString, RUMStringConversions,
+    };
     use crate::types::{RUMBuffer, RUMCLIParser};
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, StdinLock, Write};
@@ -158,10 +160,20 @@ pub mod cli_utils {
         }
     }
 
-    //TODO: Turn into a RUMBuffer for future tools.
-    pub fn write_stdout(data: &RUMString) -> RUMResult<()> {
+    ///
+    /// Escapes a string (`stringview`) and writes it to `stdout`.
+    ///
+    pub fn write_string_stdout(data: &str) -> RUMResult<()> {
+        let escaped = basic_escape(data, CLI_ESCAPE_EXCEPTIONS);
+        write_stdout(&escaped.to_buffer())
+    }
+
+    ///
+    /// Writes [RUMBuffer] to `stdout`.
+    ///
+    pub fn write_stdout(data: &RUMBuffer) -> RUMResult<()> {
         let mut stdout_handle = stdout();
-        match stdout_handle.write_all(data.as_bytes()) {
+        match stdout_handle.write_all(data.as_slice()) {
             Ok(_) => match stdout_handle.flush() {
                 Ok(_) => Ok(()),
                 Err(e) => Err(rumtk_format!("Error flushing stdout: {}", e)),
@@ -212,22 +224,42 @@ pub mod macros {
     }
 
     ///
-    /// Escapes a message and writes it to stdout via the print! macro.
+    /// Writes [RUMString](crate::strings::RUMString) or [RUMBuffer](crate::types::RUMBuffer) to `stdout`.
     ///
-    /// # Example
+    /// If the `binary` parameter is omitted, we take a [RUMString](crate::strings::RUMString), escape it
+    /// while preserving [CLI_ESCAPE_EXCEPTIONS](crate::cli::cli_utils::CLI_ESCAPE_EXCEPTIONS) characters,
+    /// and finally write it out as a [RUMBuffer](crate::types::RUMBuffer) to `stdout`.
+    ///
+    /// If the `binary` parameter is passed, we push the `message` parameter directly to `stdout`. the
+    /// `message` parameter has to be of type [RUMBuffer](crate::types::RUMBuffer).
+    ///
+    /// ## Example
+    ///
+    /// ### Default / Pushing a String
     /// ```
     /// use rumtk_core::rumtk_write_stdout;
     ///
     /// rumtk_write_stdout!("I ❤ my wife!");
     /// ```
     ///
+    /// ## Pushing Binary Buffer
+    /// ```
+    /// use rumtk_core::rumtk_write_stdout;
+    /// use rumtk_core::core::new_random_buffer;
+    ///
+    /// let buffer = new_random_buffer();
+    /// rumtk_write_stdout!(buffer, true);
+    /// ```
+    ///
     #[macro_export]
     macro_rules! rumtk_write_stdout {
         ( $message:expr ) => {{
-            use $crate::cli::cli_utils::{write_stdout, CLI_ESCAPE_EXCEPTIONS};
-            use $crate::strings::basic_escape;
-            let escaped_message = basic_escape($message, CLI_ESCAPE_EXCEPTIONS);
-            write_stdout(&escaped_message);
+            use $crate::cli::cli_utils::write_string_stdout;
+            write_string_stdout(&$message)
+        }};
+        ( $message:expr, $binary:expr ) => {{
+            use $crate::cli::cli_utils::write_stdout;
+            write_stdout(&$message)
         }};
     }
 

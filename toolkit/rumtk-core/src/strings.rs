@@ -18,7 +18,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-use crate::core::{is_unique, RUMResult};
+use crate::core::{is_unique, RUMResult, RUMVec};
+use crate::types::RUMBuffer;
 use chardetng::EncodingDetector;
 pub use compact_str::{
     format_compact as rumtk_format, CompactString, CompactStringExt, ToCompactString,
@@ -130,12 +131,19 @@ pub trait AsStr {
 }
 
 pub trait RUMStringConversions: ToString {
+    #[inline(always)]
     fn to_rumstring(&self) -> RUMString {
         RUMString::from(self.to_string())
     }
 
-    fn to_raw(&self) -> Vec<u8> {
+    #[inline(always)]
+    fn to_raw(&self) -> RUMVec<u8> {
         self.to_string().as_bytes().to_vec()
+    }
+
+    #[inline(always)]
+    fn to_buffer(&self) -> RUMBuffer {
+        RUMBuffer::from(self.to_string())
     }
 }
 
