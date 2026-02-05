@@ -198,7 +198,7 @@ pub mod pipeline_functions {
     /// sys_wc_process.wait();
     /// ```
     ///
-    pub fn pipeline_pipe_process(
+    pub fn pipeline_pipe_processes(
         process: &mut RUMPipelineProcess,
         piped: &mut RUMPipelineCommand,
     ) -> RUMResult<()> {
@@ -326,7 +326,9 @@ pub mod pipeline_functions {
         match data {
             Some(data) => match process.stdin {
                 Some(ref mut stdin) => match stdin.write_all(&data) {
-                    Ok(_) => {}
+                    Ok(_) => {
+                        pipeline_close_process_stdin(process);
+                    }
                     Err(e) => {
                         return Err(rumtk_format!(
                             "Failed to pipe data to stdin of process because => {}",
@@ -383,7 +385,7 @@ pub mod pipeline_functions {
 
         for cmd in commands.iter().skip(1) {
             let mut new_root = pipeline_generate_command(cmd);
-            pipeline_pipe_process(pipeline.last_mut().unwrap(), &mut new_root)?;
+            pipeline_pipe_processes(pipeline.last_mut().unwrap(), &mut new_root)?;
             parent_process = pipeline_spawn_process(&mut new_root)?;
             pipeline.push(parent_process);
         }
