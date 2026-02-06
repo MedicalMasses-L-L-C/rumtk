@@ -24,7 +24,6 @@ use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
 use rumtk_core::{rumtk_read_stdin, rumtk_sleep, rumtk_write_stdout};
-use rumtk_hl7_v2::hl7_v2_datasets::hl7_v2_messages::VXU_HL7_V2_MESSAGE;
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
 use rumtk_hl7_v2::{rumtk_v2_mllp_connect, rumtk_v2_mllp_iter_channels, rumtk_v2_mllp_listen};
 
@@ -116,21 +115,25 @@ fn inbound_receive(channel: &SafeMLLPChannel) -> RUMResult<()> {
     let mut owned_channel = channel.lock().expect("Failed to lock channel");
     let raw_msg = owned_channel.receive_message()?;
     if !raw_msg.is_empty() {
-        rumtk_write_stdout!(VXU_HL7_V2_MESSAGE);
+        rumtk_write_stdout!(raw_msg);
     } else {
         rumtk_sleep!(0.001);
     }
     Ok(())
 }
 
+fn inbound_single_pass(listener: &SafeAsyncMLLP) {
+    for channel in rumtk_v2_mllp_iter_channels!(listener.clone()).unwrap() {
+        match inbound_receive(&channel) {
+            Ok(()) => continue,
+            Err(e) => println!("{}", e), // TODO: log call
+        }
+    }
+}
+
 fn inbound_loop(listener: &SafeAsyncMLLP) {
     loop {
-        for channel in rumtk_v2_mllp_iter_channels!(listener.clone()).unwrap() {
-            match inbound_receive(&channel) {
-                Ok(()) => continue,
-                Err(e) => println!("{}", e), // TODO: log call
-            }
-        }
+        inbound_single_pass(listener);
     }
 }
 
@@ -180,8 +183,8 @@ fn main() {
         }
 
         // Run inbound logic
-        inbound_loop(
-            &listener.expect("MLLP listening connection failed to bind a network interface!"),
-        );
+        let listener_handle =
+            listener.expect("MLLP listening connection failed to bind a network interface!");
+        inbound_loop(&listener_handle);
     }
 }

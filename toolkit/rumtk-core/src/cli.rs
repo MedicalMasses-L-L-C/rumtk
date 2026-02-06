@@ -24,7 +24,7 @@ pub mod cli_utils {
     use crate::strings::{rumtk_format, EscapeExceptions, RUMString, RUMStringConversions};
     use crate::types::{RUMBuffer, RUMCLIParser};
     use compact_str::CompactStringExt;
-    use std::io::{stdin, stdout, Read, StdinLock, Stdout, Write};
+    use std::io::{stdin, stdout, Read, Stdin, Stdout, Write};
     use std::num::NonZeroU16;
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
@@ -112,12 +112,12 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_stdin() -> RUMResult<RUMBuffer> {
-        let mut stdin_lock = stdin().lock();
+        let mut stdin_handle = stdin();
         let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
-        let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
+        let mut s = read_some_stdin(&mut stdin_handle, &mut stdin_buffer)?;
 
         while s > 0 {
-            s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer)?;
+            s = read_some_stdin(&mut stdin_handle, &mut stdin_buffer)?;
         }
 
         Ok(RUMBuffer::from(stdin_buffer))
@@ -146,7 +146,7 @@ pub mod cli_utils {
     /// assert_eq!(totas_s, 0, "Returned data with {} size even though we expected 0 bytes!", totas_s)
     /// ```
     ///
-    pub fn read_some_stdin(input: &mut StdinLock, buf: &mut BufferSlice) -> RUMResult<usize> {
+    pub fn read_some_stdin(input: &mut Stdin, buf: &mut BufferSlice) -> RUMResult<usize> {
         let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
         match input.read(&mut chunk) {
             Ok(s) => {
