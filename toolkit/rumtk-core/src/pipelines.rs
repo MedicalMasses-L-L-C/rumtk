@@ -326,9 +326,7 @@ pub mod pipeline_functions {
         match data {
             Some(data) => match process.stdin {
                 Some(ref mut stdin) => match stdin.write_all(&data) {
-                    Ok(_) => {
-                        pipeline_close_process_stdin(process);
-                    }
+                    Ok(_) => {}
                     Err(e) => {
                         return Err(rumtk_format!(
                             "Failed to pipe data to stdin of process because => {}",
@@ -698,8 +696,7 @@ pub mod pipeline_macros {
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("ls", new_random_buffer()),
-    ///         rumtk_pipeline_command!("wc")
+    ///         rumtk_pipeline_command!("wc", new_random_buffer())
     ///     ).await?;
     ///
     ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
@@ -707,6 +704,32 @@ pub mod pipeline_macros {
     /// };
     ///
     /// rumtk_resolve_task!(f()).unwrap();
+    /// ```
+    ///
+    /// ### With Buffer Piped In W/ Return
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::{RUMResult, new_random_buffer};
+    /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let expected = "1024\n";
+    ///
+    /// let f = async || -> RUMResult<RUMBuffer> {
+    ///     let result = rumtk_pipeline_run_async!(
+    ///         rumtk_pipeline_command!("wc", new_random_buffer())
+    ///     ).await?;
+    ///
+    ///     Ok(result)
+    /// };
+    ///
+    /// let result = rumtk_resolve_task!(f()).unwrap().unwrap();
+    /// let string = result.to_vec().to_rumstring();
+    /// let result_buffer_size = string.split("      ").last().unwrap().split("    ").last().unwrap().to_rumstring();
+    ///
+    /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
+    /// assert_eq!(&result_buffer_size, expected, "Pipeline returned an unexpected result from command wc! => {:?}\nvs.\n{:?}", &result_buffer_size, &expected);
     /// ```
     ///
     #[macro_export]
