@@ -196,7 +196,9 @@ pub mod mllp_v2 {
         AsyncMutex, AsyncMutexGuard, ClientIDList, RUMClientHandle, RUMNetMessage, RUMServerHandle,
         ANYHOST, LOCALHOST,
     };
-    use rumtk_core::net::tcp::{AsyncRwLock, RUMClient, RUMServer, SafeClient, SafeServer};
+    use rumtk_core::net::tcp::{
+        AsyncRwLock, RUMClient, RUMNetClient, RUMNetMessageQueue, RUMServer, SafeServer,
+    };
     use rumtk_core::strings::{
         basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString,
         RUMStringConversions, ToCompactString,
@@ -356,7 +358,7 @@ pub mod mllp_v2 {
     ///
     pub enum LowerLayer {
         SERVER(SafeServer),
-        CLIENT(SafeClient),
+        CLIENT(RUMNetClient),
     }
 
     impl LowerLayer {
@@ -369,7 +371,7 @@ pub mod mllp_v2 {
                 }
                 false => {
                     let client = RUMClient::connect(&ip, port).await?;
-                    let safe_client = SafeClient::new(AsyncRwLock::new(client));
+                    let safe_client = RUMNetClient::new(AsyncRwLock::new(client));
                     Ok(LowerLayer::CLIENT(safe_client))
                 }
             }
@@ -489,6 +491,7 @@ pub mod mllp_v2 {
         transport_layer: SafeLowerLayer,
         filter_policy: MLLP_FILTER_POLICY,
         server_handle: ServerRunner,
+        inbound_messages: RUMNetMessageQueue,
         server: bool,
     }
 
@@ -527,10 +530,12 @@ pub mod mllp_v2 {
             let transport_layer =
                 Arc::new(AsyncMutex::new(LowerLayer::init(&ip, port, server).await?));
             let server_handle = transport_layer.lock().await.start().await;
+            let inbound_messages = RUMNetMessageQueue::default();
             Ok(AsyncMLLP {
                 transport_layer,
                 filter_policy,
                 server_handle,
+                inbound_messages,
                 server,
             })
         }

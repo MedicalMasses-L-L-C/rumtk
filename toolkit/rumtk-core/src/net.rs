@@ -585,8 +585,7 @@ pub mod tcp {
                     Client: {}", &client));
                 }
             };
-            let mut locked_queue = queue.lock().await;
-            locked_queue.push_back(msg);
+            queue.push_back(msg);
             Ok(())
         }
 
@@ -599,16 +598,15 @@ pub mod tcp {
                 Some(queue) => queue,
                 None => return None,
             };
-            let mut locked_queue = queue.lock().await;
-            let mut messages = Vec::<RUMNetMessage>::with_capacity(locked_queue.len());
-            while !locked_queue.is_empty() {
-                let message = match locked_queue.pop_front() {
+            let mut messages = Vec::<RUMNetMessage>::with_capacity(queue.len());
+            while !queue.is_empty() {
+                let message = match queue.pop_front() {
                     Some(message) => message,
                     None => break,
                 };
                 messages.push(message);
             }
-            locked_queue.clear();
+            queue.clear();
             Some(messages)
         }
 
@@ -618,7 +616,7 @@ pub mod tcp {
                 Some(queue) => queue,
                 None => return true,
             };
-            let empty = queue.lock().await.is_empty();
+            let empty = queue.is_empty();
             empty
         }
 
@@ -701,8 +699,7 @@ pub mod tcp {
             if !queue.contains_key(client_id) {
                 return Err(rumtk_format!("No client with id {} found!", &client_id));
             }
-            let mut queue = queue[client_id].lock().await;
-            queue.push_back(msg);
+            queue[client_id].push_back(msg);
             Ok(())
         }
 
@@ -715,8 +712,7 @@ pub mod tcp {
                 Some(queue) => queue,
                 None => return Some(vec![]),
             };
-            let mut locked_queue = queue.lock().await;
-            locked_queue.pop_front()
+            queue.pop_front()
         }
 
         ///
