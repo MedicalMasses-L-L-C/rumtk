@@ -46,7 +46,7 @@ pub mod cli_utils {
     use crate::strings::{rumtk_format, EscapeExceptions, RUMStringConversions};
     use crate::types::RUMBuffer;
     use compact_str::CompactStringExt;
-    use std::io::{stdin, stdout, Read, Stdin, Write};
+    use std::io::{stdin, stdout, Read, Write};
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
@@ -73,12 +73,11 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_stdin() -> RUMResult<RUMBuffer> {
-        let mut stdin_handle = stdin();
         let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
-        let mut s = read_some_stdin(&mut stdin_handle, &mut stdin_buffer)?;
+        let mut s = read_some_stdin(&mut stdin_buffer)?;
 
         while s > 0 {
-            s = read_some_stdin(&mut stdin_handle, &mut stdin_buffer)?;
+            s = read_some_stdin(&mut stdin_buffer)?;
         }
 
         Ok(RUMBuffer::from(stdin_buffer))
@@ -94,22 +93,22 @@ pub mod cli_utils {
     /// use std::io::prelude::*;
     /// use std::process::{Command, Stdio};
     /// use rumtk_core::cli::cli_utils::{read_some_stdin, BUFFER_SIZE, BUFFER_CHUNK_SIZE};
+    /// use rumtk_core::core::RUMVec;
     ///
-    /// let mut stdin_lock = stdin().lock();
-    /// let mut stdin_buffer: Vec<u8> = Vec::with_capacity(BUFFER_SIZE);
-    /// let mut s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer).unwrap();
+    /// let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
+    /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
     /// let mut totas_s = s;
     /// while s > 0 {
-    ///    s = read_some_stdin(&mut stdin_lock, &mut stdin_buffer).unwrap();
+    ///    s = read_some_stdin(&mut stdin_buffer).unwrap();
     ///    totas_s += s;
     /// }
     ///
     /// assert_eq!(totas_s, 0, "Returned data with {} size even though we expected 0 bytes!", totas_s)
     /// ```
     ///
-    pub fn read_some_stdin(input: &mut Stdin, buf: &mut BufferSlice) -> RUMResult<usize> {
+    pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
         let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
-        match input.read(&mut chunk) {
+        match stdin().read(&mut chunk) {
             Ok(s) => {
                 let slice = &chunk[0..s];
 
