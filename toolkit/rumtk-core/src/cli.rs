@@ -19,13 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+///
+/// Tools for handling reading and writing from the standard I/O/E.
+///
+/// Per this [stackoverflow discussion](https://unix.stackexchange.com/questions/37508/in-what-order-do-piped-commands-run).
+/// Note:
+///
+///     Piped commands run concurrently. When you run ps | grep …, it's the luck of the draw (or a matter of details of the workings of the shell combined with scheduler fine-tuning deep in the bowels of the kernel) as to whether ps or grep starts first, and in any case they continue to execute concurrently.
+///
+///     This is very commonly used to allow the second program to process data as it comes out from the first program, before the first program has completed its operation. For example
+///
+///     grep pattern very-large-file | tr a-z A-Z
+///     begins to display the matching lines in uppercase even before grep has finished traversing the large file.
+///
+///     grep pattern very-large-file | head -n 1
+///     displays the first matching line, and may stop processing well before grep has finished reading its input file.
+///
+///     If you read somewhere that piped programs run in sequence, flee this document. Piped programs run concurrently and always have.
+///
+/// I bring the note above because that was my original understanding, but I have had to spend a
+/// crazy amount of time trying to get data flowing from one process to another without the initial
+/// process first exiting.
+///
 pub mod cli_utils {
     use crate::core::{RUMResult, RUMVec};
-    use crate::strings::{rumtk_format, EscapeExceptions, RUMString, RUMStringConversions};
-    use crate::types::{RUMBuffer, RUMCLIParser};
+    use crate::strings::{rumtk_format, EscapeExceptions, RUMStringConversions};
+    use crate::types::RUMBuffer;
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, Stdin, Stdout, Write};
-    use std::num::NonZeroU16;
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
@@ -36,66 +57,6 @@ pub mod cli_utils {
 
     pub type BufferSlice = Vec<u8>;
     pub type BufferChunk = [u8; BUFFER_CHUNK_SIZE];
-
-    ///
-    /// Example CLI parser that can be used to paste in your binary and adjust as needed.
-    ///
-    /// Note, this is only an example.
-    ///
-    #[derive(RUMCLIParser, Debug)]
-    #[command(author, version, about, long_about = None)]
-    pub struct RUMTKArgs {
-        ///
-        /// For interface crate only. Specifies the ip address to connect to.
-        ///
-        /// In outbound mode, `--ip` and `--port` are required parameters.
-        ///
-        /// In inbound mode, you can omit either or both parameters.
-        ///
-        #[arg(short, long)]
-        ip: Option<RUMString>,
-        ///
-        /// For interface crate only. Specifies the port to connect to.
-        ///
-        /// In outbound mode, `--ip` and `--port` are required parameters.
-        ///
-        /// In inbound mode, you can omit either or both parameters.
-        ///
-        #[arg(short, long)]
-        port: Option<NonZeroU16>,
-        ///
-        /// For process crate only. Specifies command line script to execute on message.
-        ///
-        #[arg(short, long)]
-        x: Option<RUMString>,
-        ///
-        /// Number of processing threads to allocate for this program.
-        ///
-        #[arg(short, long, default_value_t = 1)]
-        threads: usize,
-        ///
-        /// For interface crate only. Specifies if the interface is in outbound mode.
-        ///
-        /// In outbound mode, `--ip` and `--port` are required parameters.
-        ///
-        /// In inbound mode, you can omit either or both parameters.
-        ///
-        #[arg(short, long)]
-        outbound: bool,
-        ///
-        /// Request program runs in debug mode and log more information.
-        ///
-        #[arg(short, long, default_value_t = false)]
-        debug: bool,
-        ///
-        /// Request program runs in dry run mode and simulate as many steps as possible but not commit
-        /// to a critical non-reversible step.
-        ///
-        /// For example, if it was meant to write contents to a file, stop before doing so.
-        ///
-        #[arg(short, long, default_value_t = false)]
-        dry_run: bool,
-    }
 
     ///
     /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size
