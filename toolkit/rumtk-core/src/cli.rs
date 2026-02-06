@@ -43,17 +43,13 @@
 ///
 pub mod cli_utils {
     use crate::core::{RUMResult, RUMVec};
-    use crate::strings::{rumtk_format, EscapeExceptions, RUMStringConversions};
+    use crate::strings::{rumtk_format, RUMStringConversions};
     use crate::types::RUMBuffer;
     use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, Write};
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
-    const END_OF_MESSAGE: &[u8; 8] = b"\0\0\0\0\0\0\0\0";
-
-    pub static CLI_ESCAPE_EXCEPTIONS: EscapeExceptions =
-        &[("\\n", "\n"), ("\\r", "\r"), ("\\\\", "\\")];
 
     pub type BufferSlice = Vec<u8>;
     pub type BufferChunk = [u8; BUFFER_CHUNK_SIZE];
@@ -112,10 +108,6 @@ pub mod cli_utils {
             Ok(s) => {
                 let slice = &chunk[0..s];
 
-                if s == END_OF_MESSAGE.len() && slice == END_OF_MESSAGE {
-                    return Ok(0);
-                }
-
                 if s > 0 {
                     buf.extend_from_slice(slice);
                 }
@@ -137,17 +129,12 @@ pub mod cli_utils {
     /// Writes [RUMBuffer] to `stdout`.
     ///
     pub fn write_stdout(data: &RUMBuffer) -> RUMResult<()> {
-        // Write the buffer out
-        write_stdout_buffer(data)?;
-        write_stdout_buffer(END_OF_MESSAGE)
-    }
-
-    fn write_stdout_buffer(buffer: &[u8]) -> RUMResult<()> {
-        match stdout().write_all(buffer) {
+        match stdout().write_all(data) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
-        flush_stdout()
+        flush_stdout()?;
+        Ok(())
     }
 
     fn flush_stdout() -> RUMResult<()> {
@@ -200,10 +187,6 @@ pub mod macros {
 
     ///
     /// Writes [RUMString](crate::strings::RUMString) or [RUMBuffer](crate::types::RUMBuffer) to `stdout`.
-    ///
-    /// If the `binary` parameter is omitted, we take a [RUMString](crate::strings::RUMString), escape it
-    /// while preserving [CLI_ESCAPE_EXCEPTIONS](crate::cli::cli_utils::CLI_ESCAPE_EXCEPTIONS) characters,
-    /// and finally write it out as a [RUMBuffer](crate::types::RUMBuffer) to `stdout`.
     ///
     /// If the `binary` parameter is passed, we push the `message` parameter directly to `stdout`. the
     /// `message` parameter has to be of type [RUMBuffer](crate::types::RUMBuffer).
