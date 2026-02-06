@@ -147,7 +147,7 @@ pub mod cli_utils {
 
     fn write_buffer(stdout: &mut Stdout, buffer: &[u8]) -> RUMResult<()> {
         match stdout.write_all(buffer) {
-            Ok(_) => Ok(flush_buffer(stdout)?),
+            Ok(_) => flush_buffer(stdout),
             Err(e) => Err(rumtk_format!("Error writing to stdout because => {}", e)),
         }
     }
