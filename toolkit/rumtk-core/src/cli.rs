@@ -21,16 +21,15 @@
 
 pub mod cli_utils {
     use crate::core::{RUMResult, RUMVec};
-    use crate::strings::{
-        basic_escape, rumtk_format, EscapeExceptions, RUMString, RUMStringConversions,
-    };
+    use crate::strings::{rumtk_format, EscapeExceptions, RUMString, RUMStringConversions};
     use crate::types::{RUMBuffer, RUMCLIParser};
     use compact_str::CompactStringExt;
-    use std::io::{stdin, stdout, Read, StdinLock, Write};
+    use std::io::{stdin, stdout, Read, StdinLock, Stdout, Write};
     use std::num::NonZeroU16;
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
+    const END_OF_MESSAGE: &[u8; 8] = b"\0\0\0\0\0\0\0\0";
 
     pub static CLI_ESCAPE_EXCEPTIONS: EscapeExceptions =
         &[("\\n", "\n"), ("\\r", "\r"), ("\\\\", "\\")];
@@ -151,9 +150,16 @@ pub mod cli_utils {
         let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
         match input.read(&mut chunk) {
             Ok(s) => {
-                if s > 0 {
-                    buf.extend_from_slice(&chunk[0..s]);
+                let slice = &chunk[0..s];
+
+                if s == END_OF_MESSAGE.len() && slice == END_OF_MESSAGE {
+                    return Ok(0);
                 }
+
+                if s > 0 {
+                    buf.extend_from_slice(slice);
+                }
+
                 Ok(s)
             }
             Err(e) => Err(rumtk_format!("Error reading stdin chunk because {}!", e)),
@@ -161,24 +167,34 @@ pub mod cli_utils {
     }
 
     ///
-    /// Escapes a string (`stringview`) and writes it to `stdout`.
+    /// writes [`stringview`] to `stdout`.
     ///
     pub fn write_string_stdout(data: &str) -> RUMResult<()> {
-        let escaped = basic_escape(data, CLI_ESCAPE_EXCEPTIONS);
-        write_stdout(&escaped.to_buffer())
+        write_stdout(&data.to_buffer())
     }
 
     ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
     pub fn write_stdout(data: &RUMBuffer) -> RUMResult<()> {
+        // Grab handle
         let mut stdout_handle = stdout();
-        match stdout_handle.write_all(data.as_slice()) {
-            Ok(_) => match stdout_handle.flush() {
-                Ok(_) => Ok(()),
-                Err(e) => Err(rumtk_format!("Error flushing stdout: {}", e)),
-            },
-            Err(e) => Err(rumtk_format!("Error writing to stdout!")),
+        // Write the buffer out
+        write_buffer(&mut stdout_handle, data)?;
+        write_buffer(&mut stdout_handle, END_OF_MESSAGE)
+    }
+
+    fn write_buffer(stdout: &mut Stdout, buffer: &[u8]) -> RUMResult<()> {
+        match stdout.write_all(buffer) {
+            Ok(_) => Ok(flush_buffer(stdout)?),
+            Err(e) => Err(rumtk_format!("Error writing to stdout because => {}", e)),
+        }
+    }
+
+    fn flush_buffer(stdout: &mut Stdout) -> RUMResult<()> {
+        match stdout.flush() {
+            Ok(_) => Ok(()),
+            Err(e) => Err(rumtk_format!("Error flushing stdout because => {}", e)),
         }
     }
 
