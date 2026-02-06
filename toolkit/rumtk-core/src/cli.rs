@@ -46,7 +46,7 @@ pub mod cli_utils {
     use crate::strings::{rumtk_format, EscapeExceptions, RUMStringConversions};
     use crate::types::RUMBuffer;
     use compact_str::CompactStringExt;
-    use std::io::{stdin, stdout, Read, Stdin, Stdout, Write};
+    use std::io::{stdin, stdout, Read, Stdin, Write};
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
@@ -138,22 +138,21 @@ pub mod cli_utils {
     /// Writes [RUMBuffer] to `stdout`.
     ///
     pub fn write_stdout(data: &RUMBuffer) -> RUMResult<()> {
-        // Grab handle
-        let mut stdout_handle = stdout();
         // Write the buffer out
-        write_buffer(&mut stdout_handle, data)?;
-        write_buffer(&mut stdout_handle, END_OF_MESSAGE)
+        write_stdout_buffer(data)?;
+        write_stdout_buffer(END_OF_MESSAGE)
     }
 
-    fn write_buffer(stdout: &mut Stdout, buffer: &[u8]) -> RUMResult<()> {
-        match stdout.write_all(buffer) {
-            Ok(_) => flush_buffer(stdout),
-            Err(e) => Err(rumtk_format!("Error writing to stdout because => {}", e)),
-        }
+    fn write_stdout_buffer(buffer: &[u8]) -> RUMResult<()> {
+        match stdout().write_all(buffer) {
+            Ok(_) => {}
+            Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
+        };
+        flush_stdout()
     }
 
-    fn flush_buffer(stdout: &mut Stdout) -> RUMResult<()> {
-        match stdout.flush() {
+    fn flush_stdout() -> RUMResult<()> {
+        match stdout().flush() {
             Ok(_) => Ok(()),
             Err(e) => Err(rumtk_format!("Error flushing stdout because => {}", e)),
         }
