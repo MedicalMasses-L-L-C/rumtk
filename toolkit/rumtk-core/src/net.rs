@@ -508,9 +508,6 @@ pub mod tcp {
                 }
             }
 
-            if client_list.is_empty() {
-                rumtk_async_sleep!(0.1).await;
-            }
             Ok(())
         }
 
@@ -524,14 +521,19 @@ pub mod tcp {
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             for (client_id, client) in client_list.iter_mut() {
-                let msg = Self::receive(client).await?;
+                let msg = match Self::receive(client).await {
+                    Ok(msg) => msg,
+                    Err(e) => {
+                        eprintln!("Disconnected client => {}", client_id);
+                        Self::disconnect(&client).await;
+                        return Err(e);
+                    }
+                };
                 if !msg.is_empty() {
                     Self::push_queue(&tx_in, client_id, msg).await?;
                 }
             }
-            if client_list.is_empty() {
-                rumtk_async_sleep!(0.1).await;
-            }
+
             Ok(())
         }
 
@@ -553,6 +555,7 @@ pub mod tcp {
                         && Self::is_queue_empty(&tx_out, client_id).await;
 
                     if empty_queues {
+                        eprintln!("Garbage Collected client => {}", client_id);
                         tx_in.write().await.remove(client_id);
                         tx_out.write().await.remove(client_id);
                         disconnected_clients.remove(i);
@@ -654,14 +657,11 @@ pub mod tcp {
                 if !data.is_empty() {
                     return Ok(data);
                 }
-
-                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
             }
         }
 
         pub async fn disconnect(client: &RUMNetClient) {
-            let mut owned_client = lock_client_ex(client).await;
-            owned_client.disconnect()
+            lock_client_ex(client).await.disconnect()
         }
 
         pub async fn get_client(
