@@ -1386,7 +1386,31 @@ pub mod mllp_v2_api {
     ///
     /// See [mllp_get_client_ids](crate::hl7_v2_mllp::mllp_v2_helpers::mllp_get_client_ids).
     ///
-    /// # Example Usage
+    /// ## Example Usage
+    ///
+    /// ```
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
+    /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
+    /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+    ///
+    /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
+    /// let results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
+    /// assert_eq!(results.is_empty(), true, "Expected to see no clients");
+    /// ```
+    ///
+    /// ```
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
+    /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
+    /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+    ///
+    /// let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
+    /// let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp).unwrap();
+    /// let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
+    /// let results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
+    /// assert_eq!(results.is_empty(), false, "Expected to see clients connected to listener!");
+    /// ```
     ///
     /// ```
     /// use rumtk_core::core::RUMResult;
