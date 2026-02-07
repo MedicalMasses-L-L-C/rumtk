@@ -33,8 +33,8 @@ pub mod thread_primitives {
     pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::runtime::Runtime as TokioRuntime;
     pub use tokio::sync::{
-        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock, RwLockReadGuard,
-        RwLockWriteGuard,
+        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock,
+        RwLockReadGuard as AsyncRwLockReadGuard, RwLockWriteGuard as AsyncRwLockWriteGuard,
     };
 
     pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;

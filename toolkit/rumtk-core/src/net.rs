@@ -251,16 +251,17 @@ pub mod tcp {
     pub type RUMNetClient = Arc<AsyncRwLock<RUMClient>>;
     pub type RUMNetClients = Arc<AsyncRwLock<RUMOrderedMap<RUMString, RUMNetClient>>>;
     type SafeClientIDList = Arc<AsyncMutex<ClientIDList>>;
-    pub type RUMNetMessageQueue<T> = Arc<AsyncRwLock<RUMOrderedMap<RUMString, RUMNetQueue<T>>>>;
+    pub type RUMNetClientMessageQueue<T> = RUMOrderedMap<RUMString, RUMNetQueue<T>>;
+    pub type RUMNetMessageQueue<T> = Arc<AsyncRwLock<RUMNetClientMessageQueue<T>>>;
     pub type SafeListener = Arc<AsyncMutex<TcpListener>>;
     pub type SafeServer = Arc<AsyncRwLock<RUMServer>>;
 
-    async fn lock_client_ex(client: &RUMNetClient) -> RwLockWriteGuard<RUMClient> {
+    async fn lock_client_ex(client: &RUMNetClient) -> AsyncRwLockWriteGuard<RUMClient> {
         let locked = client.write().await;
         locked
     }
 
-    async fn lock_client(client: &RUMNetClient) -> RwLockReadGuard<RUMClient> {
+    async fn lock_client(client: &RUMNetClient) -> AsyncRwLockReadGuard<RUMClient> {
         let locked = client.read().await;
         locked
     }
