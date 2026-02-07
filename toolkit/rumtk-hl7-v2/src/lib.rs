@@ -49,7 +49,7 @@ mod tests {
         V2ComponentType, V2ComponentTypeDescriptor,
     };
     use crate::hl7_v2_mllp::mllp_v2::{
-        mllp_decode, mllp_encode, MLLPMessages, CR, EB, MLLP_FILTER_POLICY, SB,
+        mllp_decode, mllp_encode, MLLPClientMessages, CR, EB, MLLP_FILTER_POLICY, SB,
     };
     use crate::hl7_v2_optionality_rules::Optionality;
     use crate::hl7_v2_parser::v2_parser::{V2Field, V2Message};
@@ -1162,17 +1162,17 @@ mod tests {
                 .unwrap())
         });
         rumtk_sleep!(1);
-        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
+        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPClientMessages> {
             let mut received_message = safe_listener
                 .lock()
                 .await
-                .receive_messages(&client_id)
+                .pop_client_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener
                     .lock()
                     .await
-                    .receive_messages(&client_id)
+                    .pop_client_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
@@ -1220,17 +1220,17 @@ mod tests {
                 .unwrap())
         });
         let safe_listener_copy = safe_listener.clone();
-        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
+        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPClientMessages> {
             let mut received_message = safe_listener_copy
                 .lock()
                 .await
-                .receive_messages(&client_id)
+                .pop_client_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener_copy
                     .lock()
                     .await
-                    .receive_messages(&client_id)
+                    .pop_client_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
@@ -1258,18 +1258,18 @@ mod tests {
             println!("Sent echo message!");
         });
         rumtk_sleep!(1);
-        let echoed_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
+        let echoed_messages = rumtk_exec_task!(async || -> RUMResult<MLLPClientMessages> {
             println!("Echoing message back to client!");
             let mut echoed_messages = safe_client
                 .lock()
                 .await
-                .receive_messages(&client_id_copy)
+                .pop_client_messages(&client_id_copy)
                 .await?;
             while echoed_messages.len() == 0 {
                 echoed_messages = safe_client
                     .lock()
                     .await
-                    .receive_messages(&client_id_copy)
+                    .pop_client_messages(&client_id_copy)
                     .await?;
             }
             println!("Echoed message: {}", &echoed_messages.first().unwrap());
