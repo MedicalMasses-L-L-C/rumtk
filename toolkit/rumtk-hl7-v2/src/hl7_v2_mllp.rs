@@ -745,7 +745,6 @@ pub mod mllp_v2 {
                     match message {
                         Ok(data) => {
                             if !data.is_empty() {
-                                eprintln!("{}", &data);
                                 Self::save_message(inbound_queue.clone(), endpoint, Ok(data)).await;
                             }
                         }
