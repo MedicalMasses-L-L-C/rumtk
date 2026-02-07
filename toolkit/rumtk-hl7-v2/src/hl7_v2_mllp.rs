@@ -421,7 +421,7 @@ pub mod mllp_v2 {
                 LowerLayer::SERVER(ref mut server) => {
                     match server.write().await.pop_message(client_id).await {
                         Some(msg) => Ok(msg),
-                        None => Ok(vec![]),
+                        None => Err(rumtk_format!("Client disconnected!")),
                     }
                 }
                 LowerLayer::CLIENT(ref mut client) => Ok(client.write().await.recv().await?),
@@ -694,9 +694,10 @@ pub mod mllp_v2 {
             let clients = locked_queue.keys().cloned().collect::<Vec<_>>();
 
             for endpoint in clients {
-                let client_messages =
-                    Self::_pop_client_messages(&mut locked_queue, &endpoint).await?;
-                messages.insert(endpoint.clone(), client_messages);
+                match Self::_pop_client_messages(&mut locked_queue, &endpoint).await {
+                    Ok(client_messages) => messages.insert(endpoint.clone(), client_messages),
+                    Err(_) => continue,
+                };
             }
 
             Ok(messages)
@@ -742,17 +743,19 @@ pub mod mllp_v2 {
                     )
                     .await;
 
-                    let mut client_queue = inbound_queue.write().await;
-                    match client_queue.get_mut(&endpoint) {
-                        Some(queue) => {
-                            queue.push_back(message);
-                        }
-                        None => {
-                            let mut new_queue = RUMNetQueue::default();
-                            new_queue.push_back(message);
-                            client_queue.insert(endpoint, new_queue);
-                        }
-                    };
+                    if message.is_ok() {
+                        let mut client_queue = inbound_queue.write().await;
+                        match client_queue.get_mut(&endpoint) {
+                            Some(queue) => {
+                                queue.push_back(message);
+                            }
+                            None => {
+                                let mut new_queue = RUMNetQueue::default();
+                                new_queue.push_back(message);
+                                client_queue.insert(endpoint, new_queue);
+                            }
+                        };
+                    }
                 }
                 //rumtk_async_sleep!(0.001).await;
             }

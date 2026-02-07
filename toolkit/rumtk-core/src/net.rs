@@ -728,11 +728,10 @@ pub mod tcp {
         ///
         pub async fn pop_message(&mut self, client_id: &RUMString) -> Option<RUMNetMessage> {
             let mut queues = self.tx_in.write().await;
-            let mut queue = match queues.get_mut(client_id) {
-                Some(queue) => queue,
-                None => return Some(vec![]),
-            };
-            queue.pop_front()
+            match queues.get_mut(client_id) {
+                Some(queue) => queue.pop_front(),
+                None => None,
+            }
         }
 
         ///
