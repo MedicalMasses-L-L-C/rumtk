@@ -197,14 +197,15 @@ pub mod mllp_v2 {
         ANYHOST, LOCALHOST,
     };
     use rumtk_core::net::tcp::{
-        AsyncRwLock, RUMClient, RUMNetClient, RUMNetMessageQueue, RUMNetQueue, RUMServer,
-        SafeServer,
+        AsyncRwLock, AsyncRwLockWriteGuard, RUMClient, RUMNetClient, RUMNetClientMessageQueue,
+        RUMNetMessageQueue, RUMNetQueue, RUMServer, SafeServer,
     };
     use rumtk_core::strings::{
         basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString,
         RUMStringConversions, ToCompactString,
     };
     use rumtk_core::threading::threading_manager::SafeTaskArgs;
+    use rumtk_core::types::RUMOrderedMap;
     use rumtk_core::{
         rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_init_threads,
         rumtk_resolve_task, rumtk_spawn_task,
@@ -213,8 +214,10 @@ pub mod mllp_v2 {
     use std::sync::{Arc, Mutex};
     use tokio::task::JoinHandle;
 
-    pub type MLLPMessages = RUMVec<RUMString>;
+    pub type MLLPClientMessages = RUMVec<RUMString>;
+    pub type MLLPMessages = RUMOrderedMap<RUMString, MLLPClientMessages>;
     type MLLPMessageResult = RUMResult<RUMString>;
+    type MLLPClientMessageQueue = RUMNetClientMessageQueue<MLLPMessageResult>;
     type MLLPMessageQueue = RUMNetMessageQueue<MLLPMessageResult>;
 
     /// Times to attempt sending message again upon initial error or lack of ACK
@@ -410,7 +413,10 @@ pub mod mllp_v2 {
             }
         }
 
-        pub async fn receive_message(&mut self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
+        pub async fn pop_client_messages(
+            &mut self,
+            client_id: &RUMString,
+        ) -> RUMResult<RUMNetMessage> {
             match *self {
                 LowerLayer::SERVER(ref mut server) => {
                     match server.write().await.pop_message(client_id).await {
@@ -602,7 +608,7 @@ pub mod mllp_v2 {
         ///
         pub async fn wait_for_send_ack(&mut self, endpoint: &RUMString) -> RUMResult<bool> {
             for i in 0..TIMEOUT_SOURCE {
-                let responses = self.receive_messages(endpoint).await?;
+                let responses = self.pop_client_messages(endpoint).await?;
                 match responses.get(0) {
                     Some(response) => {
                         let acked = is_ack(response);
@@ -638,6 +644,65 @@ pub mod mllp_v2 {
         }
 
         ///
+        /// Looks into client queue for any messages and dequeue them for further processing.
+        ///
+        async fn _pop_client_messages(
+            locked_queue: &mut AsyncRwLockWriteGuard<'_, MLLPClientMessageQueue>,
+            endpoint: &RUMString,
+        ) -> RUMResult<MLLPClientMessages> {
+            match locked_queue.get_mut(endpoint) {
+                Some(messages) => {
+                    let mut message_list = MLLPClientMessages::default();
+
+                    while !messages.is_empty() {
+                        let result = messages.pop_front().unwrap();
+                        message_list.push(result?);
+                    }
+
+                    Ok(message_list)
+                }
+                None => Ok(vec![]),
+            }
+        }
+
+        ///
+        /// Returns all messages currently available for a given client or connection. This method
+        /// locks the master inbound queue every time it is called. If you need all the client
+        /// clients' messages, consider calling [pop_messages](Self::pop_messages) instead!
+        ///
+        /// See [_pop_client_messages](Self::_pop_client_messages)
+        ///
+        pub async fn pop_client_messages(
+            &mut self,
+            endpoint: &RUMString,
+        ) -> RUMResult<MLLPClientMessages> {
+            Self::_pop_client_messages(&mut self.inbound_messages.write().await, endpoint).await
+        }
+
+        ///
+        /// This method goes through all the client queues and pops them into a simple [RUMOrderedMap]
+        /// for further consumption/processing. Unlike [pop_client_messages](Self::pop_client_messages),
+        /// this method is optimized around the internal lock and it is preferred over calling the
+        /// single `pop_client_messages` method to avoid wasting time acquiring locks if the intention
+        /// is to grab all messages currently queued.
+        ///
+        /// See [_pop_client_messages](Self::_pop_client_messages)
+        ///
+        pub async fn pop_messages(&mut self) -> RUMResult<MLLPMessages> {
+            let mut messages = MLLPMessages::default();
+            let mut locked_queue = self.inbound_messages.write().await;
+            let clients = locked_queue.keys().cloned().collect::<Vec<_>>();
+
+            for endpoint in clients {
+                let client_messages =
+                    Self::_pop_client_messages(&mut locked_queue, &endpoint).await?;
+                messages.insert(endpoint.clone(), client_messages);
+            }
+
+            Ok(messages)
+        }
+
+        ///
         /// Attempts to receive a message.
         /// If we receive nothing within [TIMEOUT_DESTINATION] duration, we exit with a timeout error.
         /// The timeout error is likely because there is nothing incoming at this moment.
@@ -662,29 +727,14 @@ pub mod mllp_v2 {
         /// This implementation skips [ACK] if the incoming message itself is an [ACK] or [NACK]
         /// message.
         ///
-        pub async fn receive_messages(&mut self, endpoint: &RUMString) -> RUMResult<MLLPMessages> {
-            match self.inbound_messages.write().await.get_mut(endpoint) {
-                Some(messages) => {
-                    let mut message_list = MLLPMessages::default();
-
-                    while !messages.is_empty() {
-                        let result = messages.pop_front().unwrap();
-                        message_list.push(result?);
-                    }
-
-                    Ok(message_list)
-                }
-                None => Err(rumtk_format!("No client connected to this endpoint!")),
-            }
-        }
-
         async fn process_and_save_messages(
             transport_layer: SafeLowerLayer,
             inbound_queue: MLLPMessageQueue,
             mllp_closed: Arc<AtomicBool>,
         ) {
             while !mllp_closed.load(Ordering::Relaxed) {
-                for endpoint in transport_layer.lock().await.get_client_ids().await {
+                let endpoints = transport_layer.lock().await.get_client_ids().await;
+                for endpoint in endpoints {
                     let message = Self::wait_on_message(
                         transport_layer.clone(),
                         &endpoint,
@@ -698,10 +748,13 @@ pub mod mllp_v2 {
                             queue.push_back(message);
                         }
                         None => {
-                            client_queue.insert(endpoint, RUMNetQueue::default());
+                            let mut new_queue = RUMNetQueue::default();
+                            new_queue.push_back(message);
+                            client_queue.insert(endpoint, new_queue);
                         }
                     };
                 }
+                //rumtk_async_sleep!(0.001).await;
             }
         }
 
@@ -721,7 +774,7 @@ pub mod mllp_v2 {
             timeout: u32,
         ) -> RUMResult<RUMString> {
             for i in 0..timeout {
-                let raw_message = transport.lock().await.receive_message(endpoint).await?;
+                let raw_message = transport.lock().await.pop_client_messages(endpoint).await?;
                 let message = mllp_decode(&raw_message)?;
                 if !(is_ack(&message) || is_nack(&message)) || message.is_empty() {
                     return Ok(message);
@@ -801,8 +854,15 @@ pub mod mllp_v2 {
                 .await
         }
 
-        pub async fn receive_messages(&mut self) -> RUMResult<MLLPMessages> {
-            self.next_layer().await.receive_messages(&self.peer).await
+        pub async fn pop_messages(&mut self) -> RUMResult<MLLPMessages> {
+            self.next_layer().await.pop_messages().await
+        }
+
+        pub async fn pop_client_messages(
+            &mut self,
+            endpoint: &RUMString,
+        ) -> RUMResult<MLLPClientMessages> {
+            self.next_layer().await.pop_client_messages(endpoint).await
         }
 
         pub async fn get_address_info(&mut self) -> Option<RUMString> {
@@ -849,16 +909,29 @@ pub mod mllp_v2 {
             )?
         }
 
-        pub fn receive_messages(&mut self) -> RUMResult<MLLPMessages> {
+        pub fn pop_messages(&mut self) -> RUMResult<MLLPMessages> {
             rumtk_exec_task!(
-                async |args: &SafeTaskArgs<MLLPReceiveArgs>| -> RUMResult<MLLPMessages> {
+                async |args: &SafeTaskArgs<SafeAsyncMLLP>| -> RUMResult<MLLPMessages> {
+                    let owned_args = args.write().await;
+                    let owned_arg = owned_args.get(0);
+                    let channel = owned_arg.unwrap();
+                    let result = channel.lock().await.pop_messages().await;
+                    result
+                },
+                vec![self.channel.clone()]
+            )?
+        }
+
+        pub fn pop_client_messages(&mut self, endpoint: &str) -> RUMResult<MLLPClientMessages> {
+            rumtk_exec_task!(
+                async |args: &SafeTaskArgs<MLLPReceiveArgs>| -> RUMResult<MLLPClientMessages> {
                     let owned_args = args.write().await;
                     let owned_arg = owned_args.get(0);
                     let (channel, peer) = owned_arg.unwrap();
-                    let result = channel.lock().await.receive_messages(&peer).await;
+                    let result = channel.lock().await.pop_client_messages(&peer).await;
                     result
                 },
-                vec![(self.channel.clone(), self.peer.clone())]
+                vec![(self.channel.clone(), endpoint.to_rumstring())]
             )?
         }
 
@@ -886,8 +959,8 @@ pub mod mllp_v2 {
 
 pub mod mllp_v2_helpers {
     use crate::hl7_v2_mllp::mllp_v2::{
-        AsyncMLLP, AsyncMutex, MLLPChannel, MLLPChannels, MLLPMessages, SafeAsyncMLLP,
-        SafeMLLPChannel, MLLP_FILTER_POLICY,
+        AsyncMLLP, AsyncMutex, MLLPChannel, MLLPChannels, MLLPClientMessages, MLLPMessages,
+        SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY,
     };
     use rumtk_core::core::RUMResult;
     use rumtk_core::net::tcp::{ClientIDList, ConnectionInfo};
@@ -932,9 +1005,13 @@ pub mod mllp_v2_helpers {
         block_on_task(async move { mllp.lock().await.is_server().await }).unwrap_or_default()
     }
 
-    pub fn mllp_receive(mllp: SafeAsyncMLLP, ep: &str) -> RUMResult<MLLPMessages> {
+    pub fn mllp_receive(mllp: SafeAsyncMLLP) -> RUMResult<MLLPMessages> {
+        block_on_task(async move { mllp.lock().await.pop_messages().await })?
+    }
+
+    pub fn mllp_receive_client(mllp: SafeAsyncMLLP, ep: &str) -> RUMResult<MLLPClientMessages> {
         let endpoint = RUMString::from(ep);
-        block_on_task(async move { mllp.lock().await.receive_messages(&endpoint).await })?
+        block_on_task(async move { mllp.lock().await.pop_client_messages(&endpoint).await })?
     }
 
     pub fn mllp_send(mllp: SafeAsyncMLLP, ep: &str, msg: &str) -> RUMResult<()> {
@@ -1378,9 +1455,13 @@ pub mod mllp_v2_api {
     ///
     #[macro_export]
     macro_rules! rumtk_v2_mllp_receive {
-        ( $safe_mllp:expr, $endpoint:expr ) => {{
+        ( $safe_mllp:expr ) => {{
             use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_receive;
-            mllp_receive($safe_mllp.clone(), $endpoint)
+            mllp_receive($safe_mllp.clone())
+        }};
+        ( $safe_mllp:expr, $endpoint:expr ) => {{
+            use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_receive_client;
+            mllp_receive_client($safe_mllp.clone(), $endpoint)
         }};
     }
 
