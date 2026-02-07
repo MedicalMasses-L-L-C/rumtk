@@ -58,6 +58,9 @@ pub mod cli_utils {
     /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size
     /// until no more bytes are present.
     ///
+    /// To avoid calling a blocking read, we check if the read yielded an amount of bytes fewer than
+    /// the requested chunk size.
+    ///
     /// ## Example
     ///
     /// ```
@@ -74,6 +77,16 @@ pub mod cli_utils {
 
         while s > 0 {
             s = read_some_stdin(&mut stdin_buffer)?;
+
+            // If we attempt the next read, it is likely to be a 0 byte read. Why does this matter?
+            // Well, if the other end of the pipe is still open, the read call will stall in Rust's
+            // std and I am not sure why.
+            // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
+            // 0 and simply let us naturally break, but a read < than requested buffer appears to be
+            // an equally canonical way to handle terminal and piped data.
+            if s < BUFFER_CHUNK_SIZE {
+                break;
+            }
         }
 
         Ok(RUMBuffer::from(stdin_buffer))
@@ -147,12 +160,12 @@ pub mod cli_utils {
     pub fn print_license_notice(program: &str, year: &str, author_list: &Vec<&str>) {
         let authors = author_list.join_compact(", ");
         let notice = rumtk_format!(
-            "  {program}  Copyright (C) {year}  {authors}
-        This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-        This is free software, and you are welcome to redistribute it
-        under certain conditions; type `show c' for details."
+            r"  {program}  Copyright (C) {year}  {authors}
+                This program comes with ABSOLUTELY NO WARRANTY.
+                This is free software, and you are welcome to redistribute it
+                under certain conditions."
         );
-        println!("{}", notice);
+        eprintln!("{}", notice);
     }
 }
 
