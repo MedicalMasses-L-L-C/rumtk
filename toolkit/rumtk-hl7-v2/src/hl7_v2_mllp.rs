@@ -198,7 +198,7 @@ pub mod mllp_v2 {
     };
     use rumtk_core::net::tcp::{
         AsyncRwLock, AsyncRwLockWriteGuard, RUMClient, RUMNetClient, RUMNetClientMessageQueue,
-        RUMNetMessageQueue, RUMNetQueue, RUMServer, SafeServer,
+        RUMNetMessageQueue, RUMNetQueue, RUMServer, SafeServer, NET_SLEEP_TIMEOUT,
     };
     use rumtk_core::strings::{
         basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString,
@@ -421,7 +421,7 @@ pub mod mllp_v2 {
                 LowerLayer::SERVER(ref mut server) => {
                     match server.write().await.pop_message(client_id).await {
                         Some(msg) => Ok(msg),
-                        None => Err(rumtk_format!("Client disconnected!")),
+                        None => Ok(vec![]),
                     }
                 }
                 LowerLayer::CLIENT(ref mut client) => Ok(client.write().await.recv().await?),
@@ -622,11 +622,10 @@ pub mod mllp_v2 {
                                 &endpoint
                             ));
                         }
-
-                        rumtk_async_sleep!(TIMEOUT_STEP_SOURCE).await;
                     }
-                    None => rumtk_async_sleep!(TIMEOUT_STEP_SOURCE).await,
+                    None => {}
                 };
+                rumtk_async_sleep!(TIMEOUT_STEP_SOURCE).await;
             }
             Err(rumtk_format!(
                 "Timeout reached attempting to send message to {}!",
@@ -743,22 +742,37 @@ pub mod mllp_v2 {
                     )
                     .await;
 
-                    if message.is_ok() {
-                        let mut client_queue = inbound_queue.write().await;
-                        match client_queue.get_mut(&endpoint) {
-                            Some(queue) => {
-                                queue.push_back(message);
+                    match message {
+                        Ok(data) => {
+                            if !data.is_empty() {
+                                eprintln!("{}", &data);
+                                Self::save_message(inbound_queue.clone(), endpoint, Ok(data)).await;
                             }
-                            None => {
-                                let mut new_queue = RUMNetQueue::default();
-                                new_queue.push_back(message);
-                                client_queue.insert(endpoint, new_queue);
-                            }
-                        };
+                        }
+                        Err(e) => Self::save_message(inbound_queue.clone(), endpoint, Err(e)).await,
                     }
                 }
-                //rumtk_async_sleep!(0.001).await;
+
+                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
             }
+        }
+
+        async fn save_message(
+            inbound_queue: MLLPMessageQueue,
+            endpoint: RUMString,
+            message: RUMResult<RUMString>,
+        ) {
+            let mut client_queue = inbound_queue.write().await;
+            match client_queue.get_mut(&endpoint) {
+                Some(queue) => {
+                    queue.push_back(message);
+                }
+                None => {
+                    let mut new_queue = RUMNetQueue::default();
+                    new_queue.push_back(message);
+                    client_queue.insert(endpoint, new_queue);
+                }
+            };
         }
 
         ///

@@ -47,6 +47,7 @@ pub mod tcp {
     pub const LOCALHOST: &str = "127.0.0.1";
     /// Convenience constant for the `0.0.0.0` address. This is to be used in contexts in which you do not have any interface preference.
     pub const ANYHOST: &str = "0.0.0.0";
+    pub const NET_SLEEP_TIMEOUT: f32 = 0.000001;
 
     pub type RUMNetMessage = RUMVec<u8>;
     pub type RUMNetResult<R> = RUMResult<R>;
@@ -139,6 +140,7 @@ pub mod tcp {
                     break;
                 }
             }
+
             Ok(msg)
         }
 
@@ -419,7 +421,7 @@ pub mod tcp {
             }
             println!("Shutting down server!");
             while !send_handle.is_finished() || !receive_handle.is_finished() {
-                rumtk_async_sleep!(0.001).await;
+                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
             }
             // Cleanup; signal to the outside world we did finished shutting down and exit execution.
             let mut reowned_self = ctx.write().await;
@@ -443,7 +445,7 @@ pub mod tcp {
             // Same trick as run's. We can now opportunistically check if the server exited while
             // safely holding the calling thread hostage.
             while !shutdown_completed {
-                rumtk_async_sleep!(0.001).await;
+                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
                 let mut reowned_self = ctx.read().await;
                 shutdown_completed = reowned_self.shutdown_completed;
             }
@@ -556,7 +558,7 @@ pub mod tcp {
                         disconnected_clients.remove(i);
                     }
                 }
-                rumtk_async_sleep!(0.001).await;
+                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
             }
 
             Ok(())
@@ -646,8 +648,15 @@ pub mod tcp {
         }
 
         pub async fn receive(client: &RUMNetClient) -> RUMResult<RUMNetMessage> {
-            let mut owned_client = lock_client_ex(client).await;
-            owned_client.recv().await
+            loop {
+                let data = lock_client_ex(client).await.recv().await?;
+
+                if !data.is_empty() {
+                    return Ok(data);
+                }
+
+                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
+            }
         }
 
         pub async fn disconnect(client: &RUMNetClient) {
