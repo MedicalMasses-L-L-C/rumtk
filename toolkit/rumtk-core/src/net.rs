@@ -500,7 +500,7 @@ pub mod tcp {
                     match RUMServer::send(client, msg).await {
                         Ok(_) => (),
                         Err(e) => {
-                            return Err(rumtk_format!("{}... Dropping client...", e));
+                            return Err(rumtk_format!("Dropping client...because {}", e));
                         }
                     };
                 }
@@ -544,23 +544,30 @@ pub mod tcp {
             let mut client_list = clients.write().await;
             let client_keys = client_list.keys().cloned().collect::<Vec<_>>();
             let mut disconnected_clients = Vec::<RUMString>::with_capacity(client_list.len());
+
+            // Identify which clients are disconnected and remove them from the list used elsewhere
+            // to tell which clients to poll.
             for client_id in client_keys {
-                let disconnected = client_list[&client_id].write().await.is_disconnected();
-                let empty_queues = RUMServer::is_queue_empty(&tx_in, &client_id).await
-                    && RUMServer::is_queue_empty(&tx_out, &client_id).await;
-                if disconnected && empty_queues {
+                if client_list[&client_id].write().await.is_disconnected() {
                     client_list.remove(&client_id);
-                    tx_in.write().await.remove(&client_id);
-                    tx_out.write().await.remove(&client_id);
                     disconnected_clients.push(client_id);
                 }
             }
 
-            if !disconnected_clients.is_empty() {
-                return Err(rumtk_format!(
-                    "The following clients have disconnected and thus will be removed! {:?}",
-                    disconnected_clients
-                ));
+            // Take a moment to keep checking if the data queues are clear before killing them.
+            while !disconnected_clients.is_empty() {
+                for i in 0..disconnected_clients.len() {
+                    let client_id = disconnected_clients.get(i).unwrap();
+                    let empty_queues = RUMServer::is_queue_empty(&tx_in, client_id).await
+                        && RUMServer::is_queue_empty(&tx_out, client_id).await;
+
+                    if empty_queues {
+                        tx_in.write().await.remove(client_id);
+                        tx_out.write().await.remove(client_id);
+                        disconnected_clients.remove(i);
+                    }
+                }
+                rumtk_async_sleep!(0.001).await;
             }
 
             Ok(())
