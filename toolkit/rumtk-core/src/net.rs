@@ -306,7 +306,7 @@ pub mod tcp {
     impl RUMServer {
         ///
         /// Constructs a server and binds the `port` on interface denoted by `ip`. The server
-        /// management is not started until you invoke [RUMServer::run].
+        /// management is not started until you invoke [Self::run].
         ///
         pub async fn new(ip: &str, port: u16) -> RUMResult<RUMServer> {
             let addr = rumtk_format!("{}:{}", ip, port);
@@ -363,21 +363,21 @@ pub mod tcp {
         pub async fn run(ctx: SafeServer) -> RUMResult<()> {
             // Bootstrapping the main server loop.
             let reowned_self = ctx.read().await;
-            let mut accept_handle = tokio::spawn(RUMServer::handle_accept(
+            let mut accept_handle = tokio::spawn(Self::handle_accept(
                 Arc::clone(&reowned_self.tcp_listener),
                 Arc::clone(&reowned_self.clients),
                 Arc::clone(&reowned_self.tx_in),
                 Arc::clone(&reowned_self.tx_out),
             ));
-            let mut send_handle = tokio::spawn(RUMServer::handle_send(
+            let mut send_handle = tokio::spawn(Self::handle_send(
                 Arc::clone(&reowned_self.clients),
                 Arc::clone(&reowned_self.tx_out),
             ));
-            let mut receive_handle = tokio::spawn(RUMServer::handle_receive(
+            let mut receive_handle = tokio::spawn(Self::handle_receive(
                 Arc::clone(&reowned_self.clients),
                 Arc::clone(&reowned_self.tx_in),
             ));
-            let mut gc_handle = tokio::spawn(RUMServer::handle_client_gc(
+            let mut gc_handle = tokio::spawn(Self::handle_client_gc(
                 Arc::clone(&reowned_self.clients),
                 Arc::clone(&reowned_self.tx_in),
                 Arc::clone(&reowned_self.tx_out),
@@ -389,7 +389,7 @@ pub mod tcp {
             while !stop {
                 let reowned_self = ctx.read().await;
                 if accept_handle.is_finished() {
-                    accept_handle = tokio::spawn(RUMServer::handle_accept(
+                    accept_handle = tokio::spawn(Self::handle_accept(
                         Arc::clone(&reowned_self.tcp_listener),
                         Arc::clone(&reowned_self.clients),
                         Arc::clone(&reowned_self.tx_in),
@@ -397,19 +397,19 @@ pub mod tcp {
                     ));
                 }
                 if send_handle.is_finished() {
-                    send_handle = tokio::spawn(RUMServer::handle_send(
+                    send_handle = tokio::spawn(Self::handle_send(
                         Arc::clone(&reowned_self.clients),
                         Arc::clone(&reowned_self.tx_out),
                     ));
                 }
                 if receive_handle.is_finished() {
-                    receive_handle = tokio::spawn(RUMServer::handle_receive(
+                    receive_handle = tokio::spawn(Self::handle_receive(
                         Arc::clone(&reowned_self.clients),
                         Arc::clone(&reowned_self.tx_in),
                     ));
                 }
                 if gc_handle.is_finished() {
-                    gc_handle = tokio::spawn(RUMServer::handle_client_gc(
+                    gc_handle = tokio::spawn(Self::handle_client_gc(
                         Arc::clone(&reowned_self.clients),
                         Arc::clone(&reowned_self.tx_in),
                         Arc::clone(&reowned_self.tx_out),
@@ -469,8 +469,8 @@ pub mod tcp {
                         None => return Err(rumtk_format!("Accepted client returned no peer address. This should not be happening!"))
                     };
                     let mut client_list = clients.write().await;
-                    RUMServer::register_queue(&tx_in, &client_id).await;
-                    RUMServer::register_queue(&tx_out, &client_id).await;
+                    Self::register_queue(&tx_in, &client_id).await;
+                    Self::register_queue(&tx_out, &client_id).await;
                     client_list.insert(client_id, RUMNetClient::new(AsyncRwLock::new(client)));
                     Ok(())
                 }
@@ -492,12 +492,12 @@ pub mod tcp {
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             for (client_id, client) in client_list.iter_mut() {
-                let messages = match RUMServer::pop_queue(&tx_out, client_id).await {
+                let messages = match Self::pop_queue(&tx_out, client_id).await {
                     Some(messages) => messages,
                     None => continue,
                 };
                 for msg in messages.iter() {
-                    match RUMServer::send(client, msg).await {
+                    match Self::send(client, msg).await {
                         Ok(_) => (),
                         Err(e) => {
                             return Err(rumtk_format!("Dropping client...because {}", e));
@@ -522,9 +522,9 @@ pub mod tcp {
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             for (client_id, client) in client_list.iter_mut() {
-                let msg = RUMServer::receive(client).await?;
+                let msg = Self::receive(client).await?;
                 if !msg.is_empty() {
-                    RUMServer::push_queue(&tx_in, client_id, msg).await?;
+                    Self::push_queue(&tx_in, client_id, msg).await?;
                 }
             }
             if client_list.is_empty() {
@@ -541,6 +541,28 @@ pub mod tcp {
             tx_in: RUMNetMessageQueue<RUMNetMessage>,
             tx_out: RUMNetMessageQueue<RUMNetMessage>,
         ) -> RUMResult<()> {
+            let mut disconnected_clients = Self::_find_disconnected_clients(&clients).await;
+
+            // Take a moment to keep checking if the data queues are clear before killing them.
+            while !disconnected_clients.is_empty() {
+                for i in 0..disconnected_clients.len() {
+                    let client_id = disconnected_clients.get(i).unwrap();
+                    let empty_queues = Self::is_queue_empty(&tx_in, client_id).await
+                        && Self::is_queue_empty(&tx_out, client_id).await;
+
+                    if empty_queues {
+                        tx_in.write().await.remove(client_id);
+                        tx_out.write().await.remove(client_id);
+                        disconnected_clients.remove(i);
+                    }
+                }
+                rumtk_async_sleep!(0.001).await;
+            }
+
+            Ok(())
+        }
+
+        async fn _find_disconnected_clients(clients: &RUMNetClients) -> RUMVec<RUMString> {
             let mut client_list = clients.write().await;
             let client_keys = client_list.keys().cloned().collect::<Vec<_>>();
             let mut disconnected_clients = Vec::<RUMString>::with_capacity(client_list.len());
@@ -554,23 +576,7 @@ pub mod tcp {
                 }
             }
 
-            // Take a moment to keep checking if the data queues are clear before killing them.
-            while !disconnected_clients.is_empty() {
-                for i in 0..disconnected_clients.len() {
-                    let client_id = disconnected_clients.get(i).unwrap();
-                    let empty_queues = RUMServer::is_queue_empty(&tx_in, client_id).await
-                        && RUMServer::is_queue_empty(&tx_out, client_id).await;
-
-                    if empty_queues {
-                        tx_in.write().await.remove(client_id);
-                        tx_out.write().await.remove(client_id);
-                        disconnected_clients.remove(i);
-                    }
-                }
-                rumtk_async_sleep!(0.001).await;
-            }
-
-            Ok(())
+            disconnected_clients
         }
 
         pub async fn register_queue(
@@ -733,7 +739,7 @@ pub mod tcp {
         /// Obtain a message, if available, from the incoming queue.
         ///
         pub async fn wait_incoming(&mut self, client_id: &RUMString) -> RUMResult<bool> {
-            let client = RUMServer::get_client(&self.clients, client_id).await?;
+            let client = Self::get_client(&self.clients, client_id).await?;
             let owned_client = client.write().await;
             owned_client.wait_incoming().await
         }
@@ -749,7 +755,7 @@ pub mod tcp {
         /// Attempts to clear clients that have been marked as disconnected.
         ///
         pub async fn gc_clients(&mut self) -> RUMResult<()> {
-            RUMServer::handle_client_gc(
+            Self::handle_client_gc(
                 self.clients.clone(),
                 self.tx_in.clone(),
                 self.tx_out.clone(),
