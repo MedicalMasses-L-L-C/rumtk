@@ -247,11 +247,11 @@ pub mod tcp {
     pub type ClientList = Vec<RUMNetClient>;
     /// List of client IDs that you can interact with.
     pub type ClientIDList = Vec<RUMString>;
-    pub type RUMNetQueue = VecDeque<RUMNetMessage>;
+    pub type RUMNetQueue<T> = VecDeque<T>;
     pub type RUMNetClient = Arc<AsyncRwLock<RUMClient>>;
     pub type RUMNetClients = Arc<AsyncRwLock<RUMOrderedMap<RUMString, RUMNetClient>>>;
     type SafeClientIDList = Arc<AsyncMutex<ClientIDList>>;
-    pub type RUMNetMessageQueue = Arc<AsyncMutex<RUMOrderedMap<RUMString, RUMNetQueue>>>;
+    pub type RUMNetMessageQueue<T> = Arc<AsyncRwLock<RUMOrderedMap<RUMString, RUMNetQueue<T>>>>;
     pub type SafeListener = Arc<AsyncMutex<TcpListener>>;
     pub type SafeServer = Arc<AsyncRwLock<RUMServer>>;
 
@@ -294,8 +294,8 @@ pub mod tcp {
     ///
     pub struct RUMServer {
         tcp_listener: SafeListener,
-        tx_in: RUMNetMessageQueue,
-        tx_out: RUMNetMessageQueue,
+        tx_in: RUMNetMessageQueue<RUMNetMessage>,
+        tx_out: RUMNetMessageQueue<RUMNetMessage>,
         clients: RUMNetClients,
         address: Option<RUMString>,
         stop: bool,
@@ -323,13 +323,13 @@ pub mod tcp {
                 Ok(addr) => Some(addr.to_compact_string()),
                 Err(e) => None,
             };
-            let tx_in = RUMNetMessageQueue::new(AsyncMutex::new(RUMOrderedMap::<
+            let tx_in = RUMNetMessageQueue::new(AsyncRwLock::new(RUMOrderedMap::<
                 RUMString,
-                RUMNetQueue,
+                RUMNetQueue<RUMNetMessage>,
             >::new()));
-            let tx_out = RUMNetMessageQueue::new(AsyncMutex::new(RUMOrderedMap::<
+            let tx_out = RUMNetMessageQueue::new(AsyncRwLock::new(RUMOrderedMap::<
                 RUMString,
-                RUMNetQueue,
+                RUMNetQueue<RUMNetMessage>,
             >::new()));
             let client_list = RUMOrderedMap::<RUMString, RUMNetClient>::new();
             let clients = RUMNetClients::new(AsyncRwLock::new(client_list));
@@ -456,8 +456,8 @@ pub mod tcp {
         pub async fn handle_accept(
             listener: SafeListener,
             clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue,
-            tx_out: RUMNetMessageQueue,
+            tx_in: RUMNetMessageQueue<RUMNetMessage>,
+            tx_out: RUMNetMessageQueue<RUMNetMessage>,
         ) -> RUMResult<()> {
             let server = listener.lock().await;
             match server.accept().await {
@@ -482,12 +482,12 @@ pub mod tcp {
 
         ///
         /// Contains logic for sending messages queued for a client to it. `tx_out` is a reference
-        /// of [RUMNetMessageQueue] which is a hash map of [RUMNetQueue] whose keys are
+        /// of [RUMNetMessageQueue<RUMNetMessage>] which is a hash map of [RUMNetQueue] whose keys are
         /// the client's peer address string.
         ///
         pub async fn handle_send(
             clients: RUMNetClients,
-            tx_out: RUMNetMessageQueue,
+            tx_out: RUMNetMessageQueue<RUMNetMessage>,
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             for (client_id, client) in client_list.iter_mut() {
@@ -517,7 +517,7 @@ pub mod tcp {
         ///
         pub async fn handle_receive(
             clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue,
+            tx_in: RUMNetMessageQueue<RUMNetMessage>,
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             for (client_id, client) in client_list.iter_mut() {
@@ -537,8 +537,8 @@ pub mod tcp {
         ///
         pub async fn handle_client_gc(
             clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue,
-            tx_out: RUMNetMessageQueue,
+            tx_in: RUMNetMessageQueue<RUMNetMessage>,
+            tx_out: RUMNetMessageQueue<RUMNetMessage>,
         ) -> RUMResult<()> {
             let mut client_list = clients.write().await;
             let client_keys = client_list.keys().cloned().collect::<Vec<_>>();
@@ -549,8 +549,8 @@ pub mod tcp {
                     && RUMServer::is_queue_empty(&tx_out, &client_id).await;
                 if disconnected && empty_queues {
                     client_list.remove(&client_id);
-                    tx_in.lock().await.remove(&client_id);
-                    tx_out.lock().await.remove(&client_id);
+                    tx_in.write().await.remove(&client_id);
+                    tx_out.write().await.remove(&client_id);
                     disconnected_clients.push(client_id);
                 }
             }
@@ -565,18 +565,21 @@ pub mod tcp {
             Ok(())
         }
 
-        pub async fn register_queue(tx_queues: &RUMNetMessageQueue, client: &RUMString) {
-            let mut queues = tx_queues.lock().await;
+        pub async fn register_queue(
+            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
+            client: &RUMString,
+        ) {
+            let mut queues = tx_queues.write().await;
             let new_queue = RUMNetQueue::new();
             queues.insert(client.clone(), new_queue);
         }
 
         pub async fn push_queue(
-            tx_queues: &RUMNetMessageQueue,
+            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
             client: &RUMString,
             msg: RUMNetMessage,
         ) -> RUMResult<()> {
-            let mut queues = tx_queues.lock().await;
+            let mut queues = tx_queues.write().await;
             let mut queue = match queues.get_mut(client) {
                 Some(queue) => queue,
                 None => {
@@ -590,10 +593,10 @@ pub mod tcp {
         }
 
         pub async fn pop_queue(
-            tx_queues: &RUMNetMessageQueue,
+            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
             client: &RUMString,
         ) -> Option<Vec<RUMNetMessage>> {
-            let mut queues = tx_queues.lock().await;
+            let mut queues = tx_queues.write().await;
             let mut queue = match queues.get_mut(client) {
                 Some(queue) => queue,
                 None => return None,
@@ -610,8 +613,11 @@ pub mod tcp {
             Some(messages)
         }
 
-        pub async fn is_queue_empty(tx_queues: &RUMNetMessageQueue, client: &RUMString) -> bool {
-            let queues = tx_queues.lock().await;
+        pub async fn is_queue_empty(
+            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
+            client: &RUMString,
+        ) -> bool {
+            let queues = tx_queues.write().await;
             let queue = match queues.get(client) {
                 Some(queue) => queue,
                 None => return true,
@@ -695,7 +701,7 @@ pub mod tcp {
             client_id: &RUMString,
             msg: RUMNetMessage,
         ) -> RUMResult<()> {
-            let mut queue = self.tx_out.lock().await;
+            let mut queue = self.tx_out.write().await;
             if !queue.contains_key(client_id) {
                 return Err(rumtk_format!("No client with id {} found!", &client_id));
             }
@@ -707,7 +713,7 @@ pub mod tcp {
         /// Obtain a message, if available, from the incoming queue.
         ///
         pub async fn pop_message(&mut self, client_id: &RUMString) -> Option<RUMNetMessage> {
-            let mut queues = self.tx_in.lock().await;
+            let mut queues = self.tx_in.write().await;
             let mut queue = match queues.get_mut(client_id) {
                 Some(queue) => queue,
                 None => return Some(vec![]),
