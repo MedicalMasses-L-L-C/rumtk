@@ -412,7 +412,7 @@ mod tests {
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{
-        pipeline_generate_command, pipeline_pipe_process, pipeline_spawn_process,
+        pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process,
     };
     use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::sleep;
@@ -772,7 +772,7 @@ mod tests {
         let mut sys_wc_command = pipeline_generate_command(&wc_command);
 
         let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
-        pipeline_pipe_process(&mut sys_ls_process, &mut sys_wc_command).unwrap();
+        pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
         let mut sys_wc_process = pipeline_spawn_process(&mut sys_wc_command).unwrap();
 
         sys_ls_process.wait();

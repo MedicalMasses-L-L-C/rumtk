@@ -48,7 +48,9 @@ mod tests {
     use crate::hl7_v2_field_descriptors::v2_field_descriptor::{
         V2ComponentType, V2ComponentTypeDescriptor,
     };
-    use crate::hl7_v2_mllp::mllp_v2::{mllp_decode, mllp_encode, CR, EB, MLLP_FILTER_POLICY, SB};
+    use crate::hl7_v2_mllp::mllp_v2::{
+        mllp_decode, mllp_encode, MLLPMessages, CR, EB, MLLP_FILTER_POLICY, SB,
+    };
     use crate::hl7_v2_optionality_rules::Optionality;
     use crate::hl7_v2_parser::v2_parser::{V2Field, V2Message};
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
@@ -1068,12 +1070,12 @@ mod tests {
         let client_id = client_ids.get(0).unwrap().clone();
 
         println!("{}", &client_id);
-        let result = rumtk_v2_mllp_receive!(&safe_listener, &client_id).unwrap();
+        let results = rumtk_v2_mllp_receive!(&safe_listener, &client_id).unwrap();
+        let result = results.get(0).unwrap();
         println!("Send thread completed!");
 
         assert_eq!(
-            result.as_str(),
-            EXPECTED_MESSAGE,
+            result, EXPECTED_MESSAGE,
             "Message received does not match the expected message. Got {}",
             &result
         );
@@ -1160,23 +1162,25 @@ mod tests {
                 .unwrap())
         });
         rumtk_sleep!(1);
-        let received_message = rumtk_exec_task!(async || -> RUMResult<RUMString> {
+        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
             let mut received_message = safe_listener
                 .lock()
                 .await
-                .receive_message(&client_id)
+                .receive_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener
                     .lock()
                     .await
-                    .receive_message(&client_id)
+                    .receive_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
         })
         .unwrap()
         .unwrap();
+        let received_message = received_messages.get(0).unwrap();
+
         assert_eq!(
             &expected_message,
             &received_message,
@@ -1216,23 +1220,25 @@ mod tests {
                 .unwrap())
         });
         let safe_listener_copy = safe_listener.clone();
-        let received_message = rumtk_exec_task!(async || -> RUMResult<RUMString> {
+        let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
             let mut received_message = safe_listener_copy
                 .lock()
                 .await
-                .receive_message(&client_id)
+                .receive_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener_copy
                     .lock()
                     .await
-                    .receive_message(&client_id)
+                    .receive_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
         })
         .unwrap()
         .unwrap();
+        let received_message = received_messages.get(0).unwrap();
+
         assert_eq!(
             &HL7_V2_PDF_MESSAGE,
             &received_message,
@@ -1252,25 +1258,27 @@ mod tests {
             println!("Sent echo message!");
         });
         rumtk_sleep!(1);
-        let echoed_message = rumtk_exec_task!(async || -> RUMResult<RUMString> {
+        let echoed_messages = rumtk_exec_task!(async || -> RUMResult<MLLPMessages> {
             println!("Echoing message back to client!");
-            let mut echoed_message = safe_client
+            let mut echoed_messages = safe_client
                 .lock()
                 .await
-                .receive_message(&client_id_copy)
+                .receive_messages(&client_id_copy)
                 .await?;
-            while echoed_message.len() == 0 {
-                echoed_message = safe_client
+            while echoed_messages.len() == 0 {
+                echoed_messages = safe_client
                     .lock()
                     .await
-                    .receive_message(&client_id_copy)
+                    .receive_messages(&client_id_copy)
                     .await?;
             }
-            println!("Echoed message: {}", &echoed_message);
-            Ok(echoed_message)
+            println!("Echoed message: {}", &echoed_messages.first().unwrap());
+            Ok(echoed_messages)
         })
         .unwrap()
         .unwrap();
+        let echoed_message = echoed_messages.get(0).unwrap();
+
         assert_eq!(
             &HL7_V2_PDF_MESSAGE,
             &echoed_message,
