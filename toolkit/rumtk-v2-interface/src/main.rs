@@ -124,7 +124,7 @@ fn inbound_receive(channel: &SafeAsyncMLLP) -> RUMResult<()> {
         for raw_msg in raw_msgs {
             if !raw_msg.is_empty() {
                 eprintln!("MLLP Received {} bytes", raw_msg.len());
-                rumtk_write_stdout!(raw_msg);
+                let _ = rumtk_write_stdout!(raw_msg);
             }
         }
     }

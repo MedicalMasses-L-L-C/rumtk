@@ -618,14 +618,21 @@ pub mod mllp_v2 {
             let mut messages = MLLPClientMessages::default();
 
             loop {
-                let message = self
-                    .wait_on_message(&endpoint, false, TIMEOUT_DESTINATION)
-                    .await?;
-
-                if message.is_empty() {
-                    return Ok(messages);
-                }
-                messages.push(message);
+                match self
+                    .wait_on_message(endpoint, false, TIMEOUT_DESTINATION)
+                    .await
+                {
+                    Ok(message) => {
+                        if message.is_empty() {
+                            return Ok(messages);
+                        }
+                        messages.push(message);
+                    }
+                    Err(_) => {
+                        //TODO: log potential client disconnection and reason.
+                        return Ok(messages);
+                    }
+                };
             }
         }
 

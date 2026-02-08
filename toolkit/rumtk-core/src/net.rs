@@ -137,7 +137,7 @@ pub mod tcp {
             loop {
                 let mut fragment = self.recv_some().await?;
                 msg.append(&mut fragment.0);
-                if fragment.1 == false {
+                if !fragment.1 {
                     break;
                 }
             }
