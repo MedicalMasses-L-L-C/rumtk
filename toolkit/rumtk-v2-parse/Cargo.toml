@@ -14,5 +14,5 @@ rust-version = "1.81.0"
 
 [dependencies]
 rumtk-core = { version = "0.12.0", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.8.13", path = "../rumtk-hl7-v2" }
+rumtk-hl7-v2 = { version = "0.9.0", path = "../rumtk-hl7-v2" }
 clap = { version = "4.5.38", features = ["derive"] }
