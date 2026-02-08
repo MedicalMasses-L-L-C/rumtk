@@ -65,7 +65,8 @@ mod tests {
         basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils,
     };
     use rumtk_core::{
-        rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_serialize, rumtk_sleep,
+        rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize,
+        rumtk_sleep,
     };
     use std::thread::spawn;
     /**********************************Constants**************************************/
@@ -1182,18 +1183,18 @@ mod tests {
                 .send_message(&message_copy)
                 .unwrap())
         });
-        rumtk_sleep!(1);
+        //rumtk_sleep!(1);
         let received_messages = rumtk_exec_task!(async || -> RUMResult<MLLPClientMessages> {
             let mut received_message = safe_listener
                 .lock()
                 .await
-                .pop_client_messages(&client_id)
+                .receive_client_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener
                     .lock()
                     .await
-                    .pop_client_messages(&client_id)
+                    .receive_client_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
@@ -1245,13 +1246,13 @@ mod tests {
             let mut received_message = safe_listener_copy
                 .lock()
                 .await
-                .pop_client_messages(&client_id)
+                .receive_client_messages(&client_id)
                 .await?;
             while received_message.len() == 0 {
                 received_message = safe_listener_copy
                     .lock()
                     .await
-                    .pop_client_messages(&client_id)
+                    .receive_client_messages(&client_id)
                     .await?;
             }
             Ok(received_message)
@@ -1284,13 +1285,13 @@ mod tests {
             let mut echoed_messages = safe_client
                 .lock()
                 .await
-                .pop_client_messages(&client_id_copy)
+                .receive_client_messages(&client_id_copy)
                 .await?;
             while echoed_messages.len() == 0 {
                 echoed_messages = safe_client
                     .lock()
                     .await
-                    .pop_client_messages(&client_id_copy)
+                    .receive_client_messages(&client_id_copy)
                     .await?;
             }
             println!("Echoed message: {}", &echoed_messages.first().unwrap());

@@ -523,7 +523,7 @@ mod tests {
             Err(e) => panic!("Failed to send message because {}", e),
         };
         let client_id = client.get_address().expect("Failed to get client id");
-        let incoming_message = server.receive(&client_id).unwrap().to_rumstring();
+        let incoming_message = server.receive(&client_id, true).unwrap().to_rumstring();
         println!("Received message => {:?}", &incoming_message);
         assert_eq!(&incoming_message, msg, "Received message corruption!");
     }
@@ -593,9 +593,9 @@ mod tests {
         };
         let clients = server.get_client_ids();
         let incoming_client_id = clients.first().expect("Expected client to have connected!");
-        let mut received_message = server.receive(incoming_client_id).unwrap();
+        let mut received_message = server.receive(incoming_client_id, true).unwrap();
         if received_message.is_empty() {
-            received_message = server.receive(incoming_client_id).unwrap();
+            received_message = server.receive(incoming_client_id, true).unwrap();
         }
         assert_eq!(
             &msg.to_raw(),

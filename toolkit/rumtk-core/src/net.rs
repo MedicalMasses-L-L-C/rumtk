@@ -173,50 +173,6 @@ pub mod tcp {
             }
         }
 
-        pub async fn wait_incoming(&self) -> RUMResult<bool> {
-            let mut buf: [u8; 1] = [0; 1];
-
-            if self.is_disconnected() {
-                return Err(rumtk_format!(
-                    "{} disconnected!",
-                    &self.socket.peer_addr().unwrap().to_compact_string()
-                ));
-            }
-
-            match self.socket.peek(&mut buf).await {
-                Ok(n) => match n {
-                    0 => Err(rumtk_format!(
-                        "Received 0 bytes from {}! It might have disconnected!",
-                        &self.socket.peer_addr().unwrap().to_compact_string()
-                    )),
-                    _ => Ok(true),
-                },
-                Err(e) => Err(rumtk_format!(
-                    "Error receiving message from {} because {}. It might have disconnected!",
-                    &self.socket.peer_addr().unwrap().to_compact_string(),
-                    &e
-                )),
-            }
-        }
-
-        /// Check if socket is ready for reading.
-        pub async fn read_ready(&self) -> bool {
-            if self.is_disconnected() {
-                return false;
-            }
-
-            self.socket.readable().await.is_ok()
-        }
-
-        /// Check if socket is ready for writing.
-        pub async fn write_ready(&self) -> bool {
-            if self.is_disconnected() {
-                return false;
-            }
-
-            self.socket.writable().await.is_ok()
-        }
-
         /// Returns the peer address:port as a string.
         pub async fn get_address(&self, local: bool) -> Option<RUMString> {
             match local {
@@ -366,14 +322,20 @@ pub mod tcp {
             }
         }
 
-        pub async fn receive(&self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
+        pub async fn receive(
+            &self,
+            client_id: &RUMString,
+            blocking: bool,
+        ) -> RUMResult<RUMNetMessage> {
             let client = self.get_client(client_id).await?;
             loop {
                 let data = lock_client_ex(&client).await.recv().await?;
 
-                if !data.is_empty() {
-                    return Ok(data);
+                if data.is_empty() && blocking {
+                    continue;
                 }
+
+                return Ok(data);
             }
         }
 
@@ -621,9 +583,13 @@ pub mod tcp {
         /// Sync API method for obtaining a single message from the server's incoming queue.
         /// Returns the next available [RUMNetMessage]
         ///
-        pub fn receive(&mut self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
-            let args = rumtk_create_task_args!((Arc::clone(&mut self.server), client_id.clone()));
-            rumtk_resolve_task!(RUMServerHandle::receive_helper(&args))?
+        pub fn receive(
+            &mut self,
+            client_id: &RUMString,
+            blocking: bool,
+        ) -> RUMResult<RUMNetMessage> {
+            let args = rumtk_create_task_args!((Arc::clone(&self.server), client_id.clone()));
+            rumtk_resolve_task!(RUMServerHandle::receive_helper(&args, blocking))?
         }
 
         ///
@@ -660,11 +626,12 @@ pub mod tcp {
 
         async fn receive_helper(
             args: &SafeTaskArgs<ServerReceiveArgs>,
+            blocking: bool,
         ) -> RUMResult<RUMNetMessage> {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let (server_ref, client_id) = locked_args.get(0).unwrap();
-            let msg = server_ref.write().await.receive(client_id).await;
+            let msg = server_ref.write().await.receive(client_id, blocking).await;
             msg
         }
 

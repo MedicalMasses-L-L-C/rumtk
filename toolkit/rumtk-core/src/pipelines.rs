@@ -178,7 +178,7 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_process, pipeline_spawn_process};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process};
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -191,7 +191,7 @@ pub mod pipeline_functions {
     /// let mut sys_wc_command = pipeline_generate_command(&wc_command);
     ///
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
-    /// pipeline_pipe_process(&mut sys_ls_process, &mut sys_wc_command).unwrap();
+    /// pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
     /// let mut sys_wc_process = pipeline_spawn_process(&mut sys_wc_command).unwrap();
     ///
     /// sys_ls_process.wait();
@@ -226,7 +226,7 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_process, pipeline_spawn_process, pipeline_get_stdout};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_spawn_process, pipeline_get_stdout, pipeline_pipe_processes};
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -239,7 +239,7 @@ pub mod pipeline_functions {
     /// let mut sys_wc_command = pipeline_generate_command(&wc_command);
     ///
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
-    /// pipeline_pipe_process(&mut sys_ls_process, &mut sys_wc_command).unwrap();
+    /// pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
     /// let mut sys_wc_process = pipeline_spawn_process(&mut sys_wc_command).unwrap();
     ///
     /// sys_ls_process.wait();
@@ -502,7 +502,7 @@ pub mod pipeline_functions {
                             code
                         ));
                     }
-                    break;
+                    continue;
                 }
                 Err(e) => return Err(rumtk_format!("Issue with process {} => {}", p.id(), e)),
             };

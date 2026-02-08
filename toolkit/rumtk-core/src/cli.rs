@@ -24,18 +24,19 @@
 ///
 /// Per this [stackoverflow discussion](https://unix.stackexchange.com/questions/37508/in-what-order-do-piped-commands-run).
 /// Note:
+///```text
+///  Piped commands run concurrently. When you run ps | grep …, it's the luck of the draw (or a matter of details of the workings of the shell combined with scheduler fine-tuning deep in the bowels of the kernel) as to whether ps or grep starts first, and in any case they continue to execute concurrently.
 ///
-///     Piped commands run concurrently. When you run ps | grep …, it's the luck of the draw (or a matter of details of the workings of the shell combined with scheduler fine-tuning deep in the bowels of the kernel) as to whether ps or grep starts first, and in any case they continue to execute concurrently.
+///  This is very commonly used to allow the second program to process data as it comes out from the first program, before the first program has completed its operation. For example
 ///
-///     This is very commonly used to allow the second program to process data as it comes out from the first program, before the first program has completed its operation. For example
+///  grep pattern very-large-file | tr a-z A-Z
+///  begins to display the matching lines in uppercase even before grep has finished traversing the large file.
 ///
-///     grep pattern very-large-file | tr a-z A-Z
-///     begins to display the matching lines in uppercase even before grep has finished traversing the large file.
+///  grep pattern very-large-file | head -n 1
+///  displays the first matching line, and may stop processing well before grep has finished reading its input file.
 ///
-///     grep pattern very-large-file | head -n 1
-///     displays the first matching line, and may stop processing well before grep has finished reading its input file.
-///
-///     If you read somewhere that piped programs run in sequence, flee this document. Piped programs run concurrently and always have.
+///  If you read somewhere that piped programs run in sequence, flee this document. Piped programs run concurrently and always have.
+/// ```
 ///
 /// I bring the note above because that was my original understanding, but I have had to spend a
 /// crazy amount of time trying to get data flowing from one process to another without the initial
