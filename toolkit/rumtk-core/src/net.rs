@@ -630,6 +630,8 @@ pub mod tcp {
         }
 
         pub async fn receive(client: &RUMNetClient) -> RUMResult<RUMNetMessage> {
+            //TODO: Fix source of lockout here
+            //Ok(lock_client_ex(client).await.recv().await?)
             loop {
                 let data = lock_client_ex(client).await.recv().await?;
 
@@ -743,18 +745,6 @@ pub mod tcp {
         ///
         pub async fn get_address_info(&self) -> Option<RUMString> {
             self.address.clone()
-        }
-
-        ///
-        /// Attempts to clear clients that have been marked as disconnected.
-        ///
-        pub async fn gc_clients(&mut self) -> RUMResult<()> {
-            Self::handle_client_gc(
-                self.clients.clone(),
-                self.tx_in.clone(),
-                self.tx_out.clone(),
-            )
-            .await
         }
     }
 
@@ -968,14 +958,6 @@ pub mod tcp {
         }
 
         ///
-        /// Garbage Collection API method for dropping clients flagged as disconnected.
-        ///
-        pub fn gc_clients(&self) -> RUMResult<()> {
-            let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            rumtk_resolve_task!(RUMServerHandle::gc_clients_helper(&args))?
-        }
-
-        ///
         /// Get the Address:Port info for this socket.
         ///
         pub fn get_address_info(&self) -> Option<RUMString> {
@@ -1062,16 +1044,8 @@ pub mod tcp {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let server_ref = locked_args.get(0).unwrap();
-            let mut server = server_ref.read().await;
-            server.get_address_info().await
-        }
-
-        async fn gc_clients_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> RUMResult<()> {
-            let owned_args = Arc::clone(args).clone();
-            let locked_args = owned_args.read().await;
-            let server_ref = locked_args.get(0).unwrap();
-            let mut server = server_ref.write().await;
-            server.gc_clients().await
+            let address = server_ref.read().await.get_address_info().await;
+            address
         }
     }
 }
