@@ -452,8 +452,8 @@ pub mod tcp {
         ///
         /// Get the Address:Port info for this socket.
         ///
-        pub async fn get_address_info(&self) -> RUMString {
-            self.address.clone()
+        pub async fn get_address_info(&self) -> Option<RUMString> {
+            Some(self.address.clone())
         }
     }
 
@@ -645,7 +645,7 @@ pub mod tcp {
         ///
         /// Get the Address:Port info for this socket.
         ///
-        pub fn get_address_info(&self) -> RUMString {
+        pub fn get_address_info(&self) -> Option<RUMString> {
             let args = rumtk_create_task_args!(Arc::clone(&self.server));
             rumtk_resolve_task!(RUMServerHandle::get_address_helper(&args)).unwrap_or_default()
         }
@@ -701,7 +701,7 @@ pub mod tcp {
             clients
         }
 
-        async fn get_address_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> RUMString {
+        async fn get_address_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> Option<RUMString> {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let server_ref = locked_args.get(0).unwrap();

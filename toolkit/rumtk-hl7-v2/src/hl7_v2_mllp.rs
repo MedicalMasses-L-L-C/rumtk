@@ -206,10 +206,7 @@ pub mod mllp_v2 {
     };
     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     use rumtk_core::types::RUMOrderedMap;
-    use rumtk_core::{
-        rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_init_threads,
-        rumtk_resolve_task, rumtk_spawn_task,
-    };
+    use rumtk_core::{rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task};
     use std::sync::{Arc, Mutex};
     use tokio::task::JoinHandle;
 
@@ -385,15 +382,6 @@ pub mod mllp_v2 {
             }
         }
 
-        pub async fn start(&self) -> ServerRunner {
-            match *self {
-                LowerLayer::SERVER(ref server) => {
-                    Some(rumtk_spawn_task!(RUMServer::run(server.clone())))
-                }
-                LowerLayer::CLIENT(ref client) => None,
-            }
-        }
-
         pub async fn send_message(
             &mut self,
             message: &RUMNetMessage,
@@ -401,11 +389,7 @@ pub mod mllp_v2 {
         ) -> RUMResult<()> {
             match *self {
                 LowerLayer::SERVER(ref mut server) => {
-                    server
-                        .write()
-                        .await
-                        .push_message(&client_id, message.clone())
-                        .await?;
+                    server.write().await.send(&client_id, message).await?;
                     Ok(())
                 }
                 LowerLayer::CLIENT(ref mut client) => client.write().await.send(&message).await,
@@ -417,22 +401,8 @@ pub mod mllp_v2 {
             client_id: &RUMString,
         ) -> RUMResult<RUMNetMessage> {
             match *self {
-                LowerLayer::SERVER(ref mut server) => {
-                    match server.write().await.pop_message(client_id).await {
-                        Some(msg) => Ok(msg),
-                        None => Ok(vec![]),
-                    }
-                }
+                LowerLayer::SERVER(ref mut server) => server.write().await.receive(client_id).await,
                 LowerLayer::CLIENT(ref mut client) => Ok(client.write().await.recv().await?),
-            }
-        }
-
-        pub async fn wait_incoming(&mut self, client_id: &RUMString) -> RUMResult<bool> {
-            match *self {
-                LowerLayer::SERVER(ref mut server) => {
-                    server.write().await.wait_incoming(client_id).await
-                }
-                LowerLayer::CLIENT(ref mut client) => client.write().await.wait_incoming().await,
             }
         }
 
@@ -504,7 +474,6 @@ pub mod mllp_v2 {
         connection_info: Option<RUMString>,
         transport_layer: SafeLowerLayer,
         filter_policy: MLLP_FILTER_POLICY,
-        server_handle: ServerRunner,
         inbound_messages: MLLPMessageQueue,
         available_clients: SafeClientIDList,
         server: bool,
@@ -544,7 +513,6 @@ pub mod mllp_v2 {
         ) -> RUMResult<AsyncMLLP> {
             let transport_layer =
                 Arc::new(AsyncMutex::new(LowerLayer::init(&ip, port, server).await?));
-            let server_handle = transport_layer.lock().await.start().await;
             let connection_info = transport_layer.lock().await.get_address_info().await;
             let mut inbound_messages = MLLPMessageQueue::default();
             let available_clients = SafeClientIDList::default();
@@ -561,7 +529,6 @@ pub mod mllp_v2 {
                 connection_info,
                 transport_layer,
                 filter_policy,
-                server_handle,
                 inbound_messages,
                 available_clients,
                 server,
@@ -990,8 +957,9 @@ pub mod mllp_v2_helpers {
         SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY,
     };
     use rumtk_core::core::RUMResult;
-    use rumtk_core::net::tcp::{ClientIDList, ConnectionInfo};
+    use rumtk_core::net::tcp::{ClientIDList, ConnectionInfo, NET_SLEEP_TIMEOUT};
     use rumtk_core::net::tcp_helpers::to_ip_port;
+    use rumtk_core::rumtk_sleep;
     use rumtk_core::strings::{rumtk_format, RUMString};
     use rumtk_core::threading::thread_primitives::SyncMutex;
     use rumtk_core::threading::threading_functions::block_on_task;
@@ -1047,14 +1015,7 @@ pub mod mllp_v2_helpers {
         block_on_task(async move { mllp.lock().await.send_message(&message, &endpoint).await })?
     }
 
-    pub fn mllp_open_client_channel(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
-        let endpoints = mllp_get_client_ids(mllp.clone())?;
-        let endpoint = endpoints.get(0).unwrap();
-        let new_channel = SafeMLLPChannel::new(SyncMutex::new(MLLPChannel::open(&endpoint, &mllp)));
-        Ok(vec![new_channel])
-    }
-
-    pub fn mllp_open_server_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
+    pub fn mllp_open_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
         let endpoints = mllp_get_client_ids(mllp.clone())?;
         let mut channels = MLLPChannels::with_capacity(endpoints.len());
         for endpoint in endpoints.iter() {
@@ -1065,12 +1026,18 @@ pub mod mllp_v2_helpers {
         Ok(channels)
     }
 
-    pub fn mllp_iter_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
-        let is_server = mllp_is_server(mllp.clone());
-        match is_server {
-            true => mllp_open_server_channels(mllp),
-            false => mllp_open_client_channel(mllp),
+    pub fn mllp_iter_channels(
+        mllp: SafeAsyncMLLP,
+        wait_for_clients: bool,
+    ) -> RUMResult<MLLPChannels> {
+        let mut channels = mllp_open_channels(mllp.clone())?;
+
+        while channels.is_empty() && wait_for_clients {
+            channels = mllp_open_channels(mllp.clone())?;
+            rumtk_sleep!(NET_SLEEP_TIMEOUT);
         }
+
+        Ok(channels)
     }
 
     pub fn mllp_client_connect(
@@ -1360,8 +1327,11 @@ pub mod mllp_v2_api {
     #[macro_export]
     macro_rules! rumtk_v2_mllp_iter_channels {
         ( $safe_mllp:expr ) => {{
+            rumtk_v2_mllp_iter_channels!($safe_mllp, true)
+        }};
+        ( $safe_mllp:expr, $wait_for_clients:expr ) => {{
             use $crate::hl7_v2_mllp::mllp_v2_helpers::mllp_iter_channels;
-            mllp_iter_channels($safe_mllp)
+            mllp_iter_channels($safe_mllp, $wait_for_clients)
         }};
     }
 
