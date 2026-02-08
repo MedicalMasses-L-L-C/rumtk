@@ -210,7 +210,6 @@ pub mod mllp_v2 {
         rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_init_threads,
         rumtk_resolve_task, rumtk_spawn_task,
     };
-    use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Arc, Mutex};
     use tokio::task::JoinHandle;
 
@@ -489,6 +488,7 @@ pub mod mllp_v2 {
 
     pub type SafeLowerLayer = Arc<AsyncMutex<LowerLayer>>;
     pub type GuardedLowerLayer<'a> = AsyncMutexGuard<'a, LowerLayer>;
+    type SafeClientIDList = Arc<AsyncRwLock<ClientIDList>>;
 
     ///
     /// # Minimal Lower Layer Protocol
@@ -496,16 +496,18 @@ pub mod mllp_v2 {
     /// This is the struct that defines the MLLP.
     /// It handles proper sanitization and encoding/decoding of HL7 flat messages.
     /// It does not handle parsing of messages.
-    /// Parsing is left to [v2_parser_interface::rumtk_v2_parse_message]. This struct only deals with
-    /// the low level encoding.
+    /// Parsing is left to [rumtk_v2_parse_message](rumtk_hl7_v2::rumtk_v2_parse_message).
+    /// This struct only deals with the low level encoding.
+    ///
     ///
     pub struct AsyncMLLP {
+        connection_info: Option<RUMString>,
         transport_layer: SafeLowerLayer,
         filter_policy: MLLP_FILTER_POLICY,
         server_handle: ServerRunner,
         inbound_messages: MLLPMessageQueue,
+        available_clients: SafeClientIDList,
         server: bool,
-        closed: Arc<AtomicBool>,
     }
 
     impl AsyncMLLP {
@@ -543,22 +545,26 @@ pub mod mllp_v2 {
             let transport_layer =
                 Arc::new(AsyncMutex::new(LowerLayer::init(&ip, port, server).await?));
             let server_handle = transport_layer.lock().await.start().await;
+            let connection_info = transport_layer.lock().await.get_address_info().await;
             let mut inbound_messages = MLLPMessageQueue::default();
-            let closed = Arc::new(AtomicBool::new(false));
+            let available_clients = SafeClientIDList::default();
 
-            tokio::spawn(Self::process_and_save_messages(
-                transport_layer.clone(),
-                inbound_messages.clone(),
-                closed.clone(),
-            ));
+            if server {
+                tokio::spawn(Self::process_and_save_messages(
+                    transport_layer.clone(),
+                    inbound_messages.clone(),
+                    available_clients.clone(),
+                ));
+            }
 
             Ok(AsyncMLLP {
+                connection_info,
                 transport_layer,
                 filter_policy,
                 server_handle,
                 inbound_messages,
+                available_clients,
                 server,
-                closed,
             })
         }
 
@@ -730,11 +736,12 @@ pub mod mllp_v2 {
         async fn process_and_save_messages(
             transport_layer: SafeLowerLayer,
             inbound_queue: MLLPMessageQueue,
-            mllp_closed: Arc<AtomicBool>,
+            available_clients: SafeClientIDList,
         ) {
-            while !mllp_closed.load(Ordering::Relaxed) {
-                let endpoints = transport_layer.lock().await.get_client_ids().await;
-                for endpoint in endpoints {
+            loop {
+                let mut endpoints = transport_layer.lock().await.get_client_ids().await;
+
+                for endpoint in endpoints.clone() {
                     let message = Self::wait_on_message(
                         transport_layer.clone(),
                         &endpoint,
@@ -750,6 +757,11 @@ pub mod mllp_v2 {
                         }
                         Err(e) => Self::save_message(inbound_queue.clone(), endpoint, Err(e)).await,
                     }
+                }
+
+                if !endpoints.is_empty() {
+                    available_clients.write().await.clear();
+                    available_clients.write().await.append(&mut endpoints);
                 }
 
                 rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
@@ -826,7 +838,7 @@ pub mod mllp_v2 {
         }
 
         pub async fn get_client_ids(&self) -> ClientIDList {
-            self.next_layer().await.get_client_ids().await
+            self.available_clients.read().await.clone()
         }
 
         pub async fn is_server(&self) -> bool {
@@ -834,8 +846,7 @@ pub mod mllp_v2 {
         }
 
         pub async fn get_address_info(&self) -> Option<RUMString> {
-            let lower_layer = self.next_layer().await;
-            lower_layer.get_address_info().await
+            self.connection_info.clone()
         }
     }
 
@@ -882,7 +893,7 @@ pub mod mllp_v2 {
         }
 
         pub async fn get_address_info(&mut self) -> Option<RUMString> {
-            self.next_layer().await.get_address_info().await
+            self.next_layer().await.get_address_info().await.clone()
         }
     }
 
