@@ -80,12 +80,13 @@ pub mod threading_manager {
     const DEFAULT_SLEEP_DURATION: f32 = 0.001f32;
     const DEFAULT_TASK_CAPACITY: usize = 100;
 
+    pub type AsyncHandle<T> = JoinHandle<T>;
     pub type TaskItems<T> = RUMVec<T>;
     /// This type aliases a vector of T elements that will be used for passing arguments to the task processor.
     pub type TaskArgs<T> = TaskItems<T>;
     /// Function signature defining the interface of task processing logic.
     pub type SafeTaskArgs<T> = Arc<AsyncRwLock<TaskItems<T>>>;
-    pub type AsyncTaskHandle<R> = JoinHandle<TaskResult<R>>;
+    pub type AsyncTaskHandle<R> = AsyncHandle<TaskResult<R>>;
     pub type AsyncTaskHandles<R> = Vec<AsyncTaskHandle<R>>;
     //pub type TaskProcessor<T, R, Fut: Future<Output = TaskResult<R>>> = impl FnOnce(&SafeTaskArgs<T>) -> Fut;
     pub type TaskID = RUMID;
