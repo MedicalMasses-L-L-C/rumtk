@@ -569,9 +569,8 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        println!("Sleeping");
         let addr = server.get_address_info().unwrap();
-        assert!(addr.is_empty(), "No address returned....Got => {}", addr)
+        assert!(!addr.is_empty(), "No address returned....Got => {}", addr)
     }
 
     #[test]
