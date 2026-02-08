@@ -415,7 +415,6 @@ mod tests {
         pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process,
     };
     use crate::pipelines::pipeline_types::RUMCommand;
-    use crate::threading::threading_functions::sleep;
     use crate::threading::threading_manager::*;
 
     #[test]
@@ -464,14 +463,10 @@ mod tests {
     ///////////////////////////////////Net Tests/////////////////////////////////////////////////
     #[test]
     fn test_server_start() {
-        let mut server = match rumtk_create_server!("localhost", 0) {
+        let server = match rumtk_create_server!("localhost", 0) {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        }
     }
 
     #[test]
@@ -481,26 +476,23 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
-        let address_info = server.get_address_info().unwrap();
+        let address_info = server.get_address_info();
         let (ip, port) = rumtk_get_ip_port!(address_info);
-        println!("Sleeping");
-        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
         };
         let client_id = client.get_address().unwrap();
-        rumtk_sleep!(1);
         match server.send(&client_id, &msg.to_raw()) {
             Ok(_) => (),
             Err(e) => panic!("Server failed to send message because {}", e),
         };
-        rumtk_sleep!(1);
         let received_message = client.receive().unwrap();
+        assert_eq!(
+            &msg.len(),
+            &received_message.len(),
+            "Received message does not match expected length!"
+        );
         assert_eq!(
             &msg.to_raw(),
             &received_message,
@@ -519,14 +511,9 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
-        let address_info = server.get_address_info().unwrap();
+        let address_info = server.get_address_info();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
-        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
@@ -535,7 +522,6 @@ mod tests {
             Ok(_) => (),
             Err(e) => panic!("Failed to send message because {}", e),
         };
-        rumtk_sleep!(1);
         let client_id = client.get_address().expect("Failed to get client id");
         let incoming_message = server.receive(&client_id).unwrap().to_rumstring();
         println!("Received message => {:?}", &incoming_message);
@@ -548,19 +534,13 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
-        let address_info = server.get_address_info().unwrap();
+        let address_info = server.get_address_info();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
-        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        rumtk_sleep!(1);
         let expected_client_id = client.get_address().expect("Failed to get client id");
         let clients = server.get_client_ids();
         let incoming_client_id = clients.get(0).expect("Expected client to have connected!");
@@ -575,20 +555,11 @@ mod tests {
     #[test]
     fn test_server_stop() {
         let msg = RUMString::from("Hello World!");
-        let mut server = match rumtk_create_server!("localhost", 0) {
+        let server = match rumtk_create_server!("localhost", 0) {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
         println!("Sleeping");
-        rumtk_sleep!(1);
-        match server.stop() {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to stop server because {}", e),
-        };
     }
 
     #[test]
@@ -598,16 +569,9 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
         println!("Sleeping");
-        rumtk_sleep!(1);
-        match server.get_address_info() {
-            Some(addr) => println!("Server address info => {}", addr),
-            None => panic!("No address. Perhaps the server was never initialized?"),
-        };
+        let addr = server.get_address_info();
+        assert!(addr.is_empty(), "No address returned....Got => {}", addr)
     }
 
     #[test]
@@ -617,29 +581,21 @@ mod tests {
             Ok(server) => server,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        match server.start(false) {
-            Ok(_) => (),
-            Err(e) => panic!("Failed to start server because {}", e),
-        };
-        let address_info = server.get_address_info().unwrap();
+        let address_info = server.get_address_info();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
-        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
         };
-        rumtk_sleep!(2);
         match client.send(msg.to_raw()) {
             Ok(_) => (),
             Err(e) => panic!("Failed to send message because {}", e),
         };
-        rumtk_sleep!(1);
         let clients = server.get_client_ids();
         let incoming_client_id = clients.first().expect("Expected client to have connected!");
         let mut received_message = server.receive(incoming_client_id).unwrap();
         if received_message.is_empty() {
-            rumtk_sleep!(1);
             received_message = server.receive(incoming_client_id).unwrap();
         }
         assert_eq!(

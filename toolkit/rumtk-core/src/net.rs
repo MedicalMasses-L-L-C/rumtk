@@ -48,6 +48,7 @@ pub mod tcp {
     /// Convenience constant for the `0.0.0.0` address. This is to be used in contexts in which you do not have any interface preference.
     pub const ANYHOST: &str = "0.0.0.0";
     pub const NET_SLEEP_TIMEOUT: f32 = 0.000001;
+    pub const NET_RETRIES: usize = 100;
 
     pub type RUMNetMessage = RUMVec<u8>;
     pub type RUMNetResult<R> = RUMResult<R>;
@@ -204,10 +205,7 @@ pub mod tcp {
                 return false;
             }
 
-            match self.socket.readable().await {
-                Ok(_) => true,
-                Err(_) => false,
-            }
+            self.socket.readable().await.is_ok()
         }
 
         /// Check if socket is ready for writing.
@@ -216,10 +214,7 @@ pub mod tcp {
                 return false;
             }
 
-            match self.socket.writable().await {
-                Ok(_) => true,
-                Err(_) => false,
-            }
+            self.socket.writable().await.is_ok()
         }
 
         /// Returns the peer address:port as a string.
@@ -258,12 +253,12 @@ pub mod tcp {
     pub type SafeListener = Arc<AsyncMutex<TcpListener>>;
     pub type SafeServer = Arc<AsyncRwLock<RUMServer>>;
 
-    async fn lock_client_ex(client: &RUMNetClient) -> AsyncRwLockWriteGuard<RUMClient> {
+    async fn lock_client_ex(client: &'_ RUMNetClient) -> AsyncRwLockWriteGuard<'_, RUMClient> {
         let locked = client.write().await;
         locked
     }
 
-    async fn lock_client(client: &RUMNetClient) -> AsyncRwLockReadGuard<RUMClient> {
+    async fn lock_client(client: &'_ RUMNetClient) -> AsyncRwLockReadGuard<'_, RUMClient> {
         let locked = client.read().await;
         locked
     }
@@ -296,13 +291,8 @@ pub mod tcp {
     /// so that the server can handle the transactions in the background
     ///
     pub struct RUMServer {
-        tcp_listener: SafeListener,
-        tx_in: RUMNetMessageQueue<RUMNetMessage>,
-        tx_out: RUMNetMessageQueue<RUMNetMessage>,
+        address: RUMString,
         clients: RUMNetClients,
-        address: Option<RUMString>,
-        stop: bool,
-        shutdown_completed: bool,
     }
 
     impl RUMServer {
@@ -311,145 +301,62 @@ pub mod tcp {
         /// management is not started until you invoke [Self::run].
         ///
         pub async fn new(ip: &str, port: u16) -> RUMResult<RUMServer> {
-            let addr = rumtk_format!("{}:{}", ip, port);
-            let tcp_listener_handle = match TcpListener::bind(addr.as_str()).await {
-                Ok(listener) => listener,
+            let mut address = rumtk_format!("{}:{}", ip, port);
+            let tcp_listener_handle = match TcpListener::bind(address.as_str()).await {
+                Ok(listener) => {
+                    address = rumtk_format!("{}:{}", ip, listener.local_addr().unwrap().port());
+                    listener
+                }
                 Err(e) => {
                     return Err(rumtk_format!(
                         "Unable to bind to {} because {}",
-                        &addr.as_str(),
+                        &address.as_str(),
                         &e
                     ))
                 }
             };
-            let address = match tcp_listener_handle.local_addr() {
-                Ok(addr) => Some(addr.to_compact_string()),
-                Err(e) => None,
-            };
-            let tx_in = RUMNetMessageQueue::default();
-            let tx_out = RUMNetMessageQueue::default();
+
             let client_list = RUMOrderedMap::<RUMString, RUMNetClient>::new();
             let clients = RUMNetClients::new(AsyncRwLock::new(client_list));
             let tcp_listener = Arc::new(AsyncMutex::new(tcp_listener_handle));
-            Ok(RUMServer {
-                tcp_listener,
-                tx_in,
-                tx_out,
-                clients,
-                address,
-                stop: false,
-                shutdown_completed: false,
-            })
-        }
 
-        ///
-        /// Main, juicy server management logic. Call this method to kick start a series of
-        /// autonomous checks. Message handling and connection handling are taken care
-        /// autonamtically.
-        ///
-        /// Await this method if you wish to block the context thread indefinitely. This method has
-        /// a never ending loop looking for when the server has been signalled to shut down.
-        ///
-        /// `ctx` here refers to an instance of the server wrapped by [SafeServer]. This was done
-        /// to be able to make the management logic work autonomously across threads. We call the
-        /// RWLock's read() method every pass of the loop and await on it. This allows the runtime
-        /// to progress the state of other futures and allow sync code to interact with the server
-        /// state. In most situations, this step should yield a no-op.
-        ///
-        pub async fn run(ctx: SafeServer) -> RUMResult<()> {
-            // Bootstrapping the main server loop.
-            let mut accept_handle = tokio::spawn(Self::handle_accept(
-                Arc::clone(&ctx.read().await.tcp_listener),
-                Arc::clone(&ctx.read().await.clients),
-                Arc::clone(&ctx.read().await.tx_in),
-                Arc::clone(&ctx.read().await.tx_out),
-            ));
-            let mut stop = ctx.read().await.stop;
-            //Most drop here to allow the outside world to grab access to the server handle and interact with us.
-            while !stop {
-                if accept_handle.is_finished() {
-                    accept_handle = tokio::spawn(Self::handle_accept(
-                        Arc::clone(&ctx.read().await.tcp_listener),
-                        Arc::clone(&ctx.read().await.clients),
-                        Arc::clone(&ctx.read().await.tx_in),
-                        Arc::clone(&ctx.read().await.tx_out),
-                    ));
-                }
+            //TODO: In the future, see if it is necessary to pass a oneshot channel and gracefully handle closure.
+            //for now, it is ok to leak the handle and let process termination kill any future connections.
+            tokio::spawn(Self::handle_accept(tcp_listener, clients.clone()));
 
-                Self::handle_send(
-                    Arc::clone(&ctx.read().await.clients),
-                    Arc::clone(&ctx.read().await.tx_out),
-                )
-                .await?;
-
-                Self::handle_receive(
-                    Arc::clone(&ctx.read().await.clients),
-                    Arc::clone(&ctx.read().await.tx_in),
-                )
-                .await?;
-
-                Self::handle_client_gc(
-                    Arc::clone(&ctx.read().await.clients),
-                    Arc::clone(&ctx.read().await.tx_in),
-                    Arc::clone(&ctx.read().await.tx_out),
-                )
-                .await?;
-
-                stop = ctx.read().await.stop;
-
-                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
-            }
-            eprintln!("Shutting down server!");
-            // Cleanup; signal to the outside world we did finished shutting down and exit execution.
-            ctx.write().await.shutdown_completed = true;
-            eprintln!("Server successfully shut down!");
-            Ok(())
-        }
-
-        ///
-        /// This method signals the server to stop.
-        ///
-        /// Then, this method waits for run to cleanup before exiting.
-        /// Meaning, this method's exit is enough to signal everything went through smoothly.
-        ///
-        pub async fn stop_server(ctx: &SafeServer) -> RUMResult<RUMString> {
-            let mut reowned_self = ctx.write().await;
-            let mut shutdown_completed = reowned_self.shutdown_completed;
-            reowned_self.stop = true;
-            std::mem::drop(reowned_self);
-
-            // Same trick as run's. We can now opportunistically check if the server exited while
-            // safely holding the calling thread hostage.
-            while !shutdown_completed {
-                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
-                let mut reowned_self = ctx.read().await;
-                shutdown_completed = reowned_self.shutdown_completed;
-            }
-
-            Ok(rumtk_format!("Server fully shutdown!"))
+            Ok(RUMServer { address, clients })
         }
 
         ///
         /// Contains basic logic for listening for incoming connections.
         ///
-        pub async fn handle_accept(
-            listener: SafeListener,
-            clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue<RUMNetMessage>,
-            tx_out: RUMNetMessageQueue<RUMNetMessage>,
+        pub async fn handle_accept(listener: SafeListener, clients: RUMNetClients) {
+            #[allow(clippy::never_loop)]
+            loop {
+                match Self::_handle_accept(&listener, &clients).await {
+                    Ok(_) => {}
+                    Err(_) => {
+                        //TODO: Log error accepting client...
+                    }
+                }
+            }
+        }
+
+        pub async fn _handle_accept(
+            listener: &SafeListener,
+            clients: &RUMNetClients,
         ) -> RUMResult<()> {
-            let server = listener.lock().await;
-            match server.accept().await {
+            match listener.lock().await.accept().await {
                 Ok((socket, _)) => {
                     let client = RUMClient::accept(socket).await?;
                     let client_id = match client.get_address(false).await {
                         Some(client_id) => client_id,
                         None => return Err(rumtk_format!("Accepted client returned no peer address. This should not be happening!"))
                     };
-                    let mut client_list = clients.write().await;
-                    Self::register_queue(&tx_in, &client_id).await;
-                    Self::register_queue(&tx_out, &client_id).await;
-                    client_list.insert(client_id, RUMNetClient::new(AsyncRwLock::new(client)));
+                    clients
+                        .write()
+                        .await
+                        .insert(client_id, RUMNetClient::new(AsyncRwLock::new(client)));
                     Ok(())
                 }
                 Err(e) => Err(rumtk_format!(
@@ -459,181 +366,10 @@ pub mod tcp {
             }
         }
 
-        ///
-        /// Contains logic for sending messages queued for a client to it. `tx_out` is a reference
-        /// of [RUMNetMessageQueue<RUMNetMessage>] which is a hash map of [RUMNetQueue] whose keys are
-        /// the client's peer address string.
-        ///
-        pub async fn handle_send(
-            clients: RUMNetClients,
-            tx_out: RUMNetMessageQueue<RUMNetMessage>,
-        ) -> RUMResult<()> {
-            let ids = Self::get_client_ids(&clients).await;
-            for client_id in ids {
-                let messages = match Self::pop_queue(&tx_out, &client_id).await {
-                    Some(messages) => messages,
-                    None => continue,
-                };
-                for msg in messages.iter() {
-                    match Self::send(clients.read().await.get(client_id.as_str()).unwrap(), msg)
-                        .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => {
-                            return Err(rumtk_format!("Dropping client...because {}", e));
-                        }
-                    };
-                }
-            }
-
-            Ok(())
-        }
-
-        ///
-        /// Contains the logic for handling receiving messages from clients. Incoming messages are
-        /// all placed into a queue that the "outside" world can interact with.
-        ///
-        pub async fn handle_receive(
-            clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue<RUMNetMessage>,
-        ) -> RUMResult<()> {
-            let ids = Self::get_client_ids(&clients).await;
-            for client_id in ids {
-                let id = client_id.as_str();
-                let msg = match Self::receive(clients.read().await.get(id).unwrap()).await {
-                    Ok(msg) => msg,
-                    Err(e) => {
-                        eprintln!("Disconnected client => {}", client_id);
-                        Self::disconnect(clients.read().await.get(id).unwrap()).await;
-                        return Err(e);
-                    }
-                };
-                if !msg.is_empty() {
-                    Self::push_queue(&tx_in, &client_id, msg).await?;
-                }
-            }
-
-            Ok(())
-        }
-
-        ///
-        /// Contains the logic for handling removal of clients from the server if they disconnected.
-        ///
-        pub async fn handle_client_gc(
-            clients: RUMNetClients,
-            tx_in: RUMNetMessageQueue<RUMNetMessage>,
-            tx_out: RUMNetMessageQueue<RUMNetMessage>,
-        ) -> RUMResult<()> {
-            let mut disconnected_clients = Self::_find_disconnected_clients(&clients).await;
-
-            // Take a moment to keep checking if the data queues are clear before killing them.
-            while !disconnected_clients.is_empty() {
-                for i in 0..disconnected_clients.len() {
-                    let client_id = disconnected_clients.get(i).unwrap();
-                    let empty_queues = Self::is_queue_empty(&tx_in, client_id).await
-                        && Self::is_queue_empty(&tx_out, client_id).await;
-
-                    if empty_queues {
-                        eprintln!("Garbage Collected client => {}", client_id);
-                        tx_in.write().await.remove(client_id);
-                        tx_out.write().await.remove(client_id);
-                        disconnected_clients.remove(i);
-                    }
-                }
-                rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
-            }
-
-            Ok(())
-        }
-
-        async fn _find_disconnected_clients(clients: &RUMNetClients) -> RUMVec<RUMString> {
-            let mut client_list = clients.write().await;
-            let client_keys = client_list.keys().cloned().collect::<Vec<_>>();
-            let mut disconnected_clients = Vec::<RUMString>::with_capacity(client_list.len());
-
-            // Identify which clients are disconnected and remove them from the list used elsewhere
-            // to tell which clients to poll.
-            for client_id in client_keys {
-                if client_list[&client_id].write().await.is_disconnected() {
-                    client_list.remove(&client_id);
-                    disconnected_clients.push(client_id);
-                }
-            }
-
-            disconnected_clients
-        }
-
-        pub async fn register_queue(
-            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
-            client: &RUMString,
-        ) {
-            let mut queues = tx_queues.write().await;
-            let new_queue = RUMNetQueue::new();
-            queues.insert(client.clone(), new_queue);
-        }
-
-        pub async fn push_queue(
-            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
-            client: &RUMString,
-            msg: RUMNetMessage,
-        ) -> RUMResult<()> {
-            let mut queues = tx_queues.write().await;
-            let mut queue = match queues.get_mut(client) {
-                Some(queue) => queue,
-                None => {
-                    return Err(rumtk_format!("Attempted to queue message for non-connected \
-                    client! Make sure client was connected! The client might have been disconnected. \
-                    Client: {}", &client));
-                }
-            };
-            queue.push_back(msg);
-            Ok(())
-        }
-
-        pub async fn pop_queue(
-            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
-            client: &RUMString,
-        ) -> Option<Vec<RUMNetMessage>> {
-            let mut queues = tx_queues.write().await;
-            let mut queue = match queues.get_mut(client) {
-                Some(queue) => queue,
-                None => return None,
-            };
-            let mut messages = Vec::<RUMNetMessage>::with_capacity(queue.len());
-            while !queue.is_empty() {
-                let message = match queue.pop_front() {
-                    Some(message) => message,
-                    None => break,
-                };
-                messages.push(message);
-            }
-            queue.clear();
-            Some(messages)
-        }
-
-        pub async fn is_queue_empty(
-            tx_queues: &RUMNetMessageQueue<RUMNetMessage>,
-            client: &RUMString,
-        ) -> bool {
-            let queues = tx_queues.write().await;
-            let queue = match queues.get(client) {
-                Some(queue) => queue,
-                None => return true,
-            };
-            let empty = queue.is_empty();
-            empty
-        }
-
-        pub async fn send(client: &RUMNetClient, msg: &RUMNetMessage) -> RUMResult<()> {
-            let mut owned_client = lock_client_ex(client).await;
-            owned_client.send(msg).await
-        }
-
-        pub async fn receive(client: &RUMNetClient) -> RUMResult<RUMNetMessage> {
-            //TODO: Fix source of lockout here
-            //Ok(lock_client_ex(client).await.recv().await?)
+        pub async fn receive(&self, client_id: &RUMString) -> RUMResult<RUMNetMessage> {
+            let client = self.get_client(client_id).await?;
             loop {
-                let data = lock_client_ex(client).await.recv().await?;
+                let data = lock_client_ex(&client).await.recv().await?;
 
                 if !data.is_empty() {
                     return Ok(data);
@@ -641,15 +377,34 @@ pub mod tcp {
             }
         }
 
+        pub async fn send(&self, client_id: &RUMString, msg: &RUMNetMessage) -> RUMResult<()> {
+            let client = self.get_client(client_id).await?;
+            let mut err = RUMString::default();
+
+            for _ in 0..NET_RETRIES {
+                match lock_client_ex(&client).await.send(msg).await {
+                    Ok(_) => return Ok(()),
+                    Err(e) => {
+                        err = e;
+                        rumtk_async_sleep!(NET_SLEEP_TIMEOUT).await;
+                        continue;
+                    }
+                }
+            }
+
+            Err(rumtk_format!(
+                "Failed to send message after reaching retry limit of {}s because => {}",
+                NET_RETRIES as f32 * NET_SLEEP_TIMEOUT,
+                err
+            ))
+        }
+
         pub async fn disconnect(client: &RUMNetClient) {
             lock_client_ex(client).await.disconnect()
         }
 
-        pub async fn get_client(
-            clients: &RUMNetClients,
-            client: &RUMString,
-        ) -> RUMResult<RUMNetClient> {
-            match clients.read().await.get(client) {
+        pub async fn get_client(&self, client: &RUMString) -> RUMResult<RUMNetClient> {
+            match self.clients.read().await.get(client) {
                 Some(client) => Ok(client.clone()),
                 _ => Err(rumtk_format!("Client {} not found!", client)),
             }
@@ -658,8 +413,13 @@ pub mod tcp {
         ///
         /// Return client id list.
         ///
-        pub async fn get_client_ids(clients: &RUMNetClients) -> ClientIDList {
-            clients.read().await.keys().cloned().collect::<Vec<_>>()
+        pub async fn get_client_ids(&self) -> ClientIDList {
+            self.clients
+                .read()
+                .await
+                .keys()
+                .cloned()
+                .collect::<Vec<_>>()
         }
 
         pub async fn get_client_id(client: &RUMNetClient) -> RUMString {
@@ -670,26 +430,11 @@ pub mod tcp {
                 .expect("No address found! Malformed client")
         }
 
-        pub async fn get_client_readiness(
-            client: &RUMNetClient,
-            socket_readiness_type: &SOCKET_READINESS_TYPE,
-        ) -> bool {
-            match socket_readiness_type {
-                SOCKET_READINESS_TYPE::NONE => true,
-                SOCKET_READINESS_TYPE::READ_READY => lock_client(client).await.read_ready().await,
-                SOCKET_READINESS_TYPE::WRITE_READY => lock_client(client).await.write_ready().await,
-                SOCKET_READINESS_TYPE::READWRITE_READY => {
-                    let locked_client = lock_client(client).await;
-                    locked_client.read_ready().await && locked_client.write_ready().await
-                }
-            }
-        }
-
         ///
         /// Return list of clients.
         ///
         pub async fn get_clients(&self) -> ClientList {
-            let ids = Self::get_client_ids(&self.clients).await;
+            let ids = self.get_client_ids().await;
             let mut clients = ClientList::with_capacity(ids.len());
             for client_id in ids {
                 clients.push(
@@ -705,45 +450,9 @@ pub mod tcp {
         }
 
         ///
-        /// Queues a message onto the server to send to client.
-        ///
-        pub async fn push_message(
-            &mut self,
-            client_id: &RUMString,
-            msg: RUMNetMessage,
-        ) -> RUMResult<()> {
-            let mut queue = self.tx_out.write().await;
-            if !queue.contains_key(client_id) {
-                return Err(rumtk_format!("No client with id {} found!", &client_id));
-            }
-            queue[client_id].push_back(msg);
-            Ok(())
-        }
-
-        ///
-        /// Obtain a message, if available, from the incoming queue.
-        ///
-        pub async fn pop_message(&mut self, client_id: &RUMString) -> Option<RUMNetMessage> {
-            let mut queues = self.tx_in.write().await;
-            match queues.get_mut(client_id) {
-                Some(queue) => queue.pop_front(),
-                None => None,
-            }
-        }
-
-        ///
-        /// Obtain a message, if available, from the incoming queue.
-        ///
-        pub async fn wait_incoming(&mut self, client_id: &RUMString) -> RUMResult<bool> {
-            let client = Self::get_client(&self.clients, client_id).await?;
-            let owned_client = client.write().await;
-            owned_client.wait_incoming().await
-        }
-
-        ///
         /// Get the Address:Port info for this socket.
         ///
-        pub async fn get_address_info(&self) -> Option<RUMString> {
+        pub async fn get_address_info(&self) -> RUMString {
             self.address.clone()
         }
     }
@@ -891,30 +600,6 @@ pub mod tcp {
         }
 
         ///
-        /// Starts the main processing loop for the server. This processing loop listens for new
-        /// clients in a non-blocking manner and checks for incoming data and data that must be
-        /// shipped to clients. You can start the server in a blocking and non_blocking manner.
-        ///
-        pub fn start(&mut self, blocking: bool) -> RUMResult<()> {
-            let args = rumtk_create_task_args!(Arc::clone(&mut self.server));
-            let task = rumtk_create_task!(RUMServerHandle::start_helper, args);
-            if blocking {
-                rumtk_resolve_task!(task);
-            } else {
-                rumtk_spawn_task!(task);
-            }
-            Ok(())
-        }
-
-        ///
-        /// Sync API method for signalling the server to stop operations.
-        ///
-        pub fn stop(&mut self) -> RUMResult<RUMString> {
-            let args = rumtk_create_task_args!(Arc::clone(&mut self.server));
-            rumtk_wait_on_task!(RUMServerHandle::stop_helper, &args)?
-        }
-
-        ///
         /// Sync API method for queueing a message to send a client on the server.
         ///
         pub fn send(&mut self, client_id: &RUMString, msg: &RUMNetMessage) -> RUMResult<()> {
@@ -960,7 +645,7 @@ pub mod tcp {
         ///
         /// Get the Address:Port info for this socket.
         ///
-        pub fn get_address_info(&self) -> Option<RUMString> {
+        pub fn get_address_info(&self) -> RUMString {
             let args = rumtk_create_task_args!(Arc::clone(&self.server));
             rumtk_resolve_task!(RUMServerHandle::get_address_helper(&args)).unwrap_or_default()
         }
@@ -969,8 +654,8 @@ pub mod tcp {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let (server_ref, client_id, msg) = locked_args.get(0).unwrap();
-            let mut server = server_ref.write().await;
-            Ok(server.push_message(client_id, msg.clone()).await?)
+            let result = server_ref.write().await.send(client_id, &msg).await?;
+            Ok(result)
         }
 
         async fn receive_helper(
@@ -979,31 +664,8 @@ pub mod tcp {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let (server_ref, client_id) = locked_args.get(0).unwrap();
-            let mut server = server_ref.write().await;
-            let mut msg = server.pop_message(&client_id).await;
-            std::mem::drop(server);
-
-            while msg.is_none() {
-                let mut server = server_ref.write().await;
-                msg = server.pop_message(&client_id).await;
-            }
-            Ok(msg.unwrap())
-        }
-
-        async fn start_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> RUMResult<()> {
-            let owned_args = Arc::clone(args).clone();
-            let lock_future = owned_args.read();
-            let locked_args = lock_future.await;
-            let server_ref = locked_args.get(0).unwrap();
-            RUMServer::run(server_ref.clone()).await
-        }
-
-        async fn stop_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> RUMResult<RUMString> {
-            let owned_args = Arc::clone(args).clone();
-            let lock_future = owned_args.read();
-            let locked_args = lock_future.await;
-            let server_ref = locked_args.get(0).unwrap();
-            RUMServer::stop_server(server_ref).await
+            let msg = server_ref.write().await.receive(client_id).await;
+            msg
         }
 
         async fn new_helper(args: &SafeTaskArgs<ConnectionInfo>) -> RUMNetResult<RUMServer> {
@@ -1026,8 +688,7 @@ pub mod tcp {
             let lock_future = owned_args.read();
             let locked_args = lock_future.await;
             let server_ref = locked_args.get(0).unwrap();
-            let clients = server_ref.read().await.clients.clone();
-            let ids = RUMServer::get_client_ids(&clients).await;
+            let ids = server_ref.read().await.get_client_ids().await;
             ids
         }
 
@@ -1040,7 +701,7 @@ pub mod tcp {
             clients
         }
 
-        async fn get_address_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> Option<RUMString> {
+        async fn get_address_helper(args: &SafeTaskArgs<ServerSelfArgs>) -> RUMString {
             let owned_args = Arc::clone(args).clone();
             let locked_args = owned_args.read().await;
             let server_ref = locked_args.get(0).unwrap();
