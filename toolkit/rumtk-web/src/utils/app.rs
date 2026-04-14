@@ -226,7 +226,7 @@ async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
 /// pipeline jobs, return HTML fragments, redirect the current page somewhere else, or a combination of these.
 /// It is a powerful interface for organizing your routing.
 ///
-#[derive(Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq)]
 pub struct AppComponents<'a> {
     pub pages: Option<UserPages<'a>>,
     pub components: Option<UserComponents<'a>>,
@@ -273,12 +273,7 @@ pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_defaul
 /// use crate::rumtk_web::AppComponents;
 /// use crate::rumtk_web::rumtk_web_register_app_components;
 ///
-/// let expected = AppComponents {
-///     pages: None,
-///     components: None,
-///     forms: None,
-///     apis: None,
-///  };
+/// let expected = AppComponents::default();
 /// let result = rumtk_web_register_app_components!();
 ///
 /// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
@@ -608,12 +603,7 @@ macro_rules! rumtk_web_register_app_components {
     (  ) => {{
         use $crate::utils::app::AppComponents;
 
-        AppComponents {
-            pages: None,
-            components: None,
-            forms: None,
-            apis: None,
-        }
+        AppComponents::default()
     }};
     ( $pages:expr ) => {{
         use $crate::utils::app::AppComponents;
