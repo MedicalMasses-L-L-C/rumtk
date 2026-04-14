@@ -162,20 +162,20 @@ async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
     Ok(())
 }
 
-pub fn app_main(
-    pages: &UserPages,
-    components: &UserComponents,
-    forms: &Forms,
-    apis: &UserAPIEndpoints,
-    skip_serve: bool,
-    skip_default_css: bool,
-) {
+pub struct AppComponents<'a> {
+    pub pages: Option<UserPages<'a>>,
+    pub components: Option<UserComponents<'a>>,
+    pub forms: Option<Forms<'a>>,
+    pub apis: Option<UserAPIEndpoints<'a>>,
+}
+
+pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_default_css: bool) {
     let args = Args::parse();
 
-    rumtk_web_init_components!(components);
-    rumtk_web_init_pages!(pages);
-    rumtk_web_init_forms!(forms);
-    rumtk_web_init_api_endpoints!(apis);
+    rumtk_web_init_components!(app_components.components);
+    rumtk_web_init_pages!(app_components.pages);
+    rumtk_web_init_forms!(app_components.forms);
+    rumtk_web_init_api_endpoints!(app_components.apis);
     rumtk_web_compile_css_bundle!(
         &args.css_source_dir,
         &args.skip_default_css | skip_default_css
@@ -184,6 +184,60 @@ pub fn app_main(
     rumtk_web_init_job_manager!(&args.threads);
     let task = run_app(args, skip_serve);
     rumtk_resolve_task!(task);
+}
+
+#[macro_export]
+macro_rules! rumtk_web_register_app_components {
+    (  ) => {{
+        use $crate::utils::app::AppComponents;
+
+        AppComponents {
+            pages: None,
+            components: None,
+            forms: None,
+            apis: None,
+        }
+    }};
+    ( $pages:expr ) => {{
+        use $crate::utils::app::AppComponents;
+
+        AppComponents {
+            pages: Some($pages),
+            components: None,
+            forms: None,
+            apis: None,
+        }
+    }};
+    ( $pages:expr, $components:expr ) => {{
+        use $crate::utils::app::AppComponents;
+
+        AppComponents {
+            pages: Some($pages),
+            components: Some($components),
+            forms: None,
+            apis: None,
+        }
+    }};
+    ( $pages:expr, $components:expr, $forms:expr ) => {{
+        use $crate::utils::app::AppComponents;
+
+        AppComponents {
+            pages: Some($pages),
+            components: Some($components),
+            forms: Some($forms),
+            apis: None,
+        }
+    }};
+    ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
+        use $crate::utils::app::AppComponents;
+
+        AppComponents {
+            pages: Some($pages),
+            components: Some($components),
+            forms: Some($forms),
+            apis: Some($apis),
+        }
+    }};
 }
 
 ///
@@ -218,6 +272,7 @@ pub fn app_main(
 ///     use rumtk_core::strings::{rumtk_format};
 ///     use rumtk_web::{
 ///         rumtk_web_run_app,
+///         rumtk_web_register_app_components,
 ///         rumtk_web_render_component,
 ///         rumtk_web_render_html,
 ///         rumtk_web_get_text_item
@@ -301,11 +356,14 @@ pub fn app_main(
 ///     let skip_serve = true;
 ///     let skip_default_css = false;
 ///
-///     let result = rumtk_web_run_app!(
+///     let app_components = rumtk_web_register_app_components!(
 ///         vec![("about", about)],
 ///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
-///         vec![("v2/add", my_api_handler)], //Optional, can be omitted alongside the skip_serve flag
+///         vec![("v2/add", my_api_handler)] //Optional, can be omitted alongside the skip_serve flag
+///     );
+///     let result = rumtk_web_run_app!(
+///         app_components,
 ///         skip_serve, //Omit in production code. This is used so that this example can work as a unit test.
 ///         skip_default_css //Omit in production code. This is used so that this example can work as a unit test.
 ///     );
@@ -314,40 +372,24 @@ pub fn app_main(
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     (  ) => {{
+        use $crate::rumtk_web_register_app_components;
         use $crate::utils::app::app_main;
 
-        app_main(&vec![], &vec![], &vec![], &vec![], false, false)
+        app_main(rumtk_web_register_app_components!(), false, false)
     }};
-    ( $pages:expr ) => {{
+    ( $app_components:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &vec![], &vec![], &vec![], false, false)
+        app_main($app_components, false, false)
     }};
-    ( $pages:expr, $components:expr ) => {{
+    ( $app_components:expr, $skip_serve:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &vec![], &vec![], false, false)
+        app_main($app_components, $skip_serve, false)
     }};
-    ( $pages:expr, $components:expr, $forms:expr ) => {{
+    ( $app_components:expr, $skip_serve:expr, $skip_default_css:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main(&$pages, &$components, &$forms, &vec![], false, false)
-    }};
-    ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
-        use $crate::utils::app::app_main;
-
-        app_main(&$pages, &$components, &$forms, &$apis, false, false)
-    }};
-    ( $pages:expr, $components:expr, $forms:expr, $apis:expr, $skip_serve:expr, $skip_default_css:expr ) => {{
-        use $crate::utils::app::app_main;
-
-        app_main(
-            &$pages,
-            &$components,
-            &$forms,
-            &$apis,
-            $skip_serve,
-            $skip_default_css,
-        )
+        app_main($app_components, $skip_serve, $skip_default_css)
     }};
 }

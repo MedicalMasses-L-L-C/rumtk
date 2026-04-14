@@ -63,11 +63,11 @@ pub fn get_default_api_handler() -> &'static APIFunction {
     &DEFAULT_API_HANDLER
 }
 
-pub fn init_endpoints(user_components: &UserAPIEndpoints) {
+pub fn init_endpoints(user_components: Option<UserAPIEndpoints>) {
     println!("🌩 Registering API Endpoints! 🌩");
     /* Init any user prescribed components */
-    for (name, value) in user_components {
-        let _ = register_api_endpoint(name, *value);
+    for (name, value) in user_components.unwrap_or_default() {
+        let _ = register_api_endpoint(name, value);
     }
     println!("🌩 ~~~~~~~~~~~~~~~~~~~~~~ 🌩");
 }

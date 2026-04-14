@@ -73,7 +73,7 @@ pub fn get_component(name: &str) -> UserComponentCacheItem {
     )
 }
 
-pub fn init_components(user_components: &UserComponents) {
+pub fn init_components(user_components: Option<UserComponents>) {
     /* Register the default library components */
     register_component("logo", logo::logo);
     register_component("info_card", info_card::info_card);
@@ -97,9 +97,9 @@ pub fn init_components(user_components: &UserComponents) {
     register_component("div", div::div);
 
     /* Init any user prescribed components */
-    for itm in user_components {
+    for itm in user_components.unwrap_or_default() {
         let (name, value) = itm;
-        register_component(name, *value);
+        register_component(name, value);
     }
 }
 

@@ -65,11 +65,11 @@ pub fn get_default_page() -> &'static PageFunction {
     unsafe { &DEFAULT_PAGE }
 }
 
-pub fn init_pages(user_components: &UserPages) {
+pub fn init_pages(user_components: Option<UserPages>) {
     println!("🗎 Registering user pages! 🗎");
     /* Init any user prescribed components */
-    for (name, value) in user_components {
-        let _ = register_page(name, *value);
+    for (name, value) in user_components.unwrap_or_default() {
+        let _ = register_page(name, value);
     }
     println!(
         "  ➡ Default page => page function [{:?}]",

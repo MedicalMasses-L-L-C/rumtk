@@ -60,9 +60,9 @@ pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction)
     rumtk_cache_push!(&raw mut FORM_CACHE, &key, &data)
 }
 
-pub fn register_forms(forms: &Forms) {
-    for (form_name, form_builder) in forms {
-        let _ = register_form_elements(form_name, form_builder);
+pub fn register_forms(forms: Option<Forms>) {
+    for (form_name, form_builder) in forms.unwrap_or_default() {
+        let _ = register_form_elements(form_name, &form_builder);
     }
 }
 
