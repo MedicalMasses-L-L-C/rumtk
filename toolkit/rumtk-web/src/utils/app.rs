@@ -226,6 +226,7 @@ async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
 /// pipeline jobs, return HTML fragments, redirect the current page somewhere else, or a combination of these.
 /// It is a powerful interface for organizing your routing.
 ///
+#[derive(Debug, PartialEq)]
 pub struct AppComponents<'a> {
     pub pages: Option<UserPages<'a>>,
     pub components: Option<UserComponents<'a>>,
@@ -258,6 +259,348 @@ pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_defaul
     rumtk_resolve_task!(task);
 }
 
+///
+/// Convenience macro for quickly building the [AppComponents] object. Feel free to pass an instance of
+/// [AppComponents] directly to [run_app] or [rumtk_web_run_app](crate::rumtk_web_run_app).
+///
+/// Passing no parameters generates an "empty" instance, meaning you would be asking the framework that you only
+/// care about built-in components. This also implies you do not want to process API endpoints.
+///
+/// ## Examples
+///
+/// ### Without Parameters
+/// ```
+/// use crate::rumtk_web::AppComponents;
+/// use crate::rumtk_web::rumtk_web_register_app_components;
+///
+/// let expected = AppComponents {
+///     pages: None,
+///     components: None,
+///     forms: None,
+///     apis: None,
+///  };
+/// let result = rumtk_web_register_app_components!();
+///
+/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
+///
+/// ```
+///
+/// ### With Existing Page
+/// ```
+/// use rumtk_web::pages::UserPages;
+/// use crate::rumtk_web::AppComponents;
+/// use crate::rumtk_web::pages::index::index;
+/// use crate::rumtk_web::rumtk_web_register_app_components;
+///
+/// let my_pages: UserPages = vec![
+///     ("myindex", index)
+/// ];
+/// let expected = AppComponents {
+///     pages: Some(my_pages.clone()),
+///     components: None,
+///     forms: None,
+///     apis: None,
+///  };
+/// let result = rumtk_web_register_app_components!(my_pages);
+///
+/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
+///
+/// ```
+///
+/// ### With Existing Page and Component
+/// ```
+/// use rumtk_web::components::UserComponents;
+/// use rumtk_web::pages::UserPages;
+/// use rumtk_web::AppComponents;
+/// use rumtk_web::pages::index::index;
+/// use rumtk_web::components::div::div;
+/// use rumtk_web::rumtk_web_register_app_components;
+///
+/// let my_pages: UserPages = vec![
+///     ("myindex", index)
+/// ];
+/// let my_components: UserComponents = vec![
+///     ("mydiv", div)
+/// ];
+/// let expected = AppComponents {
+///     pages: Some(my_pages.clone()),
+///     components: Some(my_components.clone()),
+///     forms: None,
+///     apis: None,
+///  };
+/// let result = rumtk_web_register_app_components!(my_pages, my_components);
+///
+/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
+///
+/// ```
+///
+/// ### With Existing Page and Component and Form
+/// ```
+/// use rumtk_web::AppComponents;
+/// use rumtk_web::components::UserComponents;
+/// use rumtk_web::pages::UserPages;
+/// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
+/// use rumtk_web::pages::index::index;
+/// use rumtk_web::components::div::div;
+/// use rumtk_web::rumtk_web_register_app_components;
+///
+/// fn upload_form(builder: FormElementBuilder) -> FormElements {
+///     vec![
+///         builder(
+///             "input",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("file")),
+///                 name: Some(RUMString::from("file")),
+///                 typ: Some(RUMString::from("file")),
+///                 value: None,
+///                 max: None,
+///                 placeholder: Some(RUMString::from("path/to/file")),
+///                 pattern: None,
+///                 accept: Some(RUMString::from(".pdf,application/pdf")),
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Picker")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: false,
+///                 required: true,
+///             },
+///             ""
+///         ),
+///         builder(
+///             "input",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("submit")),
+///                 name: None,
+///                 typ: Some(RUMString::from("submit")),
+///                 value: Some(RUMString::from("Send")),
+///                 max: None,
+///                 placeholder: None,
+///                 pattern: None,
+///                 accept: None,
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Submit Button")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: false,
+///                 required: false,
+///             },
+///             "f18"
+///         ),
+///         builder(
+///             "progress",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("progress")),
+///                 name: None,
+///                 typ: None,
+///                 value: Some(RUMString::from("0")),
+///                 max: Some(RUMString::from("100")),
+///                 placeholder: None,
+///                 pattern: None,
+///                 accept: None,
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Submit Progress Bar")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: true,
+///                 required: false,
+///             },
+///             ""
+///         ),
+///     ]
+/// }
+///
+/// let my_pages: UserPages = vec![
+///     ("myindex", index)
+/// ];
+/// let my_components: UserComponents = vec![
+///     ("mydiv", div)
+/// ];
+/// let my_forms: Forms = vec![
+///     ("myform", upload_form)
+/// ];
+/// let expected = AppComponents {
+///     pages: Some(my_pages.clone()),
+///     components: Some(my_components.clone()),
+///     forms: Some(my_forms.clone()),
+///     apis: None,
+///  };
+/// let result = rumtk_web_register_app_components!(my_pages, my_components, my_forms);
+///
+/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
+///
+/// ```
+///
+/// ### With Existing Page and Component and Form and API Endpoint
+/// ```
+/// use rumtk_core::{rumtk_pipeline_run_async, rumtk_pipeline_command};
+/// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
+/// use rumtk_web::{APIPath, AppComponents, FormData, HTMLResult, RUMWebData, SharedAppState};
+/// use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents};
+/// use rumtk_web::api::UserAPIEndpoints;
+/// use rumtk_web::components::UserComponents;
+/// use rumtk_web::pages::UserPages;
+/// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
+/// use rumtk_web::pages::index::index;
+/// use rumtk_web::components::div::div;
+/// use rumtk_web::components::form::props::InputProps;
+/// use rumtk_web::jobs::{JobResult, JobResultType};
+/// use rumtk_web::utils::defaults::{PARAMS_TARGET};
+/// use rumtk_web::rumtk_web_register_app_components;
+///
+/// async fn upload_processor(form: FormData) -> JobResult {
+///     let id = form.form.get("file").unwrap();
+///     let file = form.files.get(id).unwrap();
+///
+///     let result = rumtk_pipeline_run_async!(
+///         rumtk_pipeline_command!("cat", file.clone()),
+///         rumtk_pipeline_command!("wc")
+///     ).await?;
+///
+///     Ok(JobResultType::JSON(result.to_vec().to_rumstring()))
+/// }
+///
+/// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
+///     let job_id = rumtk_web_get_job_manager!().spawn_task(upload_processor(form))?;
+///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state.clone());
+///
+///     rumtk_web_render_page_contents!(
+///         &vec![
+///             mydiv
+///         ]
+///     )
+/// }
+///
+/// fn upload_form(builder: FormElementBuilder) -> FormElements {
+///     vec![
+///         builder(
+///             "input",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("file")),
+///                 name: Some(RUMString::from("file")),
+///                 typ: Some(RUMString::from("file")),
+///                 value: None,
+///                 max: None,
+///                 placeholder: Some(RUMString::from("path/to/file")),
+///                 pattern: None,
+///                 accept: Some(RUMString::from(".pdf,application/pdf")),
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Picker")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: false,
+///                 required: true,
+///             },
+///             ""
+///         ),
+///         builder(
+///             "input",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("submit")),
+///                 name: None,
+///                 typ: Some(RUMString::from("submit")),
+///                 value: Some(RUMString::from("Send")),
+///                 max: None,
+///                 placeholder: None,
+///                 pattern: None,
+///                 accept: None,
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Submit Button")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: false,
+///                 required: false,
+///             },
+///             "f18"
+///         ),
+///         builder(
+///             "progress",
+///             "",
+///             InputProps {
+///                 id: Some(RUMString::from("progress")),
+///                 name: None,
+///                 typ: None,
+///                 value: Some(RUMString::from("0")),
+///                 max: Some(RUMString::from("100")),
+///                 placeholder: None,
+///                 pattern: None,
+///                 accept: None,
+///                 alt: None,
+///                 aria_label: Some(RUMString::from("PDF File Submit Progress Bar")),
+///                 event_handlers: None,
+///                 max_length: None,
+///                 min_length: None,
+///                 autocapitalize: false,
+///                 autocomplete: false,
+///                 autocorrect: false,
+///                 autofocus: false,
+///                 disabled: false,
+///                 hidden: true,
+///                 required: false,
+///             },
+///             ""
+///         ),
+///     ]
+/// }
+///
+/// let my_pages: UserPages = vec![
+///     ("myindex", index)
+/// ];
+/// let my_components: UserComponents = vec![
+///     ("mydiv", div)
+/// ];
+/// let my_forms: Forms = vec![
+///     ("myform", upload_form)
+/// ];
+/// let my_endpoints: UserAPIEndpoints = vec![
+///     ("/api/upload", process_upload)
+/// ];
+/// let expected = AppComponents {
+///     pages: Some(my_pages.clone()),
+///     components: Some(my_components.clone()),
+///     forms: Some(my_forms.clone()),
+///     apis: Some(my_endpoints.clone()),
+///  };
+/// let result = rumtk_web_register_app_components!(my_pages, my_components, my_forms, my_endpoints);
+///
+/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
+///
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_register_app_components {
     (  ) => {{
