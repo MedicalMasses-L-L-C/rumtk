@@ -336,12 +336,14 @@ pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_defaul
 ///
 /// ### With Existing Page and Component and Form
 /// ```
+/// use rumtk_core::strings::RUMString;
 /// use rumtk_web::AppComponents;
 /// use rumtk_web::components::UserComponents;
 /// use rumtk_web::pages::UserPages;
 /// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
 /// use rumtk_web::pages::index::index;
 /// use rumtk_web::components::div::div;
+/// use rumtk_web::components::form::props::InputProps;
 /// use rumtk_web::rumtk_web_register_app_components;
 ///
 /// fn upload_form(builder: FormElementBuilder) -> FormElements {

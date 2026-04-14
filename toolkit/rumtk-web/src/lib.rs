@@ -36,7 +36,5 @@ pub use utils::*;
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_run_app() {
-        run
-    }
+    fn test_run_app() {}
 }

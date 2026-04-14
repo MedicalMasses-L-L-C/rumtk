@@ -167,7 +167,9 @@ macro_rules! rumtk_web_get_default_page {
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponents};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_pages, rumtk_web_get_page};
 ///
-/// fn my_page(app_state: SharedAppState) -> RenderedPageComponents {
+/// use rumtk_web::pages::UserPages;
+///
+///  fn my_page(app_state: SharedAppState) -> RenderedPageComponents {
 ///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
 ///
 ///     vec![
@@ -177,7 +179,8 @@ macro_rules! rumtk_web_get_default_page {
 ///
 /// let my_page_name = "my_page";
 ///
-/// rumtk_web_init_pages!(&vec![(my_page_name, my_page)]);
+/// let pages: UserPages = vec![(my_page_name, my_page)];
+/// rumtk_web_init_pages!(Some(pages));
 ///```
 ///
 ///
