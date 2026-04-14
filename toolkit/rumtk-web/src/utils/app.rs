@@ -162,6 +162,70 @@ async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
     Ok(())
 }
 
+///
+/// Struct encapsulating custom-made items to register with the framework.
+///
+/// ## Pages
+/// The `pages` field accepts an optional of [UserPages] which is a vector of [PageItem](crate::pages::PageItem).
+///
+/// ```text
+///     vec![
+///         ("my_page", my_page_function),
+///         ...
+///     ];
+/// ```
+///
+/// The page function is of type [PageFunction](crate::utils::types::PageFunction).
+///
+/// It is important to understand that a `page` is a function that simply list the series of components to be rendered.
+/// We rely on `CSS` for the actual layout in 2D space. Therefore, a page function should not prescribe the page layout per se.
+///
+/// ## Components
+/// The `components` field takes an optional of [UserComponents] which is a vector of [UserComponentItem](crate::components::UserComponentItem).
+///
+/// ```text
+///     vec![
+///         ("my_component", my_component_function),
+///         ...
+///     ];
+/// ```
+///
+/// The component function is of type [PageFunction](crate::utils::types::ComponentFunction).
+///
+/// ## Forms
+/// The `forms` field takes an optional of [Forms] which is a vector of [FormItem](crate::components::form::FormItem).
+///
+/// ```text
+///     vec![
+///         ("my_form", my_form_function),
+///         ...
+///     ];
+/// ```
+///
+/// The form function is of type [FormBuilderFunction](crate::components::form::FormBuilderFunction).
+///
+/// Although a `form` is treated as a type of component in the framework, its implementation and behavior is closer to
+/// a `page` in that its main role is to define the vector of [FormElementBuilder](crate::components::form::FormElementBuilder).
+/// These element builder functions further renders the actual form component to be inserted in linear order. Again, these functions
+/// say nothing about the layout of the form as that is handled via `CSS`.
+///
+/// ## APIs
+/// The `apis` field takes an optional of [UserAPIEndpoints] which is a vector of [APIItem](crate::api::APIItem).
+///
+/// ```text
+///     vec![
+///         ("/my/api/endpoint", my_api_handler),
+///         ...
+///     ];
+/// ```
+///
+/// The api function is of type [APIFunction](crate::utils::types::APIFunction).
+///
+/// These API functions are your handlers directly mapped to the REST route you wish to intercept. This enables a
+/// simple key-value pair approach to defining API endpoints in your web app. These handlers can queue asynchronous
+/// pipeline jobs, return HTML fragments, redirect the current page somewhere else, or a combination of these.
+/// It is a powerful interface for organizing your routing.
+///
 pub struct AppComponents<'a> {
     pub pages: Option<UserPages<'a>>,
     pub components: Option<UserComponents<'a>>,
@@ -169,6 +233,14 @@ pub struct AppComponents<'a> {
     pub apis: Option<UserAPIEndpoints<'a>>,
 }
 
+///
+/// Main API function for running and serving the web application.
+///
+/// It takes an [AppComponents] instance and a few switches to help preconfigure the framework to
+/// use custom-made components and to register API endpoints.
+///
+/// See [rumtk_web_run_app](crate::rumtk_web_run_app) for more details.
+///
 pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_default_css: bool) {
     let args = Args::parse();
 
