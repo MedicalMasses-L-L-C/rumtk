@@ -235,6 +235,16 @@ pub struct AppComponents<'a> {
 }
 
 ///
+/// Struct for defining the global switches to drive the initialization of the web app. This struct
+/// works hand in hand with [AppComponents].
+///
+#[derive(Default, Debug, PartialEq)]
+pub struct AppSwitches {
+    pub skip_serve: bool,
+    pub skip_default_css: bool,
+}
+
+///
 /// Main API function for running and serving the web application.
 ///
 /// It takes an [AppComponents] instance and a few switches to help preconfigure the framework to
@@ -242,7 +252,20 @@ pub struct AppComponents<'a> {
 ///
 /// See [rumtk_web_run_app](crate::rumtk_web_run_app) for more details.
 ///
-pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_default_css: bool) {
+/// ## Example
+/// ```
+/// use rumtk_web::app_main;
+/// use rumtk_web::{rumtk_web_register_app_switches, rumtk_web_register_app_components};
+///
+/// // We pass true to the switches because we do not want the web server to actually serve the page
+/// // It would hang the test otherwise...
+/// app_main(
+///     rumtk_web_register_app_components!(),
+///     rumtk_web_register_app_switches!(true)
+/// ).expect("Issue occurred while running the app");
+/// ```
+///
+pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUMResult<()> {
     let args = Args::parse();
 
     rumtk_web_init_components!(app_components.components);
@@ -251,12 +274,12 @@ pub fn app_main(app_components: AppComponents<'_>, skip_serve: bool, skip_defaul
     rumtk_web_init_api_endpoints!(app_components.apis);
     rumtk_web_compile_css_bundle!(
         &args.css_source_dir,
-        &args.skip_default_css | skip_default_css
+        &args.skip_default_css | switches.skip_default_css
     );
 
     rumtk_web_init_job_manager!(&args.threads);
-    let task = run_app(args, skip_serve);
-    rumtk_resolve_task!(task);
+    let task = run_app(args, switches.skip_serve);
+    rumtk_resolve_task!(task)?
 }
 
 ///
@@ -648,6 +671,49 @@ macro_rules! rumtk_web_register_app_components {
 }
 
 ///
+/// Convenience macro for generating a [AppSwitches] instance containing the boolean options a
+/// framework consumer would like to opt-in.
+///
+/// ## Examples
+/// ```
+/// use rumtk_web::AppSwitches;
+/// use rumtk_web::{rumtk_web_register_app_switches};
+///
+/// let expected = AppSwitches {
+///     skip_serve: true,
+///     skip_default_css: false
+/// };
+/// let switches = rumtk_web_register_app_switches!(true);
+///
+/// assert_eq!(switches, expected, "The switches constructed to config app does not match the expected.");
+/// ```
+///
+#[macro_export]
+macro_rules! rumtk_web_register_app_switches {
+    (  ) => {{
+        use $crate::utils::app::AppSwitches;
+
+        AppSwitches::default()
+    }};
+    ( $skip_serve:expr ) => {{
+        use $crate::utils::app::AppSwitches;
+
+        AppSwitches {
+            skip_serve: $skip_serve,
+            skip_default_css: false,
+        }
+    }};
+    ( $skip_serve:expr, $skip_default_css:expr ) => {{
+        use $crate::utils::app::AppSwitches;
+
+        AppSwitches {
+            skip_serve: $skip_serve,
+            skip_default_css: $skip_default_css,
+        }
+    }};
+}
+
+///
 /// This is the main macro for defining your applet and launching it.
 /// Usage is very simple and the only decision from a user is whether to pass a list of
 /// [UserPages](UserPages) or a list of [UserPages](UserPages) and a list
@@ -677,13 +743,7 @@ macro_rules! rumtk_web_register_app_components {
 /// ### With Page and Component definition
 /// ```
 ///     use rumtk_core::strings::{rumtk_format};
-///     use rumtk_web::{
-///         rumtk_web_run_app,
-///         rumtk_web_register_app_components,
-///         rumtk_web_render_component,
-///         rumtk_web_render_html,
-///         rumtk_web_get_text_item
-///     };
+///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_get_text_item, rumtk_web_register_app_switches};
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppState, RenderedPageComponents};
 ///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData};
@@ -769,34 +829,36 @@ macro_rules! rumtk_web_register_app_components {
 ///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("v2/add", my_api_handler)] //Optional, can be omitted alongside the skip_serve flag
 ///     );
-///     let result = rumtk_web_run_app!(
-///         app_components,
+///     let app_switches = rumtk_web_register_app_switches!(
 ///         skip_serve, //Omit in production code. This is used so that this example can work as a unit test.
 ///         skip_default_css //Omit in production code. This is used so that this example can work as a unit test.
+///     );
+///     let result = rumtk_web_run_app!(
+///         app_components,
+///         app_switches
 ///     );
 /// ```
 ///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     (  ) => {{
-        use $crate::rumtk_web_register_app_components;
         use $crate::utils::app::app_main;
+        use $crate::{rumtk_web_register_app_components, rumtk_web_register_app_switches};
 
-        app_main(rumtk_web_register_app_components!(), false, false)
+        app_main(
+            rumtk_web_register_app_components!(),
+            rumtk_web_register_app_switches!(),
+        )
     }};
     ( $app_components:expr ) => {{
+        use $crate::rumtk_web_register_app_switches;
         use $crate::utils::app::app_main;
 
-        app_main($app_components, false, false)
+        app_main($app_components, rumtk_web_register_app_switches!())
     }};
-    ( $app_components:expr, $skip_serve:expr ) => {{
+    ( $app_components:expr, $switches:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main($app_components, $skip_serve, false)
-    }};
-    ( $app_components:expr, $skip_serve:expr, $skip_default_css:expr ) => {{
-        use $crate::utils::app::app_main;
-
-        app_main($app_components, $skip_serve, $skip_default_css)
+        app_main($app_components, $switches)
     }};
 }

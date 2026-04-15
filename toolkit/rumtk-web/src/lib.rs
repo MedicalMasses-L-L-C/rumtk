@@ -40,13 +40,13 @@ mod tests {
     };
 
     #[test]
-    fn test_run_app() {}
-
-    #[test]
     fn test_compile_form() {
         let expected_form = TESTDATA_EXPECTED_FORMDATA();
         let form_data = create_test_form(TESTDATA_FORMDATA_REQUEST).expect("Form");
 
         assert_eq!(form_data, expected_form, "Form results mismatch!");
     }
+
+    #[test]
+    fn test_render_component() {}
 }
