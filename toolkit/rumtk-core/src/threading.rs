@@ -698,6 +698,7 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_spawn_task {
         ( $func:expr ) => {{
+            use $crate::rumtk_init_threads;
             let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
             rt.spawn($func)
         }};
