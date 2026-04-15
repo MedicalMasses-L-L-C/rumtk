@@ -7,23 +7,23 @@ communication and automation in medicine.
 
 ## Rumtk-core
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-core)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-core)](https://crates.io/crates/rumtk-core) [![Released API docs](https://docs.rs/rumtk-core/badge.svg)](https://docs.rs/rumtk-core) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-core)](COPYING.LESSER) [![Crates.io](https://img.shields.io/crates/v/rumtk-core)](https://crates.io/crates/rumtk-core) [![Released API docs](https://docs.rs/rumtk-core/badge.svg)](https://docs.rs/rumtk-core) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 ## Rumtk-HL7-V2
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2)](https://crates.io/crates/rumtk-hl7-v2) [![Released API docs](https://docs.rs/rumtk-hl7-v2/badge.svg)](https://docs.rs/rumtk-hl7-v2) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2)](COPYING.LESSER) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2)](https://crates.io/crates/rumtk-hl7-v2) [![Released API docs](https://docs.rs/rumtk-hl7-v2/badge.svg)](https://docs.rs/rumtk-hl7-v2) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 ## Rumtk-Web
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-web)](LICENSE-LGPL) [![Crates.io](https://img.shields.io/crates/v/rumtk-web)](https://crates.io/crates/rumtk-web) [![Released API docs](https://docs.rs/rumtk-web/badge.svg)](https://docs.rs/rumtk-web) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-web)](COPYING.LESSER) [![Crates.io](https://img.shields.io/crates/v/rumtk-web)](https://crates.io/crates/rumtk-web) [![Released API docs](https://docs.rs/rumtk-web/badge.svg)](https://docs.rs/rumtk-web) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 ## Rumtk-HL7-V2-Interface
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-interface)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-interface)](https://crates.io/crates/rumtk-v2-interface) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-interface) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-v2-interface)](COPYING) [![Crates.io](https://img.shields.io/crates/v/rumtk-v2-interface)](https://crates.io/crates/rumtk-v2-interface) [![Released API docs](https://docs.rs/rumtk-v2-interface/badge.svg)](https://docs.rs/rumtk-v2-interface) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 ## Rumtk-HL7-V2-Parser
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2-parse)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2-parse)](https://crates.io/crates/rumtk-hl7-v2-parse) [![Released API docs](https://docs.rs/rumtk-hl7-v2-parse/badge.svg)](https://docs.rs/rumtk-hl7-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2-parse)](COPYING) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2-parse)](https://crates.io/crates/rumtk-hl7-v2-parse) [![Released API docs](https://docs.rs/rumtk-hl7-v2-parse/badge.svg)](https://docs.rs/rumtk-hl7-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 # Goal
 
