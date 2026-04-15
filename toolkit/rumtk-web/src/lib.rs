@@ -35,6 +35,18 @@ pub use utils::*;
 ///
 #[cfg(test)]
 mod tests {
+    use crate::testdata::{
+        create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_FORMDATA_REQUEST,
+    };
+
     #[test]
     fn test_run_app() {}
+
+    #[test]
+    fn test_compile_form() {
+        let expected_form = TESTDATA_EXPECTED_FORMDATA();
+        let form_data = create_test_form(TESTDATA_FORMDATA_REQUEST).expect("Form");
+
+        assert_eq!(form_data, expected_form, "Form results mismatch!");
+    }
 }
