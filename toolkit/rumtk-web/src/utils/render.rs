@@ -21,7 +21,23 @@
 use crate::types::HTMLResult;
 use crate::{RUMWebRedirect, RUMWebTemplate};
 use askama::Template;
+use pulldown_cmark::{Options, Parser};
 use rumtk_core::strings::{rumtk_format, RUMString};
+use std::sync::OnceLock;
+
+pub static MARKDOWN_OPTIONS: OnceLock<Options> = OnceLock::new();
+
+pub static MARKDOWN_OPTIONS_INIT: fn() -> Options = || -> Options {
+    let mut options = Options::empty();
+
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TASKLISTS);
+    options.insert(Options::ENABLE_MATH);
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_WIKILINKS);
+
+    options
+};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -110,6 +126,26 @@ macro_rules! rumtk_web_render_page_contents {
     }};
 }
 
+///
+/// Generate redirect response automatically instead of actually rendering an HTML page.
+///
+/// ## Examples
+///
+/// ### Temporary Redirect
+/// ```
+/// use rumtk_web::RUMStringConversions;
+/// use rumtk_web::utils::response::RUMWebRedirect;
+/// use rumtk_web::rumtk_web_render_redirect;
+///
+/// let url = "http://localhost/redirected";
+/// let redirect = rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_rumstring()));
+///
+/// let result = redirect.expect("Failed to create the redirect response!").get_url();
+///
+/// assert_eq!(result, url, "Url in Response object does not match the expected!");
+///
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_render_redirect {
     ( $url:expr ) => {{
@@ -124,21 +160,31 @@ macro_rules! rumtk_web_render_redirect {
 /// If using raw strings, do not leave an extra line. The first input must have characters, or you
 /// will get <pre><code> blocks regardless of what you do.
 ///
+/// ## Example
+/// ```
+/// use rumtk_web::rumtk_web_render_markdown;
+///
+/// let md = r###"
+///**Hello World**
+/// "###;
+/// let expected_html = "<p><strong>Hello World</strong></p>\n";
+///
+/// let result = rumtk_web_render_markdown!(md);
+///
+/// assert_eq!(result, expected_html, "The rendered markdown does not match the expected HTML!");
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_render_markdown {
     ( $md:expr ) => {{
         use pulldown_cmark::{Options, Parser};
         use rumtk_core::strings::RUMStringConversions;
+        use $crate::utils::render::{MARKDOWN_OPTIONS, MARKDOWN_OPTIONS_INIT};
 
-        let mut options = Options::empty();
-        options.insert(Options::ENABLE_STRIKETHROUGH);
-        options.insert(Options::ENABLE_TASKLISTS);
-        options.insert(Options::ENABLE_MATH);
-        options.insert(Options::ENABLE_TABLES);
-        options.insert(Options::ENABLE_WIKILINKS);
+        let mut options = MARKDOWN_OPTIONS.get_or_init(MARKDOWN_OPTIONS_INIT);
 
         let input = String::from($md);
-        let parser = Parser::new_ext(&input, options);
+        let parser = Parser::new_ext(&input, *options);
         let mut html_output = String::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
 

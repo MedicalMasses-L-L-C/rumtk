@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#![feature(once_cell_get_mut)]
+
 pub mod api;
 pub mod components;
 pub mod css;
@@ -36,7 +38,10 @@ mod tests {
     use crate::testdata::{
         create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_FORMDATA_REQUEST,
     };
+    use crate::{rumtk_web_render_redirect, RUMWebRedirect};
+    use rumtk_core::strings::RUMStringConversions;
 
+    ///////////////////////////////////FormData/////////////////////////////////////////////////
     #[test]
     fn test_compile_form() {
         let expected_form = TESTDATA_EXPECTED_FORMDATA();
@@ -45,6 +50,43 @@ mod tests {
         assert_eq!(form_data, expected_form, "Form results mismatch!");
     }
 
+    ///////////////////////////////////Response/////////////////////////////////////////////////
+    #[test]
+    fn test_render_redirect_response() {
+        let url = "http://localhost/redirected";
+        let redirect =
+            rumtk_web_render_redirect!(RUMWebRedirect::Redirect(url.to_rumstring())).unwrap();
+        let redirect_code = redirect.get_code();
+        let redirect_url = redirect.get_url();
+        assert_eq!(redirect_url, url, "Redirect url mismatch!");
+        assert_eq!(redirect_code, 303, "Wrong redirect code!");
+    }
+
+    #[test]
+    fn test_render_redirect_response_temporary() {
+        let url = "http://localhost/redirected";
+        let redirect =
+            rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_rumstring()))
+                .unwrap();
+        let redirect_code = redirect.get_code();
+        let redirect_url = redirect.get_url();
+        assert_eq!(redirect_url, url, "Redirect url mismatch!");
+        assert_eq!(redirect_code, 307, "Wrong redirect code!");
+    }
+
+    #[test]
+    fn test_render_redirect_response_permanent() {
+        let url = "http://localhost/redirected";
+        let redirect =
+            rumtk_web_render_redirect!(RUMWebRedirect::RedirectPermanent(url.to_rumstring()))
+                .unwrap();
+        let redirect_code = redirect.get_code();
+        let redirect_url = redirect.get_url();
+        assert_eq!(redirect_url, url, "Redirect url mismatch!");
+        assert_eq!(redirect_code, 308, "Wrong redirect code!");
+    }
+
+    ///////////////////////////////////HTML/////////////////////////////////////////////////
     #[test]
     fn test_render_html_component() {}
 }
