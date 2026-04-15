@@ -121,7 +121,8 @@ macro_rules! rumtk_web_render_redirect {
 
 ///
 ///
-/// If using raw strings, do not leave an extra line. The first input must have characters or you will get <pre><code> blocks regardless of what you do.
+/// If using raw strings, do not leave an extra line. The first input must have characters, or you
+/// will get <pre><code> blocks regardless of what you do.
 ///
 #[macro_export]
 macro_rules! rumtk_web_render_markdown {
