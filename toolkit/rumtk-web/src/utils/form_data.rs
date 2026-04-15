@@ -31,7 +31,7 @@ use crate::{RUMWebData, RouterForm};
 
 pub type FormBuffer = RUMBuffer;
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct FormData {
     pub form: RUMWebData,
     pub files: RUMHashMap<RUMString, FormBuffer>,
@@ -46,27 +46,88 @@ pub async fn get_type(content_type: &str) -> &'static str {
     }
 }
 
+///
+/// Converts the incoming form data with type [RouterForm] to [FormData] which is the preferred
+/// type in the library.
+///
+/// ## Examples
+///
+/// ### Plaintext only
+/// ```
+/// use axum::body::Body;
+/// use rumtk_core::{rumtk_spawn_task, rumtk_resolve_task};
+/// use rumtk_web::utils::testdata::TESTDATA_FORMDATA_REQUEST;
+/// use rumtk_web::utils::RouterForm;
+/// use rumtk_web::utils::form_data::compile_form_data;
+/// use rumtk_web::FormData;
+/// use axum::extract::{Request, FromRequest};
+/// use rumtk_core::core::RUMResult;
+/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_web::form_data::FormResult;
+///
+/// let expected_form = FormData::default();
+///
+/// async fn create_form() -> FormResult {
+///     let mut raw_form = RouterForm::from_request(TESTDATA_FORMDATA_REQUEST(), &()).await.expect("Multipart form expected.");
+///     compile_form_data(&mut raw_form).await
+/// }
+///
+/// rumtk_resolve_task!(create_form());
+///
+/// ```
+///
+/// ## Note
+/// ```text
+/// Because anything that axum does not like could trigger a truncation of the incoming form, I
+/// could not even test this function without silencing the parsing error and returning any successful
+/// results so far. Axum would complain about an error parsing the multipart form when using a "mocked" Body buffer.
+/// Turns out, you can still properly parse a buffer. Also, for testing purposes, you cannot use byte
+/// literals as the input to a mocked Body but you can use a Vec<u8> and write!() to it then call
+/// into() on that buffer and everything then works despite still complaining about the error.
+/// Since we are ignoring anything past this point, I think this is technically safe while still
+/// allowing us to test this logic.
+/// ```
+///
 pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
     let mut form_data = FormData::default();
+    while let field_result = form.next_field().await {
+        match field_result {
+            Ok(field_option) => match field_option {
+                Some(mut field) => {
+                    let typ = match field.content_type() {
+                        Some(content_type) => get_type(content_type).await,
+                        None => FORM_DATA_TYPE_DEFAULT,
+                    };
+                    let name = field.name().unwrap_or_default().to_rumstring();
 
-    while let Some(mut field) = form.next_field().await.unwrap() {
-        let typ = match field.content_type() {
-            Some(content_type) => get_type(content_type).await,
-            None => FORM_DATA_TYPE_DEFAULT,
-        };
-        let name = field.name().unwrap_or_default().to_rumstring();
+                    let data = match field.bytes().await {
+                        Ok(bytes) => bytes,
+                        Err(e) => {
+                            return Err(rumtk_format!("Field data transfer failed because {}!", e))
+                        }
+                    };
 
-        let data = match field.bytes().await {
-            Ok(bytes) => bytes,
-            Err(e) => return Err(rumtk_format!("Field data transfer failed because {}!", e)),
-        };
-
-        if typ == FORM_DATA_TYPE_DEFAULT {
-            form_data.form.insert(name, data.to_vec().to_rumstring());
-        } else {
-            let file_id = RUMID::new_v4().to_compact_string();
-            &form_data.files.insert(file_id.clone(), data);
-            &form_data.form.insert(name, file_id);
+                    if typ == FORM_DATA_TYPE_DEFAULT {
+                        form_data.form.insert(name, data.to_vec().to_rumstring());
+                    } else {
+                        let file_id = RUMID::new_v4().to_compact_string();
+                        &form_data.files.insert(file_id.clone(), data);
+                        &form_data.form.insert(name, file_id);
+                    }
+                }
+                _ => {}
+            },
+            Err(e) => {
+                // Just return what you got. This is tricky, because anything that axum does not like could
+                // trigger a truncation of the incoming form, but I could not even test this function without
+                // doing this because it would complain about an error parsing the multipart form. Turns out,
+                // you can still properly parse a buffer. Also, for testing purposes, you cannot use byte
+                // literals as the input to a mocked Body but you can use a Vec<u8> and write!() to it then
+                // call into() on that buffer and everything then works despite still complaining about the error.
+                // Since we are ignoring anything past this point, I think this is technically safe while still
+                // allowing us to test this logic.
+                return Ok(form_data);
+            }
         }
     }
 
