@@ -21,6 +21,7 @@
 
 /* Responses */
 use axum::body::Body;
+use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Redirect, Response};
 use rumtk_core::strings::{RUMString, RUMStringConversions};
 
@@ -63,6 +64,24 @@ impl RUMWebResponse {
         match self {
             RUMWebResponse::GetResponse(res) => res.0.to_rumstring(),
             _ => RUMString::default(),
+        }
+    }
+
+    pub fn get_url(&self) -> RUMString {
+        match self {
+            RUMWebResponse::RedirectResponse(res) => res.location().to_rumstring(),
+            RUMWebResponse::RedirectTemporaryResponse(res) => res.location().to_rumstring(),
+            RUMWebResponse::RedirectPermanentResponse(res) => res.location().to_rumstring(),
+            _ => RUMString::default(),
+        }
+    }
+
+    pub fn get_code(&self) -> StatusCode {
+        match self {
+            RUMWebResponse::RedirectResponse(res) => res.status_code(),
+            RUMWebResponse::RedirectTemporaryResponse(res) => res.status_code(),
+            RUMWebResponse::RedirectPermanentResponse(res) => res.status_code(),
+            _ => StatusCode::OK,
         }
     }
 
