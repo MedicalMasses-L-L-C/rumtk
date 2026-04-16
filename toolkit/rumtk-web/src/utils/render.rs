@@ -20,9 +20,8 @@
  */
 use crate::types::HTMLResult;
 use crate::{RUMWebRedirect, RUMWebTemplate};
-use askama::Template;
 use pulldown_cmark::{Options, Parser};
-use rumtk_core::strings::{rumtk_format, RUMString};
+use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
 use std::sync::OnceLock;
 
 pub static MARKDOWN_OPTIONS: OnceLock<Options> = OnceLock::new();
@@ -55,7 +54,26 @@ struct ContentBlock<'a> {
     elements: &'a [RUMString],
 }
 
-pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedirect) -> HTMLResult {
+///
+/// This function trims excess newlines and whitespacing outside tag block (e.g. `<div></div>`). The
+/// idea is to cleanup the rendered template which picks up extra characters due to the way string
+/// literals work in proc macros.
+///
+/// This is not meant to be used as a sanitization function!
+///
+/// This function consumes the input string!!!!!
+///
+/// ## Example
+/// ```
+/// use rumtk_web::rumtk_web_trim_rendered_html;
+///
+/// let expected = String::from("<div class='div-default'>default</div>");
+/// let input = String::from("\n        \n           \n        \n        <div class='div-default'>default</div>\n    \n        \n    ");
+/// let filtered = rumtk_web_trim_rendered_html(input);
+///
+/// assert_eq!(filtered, expected, "Template render trim failed!");
+/// ```
+///
 pub fn rumtk_web_trim_rendered_html(html: String) -> String {
     let filtered = html
         .as_str()
@@ -131,6 +149,29 @@ macro_rules! rumtk_web_render_html {
     }};
 }
 
+///
+/// Generates the HTML page as prescribed by the input `page` function of type [HTMLResult].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::strings::RUMString;
+/// use rumtk_web::pages::index::index;
+/// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
+///
+/// let app_state = SharedAppState::default();
+/// let mydiv = rumtk_web_render_component!("div", [("type", "story")], app_state.clone());
+///
+/// let expected_page = RUMString::new("<div class='div-default'>default</div>");
+/// let page_response = rumtk_web_render_page_contents!(
+///     &vec![
+///         mydiv
+///     ]
+/// ).expect("Page rendered!");
+/// let rendered_page = page_response.to_rumstring();
+///
+/// assert_eq!(rendered_page, expected_page, "Page was not rendered properly!")
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_render_page_contents {
     ( $page_elements:expr ) => {{
