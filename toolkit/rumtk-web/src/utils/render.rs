@@ -66,9 +66,10 @@ struct ContentBlock<'a> {
 /// ## Example
 /// ```
 /// use rumtk_web::rumtk_web_trim_rendered_html;
+/// use rumtk_web::testdata::{TRIMMED_HTML_RENDER, UNTRIMMED_HTML_RENDER};
 ///
-/// let expected = String::from("<div class='div-default'>default</div>");
-/// let input = String::from("\n        \n           \n        \n        <div class='div-default'>default</div>\n    \n        \n    ");
+/// let expected = String::from(TRIMMED_HTML_RENDER);
+/// let input = String::from(UNTRIMMED_HTML_RENDER);
 /// let filtered = rumtk_web_trim_rendered_html(input);
 ///
 /// assert_eq!(filtered, expected, "Template render trim failed!");
