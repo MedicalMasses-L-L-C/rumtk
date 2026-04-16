@@ -37,9 +37,7 @@ pub async fn default_robots_matcher(
     _params: RUMWebData,
     _state: SharedAppState,
 ) -> HTMLResult {
-    Ok(RUMWebResponse::GetResponse(Html::<String>::from(
-        String::from(DEFAULT_ROBOT_TXT),
-    )))
+    RUMWebResponse::into_get_response(DEFAULT_ROBOT_TXT).into_html_result()
 }
 
 pub async fn default_page_matcher(

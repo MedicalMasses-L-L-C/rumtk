@@ -82,6 +82,30 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> String {
     filtered.as_str().trim().to_string()
 }
 
+///
+/// Render the given component template into an `HTML Body response` or a `URL Redirect response`.
+/// If you provide the [RUMWebRedirect] in the `url` parameter configured for redirection, then we
+/// return the redirection as the response. Otherwise, we render the HTML and save it in the response.
+///
+/// ## Example
+/// ```
+/// use rumtk_web::{HTMLBody, RUMString, RUMWebRedirect, RUMWebResponse};
+/// use rumtk_web::RUMWebTemplate;
+/// use rumtk_web::rumtk_web_render_html;
+///
+/// #[derive(RUMWebTemplate)]
+/// #[template(
+///     source = "<div></div>",
+///     ext = "html"
+/// )]
+/// struct Div { }
+///
+/// let result = rumtk_web_render_html(Div{}, RUMWebRedirect::None).unwrap();
+/// let expected = RUMWebResponse::into_get_response("<div></div>");
+///
+/// assert_eq!(result, expected, "Test Div template rendered improperly!");
+/// ```
+///
 pub fn rumtk_web_render_html<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
