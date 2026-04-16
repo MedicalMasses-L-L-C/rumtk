@@ -39,6 +39,9 @@ pub static MARKDOWN_OPTIONS_INIT: fn() -> Options = || -> Options {
     options
 };
 
+const TEMPLATE_NEWLINE_PATTERN: &str = "\n   ";
+const TEMPLATE_NEWLINE_REPLACEMENT: &str = "    ";
+
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
@@ -53,9 +56,20 @@ struct ContentBlock<'a> {
 }
 
 pub fn rumtk_web_render_html<T: askama::Template>(template: T, url: RUMWebRedirect) -> HTMLResult {
+pub fn rumtk_web_trim_rendered_html(html: String) -> String {
+    let filtered = html
+        .as_str()
+        .replace(TEMPLATE_NEWLINE_PATTERN, TEMPLATE_NEWLINE_REPLACEMENT);
+    filtered.as_str().trim().to_string()
+}
+
+pub fn rumtk_web_render_html<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
-        Ok(html) => Ok(url.into_web_response(Some(html))),
+        Ok(html) => {
+            let filtered = rumtk_web_trim_rendered_html(html);
+            Ok(url.into_web_response(Some(filtered)))
+        }
         Err(e) => {
             let tn = std::any::type_name::<T>();
             Err(rumtk_format!("Template {tn} render failed: {e:?}"))
