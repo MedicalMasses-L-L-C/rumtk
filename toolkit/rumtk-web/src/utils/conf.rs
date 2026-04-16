@@ -137,6 +137,7 @@ pub type ClipboardID = RUMString;
 /// the `clipboard` containing dynamically generated state ([NestedTextMap](crate::utils::NestedTextMap)),
 /// and the `jobs` field containing
 ///
+#[derive(Default, Debug, Clone)]
 pub struct AppState {
     config: AppConf,
     clipboard: NestedTextMap,
