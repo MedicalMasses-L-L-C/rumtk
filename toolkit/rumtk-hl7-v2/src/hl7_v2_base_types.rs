@@ -30,8 +30,8 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{rumtk_format, ToCompactString};
-    use rumtk_core::strings::{RUMString, RUMStringConversions, UTFStringExtensions};
+    use rumtk_core::strings::{rumtk_format, AsStr, ToCompactString};
+    use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 
     use std::fmt::Debug;
@@ -140,11 +140,11 @@ pub mod v2_base_types {
         }
 
         pub fn isolate_parse_chars(key_fragment: &str) -> Vec<&str> {
-            let fragments = key_fragment.get_graphemes();
-            let field_separator = fragments[0];
+            let fragments = key_fragment.as_grapheme_str();
+            let field_separator = fragments.at(0);
             let mut parse_chars = Vec::<&str>::with_capacity(fragments.len());
             parse_chars.push(field_separator);
-            for fragment in fragments.iter().skip(1) {
+            for fragment in fragments.get_graphemes().iter().skip(1) {
                 if *fragment == field_separator {
                     break;
                 }
@@ -794,8 +794,7 @@ pub mod v2_primitives {
     pub use crate::hl7_v2_base_types::v2_base_types::*;
     use rumtk_core::search::rumtk_search::string_search;
     use rumtk_core::strings::{
-        rumtk_format, AsStr, CompactString, RUMString, ToCompactString, UTFStringExtensions,
-        DOT_STR,
+        rumtk_format, AsStr, CompactString, RUMString, StringUtils, DOT_STR,
     };
 
     /**************************** Constants**************************************/
