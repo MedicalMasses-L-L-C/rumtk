@@ -23,7 +23,9 @@ use crate::utils::defaults::{
     DEFAULT_TEXT_ITEM, FORM_DATA_TYPE_HTML, FORM_DATA_TYPE_PDF, PARAMS_CONTENTS, PARAMS_CSS_CLASS,
 };
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use crate::{
+    rumtk_web_conf_get, rumtk_web_get_text_item, rumtk_web_render_html, AppConf, RUMWebTemplate,
+};
 use rumtk_core::rumtk_generate_id;
 
 #[derive(RUMWebTemplate, Debug)]
@@ -72,7 +74,7 @@ pub fn content_viewer(
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     rumtk_web_render_html!(ContentViewer {
         id,

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
-use crate::{rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_conf_get, rumtk_web_render_html, AppConf, RUMWebTemplate};
 use askama::Template;
 
 #[derive(RUMWebTemplate)]
@@ -41,10 +41,8 @@ pub struct Meta {
 }
 
 pub fn meta(state: SharedAppState) -> HTMLResult {
-    let owned_state = state.read().expect("Lock failure");
-
     rumtk_web_render_html!(Meta {
-        title: owned_state.get_config().title.clone(),
-        description: owned_state.get_config().description.clone()
+        title: rumtk_web_conf_get!(state, |conf: &AppConf| { conf.title.clone() }),
+        description: rumtk_web_conf_get!(state, |conf: &AppConf| { conf.description.clone() })
     })
 }

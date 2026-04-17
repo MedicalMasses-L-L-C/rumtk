@@ -741,10 +741,10 @@ macro_rules! rumtk_web_register_app_switches {
 /// ### With Page and Component definition
 /// ```
 ///     use rumtk_core::strings::{rumtk_format};
-///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_get_text_item, rumtk_web_register_app_switches};
+///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_get_text_item, rumtk_web_register_app_switches, rumtk_web_conf_get};
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppState, RenderedPageComponents};
-///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData};
+///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData, AppConf};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///     use rumtk_web::utils::types::RUMWebTemplate;
 ///
@@ -795,7 +795,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
-///         let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+///         let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 ///
 ///         rumtk_web_render_html!(MyDiv {
 ///             contents: RUMString::from(contents),

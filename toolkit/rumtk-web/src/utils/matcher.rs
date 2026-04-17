@@ -24,13 +24,12 @@ use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
 use crate::{
-    rumtk_web_get_api_endpoint, rumtk_web_get_component, RUMWebData, RUMWebResponse, RouterForm,
-    URLParams,
+    rumtk_web_get_api_endpoint, rumtk_web_get_component, RUMWebData, RUMWebResponse, RouterForm
+    ,
 };
 use axum::body::Body;
 use axum::http::Response;
 use axum::response::{Html, IntoResponse};
-use tracing::error;
 
 pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
@@ -88,10 +87,7 @@ pub async fn default_component_matcher(
 pub fn match_maker(match_response: HTMLResult) -> Response<Body> {
     match match_response {
         Ok(res) => res.into_response(),
-        Err(e) => {
-            error!("{}", e);
-            Html(String::default()).into_response()
-        }
+        Err(e) => Html(String::default()).into_response(),
     }
 }
 

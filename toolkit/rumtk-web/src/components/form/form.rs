@@ -26,8 +26,8 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_conf_get, rumtk_web_get_conf, rumtk_web_get_form, rumtk_web_get_text_item,
+    rumtk_web_render_component, rumtk_web_render_html, AppConf, RUMWebTemplate,
 };
 use askama::Template;
 
@@ -99,7 +99,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let endpoint_store = rumtk_web_get_conf!(state, SECTION_ENDPOINTS);
     let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     let elements = rumtk_web_get_form!(typ);
 

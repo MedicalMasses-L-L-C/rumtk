@@ -22,8 +22,8 @@ use crate::components::navlink::navlink;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html, RUMWebData, RUMWebTemplate,
+    rumtk_web_conf_get, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_render_html, AppConf, RUMWebData, RUMWebTemplate,
 };
 use askama::Template;
 use axum::response::Html;
@@ -85,45 +85,27 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
 pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let company = state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .company
-        .clone();
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let company = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.company.clone() });
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
     let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
-    let nav_links = match state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .header_conf
-        .disable_navlinks
-    {
+    let nav_links = match rumtk_web_conf_get!(state, |conf: &AppConf| {
+        conf.header_conf.disable_navlinks
+    }) {
         true => vec![rumtk_web_render_component!(
             "title",
             [(
                 "type",
-                &state
-                    .read()
-                    .expect("Lock failure")
-                    .get_config()
-                    .title
-                    .clone()
+                rumtk_web_conf_get!(state, |conf: &AppConf| { conf.title.clone() })
             )],
             state
         )],
         false => get_nav_links(&nav_keys, state.clone()),
     };
 
-    let disable_logo = state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .header_conf
-        .disable_logo;
+    let disable_logo =
+        rumtk_web_conf_get!(state, |conf: &AppConf| { conf.header_conf.disable_logo });
     let logo = match disable_logo {
         true => RUMString::default(),
         false => rumtk_web_render_component!(
@@ -132,13 +114,10 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
                 ("type", "diamond"),
                 (
                     "class",
-                    state
-                        .read()
-                        .expect("Lock failure")
-                        .get_config()
-                        .header_conf
-                        .logo_size
-                        .as_str()
+                    rumtk_web_conf_get!(state, |conf: &AppConf| {
+                        conf.header_conf.logo_size.clone()
+                    })
+                    .as_str()
                 ),
             ],
             state

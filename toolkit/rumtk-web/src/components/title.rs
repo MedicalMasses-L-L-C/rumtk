@@ -21,7 +21,10 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_TITLES};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::TextMap;
-use crate::{rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use crate::{
+    rumtk_web_conf_get, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    AppConf, RUMWebTemplate,
+};
 use askama::Template;
 
 #[derive(RUMWebTemplate, Debug)]
@@ -50,7 +53,7 @@ pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     let text_store = rumtk_web_get_string!(state, SECTION_TITLES);
     let itm = rumtk_web_get_text_item!(&text_store, typ, &TextMap::default());

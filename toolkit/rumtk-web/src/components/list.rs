@@ -21,7 +21,10 @@
 use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ID};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
 use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
-use crate::{rumtk_web_get_conf, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use crate::{
+    rumtk_web_conf_get, rumtk_web_conf_set, rumtk_web_get_conf, rumtk_web_get_text_item,
+    rumtk_web_modify_state, rumtk_web_render_html, AppConf, AppState, RUMWebTemplate,
+};
 use rumtk_core::strings::RUMStringConversions;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -58,16 +61,15 @@ pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let item_list = state
-        .write()
-        .unwrap()
-        .pop_clipboard(&clipboard_id.to_rumstring());
+    let item_list = rumtk_web_modify_state!(state, |state: &mut AppState| {
+        state.pop_clipboard(&clipboard_id.to_rumstring())
+    });
     let items = match item_list {
         Some(items) => items,
         None => rumtk_web_get_conf!(state, typ),
     };
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     rumtk_web_render_html!(List {
         items,

@@ -23,7 +23,8 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_conf_get, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    AppConf, RUMWebTemplate,
 };
 use askama::Template;
 
@@ -56,27 +57,13 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
-    let company = state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .company
-        .clone();
-    let copyright = state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .copyright
-        .clone();
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
+    let company = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.company.clone() });
+    let copyright = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.copyright.clone() });
 
-    let contact_button = match state
-        .read()
-        .expect("Lock failure")
-        .get_config()
-        .footer_conf
-        .disable_contact_button
-    {
+    let contact_button = match rumtk_web_conf_get!(state, |conf: &AppConf| {
+        conf.footer_conf.disable_contact_button
+    }) {
         true => RUMString::default(),
         false => rumtk_web_render_component!(
             "contact_button",

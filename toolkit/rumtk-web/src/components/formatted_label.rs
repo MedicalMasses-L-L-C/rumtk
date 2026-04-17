@@ -24,8 +24,8 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
-    rumtk_web_render_markdown, RUMWebTemplate,
+    rumtk_web_conf_get, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_render_markdown, AppConf, RUMWebTemplate,
 };
 use askama::Template;
 
@@ -55,7 +55,7 @@ pub fn formatted_label(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());

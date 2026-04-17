@@ -24,10 +24,11 @@ use crate::utils::types::RUMString;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
-use rumtk_core::rumtk_generate_id;
+use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
+use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
 use std::sync::{Arc, RwLock};
 
 pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
@@ -144,7 +145,7 @@ pub struct AppState {
     jobs: RUMHashMap<RUMID, Job>,
 }
 
-pub type SafeAppState = Arc<RwLock<AppState>>;
+pub type SharedAppState = SafeLock<AppState>;
 
 impl AppState {
     pub fn new() -> AppState {
@@ -155,12 +156,12 @@ impl AppState {
         }
     }
 
-    pub fn new_safe() -> SafeAppState {
-        Arc::new(RwLock::new(AppState::new()))
+    pub fn new_safe() -> SharedAppState {
+        rumtk_new_lock!(AppState::new())
     }
 
-    pub fn from_safe(conf: AppConf) -> SafeAppState {
-        Arc::new(RwLock::new(AppState::from(conf)))
+    pub fn from_safe(conf: AppConf) -> SharedAppState {
+        rumtk_new_lock!(AppState::from(conf))
     }
 
     pub fn get_config(&self) -> &AppConf {
@@ -215,9 +216,11 @@ impl From<AppConf> for AppState {
     }
 }
 
-pub type SharedAppState = Arc<RwLock<AppState>>;
-pub type RouterAppState = State<Arc<RwLock<AppState>>>;
+pub type RouterAppState = State<SharedAppState>;
 
+///
+///
+///
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
     ( $args:expr ) => {{
@@ -272,16 +275,51 @@ macro_rules! rumtk_web_save_conf {
 #[macro_export]
 macro_rules! rumtk_web_get_string {
     ( $conf:expr, $item:expr ) => {{
-        let owned_state = $conf.read().expect("Lock failure");
-        owned_state.get_config().get_text($item)
+        use $crate::rumtk_web_conf_get;
+        use $crate::AppConf;
+        rumtk_web_conf_get!($conf, |conf: &AppConf| { conf.get_text($item) })
     }};
 }
 
 #[macro_export]
 macro_rules! rumtk_web_get_conf {
     ( $conf:expr, $item:expr ) => {{
-        let owned_state = $conf.read().expect("Lock failure");
-        owned_state.get_config().get_conf($item)
+        use $crate::rumtk_web_conf_get;
+        use $crate::AppConf;
+        rumtk_web_conf_get!($conf, |conf: &AppConf| { conf.get_conf($item) })
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_conf_get {
+    ( $state:expr, $function:expr ) => {{
+        use rumtk_core::rumtk_critical_section_read;
+        rumtk_critical_section_read!($state.clone(), |guard| {
+            let result = guard.get_config();
+            Ok($function(result))
+        })
+        .unwrap_or_default()
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_conf_set {
+    ( $state:expr, $function:expr ) => {{
+        use rumtk_core::rumtk_critical_section_write;
+        rumtk_critical_section_write!($state.clone(), |mut guard| {
+            let mut result = guard.get_config_mut();
+            let r = $function(result);
+            Ok(r)
+        })
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_modify_state {
+    ( $state:expr, $function:expr ) => {{
+        use rumtk_core::rumtk_critical_section_write;
+        rumtk_critical_section_write!($state.clone(), |mut guard| { Ok($function(&mut guard)) })
+            .unwrap()
     }};
 }
 

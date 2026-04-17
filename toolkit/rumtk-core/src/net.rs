@@ -32,7 +32,7 @@ pub mod tcp {
     use crate::types::RUMOrderedMap;
     use crate::{
         rumtk_async_sleep, rumtk_create_task, rumtk_create_task_args, rumtk_init_threads,
-        rumtk_resolve_task, rumtk_spawn_task, rumtk_wait_on_task,
+        rumtk_new_lock, rumtk_resolve_task, rumtk_spawn_task, rumtk_wait_on_task,
     };
     use ahash::HashMapExt;
     use compact_str::ToCompactString;
@@ -556,7 +556,7 @@ pub mod tcp {
             let task_result = rumtk_wait_on_task!(RUMServerHandle::new_helper, &args)?;
             let server = task_result;
             Ok(RUMServerHandle {
-                server: Arc::new(AsyncRwLock::new(server?)),
+                server: rumtk_new_lock!(server?),
             })
         }
 

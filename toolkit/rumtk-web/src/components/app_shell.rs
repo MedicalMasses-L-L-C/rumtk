@@ -18,14 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::{app_body::app_body, app_head::app_head};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_conf_set, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    AppConf, RUMWebTemplate,
 };
 use askama::Template;
-
-use crate::components::{app_body::app_body, app_head::app_head};
+use rumtk_core::{rumtk_critical_section_read, rumtk_critical_section_write};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -51,8 +52,12 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppSt
     //owned_state.opts = *params.clone();
 
     //Config App
-    state.write().expect("Lock failure").get_config_mut().lang = RUMString::from(lang);
-    state.write().expect("Lock failure").get_config_mut().theme = RUMString::from(theme);
+    rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+        conf.lang = RUMString::from(lang)
+    });
+    rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+        conf.theme = RUMString::from(theme)
+    });
 
     //Let's render the head component
     let head = rumtk_web_render_component!(|| -> HTMLResult {

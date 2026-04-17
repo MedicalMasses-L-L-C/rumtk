@@ -21,8 +21,8 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html, RUMWebData, RUMWebTemplate,
+    rumtk_web_conf_get, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_render_html, AppConf, RUMWebData, RUMWebTemplate,
 };
 use askama::Template;
 use rumtk_core::strings::RUMStringConversions;
@@ -92,7 +92,7 @@ pub fn portrait_card(
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let icon_data = get_portrait_grid(section, typ, &state);
 
-    let custom_css_enabled = state.read().expect("Lock failure").get_config().custom_css;
+    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
 
     rumtk_web_render_html!(PortraitCard {
         icon_data,
