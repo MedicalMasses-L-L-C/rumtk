@@ -42,7 +42,6 @@ pub mod thread_primitives {
     pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
     pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
-    pub type ReadCriticalSectionFunction<T, R> = fn(guard: SafeLockReadGuard<T>) -> RUMResult<R>;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
     /**************************** Helpers ***************************************/
@@ -521,11 +520,12 @@ pub mod threading_manager {
 ///
 pub mod threading_functions {
     use crate::core::RUMResult;
+    use crate::net::tcp::SafeLockReadGuard;
     use crate::rumtk_sleep;
     use crate::strings::rumtk_format;
     pub use crate::threading::thread_primitives::init_runtime;
+    use crate::threading::thread_primitives::SafeLockWriteGuard;
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
-    use crate::threading::thread_primitives::{ReadCriticalSectionFunction, SafeLockWriteGuard};
     use num_cpus;
     use std::future::Future;
     use std::sync::Arc;
@@ -617,22 +617,25 @@ pub mod threading_functions {
         Arc::new(AsyncRwLock::new(data))
     }
 
-    pub fn process_read_critical_section<T, R>(
+    pub fn process_read_critical_section<T, R, F>(
         lock: SafeLock<T>,
-        critical_section: ReadCriticalSectionFunction<T, R>,
-    ) -> RUMResult<R> {
+        critical_section: F,
+    ) -> RUMResult<R>
+    where
+        F: Fn(SafeLockReadGuard<T>) -> RUMResult<R>,
+    {
         tokio::task::block_in_place(move || {
             let read_guard = lock.blocking_read();
             critical_section(read_guard)
         })
     }
 
-    pub fn process_write_critical_section<T, F>(
+    pub fn process_write_critical_section<T, F, R>(
         lock: SafeLock<T>,
         critical_section: F,
-    ) -> RUMResult<()>
+    ) -> RUMResult<R>
     where
-        F: Fn(SafeLockWriteGuard<T>) -> RUMResult<()>,
+        F: Fn(SafeLockWriteGuard<T>) -> RUMResult<R>,
     {
         tokio::task::block_in_place(move || {
             let write_guard = lock.blocking_write();
@@ -1088,8 +1091,7 @@ pub mod threading_macros {
 
     ///
     /// Using a standard spin lock [SafeLock](thread_primitives::SafeLock), lock it and execute the
-    /// critical section. The critical section itself is a synchronous function of type
-    /// [ReadCriticalSectionFunction](thread_primitives::ReadCriticalSectionFunction). In this case,
+    /// critical section. The critical section itself is a synchronous function or closure. In this case,
     /// the critical section simply retrieves a value from a guarded dataset.
     ///
     /// ## Example
