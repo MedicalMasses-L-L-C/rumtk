@@ -50,7 +50,7 @@ mod tests {
     use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
     use crate::strings::{
-        rumtk_format, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
+        rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
     };
     use crate::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use compact_str::CompactString;
@@ -162,13 +162,19 @@ mod tests {
     #[test]
     fn test_unique_string() {
         let input = "I❤mywife!";
-        assert!(input.is_unique(), "String was not detected as unique.");
+        assert!(
+            input.as_grapheme_str().is_unique(),
+            "String was not detected as unique."
+        );
     }
 
     #[test]
     fn test_non_unique_string() {
         let input = "I❤❤mywife!";
-        assert!(!input.is_unique(), "String was detected as unique.");
+        assert!(
+            !input.as_grapheme_str().is_unique(),
+            "String was detected as unique."
+        );
     }
 
     #[test]

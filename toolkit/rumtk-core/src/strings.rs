@@ -24,6 +24,7 @@ pub use compact_str::{
     format_compact as rumtk_format, CompactString, CompactStringExt, ToCompactString,
 };
 use encoding_rs::Encoding;
+use std::cmp::min;
 use unicode_segmentation::UnicodeSegmentation;
 /**************************** Constants**************************************/
 const ESCAPED_STRING_WINDOW: usize = 6;
@@ -42,6 +43,7 @@ pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
 pub type Grapheme<'a> = &'a str;
 pub type GraphemeStringView<'a> = RUMVec<Grapheme<'a>>;
 pub type GraphemePattern<'a> = &'a [Grapheme<'a>];
+pub type GraphemeSlice<'b, 'a> = &'b [Grapheme<'a>];
 pub type GraphemePatternPair<'a> = (GraphemePattern<'a>, GraphemePattern<'a>);
 
 ///
@@ -146,29 +148,20 @@ impl<'a> GraphemeStr<'a> {
         self.end - self.start
     }
 
-    ///
-    ///
-    ///
-    pub fn get_raw_graphemes(&self) -> &GraphemeStringView {
-        &self.view
+    pub fn get_graphemes(&self) -> GraphemeSlice<'_, 'a> {
+        &self.view[self.start..self.end]
     }
 
-    ///
-    ///
-    ///
-    pub fn get_grapheme_window(&self) -> GraphemeStringView {
-        self.view[self.start..self.end].to_vec()
-    }
-
-    pub fn truncate(&self, max: usize) -> Self {
+    pub fn truncate(&self, size: usize) -> Self {
+        let end = min(size, self.end);
         Self {
             view: self.view.clone(),
             start: self.start,
-            end: max,
+            end,
         }
     }
 
-    fn is_unique(&self) -> bool {
+    pub fn is_unique(&self) -> bool {
         is_unique(&self.view)
     }
 }
@@ -184,6 +177,8 @@ impl ToString for GraphemeStr<'_> {
         new_string
     }
 }
+
+impl RUMStringConversions for GraphemeStr<'_> {}
 
 /**************************** Traits ****************************************/
 
@@ -216,7 +211,7 @@ pub trait RUMStringConversions: ToString {
     }
 }
 
-pub trait StringUtils: AsStr {
+pub trait StringUtils: AsStr + RUMStringConversions {
     #[inline(always)]
     fn duplicate(&self, count: usize) -> RUMString {
         let mut duplicated = RUMString::with_capacity(count);
@@ -224,6 +219,10 @@ pub trait StringUtils: AsStr {
             duplicated += &self.as_str();
         }
         duplicated
+    }
+
+    fn truncate(&self, count: usize) -> RUMString {
+        self.as_grapheme_str().truncate(count).to_rumstring()
     }
 }
 
