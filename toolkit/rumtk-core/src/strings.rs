@@ -39,94 +39,164 @@ pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
 pub type RUMString = CompactString;
 pub type EscapeException<'a> = (&'a str, &'a str);
 pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
+pub type Grapheme<'a> = &'a str;
+pub type GraphemeStringView<'a> = RUMVec<Grapheme<'a>>;
+pub type GraphemePattern<'a> = &'a [Grapheme<'a>];
+pub type GraphemePatternPair<'a> = (GraphemePattern<'a>, GraphemePattern<'a>);
+
+///
+/// The equivalent to a `stringview` but at the grapheme level. Meaning, we can use this view to
+/// iterate through a string at the full `UTF8` implementation
+///
+#[derive(Default, Debug, PartialEq, Clone)]
+pub struct GraphemeStr<'a> {
+    view: GraphemeStringView<'a>,
+    start: usize,
+    end: usize,
+}
+
+impl<'a> GraphemeStr<'a> {
+    pub fn from(string: &'a str) -> Self {
+        let view = string.graphemes(true).collect::<GraphemeStringView>();
+        Self::from_view(view)
+    }
+
+    pub fn from_view(view: GraphemeStringView<'a>) -> Self {
+        let start = 0;
+        let end = view.len();
+        Self { view, start, end }
+    }
+
+    pub fn at(&self, index: usize) -> Grapheme<'a> {
+        self.view[index]
+    }
+
+    pub fn trim(&self, pattern: &GraphemePatternPair<'a>) -> Self {
+        let (left_pattern, right_pattern) = pattern;
+        self.trim_left(left_pattern).trim_right(right_pattern)
+    }
+
+    pub fn trim_left(&self, pattern: &GraphemePattern<'a>) -> Self {
+        let new_offset = self.find(pattern, self.start);
+        Self {
+            view: self.view.clone(),
+            start: new_offset,
+            end: self.end,
+        }
+    }
+
+    pub fn trim_right(&self, pattern: &GraphemePattern<'a>) -> Self {
+        let new_offset = self.rfind(pattern, self.end);
+        Self {
+            view: self.view.clone(),
+            start: self.start,
+            end: new_offset,
+        }
+    }
+
+    pub fn splice(&self, skip_pattern: &GraphemePatternPair<'a>) -> Self {
+        let (left_pattern, right_pattern) = skip_pattern;
+        let mut new_view = GraphemeStringView::with_capacity(self.end - self.start);
+        let mut offset = self.start;
+        let l_pattern_s = left_pattern.len();
+
+        while offset < self.end {
+            let target_s = self.find(left_pattern, offset) + l_pattern_s;
+            for i in offset..target_s {
+                new_view.push(self.view[i]);
+            }
+            offset = self.find(right_pattern, target_s);
+        }
+
+        GraphemeStr::from_view(new_view)
+    }
+
+    pub fn find(&self, pattern: &GraphemePattern<'a>, offset: usize) -> usize {
+        let pattern_s = pattern.len();
+        let mut new_offset = offset;
+        let mut pattern_end = new_offset + pattern_s;
+
+        while new_offset < self.end && pattern_end < self.end {
+            if self.view[new_offset..pattern_end] == **pattern {
+                break;
+            }
+
+            new_offset += 1;
+            pattern_end = new_offset + pattern_s;
+        }
+
+        new_offset
+    }
+
+    pub fn rfind(&self, pattern: &GraphemePattern<'a>, offset: usize) -> usize {
+        let pattern_s = pattern.len();
+        let mut new_offset = offset;
+        while new_offset > self.start {
+            if self.view[new_offset - pattern_s..new_offset] == **pattern {
+                break;
+            }
+
+            new_offset -= 1;
+        }
+
+        new_offset
+    }
+
+    pub fn len(&self) -> usize {
+        self.end - self.start
+    }
+
+    ///
+    ///
+    ///
+    pub fn get_raw_graphemes(&self) -> &GraphemeStringView {
+        &self.view
+    }
+
+    ///
+    ///
+    ///
+    pub fn get_grapheme_window(&self) -> GraphemeStringView {
+        self.view[self.start..self.end].to_vec()
+    }
+
+    pub fn truncate(&self, max: usize) -> Self {
+        Self {
+            view: self.view.clone(),
+            start: self.start,
+            end: max,
+        }
+    }
+
+    fn is_unique(&self) -> bool {
+        is_unique(&self.view)
+    }
+}
+
+impl ToString for GraphemeStr<'_> {
+    fn to_string(&self) -> String {
+        let mut new_string = String::with_capacity(self.len());
+
+        for grapheme in self.view[self.start..self.end].iter() {
+            new_string.push_str(grapheme);
+        }
+
+        new_string
+    }
+}
 
 /**************************** Traits ****************************************/
 
-///
-/// Implemented indexing trait for String and str which uses the UnicodeSegmentation facilities to
-/// enable grapheme iteration by default. There could be some performance penalty, but it will allow
-/// for native Unicode support to the best extent possible.
-///
-/// We also enable decoding from Encoding Standard encodings to UTF-8.
-///
-pub trait UTFStringExtensions {
-    fn count_graphemes(&self) -> usize;
-
-    ///
-    /// Return a grapheme unit which could span multiple Unicode codepoints or "characters".
-    ///
-    /// # Note
-    /// ```text
-    ///     If the grapheme requested does not exists, this method will return a blank string.
-    /// ```
-    ///
-    /// Instead of just retrieving a codepoint as character, I decided to take it a step further and
-    /// have support for grapheme selection such that characters in written language like sanskrit
-    /// can be properly selected and evaluated.
-    ///
-    /// [!CAUTION]
-    /// This can be an extremely slow operation over large strings since each call to this method
-    /// will need to rescan the input string every time we need to look up a grapheme. Unfortunately,
-    /// this is a side effect of convenience. To improve performance, call .get_graphemes() once and
-    /// then call take_grapheme() over that iterator.
-    ///
-    fn get_grapheme(&self, index: usize) -> &str;
-
-    fn get_graphemes(&self) -> Vec<&str>;
-
-    fn get_grapheme_chunk(&self, offset: usize) -> Vec<&str>;
-
-    #[inline(always)]
-    fn take_grapheme<'a>(&self, graphemes: &Vec<&'a str>, index: usize) -> RUMString {
-        if index >= graphemes.len() {
-            return RUMString::from(EMPTY_STRING);
-        }
-        RUMString::from(graphemes[index])
-    }
-
-    #[inline(always)]
-    fn get_grapheme_window(&self, min: usize, max: usize, offset: usize) -> RUMString {
-        let mut window: RUMString = RUMString::with_capacity(max - min);
-        let start = min + offset;
-        let end = max + offset;
-        let graphemes = self.get_graphemes();
-        for i in start..end {
-            window += &self.take_grapheme(&graphemes, i);
-        }
-        window
-    }
-
-    #[inline(always)]
-    fn get_grapheme_string(&self, end_pattern: &str, offset: usize) -> RUMString {
-        let mut window: RUMString = RUMString::with_capacity(ESCAPED_STRING_WINDOW);
-        for grapheme in self.get_grapheme_chunk(offset) {
-            if grapheme == end_pattern {
-                return RUMString::from(window);
-            } else {
-                window += grapheme;
-            }
-        }
-        RUMString::from(window)
-    }
-
-    #[inline(always)]
-    fn find_grapheme(&self, pattern: &str, offset: usize) -> &str {
-        for grapheme in self.get_grapheme_chunk(offset) {
-            if grapheme == pattern {
-                return grapheme;
-            }
-        }
-        EMPTY_STRING
-    }
-
-    #[inline(always)]
-    fn truncate(&self, max_size: usize) -> RUMString {
-        self.get_grapheme_window(0, max_size, 0)
-    }
+pub trait StringLike {
+    fn with_capacity(capacity: usize) -> Self;
+    fn push_str(&mut self, string: &str);
 }
 
 pub trait AsStr {
     fn as_str(&self) -> &str;
+    fn as_grapheme_str(&self) -> GraphemeStr {
+        GraphemeStr::from(self.as_str())
+    }
 }
 
 pub trait RUMStringConversions: ToString {
@@ -146,7 +216,7 @@ pub trait RUMStringConversions: ToString {
     }
 }
 
-pub trait StringUtils: AsStr + UTFStringExtensions {
+pub trait StringUtils: AsStr {
     #[inline(always)]
     fn duplicate(&self, count: usize) -> RUMString {
         let mut duplicated = RUMString::with_capacity(count);
@@ -155,35 +225,11 @@ pub trait StringUtils: AsStr + UTFStringExtensions {
         }
         duplicated
     }
-
-    fn is_unique(&self) -> bool {
-        let graphemes = self.get_graphemes();
-        is_unique(&graphemes)
-    }
 }
 
-impl UTFStringExtensions for RUMString {
-    #[inline(always)]
-    fn count_graphemes(&self) -> usize {
-        self.graphemes(true).count()
-    }
-
-    #[inline(always)]
-    fn get_grapheme(&self, index: usize) -> &str {
-        self.graphemes(true)
-            .nth(index)
-            .or(EMPTY_STRING_OPTION)
-            .unwrap()
-    }
-
-    #[inline(always)]
-    fn get_graphemes(&self) -> Vec<&str> {
-        self.graphemes(true).collect::<Vec<&str>>()
-    }
-
-    #[inline(always)]
-    fn get_grapheme_chunk(&self, offset: usize) -> Vec<&str> {
-        self.graphemes(true).skip(offset).collect::<Vec<&str>>()
+impl AsStr for String {
+    fn as_str(&self) -> &str {
+        self.as_str()
     }
 }
 
@@ -194,31 +240,6 @@ impl AsStr for RUMString {
     }
 }
 impl StringUtils for RUMString {}
-
-impl UTFStringExtensions for str {
-    #[inline(always)]
-    fn count_graphemes(&self) -> usize {
-        self.graphemes(true).count()
-    }
-
-    #[inline(always)]
-    fn get_grapheme(&self, index: usize) -> &str {
-        self.graphemes(true)
-            .nth(index)
-            .or(EMPTY_STRING_OPTION)
-            .unwrap()
-    }
-
-    #[inline(always)]
-    fn get_graphemes(&self) -> Vec<&str> {
-        self.graphemes(true).collect::<Vec<&str>>()
-    }
-
-    #[inline(always)]
-    fn get_grapheme_chunk(&self, offset: usize) -> Vec<&str> {
-        self.graphemes(true).skip(offset).collect::<Vec<&str>>()
-    }
-}
 
 impl RUMStringConversions for str {}
 
@@ -321,7 +342,7 @@ pub fn unescape_string(escaped_str: &str) -> RUMResult<RUMString> {
                     Err(_why) => Vec::from(escape_seq.as_bytes()),
                 };
                 result.append(&mut c);
-                i += &escape_seq.count_graphemes();
+                i += &escape_seq.as_grapheme_str().len();
             }
             _ => {
                 result.append(&mut Vec::from(seq_start.as_bytes()));
@@ -400,7 +421,7 @@ pub fn unescape(escaped_str: &str) -> Result<Vec<u8>, RUMString> {
             bytes.append(&mut byte_str.as_bytes().to_vec());
         }
         // Multibyte notation case
-        "\\m" => match lower_case.count_graphemes() {
+        "\\m" => match lower_case.as_grapheme_str().len() {
             8 => {
                 bytes.push(hex_to_byte(&lower_case[2..4])?);
                 bytes.push(hex_to_byte(&lower_case[4..6])?);
