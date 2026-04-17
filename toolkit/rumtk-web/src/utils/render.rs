@@ -21,7 +21,9 @@
 use crate::types::HTMLResult;
 use crate::{RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::{Options, Parser};
-use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+use rumtk_core::strings::{
+    rumtk_format, AsStr, GraphemePattern, GraphemePatternPair, RUMString, RUMStringConversions,
+};
 use std::sync::OnceLock;
 
 pub static MARKDOWN_OPTIONS: OnceLock<Options> = OnceLock::new();
@@ -38,8 +40,9 @@ pub static MARKDOWN_OPTIONS_INIT: fn() -> Options = || -> Options {
     options
 };
 
-const TEMPLATE_NEWLINE_PATTERN: &str = "\n   ";
-const TEMPLATE_NEWLINE_REPLACEMENT: &str = "    ";
+const TEMPLATE_NEWLINE_COMPONENT_PATTERN: GraphemePatternPair<'static> = (&["<"], &[">"]);
+const TEMPLATE_NEWLINE_COMPONENT_INNER_PATTERN: GraphemePatternPair<'static> =
+    (&[">", "\n"], &["<"]);
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -76,10 +79,11 @@ struct ContentBlock<'a> {
 /// ```
 ///
 pub fn rumtk_web_trim_rendered_html(html: String) -> String {
-    let filtered = html
-        .as_str()
-        .replace(TEMPLATE_NEWLINE_PATTERN, TEMPLATE_NEWLINE_REPLACEMENT);
-    filtered.as_str().trim().to_string()
+    html.as_grapheme_str()
+        .trim(&TEMPLATE_NEWLINE_COMPONENT_PATTERN)
+        .splice(&TEMPLATE_NEWLINE_COMPONENT_INNER_PATTERN)
+        .trim(&TEMPLATE_NEWLINE_COMPONENT_PATTERN)
+        .to_string()
 }
 
 ///
@@ -128,6 +132,74 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
     Ok(url.into_web_response(Some(String::default())))
 }
 
+///
+/// Render component into an HTML Response Body of type [HTMLResult]. This macro is a bit more complex.
+/// Depending on the arguments passed to it, it can
+///
+/// 1. Call a component function that receives exactly 0 parameters.
+/// 2. Call a component function that only receives the [SharedAppState](crate::utils::SharedAppState) handle as its only parameter.
+/// 3. Call a component function that can accept the standard set of parameters (`path`, `params`, and `app_state`). However, the Path is set to empty.
+/// 4. Call a component function that can accept the standard set of parameters (`path`, `params`, and `app_state`). All of these parameters are passed through to the function.
+///
+/// The reason for this set of behaviors is that we have standard component functions which are found in [components](crate::components) modules.
+/// These functions are of type [ComponentFunction](crate::utils::ComponentFunction) and the expected parameters are as follows:
+///
+/// 1. `path` => [URLPath](crate::utils::URLPath)
+/// 2. `params` => [URLParams](crate::utils::URLParams)
+/// 3. `app_state` => [SharedAppState](crate::utils::SharedAppState)
+///
+/// The component functions are the bread and butter of the framework and are what are expected from consumers of
+/// this library. They get registered to an internal `Map` that we use as a sort of `vTable` to dispatch the correct user function.
+/// **In this case, the component function parameter for this macro is a stringview type since we perform the lookup automatically!**
+///
+/// The reason for the other usages is that we also have static components whose only purpose are to define
+/// pre-selected items to help make web apps come together in an easy to use package. These include the
+/// `htmx` and `fontawesome` imports. Perhaps, we will open up this facility to the user in later iterations of the framework
+/// to make it easy to override and include other static assets and maybe for prefetch and optimization purposes.
+///
+/// ## Examples
+///
+/// ### Simple Component Render
+/// ```
+/// use rumtk_web::static_components::css::css;
+/// use rumtk_web::rumtk_web_render_component;
+///
+/// let rendered = rumtk_web_render_component!(css);
+/// let expected = "<link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href='/static/css/bundle.css';' />";
+///
+/// assert_eq!(rendered, expected, "Commponent rendered improperly!");
+/// ```
+///
+/// ### Component Render with Shared State
+/// ```
+/// use rumtk_web::SharedAppState;
+/// use rumtk_web::static_components::meta::meta;
+/// use rumtk_web::utils::testdata::TRIMMED_HTML_RENDER_META;
+/// use rumtk_web::rumtk_web_render_component;
+///
+/// let state = SharedAppState::default();
+/// let rendered = rumtk_web_render_component!(meta, state);
+///
+/// assert_eq!(rendered, TRIMMED_HTML_RENDER_META, "Commponent rendered improperly!");
+/// ```
+///
+/// ### Component Render with Standard Parameters
+/// ```
+/// use rumtk_web::SharedAppState;
+/// use rumtk_web::defaults::PARAMS_TITLE;
+/// use rumtk_web::utils::testdata::TRIMMED_HTML_TITLE_RENDER;
+/// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_components};
+///
+/// rumtk_web_init_components!(None);
+/// let params = [
+///     (PARAMS_TITLE, "Hello World!")
+/// ];
+/// let state = SharedAppState::default();
+/// let rendered = rumtk_web_render_component!("title", params, state);
+///
+/// assert_eq!(rendered, TRIMMED_HTML_TITLE_RENDER, "Commponent rendered improperly!");
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{

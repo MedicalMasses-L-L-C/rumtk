@@ -35,10 +35,16 @@ pub use utils::*;
 ///
 #[cfg(test)]
 mod tests {
+    use crate::defaults::PARAMS_TITLE;
     use crate::testdata::{
         create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_FORMDATA_REQUEST,
+        TRIMMED_HTML_TITLE_RENDER,
     };
-    use crate::{rumtk_web_render_redirect, RUMWebRedirect};
+    use crate::{
+        rumtk_web_init_components, rumtk_web_render_component, rumtk_web_render_html,
+        rumtk_web_render_redirect, RUMWebRedirect, SharedAppState,
+    };
+    use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMStringConversions;
 
     ///////////////////////////////////FormData/////////////////////////////////////////////////
@@ -84,6 +90,32 @@ mod tests {
         let redirect_url = redirect.get_url();
         assert_eq!(redirect_url, url, "Redirect url mismatch!");
         assert_eq!(redirect_code, 308, "Wrong redirect code!");
+    }
+
+    #[test]
+    fn test_render_standard_web_component() {
+        rumtk_web_init_components!(None);
+
+        let params = [(PARAMS_TITLE, "Hello World!")];
+        let state = SharedAppState::default();
+        let rendered = rumtk_web_render_component!("title", params, state);
+
+        assert_eq!(
+            rendered, TRIMMED_HTML_TITLE_RENDER,
+            "Commponent rendered improperly!"
+        );
+    }
+
+    #[test]
+    fn test_render() {
+        #[derive(RUMWebTemplate)]
+        #[template(source = "<div></div>", ext = "html")]
+        struct Div {}
+
+        let result = rumtk_web_render_html(Div {}, RUMWebRedirect::None).unwrap();
+        let expected = RUMWebResponse::into_get_response("<div></div>");
+
+        assert_eq!(result, expected, "Test Div template rendered improperly!");
     }
 
     ///////////////////////////////////HTML/////////////////////////////////////////////////
