@@ -33,7 +33,9 @@ pub mod thread_primitives {
     use tokio::runtime::Runtime as TokioRuntime;
     pub use tokio::sync::{
         Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock,
-        RwLockReadGuard as AsyncRwLockReadGuard, RwLockWriteGuard as AsyncRwLockWriteGuard,
+        RwLockMappedWriteGuard as AsyncRwLockMappedWriteGuard,
+        RwLockReadGuard as AsyncRwLockMappedReadGuard, RwLockReadGuard as AsyncRwLockReadGuard,
+        RwLockWriteGuard as AsyncRwLockWriteGuard,
     };
 
     pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
@@ -41,6 +43,7 @@ pub mod thread_primitives {
     pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
     pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
     pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
+    pub type MappedLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
