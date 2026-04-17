@@ -219,7 +219,42 @@ impl From<AppConf> for AppState {
 pub type RouterAppState = State<SharedAppState>;
 
 ///
+/// Load the configuration for this app at the specified path. By default, we look into `./app.json`
+/// as the location of the configuration.
 ///
+/// ## Example
+/// ```
+/// use std::fs;
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_web::{rumtk_web_save_conf, rumtk_web_load_conf, rumtk_web_conf_get};
+/// use rumtk_web::{AppConf};
+/// use rumtk_core::strings::RUMString;
+///
+/// #[derive(Default)]
+/// struct Args {
+///     title: RUMString,
+///     description: RUMString,
+///     company: RUMString,
+///     copyright: RUMString,
+///     css_source_dir: RUMString,
+///     ip: RUMString,
+///     upload_limit: usize,
+///     threads: usize,
+///     skip_default_css: bool,
+/// }
+///
+/// let path = "./test_conf.json";
+///
+/// rumtk_web_save_conf!(&path);
+/// let app_state = rumtk_web_load_conf!(Args::default());
+/// let config = rumtk_web_conf_get!(app_state, |conf: &AppConf| { conf.clone() });
+///
+/// if fs::exists(&path).unwrap() {
+///     fs::remove_file(&path).unwrap();
+/// }
+///
+/// assert_eq!(config, AppConf::default(), "Configuration was not loaded properly!");
+/// ```
 ///
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
@@ -258,20 +293,58 @@ macro_rules! rumtk_web_load_conf {
     }};
 }
 
+///
+/// Serializes [AppConf] default contents and saves it to a file on disk at a specified path or relative to
+/// the current working directory. This is done to pre-craft a default configuration skeleton so
+/// a consumer of the framework can simply update that file before testing and shipping to production.
+///
+/// By default, we generate the skeleton in `./app.json`.
+///
+/// ## Example
+/// ```
+/// use std::fs;
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_web::rumtk_web_save_conf;
+/// use rumtk_core::strings::RUMString;
+///
+/// let path = "./test_conf.json";
+///
+/// if fs::exists(&path).unwrap() {
+///     fs::remove_file(&path).unwrap();
+/// }
+///
+/// assert!(!fs::exists(&path).unwrap(), "File was not deleted as expected!");
+///
+/// rumtk_web_save_conf!(&path);
+///
+/// assert!(fs::exists(&path).unwrap(), "File was not created as expected!");
+///
+/// if fs::exists(&path).unwrap() {
+///     fs::remove_file(&path).unwrap();
+/// }
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_save_conf {
+    (  ) => {{
+        rumtk_web_save_conf!("./app.json")
+    }};
     ( $path:expr ) => {{
         use rumtk_core::rumtk_serialize;
         use rumtk_core::strings::RUMStringConversions;
         use std::fs;
         use $crate::utils::AppConf;
 
-        let json = rumtk_serialize!(AppConf::default(), true)?;
+        let json = rumtk_serialize!(AppConf::default(), true).unwrap_or_default();
         fs::write($path, &json);
         json
     }};
 }
 
+///
+/// Retrieve a configuration ([AppConf]) static string. These are strings driven by the app designer's
+/// generated configuration.
+///
 #[macro_export]
 macro_rules! rumtk_web_get_string {
     ( $conf:expr, $item:expr ) => {{
@@ -281,6 +354,11 @@ macro_rules! rumtk_web_get_string {
     }};
 }
 
+///
+/// Retrieve a configuration ([AppConf]) item. These are strings driven by the app designer's
+/// generated configuration. Unlike [rumtk_web_get_string](crate::rumtk_web_get_string), the item
+/// retrieved here is separate from the strings section.
+///
 #[macro_export]
 macro_rules! rumtk_web_get_conf {
     ( $conf:expr, $item:expr ) => {{
@@ -290,6 +368,24 @@ macro_rules! rumtk_web_get_conf {
     }};
 }
 
+///
+/// Get field state from the configuration section of the [SharedAppState] object. The configuration
+/// is of type [AppConf].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_core::strings::RUMString;
+/// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
+/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_conf_get};
+///
+/// let state = rumtk_new_lock!(AppState::new());
+///
+/// let new_lang = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.lang.clone() });
+///
+/// assert_eq!(new_lang, "", "Language field in the configuration was not empty!");
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_conf_get {
     ( $state:expr, $function:expr ) => {{
@@ -302,6 +398,29 @@ macro_rules! rumtk_web_conf_get {
     }};
 }
 
+///
+/// Set field or state in the configuration section of the [SharedAppState] object. The configuration
+/// is of type [AppConf].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_core::strings::RUMString;
+/// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
+/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_conf_get};
+///
+/// let state = rumtk_new_lock!(AppState::new());
+/// let lang = RUMString::from("en");
+///
+/// rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+///     conf.lang = RUMString::from(lang.clone())
+/// });
+///
+/// let new_lang = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.lang.clone() });
+///
+/// assert_eq!(new_lang, lang, "Changing the language field in the configuration was not successful!");
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_conf_set {
     ( $state:expr, $function:expr ) => {{
@@ -314,6 +433,26 @@ macro_rules! rumtk_web_conf_set {
     }};
 }
 
+///
+/// Facility for modifying the state in an instance of [SharedAppState].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_core::strings::RUMString;
+/// use rumtk_web::{AppState, ClipboardID, SharedAppState};
+/// use rumtk_web::rumtk_web_modify_state;
+///
+/// let state = rumtk_new_lock!(AppState::new());
+/// let clipboard_id = ClipboardID::new("");
+///
+/// let item_list = rumtk_web_modify_state!(state, |state: &mut AppState| {
+///     state.pop_clipboard(&clipboard_id)
+/// });
+///
+/// assert_eq!(item_list, None, "A non empty item list was retrieved from the app state.");
+/// ```
+///
 #[macro_export]
 macro_rules! rumtk_web_modify_state {
     ( $state:expr, $function:expr ) => {{
