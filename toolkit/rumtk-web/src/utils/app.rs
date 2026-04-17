@@ -499,7 +499,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// }
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
-///     let job_id = rumtk_web_get_job_manager!().spawn_task(upload_processor(form))?;
+///     let job_id = rumtk_web_get_job_manager!()?.spawn_task(upload_processor(form))?;
 ///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state.clone());
 ///
 ///     rumtk_web_render_page_contents!(

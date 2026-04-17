@@ -20,6 +20,7 @@
  */
 use rumtk_core::core::RUMResult;
 use rumtk_core::id::id_to_uuid;
+use rumtk_core::strings::rumtk_format;
 use rumtk_core::strings::RUMString;
 use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
 use rumtk_core::types::RUMBuffer;
@@ -55,9 +56,13 @@ pub fn init_job_manager(workers: &usize) -> RUMResult<()> {
     Ok(())
 }
 
-pub fn get_manager() -> &'static mut JobManager {
-    let mut manager = unsafe { TASK_MANAGER.as_mut().unwrap() };
-    manager
+pub fn get_manager() -> RUMResult<&'static mut JobManager> {
+    unsafe {
+        match TASK_MANAGER.as_mut() {
+            Some(m) => Ok(m),
+            None => return Err(rumtk_format!("TaskManager is not initialized")),
+        }
+    }
 }
 
 #[macro_export]
