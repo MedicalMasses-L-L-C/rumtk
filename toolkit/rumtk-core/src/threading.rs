@@ -40,6 +40,9 @@ pub mod thread_primitives {
     /**************************** Types ***************************************/
     pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
     pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
+    pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
+    pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
+    pub type ReadCriticalSectionFunction<T, R> = fn(guard: SafeLockReadGuard<T>) -> RUMResult<R>;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
     /**************************** Helpers ***************************************/
@@ -59,7 +62,7 @@ pub mod thread_primitives {
             });
             match handle.lock() {
                 Ok(guard) => Ok(guard),
-                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime!")),
+                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime! => {}", e)),
             }
         }
     }
@@ -521,8 +524,11 @@ pub mod threading_functions {
     use crate::rumtk_sleep;
     use crate::strings::rumtk_format;
     pub use crate::threading::thread_primitives::init_runtime;
+    use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
+    use crate::threading::thread_primitives::{ReadCriticalSectionFunction, SafeLockWriteGuard};
     use num_cpus;
     use std::future::Future;
+    use std::sync::Arc;
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
     use tokio::time::sleep as tokio_sleep;
@@ -605,6 +611,33 @@ pub mod threading_functions {
                 &e
             )),
         }
+    }
+
+    pub fn new_lock<T>(data: T) -> SafeLock<T> {
+        Arc::new(AsyncRwLock::new(data))
+    }
+
+    pub fn process_read_critical_section<T, R>(
+        lock: SafeLock<T>,
+        critical_section: ReadCriticalSectionFunction<T, R>,
+    ) -> RUMResult<R> {
+        tokio::task::block_in_place(move || {
+            let read_guard = lock.blocking_read();
+            critical_section(read_guard)
+        })
+    }
+
+    pub fn process_write_critical_section<T, F>(
+        lock: SafeLock<T>,
+        critical_section: F,
+    ) -> RUMResult<()>
+    where
+        F: Fn(SafeLockWriteGuard<T>) -> RUMResult<()>,
+    {
+        tokio::task::block_in_place(move || {
+            let write_guard = lock.blocking_write();
+            critical_section(write_guard)
+        })
     }
 }
 
@@ -1030,6 +1063,87 @@ pub mod threading_macros {
         ( $worker_num:expr ) => {{
             use $crate::threading::threading_manager::TaskManager;
             TaskManager::new($worker_num);
+        }};
+    }
+
+    ///
+    /// Creates a new safe lock to guard the given data. This interface was created to cleanup lock
+    /// management for consumers of framework!
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_new_lock};
+    ///
+    /// let data = 5;
+    /// let lock = rumtk_new_lock!(data);
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_new_lock {
+        ( $data:expr ) => {{
+            use $crate::threading::threading_functions::new_lock;
+            new_lock($data)
+        }};
+    }
+
+    ///
+    /// Using a standard spin lock [SafeLock](thread_primitives::SafeLock), lock it and execute the
+    /// critical section. The critical section itself is a synchronous function of type
+    /// [ReadCriticalSectionFunction](thread_primitives::ReadCriticalSectionFunction). In this case,
+    /// the critical section simply retrieves a value from a guarded dataset.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_new_lock, rumtk_critical_section_read};
+    ///
+    /// let data = 5;
+    /// let lock = rumtk_new_lock!(data);
+    /// let result = rumtk_critical_section_read!(
+    ///     lock,
+    ///     |guard| {
+    ///         Ok(*guard)
+    ///     }
+    /// ).expect("No errors locking!");
+    ///
+    /// assert_eq!(result, data, "Critical section yielded invalid result!");
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_critical_section_read {
+        ( $lock:expr, $function:expr ) => {{
+            use $crate::threading::threading_functions::process_read_critical_section;
+            process_read_critical_section($lock, $function)
+        }};
+    }
+
+    ///
+    /// Using a standard spin lock [SafeLock](thread_primitives::SafeLock), lock it and execute the
+    /// critical section. The critical section itself is a synchronous function or closure. In this case,
+    /// the critical section attempts to modify the internal state of a guarded dataset.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_new_lock, rumtk_critical_section_write};
+    ///
+    /// let data = 5;
+    /// let new_data = 10;
+    /// let lock = rumtk_new_lock!(data);
+    /// let result = rumtk_critical_section_write!(
+    ///     lock,
+    ///     |mut guard| {
+    ///         *guard = new_data;
+    ///         Ok(())
+    ///     }
+    /// ).expect("No errors locking!");
+    ///
+    /// assert_eq!(result, (), "Critical section yielded invalid result!");
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_critical_section_write {
+        ( $lock:expr, $function:expr ) => {{
+            use $crate::threading::threading_functions::process_write_critical_section;
+            process_write_critical_section($lock, $function)
         }};
     }
 }
