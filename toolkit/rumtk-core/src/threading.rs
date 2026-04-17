@@ -26,8 +26,8 @@ pub mod thread_primitives {
     use crate::strings::rumtk_format;
     pub use std::sync::Mutex as SyncMutex;
     pub use std::sync::MutexGuard as SyncMutexGuard;
-    use std::sync::OnceLock;
     pub use std::sync::RwLock as SyncRwLock;
+    use std::sync::{Arc, OnceLock};
     pub use tokio::io;
     pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::runtime::Runtime as TokioRuntime;
@@ -39,6 +39,7 @@ pub mod thread_primitives {
     pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
     /**************************** Types ***************************************/
     pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
+    pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
     /**************************** Helpers ***************************************/
@@ -67,13 +68,13 @@ pub mod thread_primitives {
 pub mod threading_manager {
     use crate::core::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
+    use crate::threading::thread_primitives::SafeLock;
     use crate::threading::threading_functions::{async_sleep, sleep};
     use crate::types::{RUMHashMap, RUMID};
     use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
     use std::future::Future;
     use std::sync::Arc;
     pub use std::sync::RwLock as SyncRwLock;
-    use tokio::sync::RwLock as AsyncRwLock;
     use tokio::task::JoinHandle;
 
     const DEFAULT_SLEEP_DURATION: f32 = 0.001f32;
@@ -84,7 +85,7 @@ pub mod threading_manager {
     /// This type aliases a vector of T elements that will be used for passing arguments to the task processor.
     pub type TaskArgs<T> = TaskItems<T>;
     /// Function signature defining the interface of task processing logic.
-    pub type SafeTaskArgs<T> = Arc<AsyncRwLock<TaskItems<T>>>;
+    pub type SafeTaskArgs<T> = SafeLock<TaskItems<T>>;
     pub type AsyncTaskHandle<R> = AsyncHandle<TaskResult<R>>;
     pub type AsyncTaskHandles<R> = Vec<AsyncTaskHandle<R>>;
     //pub type TaskProcessor<T, R, Fut: Future<Output = TaskResult<R>>> = impl FnOnce(&SafeTaskArgs<T>) -> Fut;
@@ -100,7 +101,7 @@ pub mod threading_manager {
     pub type SafeTask<R> = Arc<Task<R>>;
     type SafeInternalTask<R> = Arc<SyncRwLock<Task<R>>>;
     pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
-    pub type SafeAsyncTaskTable<R> = Arc<AsyncRwLock<TaskTable<R>>>;
+    pub type SafeAsyncTaskTable<R> = SafeLock<TaskTable<R>>;
     pub type SafeSyncTaskTable<R> = Arc<SyncRwLock<TaskTable<R>>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
@@ -591,26 +592,19 @@ pub mod threading_functions {
     {
         let default_system_thread_count = get_default_system_thread_count();
 
-        let handle = init_runtime(default_system_thread_count)
-            .expect("Failed to initialize runtime")
-            .spawn(task);
+        let handle = init_runtime(default_system_thread_count)?.spawn(task);
 
         while !handle.is_finished() {
             rumtk_sleep!(DEFAULT_SLEEP_DURATION);
         }
 
-        tokio::task::block_in_place(move || {
-            match init_runtime(default_system_thread_count)
-                .expect("Failed to initialize runtime")
-                .block_on(handle)
-            {
-                Ok(r) => Ok(r),
-                Err(e) => Err(rumtk_format!(
-                    "Issue peeking into task in the runtime because => {}",
-                    &e
-                )),
-            }
-        })
+        match init_runtime(default_system_thread_count)?.block_on(handle) {
+            Ok(r) => Ok(r),
+            Err(e) => Err(rumtk_format!(
+                "Issue peeking into task in the runtime because => {}",
+                &e
+            )),
+        }
     }
 }
 
