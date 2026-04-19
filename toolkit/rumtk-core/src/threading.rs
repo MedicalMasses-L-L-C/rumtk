@@ -518,7 +518,7 @@ pub mod threading_functions {
     pub const MICROS_PER_SEC: u64 = 1000000;
     const DEFAULT_SLEEP_DURATION: f32 = 0.001;
     /**************************** Helpers **************************************/
-    pub fn init_runtime<'a>(workers: usize) -> RUMResult<&'a Runtime> {
+    pub fn init_runtime<'a>(workers: usize) -> &'a Runtime {
         unsafe {
             let runtime = DEFAULT_RUNTIME.get_or_init(|| {
                 let mut builder = tokio::runtime::Builder::new_multi_thread();
@@ -532,7 +532,7 @@ pub mod threading_functions {
                     ),
                 }
             });
-            Ok(runtime)
+            runtime
         }
     }
 
