@@ -18,12 +18,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::core::RUMResult;
+use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard};
+use crate::threading::thread_primitives::SafeLock;
+use crate::threading::threading_functions::{lock_read, new_lock, process_write_critical_section};
 use crate::types::RUMHashMap;
+use crate::{rumtk_critical_section_write, rumtk_lock_read, rumtk_new_lock};
+use clap::builder::TypedValueParser;
 use core::hash::Hash;
 pub use once_cell::unsync::Lazy;
-use std::sync::{
-    Arc, MappedRwLockReadGuard, MappedRwLockWriteGuard, RwLock, RwLockReadGuard, RwLockWriteGuard,
-};
+use std::fmt::Debug;
+use std::sync::LazyLock;
 /**************************** Constants**************************************/
 /// I don't think most scenarios will need more than 10 items worth of memory pre-allocated at a time.
 pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
@@ -35,117 +40,74 @@ pub const DEFAULT_CACHE_PAGE_SIZE: usize = 10;
 /// the search parsing object here.
 ///
 pub type RUMCache<K, V> = RUMHashMap<K, V>;
-pub type LazyRUMCache<K, V> = Lazy<Arc<RwLock<RUMCache<K, V>>>>;
-pub type LazyRUMCacheValue<V> = MappedRwLockReadGuard<'static, V>;
-pub type LazyRUMCacheMutValue<V> = MappedRwLockWriteGuard<'static, V>;
+pub type LockedCache<K, V> = SafeLock<RUMCache<K, V>>;
+pub type LazyRUMCache<K, V> = LazyLock<LockedCache<K, V>>;
+pub type RUMCacheValue<V> = AsyncOwnedRwLockReadGuard<V>;
+pub type RUMCacheMutValue<V> = AsyncOwnedRwLockWriteGuard<V>;
+pub type RUMCacheWriteGuard<K,V> = AsyncOwnedRwLockWriteGuard<RUMCache<K, V>>;
 
 /**************************** Traits ****************************************/
 
 /**************************** Helpers ***************************************/
-macro_rules! cache_unwrap {
-    ( $k:expr ) => {{
-        |d| {
-            d.get($k).expect("Item not found in cache despite having inserted it previously within this scope! This is completely unexpected and a fatal bug!")
-        }
-    }};
-    ( $k:expr, $default:expr ) => {{
-        |d| {
-            match d.get($k) {
-                Some(val) => val,
-                None => $default
-            }
-        }
-    }};
-}
 
-macro_rules! cache_mut_unwrap {
-    ( $k:expr ) => {{
-        |d| {
-            d.get_mut($k).expect("Item not found in cache despite having inserted it previously within this scope! This is completely unexpected and a fatal bug!")
-        }
-    }};
-    ( $k:expr, $default:expr ) => {{
-        |d| {
-            match d.get_mut($k) {
-                Some(val) => val,
-                None => $default
-            }
-        }
-    }};
-}
-
-pub const fn new_cache<K, V>() -> LazyRUMCache<K, V> {
-    LazyRUMCache::new(|| {
-        Arc::new(RwLock::new(RUMCache::with_capacity(
-            DEFAULT_CACHE_PAGE_SIZE,
-        )))
-    })
-}
-
-pub unsafe fn get_or_set_from_cache<K, V, F>(
-    cache: *mut LazyRUMCache<K, V>,
-    expr: &K,
-    new_fn: F,
-) -> LazyRUMCacheValue<V>
+pub const fn new_cache<K, V>() -> LazyRUMCache<K, V>
 where
-    K: Hash + Eq + Clone + 'static,
-    V: Clone,
-    F: Fn(&K) -> V,
+    K: Debug,
+    V: Debug,
 {
-    let cache_entity = &mut *cache;
-    if !cache_entity.read().unwrap().contains_key(&expr) {
-        let cache_ref = Arc::get_mut(cache_entity).unwrap();
-        cache_ref
-            .write()
-            .unwrap()
-            .insert(expr.clone(), new_fn(&expr).clone());
-    }
-    RwLockReadGuard::map(cache_entity.read().unwrap(), cache_unwrap!(expr))
+    LazyLock::new(|| {
+        let cache = RUMCache::<K, V>::with_capacity(DEFAULT_CACHE_PAGE_SIZE);
+        rumtk_new_lock!(cache)
+    })
 }
 
 pub unsafe fn cache_push<K, V>(
     cache: *mut LazyRUMCache<K, V>,
-    expr: &K,
-    val: &V,
-) -> LazyRUMCacheValue<V>
+    key: &K,
+    val: V,
+)
 where
-    K: Hash + Eq + Clone + 'static,
-    V: Clone,
+    K: Hash + Eq + Clone + Send + Sync + 'static,
+    V: Clone + Send + Sync + 'static,
 {
-    let cache_entity = &mut *cache;
-    cache_entity
-        .write()
-        .unwrap()
-        .insert(expr.clone(), val.clone());
-    RwLockReadGuard::map(cache_entity.read().unwrap(), cache_unwrap!(expr))
+    rumtk_critical_section_write!((**cache).clone(), |mut guard: RUMCacheWriteGuard<K,V>| {
+        guard.insert(key.clone(), val.clone());
+    })
 }
 
 pub unsafe fn cache_get<K, V>(
     cache: *mut LazyRUMCache<K, V>,
-    expr: &K,
-    default: &'static V,
-) -> LazyRUMCacheValue<V>
+    key: &K,
+) -> Option<V>
 where
-    K: Hash + Eq + Clone + 'static,
-    V: Clone,
+    K: Hash + Eq + Clone + Send + Sync + 'static,
+    V: Clone + Send + Sync + 'static,
 {
-    let cache_entity = &mut *cache;
-    let cache_ref = cache_entity.read().unwrap();
-    RwLockReadGuard::map(cache_ref, cache_unwrap!(expr, default))
+    let guard = rumtk_lock_read!(*cache);
+    match (*guard).get(key) {
+        Some(val) => Some(val.clone()),
+        None => None
+    }
 }
 
-pub unsafe fn cache_get_mut<K, V>(
+pub unsafe fn cache_get_or_set<K, V, F>(
     cache: *mut LazyRUMCache<K, V>,
-    expr: &K,
-    default: &'static mut V,
-) -> LazyRUMCacheMutValue<V>
+    key: &K,
+    default_func: F
+) -> RUMResult<V>
 where
-    K: Hash + Eq + Clone + 'static,
-    V: Clone,
+    K: Hash + Eq + Clone + Send + Sync + 'static,
+    V: Clone + Send + Sync + 'static,
+    F: Fn() -> RUMResult<V>
 {
-    let cache_entity = &mut *cache;
-    let cache_ref = cache_entity.write().unwrap();
-    RwLockWriteGuard::map(cache_ref, cache_mut_unwrap!(expr, default))
+    let val = match cache_get(cache, key) {
+        Some(val) => val,
+        None => {
+            cache_push(cache, key, default_func()?);
+            cache_get(cache, key).unwrap()
+        }
+    };
+    Ok(val)
 }
 
 pub mod cache_macros {
@@ -180,14 +142,14 @@ pub mod cache_macros {
     ///
     #[macro_export]
     macro_rules! rumtk_cache_fetch {
-        ( $cache:expr, $key:expr, $func:expr ) => {{
-            use $crate::cache::get_or_set_from_cache;
+        ( $cache:expr, $key:expr, $default_func:expr ) => {{
+            use $crate::cache::{cache_get_or_set};
             // Do not remove the clippy disable decorator here since we do intend to expand within
             // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
             // internal references due to compiler error
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
-                get_or_set_from_cache($cache, $key, $func)
+                cache_get_or_set($cache, $key, $default_func)
             }
         }};
     }
@@ -288,14 +250,14 @@ pub mod cache_macros {
     ///
     #[macro_export]
     macro_rules! rumtk_cache_get {
-        ( $cache:expr, $key:expr, $default_function:expr ) => {{
+        ( $cache:expr, $key:expr ) => {{
             use $crate::cache::cache_get;
             // Do not remove the clippy disable decorator here since we do intend to expand within
             // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
             // internal references due to compiler error
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
-                cache_get($cache, $key, $default_function)
+                cache_get($cache, $key)
             }
         }};
     }
