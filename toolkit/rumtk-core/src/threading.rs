@@ -30,19 +30,20 @@ pub mod thread_primitives {
     pub use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::runtime::Runtime as TokioRuntime;
     pub use tokio::sync::{
-        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard, RwLock as AsyncRwLock,
+        Mutex as AsyncMutex, MutexGuard as AsyncMutexGuard,
+        OwnedRwLockReadGuard as AsyncOwnedRwLockMappedReadGuard,
+        OwnedRwLockReadGuard as AsyncOwnedRwLockReadGuard,
+        OwnedRwLockWriteGuard as AsyncOwnedRwLockWriteGuard, RwLock as AsyncRwLock,
         RwLockMappedWriteGuard as AsyncRwLockMappedWriteGuard,
-        RwLockReadGuard as AsyncRwLockMappedReadGuard, RwLockReadGuard as AsyncRwLockReadGuard,
-        RwLockWriteGuard as AsyncRwLockWriteGuard,
+        RwLockReadGuard as AsyncRwLockReadGuard, RwLockWriteGuard as AsyncRwLockWriteGuard,
     };
 
     /**************************** Types ***************************************/
-    pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
-    pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
-    pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
     pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type MappedLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
+    pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
+    pub type SafeTokioRuntime = OnceLock<TokioRuntime>;
 }
 
 pub mod threading_manager {
@@ -498,7 +499,7 @@ pub mod threading_manager {
 ///
 pub mod threading_functions {
     use crate::core::RUMResult;
-    use crate::net::tcp::{RuntimeGuard, SafeLockReadGuard, SafeTokioRuntime, SyncMutex};
+    use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard, SafeLockReadGuard, SafeTokioRuntime};
     use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::SafeLockWriteGuard;
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
@@ -507,6 +508,7 @@ pub mod threading_functions {
     use std::sync::Arc;
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
+    use tokio::runtime::Runtime;
     use tokio::time::sleep as tokio_sleep;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
@@ -516,24 +518,21 @@ pub mod threading_functions {
     pub const MICROS_PER_SEC: u64 = 1000000;
     const DEFAULT_SLEEP_DURATION: f32 = 0.001;
     /**************************** Helpers **************************************/
-    pub fn init_runtime(workers: usize) -> RUMResult<RuntimeGuard<'static>> {
+    pub fn init_runtime<'a>(workers: usize) -> RUMResult<&'a Runtime> {
         unsafe {
-            let handle = DEFAULT_RUNTIME.get_or_init(|| {
+            let runtime = DEFAULT_RUNTIME.get_or_init(|| {
                 let mut builder = tokio::runtime::Builder::new_multi_thread();
                 builder.worker_threads(workers);
                 builder.enable_all();
                 match builder.build() {
-                    Ok(handle) => SyncMutex::new(handle),
+                    Ok(handle) => handle,
                     Err(e) => panic!(
                         "Unable to initialize threading tokio runtime because {}!",
                         &e
                     ),
                 }
             });
-            match handle.lock() {
-                Ok(guard) => Ok(guard),
-                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime! => {}", e)),
-            }
+            Ok(runtime)
         }
     }
 
