@@ -245,7 +245,7 @@ pub mod threading_manager {
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let rt = rumtk_init_threads!(self.workers)?;
+            let rt = rumtk_init_threads!(self.workers);
             rumtk_spawn_task!(
                 rt,
                 Self::_add_task_async(id.clone(), self.tasks.clone(), task)
@@ -263,7 +263,7 @@ pub mod threading_manager {
         {
             let id = TaskID::new_v4();
             let tasks = self.tasks.clone();
-            rumtk_resolve_task!(Self::_add_task_async(id.clone(), tasks, task))
+            Ok(rumtk_resolve_task!(Self::_add_task_async(id.clone(), tasks, task)))
         }
 
         async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
@@ -500,7 +500,6 @@ pub mod threading_manager {
 pub mod threading_functions {
     use crate::core::RUMResult;
     use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard, SafeLockReadGuard, SafeTokioRuntime};
-    use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::SafeLockWriteGuard;
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
     use num_cpus;
@@ -583,28 +582,18 @@ pub mod threading_functions {
     ///
     /// let result = block_on_task(async {
     ///     Hello
-    /// }).unwrap();
+    /// });
     ///
     /// assert_eq!(Hello, result, "Result mismatches expected! {} vs. {}", Hello, result);
     /// ```
     ///
-    pub fn block_on_task<R, F>(task: F) -> RUMResult<R>
+    pub fn block_on_task<R, F>(task: F) -> R
     where
         F: Future<Output = R> + Send + 'static,
         F::Output: Send + 'static,
     {
-        let default_system_thread_count = get_default_system_thread_count();
-        let rt = init_runtime(get_default_system_thread_count())?;
-
-        let handle = rt.spawn(task);
-
-        match rt.block_on(handle) {
-            Ok(r) => Ok(r),
-            Err(e) => Err(rumtk_format!(
-                "Issue peeking into task in the runtime because => {}",
-                &e
-            )),
-        }
+        let rt = init_runtime(get_default_system_thread_count());
+        rt.block_on(task)
     }
 
     pub fn new_lock<T>(data: T) -> SafeLock<T> {
