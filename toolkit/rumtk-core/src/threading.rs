@@ -22,8 +22,6 @@
 /// This module provides all the primitives needed to build a multithreaded application.
 ///
 pub mod thread_primitives {
-    use crate::core::RUMResult;
-    use crate::strings::rumtk_format;
     pub use std::sync::Mutex as SyncMutex;
     pub use std::sync::MutexGuard as SyncMutexGuard;
     pub use std::sync::RwLock as SyncRwLock;
@@ -38,36 +36,13 @@ pub mod thread_primitives {
         RwLockWriteGuard as AsyncRwLockWriteGuard,
     };
 
-    pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
     /**************************** Types ***************************************/
-    pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
     pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
+    pub type SafeTokioRuntime = OnceLock<SyncMutex<TokioRuntime>>;
+    pub type RuntimeGuard<'a> = SyncMutexGuard<'a, TokioRuntime>;
     pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type MappedLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
     pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
-    /**************************** Globals **************************************/
-    static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
-    /**************************** Helpers ***************************************/
-    pub fn init_runtime(workers: usize) -> RUMResult<RuntimeGuard<'static>> {
-        unsafe {
-            let handle = DEFAULT_RUNTIME.get_or_init(|| {
-                let mut builder = tokio::runtime::Builder::new_multi_thread();
-                builder.worker_threads(workers);
-                builder.enable_all();
-                match builder.build() {
-                    Ok(handle) => SyncMutex::new(handle),
-                    Err(e) => panic!(
-                        "Unable to initialize threading tokio runtime because {}!",
-                        &e
-                    ),
-                }
-            });
-            match handle.lock() {
-                Ok(guard) => Ok(guard),
-                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime! => {}", e)),
-            }
-        }
-    }
 }
 
 pub mod threading_manager {
@@ -523,10 +498,8 @@ pub mod threading_manager {
 ///
 pub mod threading_functions {
     use crate::core::RUMResult;
-    use crate::net::tcp::SafeLockReadGuard;
-    use crate::rumtk_sleep;
+    use crate::net::tcp::{RuntimeGuard, SafeLockReadGuard, SafeTokioRuntime, SyncMutex};
     use crate::strings::rumtk_format;
-    pub use crate::threading::thread_primitives::init_runtime;
     use crate::threading::thread_primitives::SafeLockWriteGuard;
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
     use num_cpus;
@@ -535,12 +508,34 @@ pub mod threading_functions {
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
     use tokio::time::sleep as tokio_sleep;
+    /**************************** Globals **************************************/
+    static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
 
     pub const NANOS_PER_SEC: u64 = 1000000000;
     pub const MILLIS_PER_SEC: u64 = 1000;
     pub const MICROS_PER_SEC: u64 = 1000000;
-
     const DEFAULT_SLEEP_DURATION: f32 = 0.001;
+    /**************************** Helpers **************************************/
+    pub fn init_runtime(workers: usize) -> RUMResult<RuntimeGuard<'static>> {
+        unsafe {
+            let handle = DEFAULT_RUNTIME.get_or_init(|| {
+                let mut builder = tokio::runtime::Builder::new_multi_thread();
+                builder.worker_threads(workers);
+                builder.enable_all();
+                match builder.build() {
+                    Ok(handle) => SyncMutex::new(handle),
+                    Err(e) => panic!(
+                        "Unable to initialize threading tokio runtime because {}!",
+                        &e
+                    ),
+                }
+            });
+            match handle.lock() {
+                Ok(guard) => Ok(guard),
+                Err(e) => Err(rumtk_format!("Unable to lock tokio runtime! => {}", e)),
+            }
+        }
+    }
 
     pub fn get_default_system_thread_count() -> usize {
         let cpus: usize = num_cpus::get();
@@ -600,14 +595,11 @@ pub mod threading_functions {
         F::Output: Send + 'static,
     {
         let default_system_thread_count = get_default_system_thread_count();
+        let rt = init_runtime(get_default_system_thread_count())?;
 
-        let handle = init_runtime(default_system_thread_count)?.spawn(task);
+        let handle = rt.spawn(task);
 
-        while !handle.is_finished() {
-            rumtk_sleep!(DEFAULT_SLEEP_DURATION);
-        }
-
-        match init_runtime(default_system_thread_count)?.block_on(handle) {
+        match rt.block_on(handle) {
             Ok(r) => Ok(r),
             Err(e) => Err(rumtk_format!(
                 "Issue peeking into task in the runtime because => {}",
@@ -708,13 +700,14 @@ pub mod threading_macros {
     #[macro_export]
     macro_rules! rumtk_init_threads {
         ( ) => {{
-            use $crate::threading::thread_primitives::init_runtime;
-            use $crate::threading::threading_functions::get_default_system_thread_count;
+            use $crate::threading::threading_functions::{
+                get_default_system_thread_count, init_runtime,
+            };
             init_runtime(get_default_system_thread_count())
         }};
         ( $threads:expr ) => {{
             use $crate::rumtk_cache_fetch;
-            use $crate::threading::thread_primitives::init_runtime;
+            use $crate::threading::threading_functions::init_runtime;
             init_runtime($threads)
         }};
     }
