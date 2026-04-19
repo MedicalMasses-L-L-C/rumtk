@@ -710,7 +710,7 @@ pub mod threading_functions {
     /// let data = 5;
     /// let lock = new_lock(data.clone());
     /// let new_data = 10;
-    /// 
+    ///
     /// *lock_write(lock.clone()) = new_data;
     ///
     /// let result = *lock_read(lock);
@@ -1228,6 +1228,61 @@ pub mod threading_macros {
         ( $lock:expr, $function:expr ) => {{
             use $crate::threading::threading_functions::process_write_critical_section;
             process_write_critical_section($lock, $function)
+        }};
+    }
+
+    ///
+    /// Framework interface to obtain a `read` guard to the locked data.
+    /// To access the internal data, you will need to dereference the guard (`*guard`).
+    ///
+    /// It is preferred to use [rumtk_critical_section_read] if you need to avoid `time of check time
+    /// of use` security bugs.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_new_lock, rumtk_lock_read};
+    ///
+    /// let data = 5;
+    /// let lock = rumtk_new_lock!(data.clone());
+    /// let result = *rumtk_lock_read!(lock);
+    ///
+    /// assert_eq!(result, data, "Failed to access locked data.");
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_lock_read {
+        ( $lock:expr ) => {{
+            use $crate::threading::threading_functions::lock_read;
+            lock_read($lock.clone())
+        }};
+    }
+
+    ///
+    /// Framework interface to obtain a `write` guard to the locked data.
+    /// To access the internal data, you will need to dereference the guard (`*guard`).
+    ///
+    /// It is preferred to use [rumtk_critical_section_write] if you need to avoid `time of check time
+    /// of use` security bugs.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_new_lock, rumtk_lock_read, rumtk_lock_write};
+    ///
+    /// let data = 5;
+    /// let lock = rumtk_new_lock!(data.clone());
+    /// let new_data = 10;
+    ///
+    /// *rumtk_lock_write!(lock) = new_data;
+    /// let result = *rumtk_lock_read!(lock);
+    ///
+    /// assert_eq!(result, new_data, "Failed to modify locked data.");
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_lock_write {
+        ( $lock:expr ) => {{
+            use $crate::threading::threading_functions::lock_write;
+            lock_write($lock.clone())
         }};
     }
 }
