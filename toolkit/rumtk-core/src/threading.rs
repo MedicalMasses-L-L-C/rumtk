@@ -600,6 +600,27 @@ pub mod threading_functions {
         Arc::new(AsyncRwLock::new(data))
     }
 
+    ///
+    /// This function gives you read access to underlying structure.
+    ///
+    /// Helper function for executing microtask immediately after locking the spin lock. This function
+    /// should be used in situations in which you want to minimize the risk of Time of Check Time of
+    /// Use security bugs.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::threading::thread_primitives::SafeLock;
+    /// use rumtk_core::threading::threading_functions::{new_lock, process_read_critical_section};
+    /// 
+    /// let data = 5;
+    /// let lock = new_lock(data.clone());
+    /// let result = process_read_critical_section(lock, |guard| {
+    ///     Ok(*guard)
+    /// }).unwrap();
+    /// 
+    /// assert_eq!(result, data, "Failed to execute critical section through which we retrieve the locked data!");
+    /// ```
+    ///
     pub fn process_read_critical_section<T, R, F>(
         lock: SafeLock<T>,
         critical_section: F,
@@ -613,6 +634,29 @@ pub mod threading_functions {
         })
     }
 
+    ///
+    /// This function gives you write access to underlying structure.
+    ///
+    /// Helper function for executing microtask immediately after locking the spin lock. This function
+    /// should be used in situations in which you want to minimize the risk of Time of Check Time of
+    /// Use security bugs.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::threading::thread_primitives::SafeLock;
+    /// use rumtk_core::threading::threading_functions::{new_lock, process_write_critical_section};
+    ///
+    /// let data = 5;
+    /// let lock = new_lock(data.clone());
+    /// let new_data = 10;
+    /// let result = process_write_critical_section(lock, |mut guard| {
+    ///     *guard = new_data;
+    ///     Ok(*guard)
+    /// }).unwrap();
+    ///
+    /// assert_eq!(result, new_data, "Failed to execute critical section through which we modify the locked data!");
+    /// ```
+    ///
     pub fn process_write_critical_section<T, F, R>(
         lock: SafeLock<T>,
         critical_section: F,
