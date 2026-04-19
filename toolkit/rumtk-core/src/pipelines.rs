@@ -414,7 +414,7 @@ pub mod pipeline_functions {
     /// ];
     ///
     /// let pipeline = pipeline_generate_pipeline(&commands).unwrap();
-    /// let result = rumtk_resolve_task!(pipeline_await_pipeline(pipeline)).unwrap().unwrap();
+    /// let result = rumtk_resolve_task!(pipeline_await_pipeline(pipeline)).unwrap();
     ///
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
@@ -721,7 +721,7 @@ pub mod pipeline_macros {
     ///     Ok(result)
     /// };
     ///
-    /// let result = rumtk_resolve_task!(f()).unwrap().unwrap();
+    /// let result = rumtk_resolve_task!(f()).unwrap();
     /// let string = result.to_vec().to_rumstring();
     /// let result_buffer_size = string.split("      ").last().unwrap().split("    ").last().unwrap().to_rumstring();
     ///

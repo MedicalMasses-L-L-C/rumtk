@@ -762,7 +762,7 @@ pub mod threading_macros {
     ///
     ///     let args = rumtk_create_task_args!(1);                               // Creates a vector of i32s
     ///     let task = rumtk_create_task!(test, args);                           // Creates a standard task which consists of a function or closure accepting a Vec<T>
-    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task)); // Spawn's task and waits for it to conclude.
+    ///     let result = rumtk_resolve_task!(task); // Spawn's task and waits for it to conclude.
     /// ```
     ///
     /// ```
@@ -781,7 +781,7 @@ pub mod threading_macros {
     ///     let thread_count: usize = 10;
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
+    ///     let result = rumtk_resolve_task!(task);
     /// ```
     #[macro_export]
     macro_rules! rumtk_init_threads {
@@ -867,7 +867,7 @@ pub mod threading_macros {
     ///
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
+    ///     let result = rumtk_resolve_task!(task);
     /// ```
     ///
     #[macro_export]
@@ -983,8 +983,8 @@ pub mod threading_macros {
     ///     }
     ///
     ///     let result = rumtk_exec_task!(test, vec![5]).unwrap();
-    ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
-    ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
+    ///     assert_eq!(&result.clone(), &vec![5], "Results mismatch");
+    ///     assert_ne!(&result.clone(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
     ///
     /// ### With Custom Thread Count
@@ -1002,8 +1002,8 @@ pub mod threading_macros {
     ///     }
     ///
     ///     let result = rumtk_exec_task!(test, vec![5], 5).unwrap();
-    ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
-    ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
+    ///     assert_eq!(&result.clone(), &vec![5], "Results mismatch");
+    ///     assert_ne!(&result.clone(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
     ///
     /// ### With Async Function Body
@@ -1021,8 +1021,8 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     },
     ///     vec![5]).unwrap();
-    ///     assert_eq!(&result.clone().unwrap(), &vec![5], "Results mismatch");
-    ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
+    ///     assert_eq!(&result.clone(), &vec![5], "Results mismatch");
+    ///     assert_ne!(&result.clone(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
     ///
     /// ### With Async Function Body and No Args
@@ -1037,13 +1037,13 @@ pub mod threading_macros {
     ///         Ok(result)
     ///     }).unwrap();
     ///     let empty = Vec::<i32>::new();
-    ///     assert_eq!(&result.clone().unwrap(), &empty, "Results mismatch");
-    ///     assert_ne!(&result.clone().unwrap(), &vec![5, 10], "Results do not mismatch as expected!");
+    ///     assert_eq!(&result.clone(), &empty, "Results mismatch");
+    ///     assert_ne!(&result.clone(), &vec![5, 10], "Results do not mismatch as expected!");
     /// ```
     ///
     /// ## Equivalent To
     ///
-    /// ```
+    /// ```no_run
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
     ///     use rumtk_core::core::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
@@ -1058,7 +1058,7 @@ pub mod threading_macros {
     ///
     ///     let args = rumtk_create_task_args!(1);
     ///     let task = rumtk_create_task!(test, args);
-    ///     let result = rumtk_resolve_task!(rumtk_spawn_task!(task));
+    ///     let result = rumtk_resolve_task!(task);
     /// ```
     ///
     #[macro_export]

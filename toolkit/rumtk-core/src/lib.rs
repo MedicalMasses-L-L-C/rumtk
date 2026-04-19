@@ -530,10 +530,13 @@ mod tests {
         let address_info = server.get_address_info().unwrap();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
+        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
         };
+        println!("Sleeping");
+        rumtk_sleep!(1);
         match client.send(msg.to_raw()) {
             Ok(_) => (),
             Err(e) => panic!("Failed to send message because {}", e),
@@ -553,10 +556,13 @@ mod tests {
         let address_info = server.get_address_info().unwrap();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
+        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
-            Err(e) => panic!("Failed to create server because {}", e),
+            Err(e) => panic!("Failed to create client because {}", e),
         };
+        println!("Sleeping");
+        rumtk_sleep!(1);
         let expected_client_id = client.get_address().expect("Failed to get client id");
         let clients = server.get_client_ids();
         let incoming_client_id = clients.get(0).expect("Expected client to have connected!");
