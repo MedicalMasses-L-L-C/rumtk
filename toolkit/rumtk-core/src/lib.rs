@@ -243,7 +243,7 @@ mod tests {
     fn test_search_string_letters() {
         let input = "Hello World!";
         let expr = r"\w";
-        let result = string_search(input, expr, "");
+        let result = string_search(input, expr, "").unwrap();
         let expected: RUMString = RUMString::from("HelloWorld");
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",
@@ -257,7 +257,7 @@ mod tests {
     fn test_search_string_words() {
         let input = "Hello World!";
         let expr = r"\w+";
-        let result = string_search(input, expr, " ");
+        let result = string_search(input, expr, " ").unwrap();
         let expected: RUMString = RUMString::from("Hello World");
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",
@@ -271,7 +271,7 @@ mod tests {
     fn test_search_string_named_groups() {
         let input = "Hello World!";
         let expr = r"(?<hello>\w{5}) (?<world>\w{5})";
-        let result = string_search_named_captures(input, expr, "");
+        let result = string_search_named_captures(input, expr, "").unwrap();
         let expected: RUMString = RUMString::from("World");
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",
@@ -285,7 +285,7 @@ mod tests {
     fn test_search_string_all_groups() {
         let input = "Hello World!";
         let expr = r"(?<hello>\w{5}) (?<world>\w{5})";
-        let result = string_search_all_captures(input, expr, "");
+        let result = string_search_all_captures(input, expr, "").unwrap();
         let expected: Vec<&str> = vec!["Hello", "World"];
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",

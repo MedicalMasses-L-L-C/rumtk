@@ -20,8 +20,9 @@
 
 pub mod rumtk_search {
     use crate::cache::{new_cache, LazyRUMCache};
+    use crate::core::RUMResult;
     use crate::rumtk_cache_fetch;
-    use crate::strings::{CompactStringExt, RUMString};
+    use crate::strings::{rumtk_format, CompactStringExt, RUMString};
     use crate::types::RUMHashMap;
     use regex::Regex;
     /**************************** Globals **************************************/
@@ -36,8 +37,11 @@ pub mod rumtk_search {
     /**************************** Traits ****************************************/
 
     /**************************** Helpers ***************************************/
-    fn compile_regex(expr: &RUMString) -> Regex {
-        Regex::new(expr).unwrap()
+    fn compile_regex(expr: &str) -> RUMResult<Regex> {
+        match Regex::new(expr) {
+            Ok(regex) => Ok(regex),
+            Err(e) => Err(rumtk_format!("Invalid regex => {}", e))
+        }
     }
 
     ///
@@ -47,8 +51,9 @@ pub mod rumtk_search {
     ///
     /// This function returns an instance of SearchGroup which is the hash map.
     ///
-    pub fn string_search_named_captures(input: &str, expr: &str, default: &str) -> SearchGroups {
-        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
+    pub fn string_search_named_captures(input: &str, expr: &str, default: &str) -> RUMResult<SearchGroups> {
+        let key = RUMString::from(expr);
+        let re: Regex = rumtk_cache_fetch!(&raw mut re_cache, &key, || {compile_regex(expr)})?;
         let names: Vec<&str> = re
             .capture_names()
             .skip(1)
@@ -64,7 +69,7 @@ pub mod rumtk_search {
         }
 
         if clean_names.is_empty() {
-            return groups;
+            return Ok(groups);
         }
 
         for name in &clean_names {
@@ -80,7 +85,7 @@ pub mod rumtk_search {
             }
         }
 
-        groups
+        Ok(groups)
     }
 
     ///
@@ -90,8 +95,9 @@ pub mod rumtk_search {
     ///
     /// This function returns an instance of CapturedList which is the list of strings.
     ///
-    pub fn string_search_all_captures(input: &str, expr: &str, default: &str) -> CapturedList {
-        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
+    pub fn string_search_all_captures(input: &str, expr: &str, default: &str) -> RUMResult<CapturedList> {
+        let key = RUMString::from(expr);
+        let re: Regex = rumtk_cache_fetch!(&raw mut re_cache, &key, || {compile_regex(expr)})?;
         let mut capture_list = CapturedList::with_capacity(DEFAULT_REGEX_CACHE_PAGE_SIZE);
 
         for caps in re.captures_iter(input) {
@@ -101,7 +107,7 @@ pub mod rumtk_search {
             }
         }
 
-        capture_list
+        Ok(capture_list)
     }
 
     ///
@@ -125,8 +131,9 @@ pub mod rumtk_search {
     /// ```
     /// Use \" \" in join_pattern if you wish to have spaces in between matches.
     ///
-    pub fn string_search(input: &str, expr: &str, join_pattern: &str) -> RUMString {
-        let re = rumtk_cache_fetch!(&raw mut re_cache, &RUMString::from(expr), compile_regex);
-        string_list(input, &re).join_compact(join_pattern)
+    pub fn string_search(input: &str, expr: &str, join_pattern: &str) -> RUMResult<RUMString> {
+        let key = RUMString::from(expr);
+        let re: Regex = rumtk_cache_fetch!(&raw mut re_cache, &key, || {compile_regex(expr)})?;
+        Ok(string_list(input, &re).join_compact(join_pattern))
     }
 }
