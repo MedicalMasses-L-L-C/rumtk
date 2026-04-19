@@ -327,7 +327,7 @@ mod tests {
         let locked_args = RwLock::new(expected.clone());
         let task_args = SafeTaskArgs::<i32>::new(locked_args);
         let task_result = rumtk_wait_on_task!(task_processor, &task_args);
-        let result = task_result.unwrap().unwrap();
+        let result = task_result.unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
@@ -348,7 +348,7 @@ mod tests {
         };
         let task_args = rumtk_create_task_args!(1, 2, 3);
         let task_result = rumtk_wait_on_task!(task_processor, &task_args);
-        let result = task_result.unwrap().unwrap();
+        let result = task_result.unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
 
@@ -370,7 +370,6 @@ mod tests {
             },
             vec![1, 2, 3]
         )
-        .unwrap()
         .unwrap();
         assert_eq!(&result, &expected, "{}", rumtk_format!("Task processing returned a different result than expected! Expected {:?} \nResults {:?}", &expected, &result));
     }
@@ -413,6 +412,17 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_block_on_task() {
+        let expect = 5;
+        let value = block_on_task(async move { 5 });
+        assert_eq!(
+            value, 5,
+            "Value mismatch from async task! Expected {} but got {}",
+            &expect, &value
+        );
+    }
+
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
@@ -420,6 +430,7 @@ mod tests {
         pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process,
     };
     use crate::pipelines::pipeline_types::RUMCommand;
+    use crate::threading::threading_functions::block_on_task;
     use crate::threading::threading_manager::*;
 
     #[test]
