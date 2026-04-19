@@ -39,9 +39,9 @@ pub mod thread_primitives {
     };
 
     /**************************** Types ***************************************/
-    pub type SafeLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
-    pub type MappedLockReadGuard<'a, T> = AsyncRwLockReadGuard<'a, T>;
-    pub type SafeLockWriteGuard<'a, T> = AsyncRwLockWriteGuard<'a, T>;
+    pub type SafeLockReadGuard<T> = AsyncOwnedRwLockReadGuard<T>;
+    pub type MappedLockReadGuard<T> = AsyncOwnedRwLockReadGuard<T>;
+    pub type SafeLockWriteGuard<T> = AsyncOwnedRwLockWriteGuard<T>;
     pub type SafeLock<T> = Arc<AsyncRwLock<T>>;
     pub type SafeTokioRuntime = OnceLock<TokioRuntime>;
 }
@@ -499,8 +499,7 @@ pub mod threading_manager {
 ///
 pub mod threading_functions {
     use crate::core::RUMResult;
-    use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard, SafeLockReadGuard, SafeTokioRuntime};
-    use crate::threading::thread_primitives::SafeLockWriteGuard;
+    use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard, SafeLockReadGuard, SafeLockWriteGuard, SafeTokioRuntime};
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
     use num_cpus;
     use std::future::Future;
@@ -624,12 +623,12 @@ pub mod threading_functions {
     pub fn process_read_critical_section<T, R, F>(
         lock: SafeLock<T>,
         critical_section: F,
-    ) -> RUMResult<R>
-    where
-        F: Fn(SafeLockReadGuard<T>) -> RUMResult<R>,
+    ) -> R
+    where 
+        F: Fn(SafeLockReadGuard<T>) -> R, T: Send + Sync + 'static,
     {
         tokio::task::block_in_place(move || {
-            let read_guard = lock.blocking_read();
+            let read_guard = lock_read(lock);
             critical_section(read_guard)
         })
     }
@@ -657,15 +656,15 @@ pub mod threading_functions {
     /// assert_eq!(result, new_data, "Failed to execute critical section through which we modify the locked data!");
     /// ```
     ///
-    pub fn process_write_critical_section<T, F, R>(
+    pub fn process_write_critical_section<T, R, F>(
         lock: SafeLock<T>,
         critical_section: F,
-    ) -> RUMResult<R>
+    ) -> R
     where
-        F: Fn(SafeLockWriteGuard<T>) -> RUMResult<R>,
+        F: Fn(SafeLockWriteGuard<T>) -> R, T: Send + Sync + 'static,
     {
         tokio::task::block_in_place(move || {
-            let write_guard = lock.blocking_write();
+            let write_guard = lock_write(lock);
             critical_section(write_guard)
         })
     }
