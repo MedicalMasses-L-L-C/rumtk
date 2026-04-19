@@ -31,8 +31,8 @@ pub mod tcp {
     use crate::threading::threading_manager::SafeTaskArgs;
     use crate::types::RUMOrderedMap;
     use crate::{
-        rumtk_async_sleep, rumtk_create_task, rumtk_create_task_args, rumtk_init_threads,
-        rumtk_new_lock, rumtk_resolve_task, rumtk_spawn_task, rumtk_wait_on_task,
+        rumtk_async_sleep, rumtk_create_task, rumtk_create_task_args,
+        rumtk_new_lock, rumtk_resolve_task, rumtk_wait_on_task,
     };
     use ahash::HashMapExt;
     use compact_str::ToCompactString;
@@ -439,7 +439,7 @@ pub mod tcp {
         pub fn new(ip: &str, port: u16) -> RUMResult<RUMClientHandle> {
             let con: ConnectionInfo = (RUMString::from(ip), port);
             let args = rumtk_create_task_args!(con);
-            let client = rumtk_wait_on_task!(RUMClientHandle::new_helper, args)?;
+            let client = rumtk_wait_on_task!(RUMClientHandle::new_helper, args);
             Ok(RUMClientHandle {
                 client: RUMNetClient::new(AsyncRwLock::new(client?)),
             })
@@ -451,7 +451,7 @@ pub mod tcp {
         pub fn send(&mut self, msg: RUMNetMessage) -> RUMResult<()> {
             let mut client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!((client_ref, msg));
-            rumtk_wait_on_task!(RUMClientHandle::send_helper, args.clone())?
+            rumtk_wait_on_task!(RUMClientHandle::send_helper, args.clone())
         }
 
         ///
@@ -460,7 +460,7 @@ pub mod tcp {
         pub fn receive(&mut self) -> RUMResult<RUMNetMessage> {
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
-            rumtk_wait_on_task!(RUMClientHandle::receive_helper, args.clone())?
+            rumtk_wait_on_task!(RUMClientHandle::receive_helper, args.clone())
         }
 
         /// Returns the peer address:port as a string.
@@ -468,7 +468,6 @@ pub mod tcp {
             let client_ref = Arc::clone(&self.client);
             let args = rumtk_create_task_args!(client_ref);
             rumtk_wait_on_task!(RUMClientHandle::get_address_helper, args.clone())
-                .unwrap_or_default()
         }
 
         async fn send_helper(args: SafeTaskArgs<ClientSendArgs<'_>>) -> RUMResult<()> {
@@ -553,8 +552,7 @@ pub mod tcp {
         pub fn new(ip: &str, port: u16) -> RUMResult<RUMServerHandle> {
             let con: ConnectionInfo = (RUMString::from(ip), port);
             let args = rumtk_create_task_args!(con);
-            let task_result = rumtk_wait_on_task!(RUMServerHandle::new_helper, &args)?;
-            let server = task_result;
+            let server = rumtk_wait_on_task!(RUMServerHandle::new_helper, &args);
             Ok(RUMServerHandle {
                 server: rumtk_new_lock!(server?),
             })
@@ -570,7 +568,7 @@ pub mod tcp {
                 msg.clone()
             ));
             let task = rumtk_create_task!(RUMServerHandle::send_helper, args);
-            match rumtk_resolve_task!(rumtk_spawn_task!(task)) {
+            match rumtk_resolve_task!(task) {
                 Ok(_) => Ok(()),
                 Err(e) => Err(rumtk_format!("Failed to gc client because => {}", e)),
             }
@@ -588,7 +586,7 @@ pub mod tcp {
             blocking: bool,
         ) -> RUMResult<RUMNetMessage> {
             let args = rumtk_create_task_args!((Arc::clone(&self.server), client_id.clone()));
-            rumtk_resolve_task!(RUMServerHandle::receive_helper(&args, blocking))?
+            rumtk_resolve_task!(RUMServerHandle::receive_helper(&args, blocking))
         }
 
         ///
@@ -596,7 +594,7 @@ pub mod tcp {
         ///
         pub fn get_clients(&self) -> ClientList {
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            rumtk_resolve_task!(RUMServerHandle::get_clients_helper(&args)).unwrap_or_default()
+            rumtk_resolve_task!(RUMServerHandle::get_clients_helper(&args))
         }
 
         ///
@@ -604,7 +602,7 @@ pub mod tcp {
         ///
         pub fn get_client_ids(&self) -> ClientIDList {
             let args = rumtk_create_task_args!((Arc::clone(&self.server)));
-            rumtk_resolve_task!(RUMServerHandle::get_client_ids_helper(&args)).unwrap_or_default()
+            rumtk_resolve_task!(RUMServerHandle::get_client_ids_helper(&args))
         }
 
         ///
@@ -612,7 +610,7 @@ pub mod tcp {
         ///
         pub fn get_address_info(&self) -> Option<RUMString> {
             let args = rumtk_create_task_args!(Arc::clone(&self.server));
-            rumtk_resolve_task!(RUMServerHandle::get_address_helper(&args)).unwrap_or_default()
+            rumtk_resolve_task!(RUMServerHandle::get_address_helper(&args))
         }
 
         async fn send_helper(args: &SafeTaskArgs<ServerSendArgs>) -> RUMResult<()> {
