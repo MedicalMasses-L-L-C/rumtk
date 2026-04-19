@@ -611,13 +611,13 @@ pub mod threading_functions {
     /// ```
     /// use rumtk_core::threading::thread_primitives::SafeLock;
     /// use rumtk_core::threading::threading_functions::{new_lock, process_read_critical_section};
-    /// 
+    ///
     /// let data = 5;
     /// let lock = new_lock(data.clone());
     /// let result = process_read_critical_section(lock, |guard| {
     ///     Ok(*guard)
     /// }).unwrap();
-    /// 
+    ///
     /// assert_eq!(result, data, "Failed to execute critical section through which we retrieve the locked data!");
     /// ```
     ///
@@ -667,6 +667,60 @@ pub mod threading_functions {
         tokio::task::block_in_place(move || {
             let write_guard = lock.blocking_write();
             critical_section(write_guard)
+        })
+    }
+
+    ///
+    /// Obtain read guard to standard spin lock such that you have a more ergonomic interface to
+    /// locked data.
+    ///
+    /// It is preferable to use [process_read_critical_section] when you must process
+    /// critical logic that is sensitive to time of check time of use security bugs!
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::threading::thread_primitives::SafeLock;
+    /// use rumtk_core::threading::threading_functions::{new_lock, lock_read};
+    ///
+    /// let data = 5;
+    /// let lock = new_lock(data.clone());
+    /// let result = *lock_read(lock);
+    ///
+    /// assert_eq!(result, data, "Failed to access the locked data!");
+    /// ```
+    ///
+    pub fn lock_read<T: Send + Sync + 'static>(lock: SafeLock<T>) -> AsyncOwnedRwLockReadGuard<T> {
+        block_on_task(async move {
+            lock.read_owned().await
+        })
+    }
+
+    ///
+    /// Obtain write guard to standard spin lock such that you have a more ergonomic interface to
+    /// locked data.
+    ///
+    /// It is preferable to use [process_write_critical_section] when you must process
+    /// critical logic that is sensitive to time of check time of use security bugs!
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::threading::thread_primitives::SafeLock;
+    /// use rumtk_core::threading::threading_functions::{new_lock, lock_read, lock_write};
+    ///
+    /// let data = 5;
+    /// let lock = new_lock(data.clone());
+    /// let new_data = 10;
+    /// 
+    /// *lock_write(lock.clone()) = new_data;
+    ///
+    /// let result = *lock_read(lock);
+    ///
+    /// assert_eq!(result, new_data, "Failed to modify the locked data!");
+    /// ```
+    ///
+    pub fn lock_write<T: Send + Sync + 'static>(lock: SafeLock<T>) -> AsyncOwnedRwLockWriteGuard<T> {
+        block_on_task(async move {
+            lock.write_owned().await
         })
     }
 }
