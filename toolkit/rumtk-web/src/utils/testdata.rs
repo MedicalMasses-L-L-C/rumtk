@@ -96,7 +96,7 @@ async fn create_form(form_fxn: TESTDATA_REQUEST_FUNCTION) -> FormResult {
 
 pub fn create_test_form(form_fxn: TESTDATA_REQUEST_FUNCTION) -> FormResult {
     let handle = create_form(form_fxn);
-    rumtk_resolve_task!(handle)?
+    rumtk_resolve_task!(handle)
 }
 
 pub const UNTRIMMED_HTML_RENDER: &str = "\n        \n           \n        \n        <div class='div-default'>default</div>\n    \n        \n    ";

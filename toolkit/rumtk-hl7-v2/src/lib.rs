@@ -1033,7 +1033,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             client_id,
-            Ok(rumtk_format!("127.0.0.1:{}", &port)),
+            rumtk_format!("127.0.0.1:{}", &port),
             "Failed to bind local port!"
         )
     }
@@ -1070,7 +1070,7 @@ mod tests {
 
     #[test]
     fn test_mllp_echo() {
-        static PORT: u16 = 55555;
+        static PORT: u16 = 55550;
         static EXPECTED_MESSAGE: &str = "Hello World";
 
         let safe_listener = rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
@@ -1198,7 +1198,6 @@ mod tests {
             }
             Ok(received_message)
         })
-        .unwrap()
         .unwrap();
         let received_message = received_messages.get(0).unwrap();
 
@@ -1256,7 +1255,6 @@ mod tests {
             }
             Ok(received_message)
         })
-        .unwrap()
         .unwrap();
         let received_message = received_messages.get(0).unwrap();
 
@@ -1296,7 +1294,6 @@ mod tests {
             println!("Echoed message: {}", &echoed_messages.first().unwrap());
             Ok(echoed_messages)
         })
-        .unwrap()
         .unwrap();
         let echoed_message = echoed_messages.get(0).unwrap();
 

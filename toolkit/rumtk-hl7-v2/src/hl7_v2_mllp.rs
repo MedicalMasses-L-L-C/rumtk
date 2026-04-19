@@ -814,7 +814,7 @@ pub mod mllp_v2 {
                     message.to_rumstring(),
                     self.peer.clone()
                 )]
-            )?
+            )
         }
 
         pub fn receive_messages(&mut self) -> RUMResult<MLLPMessages> {
@@ -827,7 +827,7 @@ pub mod mllp_v2 {
                     result
                 },
                 vec![self.channel.clone()]
-            )?
+            )
         }
 
         pub fn receive_client_messages(&mut self, endpoint: &str) -> RUMResult<MLLPClientMessages> {
@@ -840,7 +840,7 @@ pub mod mllp_v2 {
                     result
                 },
                 vec![(self.channel.clone(), endpoint.to_rumstring())]
-            )?
+            )
         }
 
         pub fn get_address_info(&mut self) -> RUMResult<RUMString> {
@@ -857,7 +857,7 @@ pub mod mllp_v2 {
                     }
                 },
                 vec![self.channel.clone()]
-            )?
+            )
         }
     }
 
@@ -891,7 +891,7 @@ pub mod mllp_v2_helpers {
     ) -> RUMResult<SafeAsyncMLLP> {
         let ip = RUMString::from(ip);
         let result = block_on_task(AsyncMLLP::new(ip, port, policy, server))?;
-        Ok(SafeAsyncMLLP::new(AsyncMutex::new(result?)))
+        Ok(SafeAsyncMLLP::new(AsyncMutex::new(result)))
     }
 
     pub fn mllp_get_ip_port(mllp: SafeAsyncMLLP) -> RUMResult<ConnectionInfo> {
@@ -903,30 +903,30 @@ pub mod mllp_v2_helpers {
                 )),
             }
         })?;
-        Ok(to_ip_port(&address_str?))
+        Ok(to_ip_port(&address_str))
     }
 
     pub fn mllp_get_client_ids(mllp: SafeAsyncMLLP) -> RUMResult<ClientIDList> {
-        block_on_task(async move { Ok(mllp.lock().await.get_client_ids().await) })?
+        block_on_task(async move { Ok(mllp.lock().await.get_client_ids().await) })
     }
 
     pub fn mllp_is_server(mllp: SafeAsyncMLLP) -> bool {
-        block_on_task(async move { mllp.lock().await.is_server().await }).unwrap_or_default()
+        block_on_task(async move { mllp.lock().await.is_server().await })
     }
 
     pub fn mllp_receive(mllp: SafeAsyncMLLP) -> RUMResult<MLLPMessages> {
-        block_on_task(async move { mllp.lock().await.receive_messages().await })?
+        block_on_task(async move { mllp.lock().await.receive_messages().await })
     }
 
     pub fn mllp_receive_client(mllp: SafeAsyncMLLP, ep: &str) -> RUMResult<MLLPClientMessages> {
         let endpoint = RUMString::from(ep);
-        block_on_task(async move { mllp.lock().await.receive_client_messages(&endpoint).await })?
+        block_on_task(async move { mllp.lock().await.receive_client_messages(&endpoint).await })
     }
 
     pub fn mllp_send(mllp: SafeAsyncMLLP, ep: &str, msg: &str) -> RUMResult<()> {
         let endpoint = RUMString::from(ep);
         let message = RUMString::from(msg);
-        block_on_task(async move { mllp.lock().await.send_message(&message, &endpoint).await })?
+        block_on_task(async move { mllp.lock().await.send_message(&message, &endpoint).await })
     }
 
     pub fn mllp_open_channels(mllp: SafeAsyncMLLP) -> RUMResult<MLLPChannels> {
@@ -962,8 +962,8 @@ pub mod mllp_v2_helpers {
         local: bool,
     ) -> RUMResult<SafeAsyncMLLP> {
         let handle = match local {
-            true => block_on_task(AsyncMLLP::local(port, policy, server))??,
-            false => block_on_task(AsyncMLLP::new(RUMString::from(ip), port, policy, server))??,
+            true => block_on_task(AsyncMLLP::local(port, policy, server))?,
+            false => block_on_task(AsyncMLLP::new(RUMString::from(ip), port, policy, server))?,
         };
         Ok(SafeAsyncMLLP::new(AsyncMutex::new(handle)))
     }
@@ -997,7 +997,7 @@ pub mod mllp_v2_helpers {
 ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, MLLP_FILTER_POLICY};
 ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_send, rumtk_v2_mllp_receive, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port};
 ///
-///     static port: u16 = 55555;
+///     static port: u16 = 55551;
 ///     let expected_message = "Hello World";
 ///
 ///     let safe_listener = rumtk_v2_mllp_listen!(port, MLLP_FILTER_POLICY::NONE, true).unwrap();
@@ -1122,19 +1122,23 @@ pub mod mllp_v2_api {
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
-    ///     let safe_listener = rumtk_v2_mllp_listen!(55555, MLLP_FILTER_POLICY::NONE, false).unwrap();
+    ///
+    ///     let port = 55552;
+    ///     let safe_listener = rumtk_v2_mllp_listen!(port, MLLP_FILTER_POLICY::NONE, false).unwrap();
     ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
-    ///     assert_eq!(port, 55555,"Port requested is 55555. Got => {}:{}", &ip, &port)
+    ///     assert_eq!(port, port,"Port requested is {}. Got => {}:{}", &port, &ip, &port)
     /// ```
     ///
     /// ### Listening on Specific NIC + Port
     /// ```
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
-    ///     let safe_listener = rumtk_v2_mllp_listen!("0.0.0.0", 55555, MLLP_FILTER_POLICY::NONE, false).unwrap();
+    ///
+    ///     let port = 55553;
+    ///     let safe_listener = rumtk_v2_mllp_listen!("0.0.0.0", port, MLLP_FILTER_POLICY::NONE, false).unwrap();
     ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     assert_eq!(ip, "0.0.0.0", "IP requested is 0.0.0.0. Got => {}:{}", &ip, &port);
-    ///     assert_eq!(port, 55555,"Port requested is 55555. Got => {}:{}", &ip, &port);
+    ///     assert_eq!(port, port,"Port requested is {}. Got => {}:{}", &port, &ip, &port);
     /// ```
     ///
     #[macro_export]

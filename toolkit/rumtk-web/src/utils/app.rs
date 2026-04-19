@@ -277,7 +277,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 
     rumtk_web_init_job_manager!(&args.threads);
     let task = run_app(args, switches.skip_serve);
-    rumtk_resolve_task!(task)?
+    rumtk_resolve_task!(task)
 }
 
 ///
