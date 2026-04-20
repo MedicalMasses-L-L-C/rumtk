@@ -83,7 +83,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
 pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let company = rumtk_web_get_config!(state).company;
+    let company = rumtk_web_get_config!(state).company.clone();
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
@@ -93,10 +93,10 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
             "title",
             [(
                 "type",
-                rumtk_web_get_config!(state).title
+                rumtk_web_get_config!(state).title.as_str()
             )],
             state
-        )],
+        )?.to_rumstring()],
         false => get_nav_links(&nav_keys, state.clone()),
     };
 
@@ -115,7 +115,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
                 ),
             ],
             state
-        ),
+        )?.to_rumstring(),
     };
 
     rumtk_web_render_html!(Header {

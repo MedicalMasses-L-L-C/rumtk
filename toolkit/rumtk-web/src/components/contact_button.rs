@@ -67,7 +67,7 @@ pub fn contact_button(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let title = rumtk_web_render_component!("title", [("type", typ)], state);
+    let title = rumtk_web_render_component!("title", [("type", typ)], state)?.to_rumstring();
 
     rumtk_web_render_html!(ContactButton {
         title,

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::types::HTMLResult;
-use crate::{RUMWebRedirect, RUMWebTemplate};
+use crate::{RUMWebData, RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::{Options, Parser};
 use rumtk_core::strings::{
     rumtk_format, AsStr, GraphemePattern, GraphemePatternPair, RUMString, RUMStringConversions,
@@ -220,14 +220,17 @@ macro_rules! rumtk_web_render_component {
         rumtk_web_render_component!($component, &[""], $params, $app_state)
     }};
     ( $component:expr, $path:expr, $params:expr, $app_state:expr ) => {{
-        use rumtk_core::strings::{RUMString, RUMStringConversions};
+        use $crate::components::div::div;
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
+        
+        let params = rumtk_web_params_map!(&$params);
 
-        let component = rumtk_web_get_component!($component);
-
-        match component($path, &rumtk_web_params_map!($params), $app_state.clone()) {
-            Ok(x) => x.to_rumstring(),
-            _ => RUMString::default(),
+        match rumtk_web_get_component!($component) {
+            Some(component) => component($path, params.get_inner(), $app_state.clone()),
+                // This is tricky, but I could not decide if the correct option here was to pass an
+                // message or default to a blank div. I chose the div, but if something changes, feel
+                // free to reconsider.
+            None => div($path, params.get_inner(), $app_state.clone())
         }
     }};
 }

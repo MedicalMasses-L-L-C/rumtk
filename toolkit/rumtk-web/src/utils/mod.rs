@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+pub use rumtk_core::strings::{RUMString, RUMStringConversions};
+
 pub mod app;
 pub mod conf;
 pub mod defaults;
@@ -66,15 +68,7 @@ macro_rules! rumtk_web_get_param {
 #[macro_export]
 macro_rules! rumtk_web_params_map {
     ( $params:expr ) => {{
-        use $crate::types::RUMWebData;
-        let mut params = RUMWebData::with_capacity($params.len());
-
-        for (k, v) in $params.iter() {
-            params.insert(
-                RUMString::from(k.to_string()),
-                RUMString::from(v.to_string()),
-            );
-        }
-        params
+        use $crate::RUMWebDataProxy;
+        RUMWebDataProxy::from($params)
     }};
 }

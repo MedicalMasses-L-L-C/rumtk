@@ -36,6 +36,7 @@ pub type AsyncURLParams = Arc<RUMWebData>;
 pub use crate::utils::response::*;
 
 pub type RenderedPageComponents = Vec<RUMString>;
+pub type RenderedPageComponentsResult = RUMResult<RenderedPageComponents>;
 /* Router Match Types */
 pub type RouterComponents = Path<Vec<RUMString>>;
 pub type RouterParams = Query<RUMWebData>;
@@ -43,7 +44,7 @@ pub type RouterForm = Multipart;
 
 /* Config Types */
 pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
-pub type PageFunction = fn(SharedAppState) -> RenderedPageComponents;
+pub type PageFunction = fn(SharedAppState) -> RenderedPageComponentsResult;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
 
@@ -54,3 +55,55 @@ pub type APIPath = RUMString;
 pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTMLResult;
 
 pub use askama::Template as RUMWebTemplate;
+use rumtk_core::core::RUMResult;
+/* Params? */
+pub type Params<'a> = [(&'a str, &'a str)];
+pub type FixedParams<'a, const N: usize> = [(&'a str, &'a str); N];
+
+
+///
+/// ```
+/// use rumtk_web::RUMWebDataProxy;
+///
+/// let data = [("", "")];
+/// let result = RUMWebDataProxy::from(&data);
+///
+/// ```
+///
+pub struct RUMWebDataProxy(RUMWebData);
+
+impl RUMWebDataProxy {
+    pub fn get_inner(&self) -> &RUMWebData {
+        &self.0
+    }
+
+    pub fn from_params(data: &Params) -> Self {
+        let mut new_params = RUMWebData::with_capacity(data.len());
+
+        for (k, v) in data.iter() {
+            new_params.insert(
+                RUMString::from(k.to_string()),
+                RUMString::from(v.to_string()),
+            );
+        }
+        RUMWebDataProxy(new_params)
+    }
+}
+
+impl From<&RUMWebData> for RUMWebDataProxy {
+    fn from(data: &RUMWebData) -> Self {
+        RUMWebDataProxy(data.clone())
+    }
+}
+
+impl From<&&Params<'_>> for RUMWebDataProxy {
+    fn from(data: &&Params) -> Self {
+        Self::from_params(data)
+    }
+}
+
+impl<const N: usize> From<&FixedParams<'_, N>> for RUMWebDataProxy {
+    fn from(data: &FixedParams<'_, N>) -> Self {
+        Self::from_params(data)
+    }
+}

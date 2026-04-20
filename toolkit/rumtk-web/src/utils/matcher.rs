@@ -19,14 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::app_shell::app_shell;
+use crate::components::div::div;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
-use crate::{
-    rumtk_web_get_api_endpoint, rumtk_web_get_component, RUMWebData, RUMWebResponse, RouterForm
-    ,
-};
+use crate::{rumtk_web_get_api_endpoint, rumtk_web_get_component, rumtk_web_render_component, RUMWebData, RUMWebResponse, RouterForm};
 use axum::body::Body;
 use axum::http::Response;
 use axum::response::{Html, IntoResponse};
@@ -78,14 +76,12 @@ pub async fn default_component_matcher(
         None => Vec::new(),
     };
 
-    let component = match path_components.first() {
+    let component = match path_components.last() {
         Some(component) => component,
         None => return Err(RUMString::from("Missing component name to fetch!")),
     };
 
-    let component = rumtk_web_get_component!(component);
-
-    component(&path_components[1..], &params, state)
+    rumtk_web_render_component!(component, &[""], params, state)
 }
 
 pub fn match_maker(match_response: HTMLResult) -> Response<Body> {

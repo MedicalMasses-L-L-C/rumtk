@@ -89,7 +89,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let title_elem = match title.is_empty() {
         true => RUMString::default(),
-        false => rumtk_web_render_component!("title", [("type", title)], state.clone()),
+        false => rumtk_web_render_component!("title", [("type", title)], state)?.to_rumstring(),
     };
 
     let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);
@@ -100,7 +100,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let elements = rumtk_web_get_form!(typ);
+    let elements = rumtk_web_get_form!(typ)?;
 
     rumtk_web_render_html!(Form {
         typ: RUMString::from(typ),

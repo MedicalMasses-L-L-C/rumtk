@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #![feature(once_cell_get_mut)]
+extern crate core;
 
 pub mod api;
 pub mod components;
@@ -98,7 +99,7 @@ mod tests {
 
         let params = [(PARAMS_TITLE, "Hello World!")];
         let state = SharedAppState::default();
-        let rendered = rumtk_web_render_component!("title", params, state);
+        let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_rumstring();
 
         assert_eq!(
             rendered, TRIMMED_HTML_TITLE_RENDER,

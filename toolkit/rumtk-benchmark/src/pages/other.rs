@@ -19,9 +19,9 @@
 use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
-pub fn other(app_state: SharedAppState) -> RenderedPageComponents {
+pub fn other(app_state: SharedAppState) -> RenderedPageComponentsResult {
     let title_coop =
-        rumtk_web_render_component!("title", [("type", "coop_values")], app_state.clone());
+        rumtk_web_render_component!("title", [("type", "coop_values")], app_state)?.to_rumstring();
 
-    vec![title_coop]
+    Ok(vec![title_coop])
 }

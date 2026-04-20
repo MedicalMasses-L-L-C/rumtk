@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::DEFAULT_TEXT_ITEM;
+use crate::utils::defaults::{DEFAULT_EMPTY_PARAMS, DEFAULT_TEXT_ITEM};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
-    AppState, RUMWebTemplate,
+    RUMWebTemplate,
 };
 use rumtk_core::rumtk_critical_section_read;
 
@@ -50,17 +50,17 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = rumtk_web_render_component!("header", [("", "")], state);
-    let main = rumtk_web_render_component!("main", path_components, [("", "")], state);
+    let header = rumtk_web_render_component!("header", DEFAULT_EMPTY_PARAMS, state)?.to_rumstring();
+    let main = rumtk_web_render_component!("main", path_components, DEFAULT_EMPTY_PARAMS, state)?.to_rumstring();
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
     let footer = rumtk_web_render_component!(
         "footer",
         [(
             "social_list",
-            rumtk_web_get_config!(state).footer_conf.socials_list.clone()
+            rumtk_web_get_config!(state).footer_conf.socials_list.as_str()
         )],
         state
-    );
+    )?.to_rumstring();
 
     rumtk_web_render_html!(AppBody {
         theme: RUMString::from(theme),

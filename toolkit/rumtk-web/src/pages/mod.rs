@@ -35,9 +35,9 @@ static mut PAGE_CACHE: PageCache = new_cache();
 static mut DEFAULT_PAGE: PageFunction = index::index;
 pub const DEFAULT_PAGE_NAME: &str = "index";
 
-pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
+pub fn register_page(name: &str, component_fxn: PageFunction) {
     let key = RUMString::from(name);
-    let r = rumtk_cache_push!(&raw mut PAGE_CACHE, &key, &component_fxn);
+    rumtk_cache_push!(&raw mut PAGE_CACHE, &key, component_fxn);
 
     if key == DEFAULT_PAGE_NAME {
         unsafe {
@@ -48,10 +48,9 @@ pub fn register_page(name: &str, component_fxn: PageFunction) -> PageCacheItem {
         "  ➡ Registered page {} => page function [{:?}]",
         name, &component_fxn
     );
-    r
 }
 
-pub fn get_page(name: &str) -> PageCacheItem {
+pub fn get_page(name: &str) -> Option<PageCacheItem> {
     rumtk_cache_get!(
         &raw mut PAGE_CACHE,
         &RUMString::from(name)
@@ -66,7 +65,7 @@ pub fn init_pages(user_components: Option<UserPages>) {
     println!("🗎 Registering user pages! 🗎");
     /* Init any user prescribed components */
     for (name, value) in user_components.unwrap_or_default() {
-        let _ = register_page(name, value);
+        register_page(name, value);
     }
     println!(
         "  ➡ Default page => page function [{:?}]",
@@ -194,8 +193,9 @@ macro_rules! rumtk_web_collect_page {
     ( $page:expr, $app_state:expr ) => {{
         use $crate::rumtk_web_get_page;
 
-        let page = rumtk_web_get_page!(&$page);
-
-        page($app_state.clone())
+        match rumtk_web_get_page!(&$page){
+            Some(page) => page($app_state.clone()),
+            None => Ok(vec![])
+        }
     }};
 }

@@ -18,14 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::cache::{new_cache, LazyRUMCache};
-use rumtk_core::strings::RUMString;
-use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
-
 use crate::components::form::form_element::form_element;
 use crate::components::form::props::InputProps;
 use crate::rumtk_web_render_component;
 use crate::utils::HTMLResult;
+use rumtk_core::cache::{new_cache, LazyRUMCache};
+use rumtk_core::core::RUMResult;
+use rumtk_core::strings::RUMString;
+use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 
 pub mod form;
 pub mod form_element;
@@ -43,28 +43,28 @@ pub type FormCacheItem = FormElements;
 static mut FORM_CACHE: FormCache = new_cache();
 static DEFAULT_FORMELEMENTS: FormElements = vec![];
 
-fn new_form_entry(_name: &RUMString) -> FormElements {
-    DEFAULT_FORMELEMENTS.clone()
+fn new_form_entry() -> RUMResult<FormElements> {
+    Ok(DEFAULT_FORMELEMENTS.clone())
 }
 
 fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> RUMString {
     rumtk_web_render_component!(|| -> HTMLResult { form_element(element, data, props, css) })
 }
 
-pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction) -> FormCacheItem {
+pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction) {
     let key = RUMString::from(name);
     let _ = rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
     let data = element_builder(build_form_element);
-    rumtk_cache_push!(&raw mut FORM_CACHE, &key, &data)
+    rumtk_cache_push!(&raw mut FORM_CACHE, &key, data);
 }
 
 pub fn register_forms(forms: Option<Forms>) {
     for (form_name, form_builder) in forms.unwrap_or_default() {
-        let _ = register_form_elements(form_name, &form_builder);
+        register_form_elements(form_name, &form_builder);
     }
 }
 
-pub fn get_form(name: &str) -> FormCacheItem {
+pub fn get_form(name: &str) -> RUMResult<FormCacheItem> {
     rumtk_cache_fetch!(&raw mut FORM_CACHE, &RUMString::from(name), new_form_entry)
 }
 

@@ -45,7 +45,7 @@ const APP_SCRIPT: &str = r"
     );
 ";
 
-pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
+pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
     let upload_form = rumtk_web_render_component!(
         "form",
         [
@@ -54,10 +54,10 @@ pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
             ("target", "progress_hidden"),
             ("endpoint", "pdf")
         ],
-        app_state.clone()
-    );
+        app_state
+    )?.to_rumstring();
     let cache_script =
-        rumtk_web_render_component!("script", [("contents", APP_SCRIPT)], app_state.clone());
+        rumtk_web_render_component!("script", [("contents", APP_SCRIPT)], app_state)?.to_rumstring();
 
-    vec![upload_form, cache_script]
+    Ok(vec![upload_form, cache_script])
 }

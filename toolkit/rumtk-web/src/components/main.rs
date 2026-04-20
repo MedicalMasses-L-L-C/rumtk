@@ -50,7 +50,7 @@ pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) 
         rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_NO_TEXT));
 
     //Let's render the main tag contents
-    let body_components = rumtk_web_collect_page!(page, state);
+    let body_components = rumtk_web_collect_page!(page, state)?;
     let contents = rumtk_web_render_component!(|| -> HTMLResult {
         rumtk_web_render_contents(&body_components)
     });
