@@ -25,10 +25,9 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_param_eq, rumtk_web_get_string, rumtk_web_get_text_item,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_param_eq, rumtk_web_get_text_item,
     rumtk_web_render_html, RUMWebTemplate,
 };
-use askama::Template;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -75,7 +74,7 @@ pub fn info_card(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let text_store = rumtk_web_get_string!(state, SECTION_TEXT);
+    let text_store = rumtk_web_get_config_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP());
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);

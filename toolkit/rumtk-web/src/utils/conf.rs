@@ -22,7 +22,6 @@ use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use axum::extract::State;
-use axum::routing::Route;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
@@ -30,7 +29,6 @@ use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use rumtk_core::{rumtk_critical_section_read, rumtk_generate_id, rumtk_new_lock};
-use std::sync::{Arc, RwLock};
 
 pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
 pub type NestedTextMap = RUMOrderedMap<RUMString, TextMap>;
@@ -110,7 +108,7 @@ impl AppConf {
         }
     }
 
-    pub fn get_conf(&self, section: &str) -> TextMap {
+    pub fn get_section(&self, section: &str) -> TextMap {
         match self.config.get(&self.lang) {
             Some(l) => match l.get(section) {
                 Some(i) => i.clone(),
@@ -266,10 +264,11 @@ macro_rules! rumtk_web_load_conf {
         use rumtk_core::rumtk_deserialize;
         use rumtk_core::strings::RUMStringConversions;
         use rumtk_core::types::RUMHashMap;
+        use $crate::AppConf;
         use std::fs;
 
         use $crate::rumtk_web_save_conf;
-        use $crate::utils::{AppConf, AppState, TextMap};
+        use $crate::utils::{AppState, TextMap};
 
         let json = match fs::read_to_string($path) {
             Ok(json) => json,
@@ -347,25 +346,25 @@ macro_rules! rumtk_web_save_conf {
 /// generated configuration.
 ///
 #[macro_export]
-macro_rules! rumtk_web_get_string {
+macro_rules! rumtk_web_get_config_string {
     ( $conf:expr, $item:expr ) => {{
-        use $crate::rumtk_web_conf_get;
+        use $crate::rumtk_web_get_config;
         use $crate::AppConf;
-        rumtk_web_conf_get!($conf, |conf: &AppConf| { conf.get_text($item) })
+        rumtk_web_get_config!($conf).get_text($item)
     }};
 }
 
 ///
 /// Retrieve a configuration ([AppConf]) item. These are strings driven by the app designer's
-/// generated configuration. Unlike [rumtk_web_get_string](crate::rumtk_web_get_string), the item
+/// generated configuration. Unlike [rumtk_web_get_config_string](crate::rumtk_web_get_config_string), the item
 /// retrieved here is separate from the strings section.
 ///
 #[macro_export]
-macro_rules! rumtk_web_get_conf {
+macro_rules! rumtk_web_get_config_section {
     ( $conf:expr, $item:expr ) => {{
-        use $crate::rumtk_web_conf_get;
+        use $crate::rumtk_web_get_config;
         use $crate::AppConf;
-        rumtk_web_conf_get!($conf, |conf: &AppConf| { conf.get_conf($item) })
+        rumtk_web_get_config!($conf).get_section($item)
     }};
 }
 
@@ -378,7 +377,7 @@ macro_rules! rumtk_web_get_conf {
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_core::strings::RUMString;
 /// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
-/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_get_config};
+/// use rumtk_web::{rumtk_web_set_config, rumtk_web_get_config};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 ///
@@ -404,29 +403,25 @@ macro_rules! rumtk_web_get_config {
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_core::strings::RUMString;
 /// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
-/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_conf_get};
+/// use rumtk_web::{rumtk_web_set_config, rumtk_web_get_config};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 /// let lang = RUMString::from("en");
 ///
-/// rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+/// rumtk_web_set_config!(state, |conf: &mut AppConf| {
 ///     conf.lang = RUMString::from(lang.clone())
 /// });
 ///
-/// let new_lang = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.lang.clone() });
+/// let new_lang = rumtk_web_get_config!(state.lang.clone();
 ///
 /// assert_eq!(new_lang, lang, "Changing the language field in the configuration was not successful!");
 /// ```
 ///
 #[macro_export]
-macro_rules! rumtk_web_conf_set {
+macro_rules! rumtk_web_set_config {
     ( $state:expr, $function:expr ) => {{
-        use rumtk_core::rumtk_critical_section_write;
-        rumtk_critical_section_write!($state.clone(), |mut guard| {
-            let mut result = guard.get_config_mut();
-            let r = $function(result);
-            Ok(r)
-        })
+        use rumtk_core::rumtk_lock_write;
+        rumtk_lock_write!($state.clone()).get_config_mut()
     }};
 }
 
@@ -443,19 +438,16 @@ macro_rules! rumtk_web_conf_set {
 /// let state = rumtk_new_lock!(AppState::new());
 /// let clipboard_id = ClipboardID::new("");
 ///
-/// let item_list = rumtk_web_modify_state!(state, |state: &mut AppState| {
-///     state.pop_clipboard(&clipboard_id)
-/// });
+/// let item_list = rumtk_web_modify_state!(state).pop_clipboard(&clipboard_id);
 ///
 /// assert_eq!(item_list, None, "A non empty item list was retrieved from the app state.");
 /// ```
 ///
 #[macro_export]
 macro_rules! rumtk_web_modify_state {
-    ( $state:expr, $function:expr ) => {{
-        use rumtk_core::rumtk_critical_section_write;
-        rumtk_critical_section_write!($state.clone(), |mut guard| { Ok($function(&mut guard)) })
-            .unwrap()
+    ( $state:expr ) => {{
+        use rumtk_core::rumtk_lock_write;
+        rumtk_lock_write!($state.clone())
     }};
 }
 

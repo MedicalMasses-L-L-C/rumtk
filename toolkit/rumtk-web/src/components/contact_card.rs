@@ -25,8 +25,8 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, TextMap, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
-    AppConf, RUMWebTemplate, DEFAULT_TEXT,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    RUMWebTemplate, DEFAULT_TEXT,
 };
 
 #[derive(RUMWebTemplate, Debug)]
@@ -80,7 +80,7 @@ pub fn contact_card(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let text_conf = rumtk_web_get_string!(state, SECTION_CONTACT);
+    let text_conf = rumtk_web_get_config_string!(state, SECTION_CONTACT);
     let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());
     let alt_text = rumtk_web_get_text_item!(&contact_lines, SECTION_ALT, &DEFAULT_TEXT());
 

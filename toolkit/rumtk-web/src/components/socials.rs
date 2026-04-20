@@ -23,10 +23,9 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html,
-    AppConf, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_render_html,
+    RUMWebTemplate,
 };
-use askama::Template;
 use rumtk_core::strings::{rumtk_format, RUMStringConversions};
 
 #[derive(Debug, Clone)]
@@ -61,7 +60,7 @@ pub struct Socials {
 fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
     let data = social_list.to_lowercase();
     let sl_names = data.split(',').collect::<Vec<&str>>();
-    let sl_urls = rumtk_web_get_conf!(state, SECTION_SOCIALS);
+    let sl_urls = rumtk_web_get_config_section!(state, SECTION_SOCIALS);
     let mut sl: SocialsList = SocialsList::with_capacity(sl_names.len());
 
     for name in sl_names {

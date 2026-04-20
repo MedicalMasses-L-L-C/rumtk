@@ -26,10 +26,9 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_conf, rumtk_web_get_config, rumtk_web_get_form, rumtk_web_get_text_item,
+    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item,
     rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
 };
-use askama::Template;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -93,10 +92,10 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
         false => rumtk_web_render_component!("title", [("type", title)], state.clone()),
     };
 
-    let module_store = rumtk_web_get_conf!(state, SECTION_MODULES);
+    let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);
     let module_name = rumtk_web_get_text_item!(&module_store, module, DEFAULT_NO_TEXT);
 
-    let endpoint_store = rumtk_web_get_conf!(state, SECTION_ENDPOINTS);
+    let endpoint_store = rumtk_web_get_config_section!(state, SECTION_ENDPOINTS);
     let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;

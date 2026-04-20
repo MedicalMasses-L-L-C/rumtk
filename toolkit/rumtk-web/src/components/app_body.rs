@@ -22,9 +22,8 @@ use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
-    AppConf, AppState, RUMWebTemplate,
+    AppState, RUMWebTemplate,
 };
-use askama::Template;
 use rumtk_core::rumtk_critical_section_read;
 
 #[derive(RUMWebTemplate)]

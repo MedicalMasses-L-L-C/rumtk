@@ -20,7 +20,6 @@
  */
 use crate::utils::types::HTMLResult;
 use crate::{rumtk_web_render_html, RUMWebTemplate};
-use askama::Template;
 
 #[derive(Debug)]
 pub struct HTMXElement {

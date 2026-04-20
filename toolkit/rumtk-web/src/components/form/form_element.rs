@@ -21,7 +21,6 @@
 use crate::components::form::props::InputProps;
 use crate::utils::types::HTMLResult;
 use crate::{rumtk_web_render_html, RUMWebTemplate};
-use askama::Template;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(

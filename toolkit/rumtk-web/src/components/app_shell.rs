@@ -22,10 +22,9 @@ use crate::components::{app_body::app_body, app_head::app_head};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_conf_set, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
-    AppConf, RUMWebTemplate,
+    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_set_config,
+    RUMWebTemplate,
 };
-use askama::Template;
 use rumtk_core::{rumtk_critical_section_read, rumtk_critical_section_write};
 
 #[derive(RUMWebTemplate)]
@@ -52,10 +51,10 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppSt
     //owned_state.opts = *params.clone();
 
     //Config App
-    rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+    rumtk_web_set_config!(state, |conf: &mut AppConf| {
         conf.lang = RUMString::from(lang)
     });
-    rumtk_web_conf_set!(state, |conf: &mut AppConf| {
+    rumtk_web_set_config!(state, |conf: &mut AppConf| {
         conf.theme = RUMString::from(theme)
     });
 

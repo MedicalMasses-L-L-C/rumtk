@@ -24,7 +24,6 @@ use crate::{
     rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, RUMWebTemplate, SharedAppState,
     URLParams, URLPath,
 };
-use askama::Template;
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]

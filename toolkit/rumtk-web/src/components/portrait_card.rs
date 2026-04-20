@@ -21,10 +21,9 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html, RUMWebData, RUMWebTemplate,
 };
-use askama::Template;
 use rumtk_core::strings::RUMStringConversions;
 
 type PortraitGrid = Vec<Vec<RUMString>>;
@@ -61,7 +60,7 @@ pub struct PortraitCard {
 }
 
 fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> PortraitGrid {
-    let text_conf = rumtk_web_get_string!(app_state, typ);
+    let text_conf = rumtk_web_get_config_string!(app_state, typ);
 
     let mut grid = Vec::with_capacity(text_conf.len());
     for (_r_name, r_list) in text_conf {

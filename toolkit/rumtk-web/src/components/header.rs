@@ -22,7 +22,7 @@ use crate::components::navlink::navlink;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html, RUMWebData, RUMWebTemplate,
 };
 use axum::response::Html;
@@ -86,7 +86,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let company = rumtk_web_get_config!(state).company;
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let links_store = rumtk_web_get_string!(state, SECTION_LINKS);
+    let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
     let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
     let nav_links = match rumtk_web_get_config!(state).header_conf.disable_navlinks {
         true => vec![rumtk_web_render_component!(

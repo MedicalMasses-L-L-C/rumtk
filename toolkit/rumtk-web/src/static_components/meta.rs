@@ -20,7 +20,6 @@
  */
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
 use crate::{rumtk_web_get_config, rumtk_web_render_html, RUMWebTemplate};
-use askama::Template;
 
 #[derive(RUMWebTemplate)]
 #[template(
