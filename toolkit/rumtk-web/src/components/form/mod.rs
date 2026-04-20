@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
+use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 
@@ -38,7 +38,7 @@ pub type FormElementBuilder =
 pub type FormBuilderFunction = fn(builder: FormElementBuilder) -> FormElements;
 pub type FormItem<'a> = (&'a str, FormBuilderFunction);
 pub type Forms<'a> = Vec<FormItem<'a>>;
-pub type FormCacheItem = LazyRUMCacheValue<FormElements>;
+pub type FormCacheItem = FormElements;
 
 static mut FORM_CACHE: FormCache = new_cache();
 static DEFAULT_FORMELEMENTS: FormElements = vec![];

@@ -60,7 +60,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
             "social_list",
             rumtk_web_conf_get!(state, |conf: &AppConf| {
                 conf.footer_conf.socials_list.clone()
-            })
+            })?
         )],
         state
     );

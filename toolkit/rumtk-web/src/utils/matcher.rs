@@ -30,6 +30,7 @@ use crate::{
 use axum::body::Body;
 use axum::http::Response;
 use axum::response::{Html, IntoResponse};
+use rumtk_core::strings::rumtk_format;
 
 pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
@@ -60,7 +61,10 @@ pub async fn default_api_matcher(
     state: SharedAppState,
 ) -> HTMLResult {
     let form_data = compile_form_data(&mut form).await?;
-    let api_endpoint = rumtk_web_get_api_endpoint!(&path);
+    let api_endpoint = match rumtk_web_get_api_endpoint!(&path) {
+        Some(endpoint) => endpoint,
+        None => return Err(rumtk_format!("Requested endpoint is not registered!"))
+    };
     api_endpoint(path, params, form_data, state)
 }
 

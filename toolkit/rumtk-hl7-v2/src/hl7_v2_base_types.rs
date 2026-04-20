@@ -198,7 +198,7 @@ pub mod v2_base_types {
 
         fn from_v2_default(expr: &str) -> V2SearchIndex {
             let expr_groups: SearchGroups =
-                string_search_named_captures(expr, REGEX_V2_SEARCH_DEFAULT, "1");
+                string_search_named_captures(expr, REGEX_V2_SEARCH_DEFAULT, "1").unwrap();
             let _segment = expr_groups.get("segment").unwrap();
             let _segment_group: u8 = expr_groups
                 .get("segment_group")
@@ -488,15 +488,15 @@ pub mod v2_base_types {
         ///
         /// Return an instance of V2DateTime. This instance may be empty if the input is malformed.
         ///
-        pub fn from_str(item: &str) -> V2DateTime {
-            let offset = string_search(item, REGEX_DT_TIMEZONE, "");
+        pub fn from_str(item: &str) -> RUMResult<V2DateTime> {
+            let offset = string_search(item, REGEX_DT_TIMEZONE, "")?;
             let time_part = item.replace(&offset.as_str(), "");
             let dt_vec: Vec<&str> = time_part.split('.').collect();
             let (year, month, day, hour, minute, second) =
                 Self::decompose_dt_str(&RUMString::from(dt_vec[0]));
 
             match dt_vec.len() {
-                1 => V2DateTime {
+                1 => Ok(V2DateTime {
                     year,
                     month,
                     day,
@@ -505,7 +505,7 @@ pub mod v2_base_types {
                     second,
                     microsecond: 0,
                     offset,
-                },
+                }),
                 2 => {
                     let ms_string = dt_vec.last().unwrap();
                     let ms_string_len = ms_string.trim().len();
@@ -518,7 +518,7 @@ pub mod v2_base_types {
                                 )
                         }
                     };
-                    V2DateTime {
+                    Ok(V2DateTime {
                         year,
                         month,
                         day,
@@ -527,9 +527,9 @@ pub mod v2_base_types {
                         second,
                         microsecond,
                         offset,
-                    }
+                    })
                 }
-                _ => V2DateTime::new(),
+                _ => Ok(V2DateTime::new()),
             }
         }
 
@@ -815,7 +815,7 @@ pub mod v2_primitives {
 
     /****************************** API *****************************************/
     fn validate_type(input: &str, regex: &str) -> V2Result<RUMString> {
-        let r = string_search(input, regex, "");
+        let r = string_search(input, regex, "")?;
         if r.len() > 0 {
             Ok(r)
         } else {
@@ -834,7 +834,7 @@ pub mod v2_primitives {
             )?;
             match input.len() {
                 0..=3 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
-                _ => Ok(V2DateTime::from_str(&validated)),
+                _ => Ok(V2DateTime::from_str(&validated)?),
             }
         }
 
@@ -848,7 +848,7 @@ pub mod v2_primitives {
             )?;
             match input.len() {
                 0..=3 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 4 characters. => [{}] ", input)),
-                _ => Ok(V2Date::from_str(&validated)),
+                _ => Ok(V2Date::from_str(&validated)?),
             }
         }
 
@@ -862,7 +862,7 @@ pub mod v2_primitives {
             )?;
             match input.len() {
                 0..=1 => Err(rumtk_format!("Cannot build V2DateTime type due to the string input being smaller than 2 characters. => [{}] ", input)),
-                _ => Ok(V2Date::from_str(rumtk_format!("19700101{}", &validated).as_str())),
+                _ => Ok(V2Date::from_str(rumtk_format!("19700101{}", &validated).as_str())?),
             }
         }
 

@@ -392,9 +392,9 @@ macro_rules! rumtk_web_conf_get {
         use rumtk_core::rumtk_critical_section_read;
         rumtk_critical_section_read!($state.clone(), |guard| {
             let result = guard.get_config();
-            Ok($function(result))
+            let fx_result = $function(result);
+            Ok(fx_result)
         })
-        .unwrap_or_default()
     }};
 }
 

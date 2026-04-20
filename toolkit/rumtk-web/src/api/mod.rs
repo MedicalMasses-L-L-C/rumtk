@@ -20,14 +20,14 @@
  */
 use crate::utils::APIFunction;
 use crate::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
-use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
+use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::{rumtk_format, RUMString};
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
 pub type APICache = LazyRUMCache<RUMString, APIFunction>;
 pub type APIItem<'a> = (&'a str, APIFunction);
 pub type UserAPIEndpoints<'a> = Vec<APIItem<'a>>;
-pub type APICacheItem = LazyRUMCacheValue<APIFunction>;
+pub type APICacheItem = APIFunction;
 
 static mut API_CACHE: APICache = new_cache();
 const DEFAULT_API_HANDLER: APIFunction =
@@ -40,20 +40,19 @@ const DEFAULT_API_HANDLER: APIFunction =
 
 pub fn register_api_endpoint(name: &str, api_handler: APIFunction) -> APICacheItem {
     let key = RUMString::from(name);
-    let r = rumtk_cache_push!(&raw mut API_CACHE, &key, &api_handler);
+    rumtk_cache_push!(&raw mut API_CACHE, &key, api_handler);
 
     println!(
         "  ➡ Registered api endpoint {} => api function [{:?}]",
         name, &api_handler
     );
-    r
+    api_handler
 }
 
-pub fn get_endpoint(name: &str) -> APICacheItem {
+pub fn get_endpoint(name: &str) -> Option<APICacheItem> {
     rumtk_cache_get!(
         &raw mut API_CACHE,
-        &RUMString::from(name),
-        get_default_api_handler()
+        &RUMString::from(name)
     )
 }
 

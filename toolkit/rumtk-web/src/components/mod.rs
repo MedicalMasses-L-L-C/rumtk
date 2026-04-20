@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::ComponentFunction;
-use rumtk_core::cache::{new_cache, LazyRUMCache, LazyRUMCacheValue};
+use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_get, rumtk_cache_push};
 
@@ -53,7 +53,7 @@ mod title;
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentItem<'a> = (&'a str, ComponentFunction);
 pub type UserComponents<'a> = Vec<UserComponentItem<'a>>;
-pub type UserComponentCacheItem = LazyRUMCacheValue<ComponentFunction>;
+pub type UserComponentCacheItem = ComponentFunction;
 
 static mut COMPONENT_CACHE: ComponentCache = new_cache();
 static DEFAULT_COMPONENT: ComponentFunction = div::div;
@@ -66,8 +66,7 @@ pub fn register_component(name: &str, component_fxn: ComponentFunction) {
 pub fn get_component(name: &str) -> UserComponentCacheItem {
     rumtk_cache_get!(
         &raw mut COMPONENT_CACHE,
-        &RUMString::from(name),
-        &DEFAULT_COMPONENT
+        &RUMString::from(name)
     )
 }
 

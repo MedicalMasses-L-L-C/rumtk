@@ -43,8 +43,9 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::cache::{get_or_set_from_cache, new_cache, LazyRUMCache};
+    use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::core::clamp_index;
+    use rumtk_core::core::RUMResult;
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::strings::CompactStringExt;
@@ -59,8 +60,8 @@ pub mod v2_parser {
     static mut search_cache: LazyRUMCache<RUMString, V2SearchIndex> = new_cache();
 
     /**************************** Helpers ***************************************/
-    fn compile_search_index(search_pattern: &RUMString) -> V2SearchIndex {
-        V2SearchIndex::from(search_pattern)
+    fn compile_search_index(search_pattern: &str) -> RUMResult<V2SearchIndex> {
+        Ok(V2SearchIndex::from(search_pattern))
     }
 
     /**************************** Types *****************************************/
@@ -168,8 +169,8 @@ pub mod v2_parser {
             self.component == V2_DELETE_FIELD
         }
 
-        pub fn as_datetime(&self) -> V2DateTime {
-            V2DateTime::from_str(&self.component)
+        pub fn as_datetime(&self) -> RUMResult<V2DateTime> {
+            Ok(V2DateTime::from_str(&self.component)?)
         }
 
         pub fn as_bool(&self) -> bool {
@@ -547,7 +548,7 @@ pub mod v2_parser {
         }
 
         pub fn find_component(&self, search_pattern: &RUMString) -> V2Result<&V2Component> {
-            let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, compile_search_index);
+            let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, || {compile_search_index(search_pattern)})?;
             let segment = self.get(&index.segment, index.segment_group as usize)?;
             let field = match segment.get(index.field as isize)?.get((index.field_group - 1) as usize) {
                 Some(field) => field,
@@ -560,7 +561,7 @@ pub mod v2_parser {
             &mut self,
             search_pattern: &RUMString,
         ) -> V2Result<&mut V2Component> {
-            let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, compile_search_index);
+            let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, || {compile_search_index(search_pattern)})?;
             let segment = self.get_mut(&index.segment, index.segment_group as usize)?;
             let mut field = match segment.get_mut(index.field as isize)?.get_mut((index.field_group - 1) as usize) {
                 Some(field) => field,
