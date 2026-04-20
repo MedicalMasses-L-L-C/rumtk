@@ -22,13 +22,14 @@ use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use axum::extract::State;
+use axum::routing::Route;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
-use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
+use rumtk_core::{rumtk_critical_section_read, rumtk_generate_id, rumtk_new_lock};
 use std::sync::{Arc, RwLock};
 
 pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
@@ -377,24 +378,20 @@ macro_rules! rumtk_web_get_conf {
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_core::strings::RUMString;
 /// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
-/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_conf_get};
+/// use rumtk_web::{rumtk_web_conf_set, rumtk_web_get_config};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 ///
-/// let new_lang = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.lang.clone() });
+/// let new_lang = rumtk_web_get_config!(state).lang.clone();
 ///
 /// assert_eq!(new_lang, "", "Language field in the configuration was not empty!");
 /// ```
 ///
 #[macro_export]
-macro_rules! rumtk_web_conf_get {
-    ( $state:expr, $function:expr ) => {{
-        use rumtk_core::rumtk_critical_section_read;
-        rumtk_critical_section_read!($state.clone(), |guard| {
-            let result = guard.get_config();
-            let fx_result = $function(result);
-            Ok(fx_result)
-        })
+macro_rules! rumtk_web_get_config {
+    ( $state:expr ) => {{
+        use rumtk_core::{rumtk_lock_read};
+        rumtk_lock_read!($state.clone()).get_config()
     }};
 }
 

@@ -21,7 +21,7 @@
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_conf_get, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
     AppConf, AppState, RUMWebTemplate,
 };
 use askama::Template;
@@ -58,9 +58,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
         "footer",
         [(
             "social_list",
-            rumtk_web_conf_get!(state, |conf: &AppConf| {
-                conf.footer_conf.socials_list.clone()
-            })?
+            rumtk_web_get_config!(state).footer_conf.socials_list.clone()
         )],
         state
     );

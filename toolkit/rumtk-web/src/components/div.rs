@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_conf_get, rumtk_web_get_text_item, rumtk_web_render_html, AppConf, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, AppConf, RUMWebTemplate,
 };
 use askama::Template;
 
@@ -45,7 +45,7 @@ pub fn div(_path_components: URLPath, params: URLParams, state: SharedAppState) 
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
+    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     rumtk_web_render_html!(Div {
         contents: RUMString::from(contents),

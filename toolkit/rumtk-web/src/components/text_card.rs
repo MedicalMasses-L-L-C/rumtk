@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_conf_get, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
     AppConf, RUMWebTemplate,
 };
 use askama::Template;
@@ -52,7 +52,7 @@ pub fn text_card(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
+    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     let formatted_label = rumtk_web_render_component!("formatted_label", [("type", typ)], state);
 
