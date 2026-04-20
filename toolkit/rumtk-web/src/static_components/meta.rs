@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
-use crate::{rumtk_web_get_config, rumtk_web_render_html, AppConf, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_render_html, RUMWebTemplate};
 use askama::Template;
 
 #[derive(RUMWebTemplate)]

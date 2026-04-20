@@ -22,7 +22,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html, AppConf, RUMWebData, RUMWebTemplate,
+    rumtk_web_render_html, RUMWebData, RUMWebTemplate,
 };
 use askama::Template;
 use rumtk_core::strings::RUMStringConversions;

@@ -25,7 +25,7 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLP
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
     rumtk_web_get_config, rumtk_web_get_string, rumtk_web_get_text_item, rumtk_web_render_html,
-    rumtk_web_render_markdown, AppConf, RUMWebTemplate,
+    rumtk_web_render_markdown, RUMWebTemplate,
 };
 use askama::Template;
 

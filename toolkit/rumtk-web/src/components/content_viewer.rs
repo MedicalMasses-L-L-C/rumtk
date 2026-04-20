@@ -24,7 +24,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, AppConf, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
 };
 use rumtk_core::rumtk_generate_id;
 

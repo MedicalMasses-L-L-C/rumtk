@@ -23,7 +23,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, S
 use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
 use crate::{
     rumtk_web_conf_set, rumtk_web_get_conf, rumtk_web_get_config, rumtk_web_get_text_item,
-    rumtk_web_modify_state, rumtk_web_render_html, AppConf, AppState, RUMWebTemplate,
+    rumtk_web_modify_state, rumtk_web_render_html, AppState, RUMWebTemplate,
 };
 use rumtk_core::strings::RUMStringConversions;
 
