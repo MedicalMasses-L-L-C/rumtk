@@ -763,7 +763,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///     
 ///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_rumstring();
 ///     
-///         vec![
+///         Ok(vec![
 ///             text_card_story,
 ///             spacer_5.clone(),
 ///             title_coop,
@@ -771,7 +771,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///             spacer_5,
 ///             title_team,
 ///             portrait_card
-///         ]
+///         ])
 ///     }
 ///
 ///     //Custom component

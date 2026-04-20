@@ -23,7 +23,7 @@ use axum::extract::{Multipart, Path, Query};
 use phf::Map;
 pub use rumtk_core::strings::RUMString;
 pub use rumtk_core::strings::{AsStr, CompactStringExt, RUMStringConversions, StringLike};
-use rumtk_core::types::RUMHashMap;
+use rumtk_core::types::{RUMHashMap, RUMID};
 use std::fmt::{Debug, Display};
 use std::sync::Arc;
 
@@ -112,6 +112,12 @@ impl<const N: usize> From<&[(&str, &str); N]> for RUMWebDataProxy {
 
 impl<const N: usize> From<&[(&str, &RUMString); N]> for RUMWebDataProxy {
     fn from(data: &[(&str, &RUMString); N]) -> Self {
+        Self::from_params(data)
+    }
+}
+
+impl<const N: usize> From<&[(&str, RUMID); N]> for RUMWebDataProxy {
+    fn from(data: &[(&str, RUMID); N]) -> Self {
         Self::from_params(data)
     }
 }

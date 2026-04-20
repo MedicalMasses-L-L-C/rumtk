@@ -225,7 +225,7 @@ pub type RouterAppState = State<SharedAppState>;
 /// ```
 /// use std::fs;
 /// use rumtk_core::rumtk_new_lock;
-/// use rumtk_web::{rumtk_web_save_conf, rumtk_web_load_conf, rumtk_web_conf_get};
+/// use rumtk_web::{rumtk_web_save_conf, rumtk_web_load_conf, rumtk_web_get_config};
 /// use rumtk_web::{AppConf};
 /// use rumtk_core::strings::RUMString;
 ///
@@ -417,7 +417,7 @@ macro_rules! rumtk_web_get_config {
 ///
 #[macro_export]
 macro_rules! rumtk_web_set_config {
-    ( $state:expr, $function:expr ) => {{
+    ( $state:expr ) => {{
         use rumtk_core::rumtk_lock_write;
         rumtk_lock_write!($state.clone()).get_config_mut()
     }};

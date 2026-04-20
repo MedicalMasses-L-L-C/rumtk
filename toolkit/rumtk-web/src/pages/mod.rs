@@ -50,11 +50,16 @@ pub fn register_page(name: &str, component_fxn: PageFunction) {
     );
 }
 
-pub fn get_page(name: &str) -> Option<PageCacheItem> {
-    rumtk_cache_get!(
+pub fn get_page(name: &str) -> PageCacheItem {
+    match rumtk_cache_get!(
         &raw mut PAGE_CACHE,
         &RUMString::from(name)
-    )
+    ) {
+        Some(page) => page,
+        None => {
+            unsafe {DEFAULT_PAGE}
+        }
+    }
 }
 
 pub fn get_default_page() -> &'static PageFunction {
@@ -195,9 +200,7 @@ macro_rules! rumtk_web_collect_page {
     ( $page:expr, $app_state:expr ) => {{
         use $crate::rumtk_web_get_page;
 
-        match rumtk_web_get_page!(&$page){
-            Some(page) => page($app_state.clone()),
-            None => Ok(vec![])
-        }
+        let page = rumtk_web_get_page!(&$page);
+        page($app_state.clone())
     }};
 }

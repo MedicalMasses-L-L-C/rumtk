@@ -51,12 +51,8 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppSt
     //owned_state.opts = *params.clone();
 
     //Config App
-    rumtk_web_set_config!(state, |conf: &mut AppConf| {
-        conf.lang = RUMString::from(lang)
-    });
-    rumtk_web_set_config!(state, |conf: &mut AppConf| {
-        conf.theme = RUMString::from(theme)
-    });
+    rumtk_web_set_config!(state).lang = RUMString::from(lang);
+    rumtk_web_set_config!(state).theme = RUMString::from(theme);
 
     //Let's render the head component
     let head = rumtk_web_render_component!(|| -> HTMLResult {
