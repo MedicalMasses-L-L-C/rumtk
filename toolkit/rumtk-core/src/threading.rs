@@ -608,12 +608,13 @@ pub mod threading_functions {
     ///
     /// ## Example
     /// ```
+    /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::threading::thread_primitives::SafeLock;
     /// use rumtk_core::threading::threading_functions::{new_lock, process_read_critical_section};
     ///
     /// let data = 5;
     /// let lock = new_lock(data.clone());
-    /// let result = process_read_critical_section(lock, |guard| {
+    /// let result = process_read_critical_section(lock, |guard| -> RUMResult<i32> {
     ///     Ok(*guard)
     /// }).unwrap();
     ///
@@ -642,13 +643,14 @@ pub mod threading_functions {
     ///
     /// ## Example
     /// ```
+    /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::threading::thread_primitives::SafeLock;
     /// use rumtk_core::threading::threading_functions::{new_lock, process_write_critical_section};
     ///
     /// let data = 5;
     /// let lock = new_lock(data.clone());
     /// let new_data = 10;
-    /// let result = process_write_critical_section(lock, |mut guard| {
+    /// let result = process_write_critical_section(lock, |mut guard| -> RUMResult<i32> {
     ///     *guard = new_data;
     ///     Ok(*guard)
     /// }).unwrap();
@@ -1177,14 +1179,16 @@ pub mod threading_macros {
     ///
     /// ## Example
     /// ```
+    /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::{rumtk_new_lock, rumtk_critical_section_read};
     ///
     /// let data = 5;
     /// let lock = rumtk_new_lock!(data);
     /// let result = rumtk_critical_section_read!(
     ///     lock,
-    ///     |guard| {
-    ///         Ok(*guard)
+    ///     |guard| -> RUMResult<i32> {
+    ///         let result: i32 = *guard;
+    ///         Ok(result)
     ///     }
     /// ).expect("No errors locking!");
     ///
@@ -1215,9 +1219,8 @@ pub mod threading_macros {
     ///     lock,
     ///     |mut guard| {
     ///         *guard = new_data;
-    ///         Ok(())
     ///     }
-    /// ).expect("No errors locking!");
+    /// );
     ///
     /// assert_eq!(result, (), "Critical section yielded invalid result!");
     /// ```

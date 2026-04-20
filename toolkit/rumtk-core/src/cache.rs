@@ -119,11 +119,12 @@ pub mod cache_macros {
     /// use rumtk_core::rumtk_cache_fetch;
     /// use rumtk_core::cache::{new_cache, LazyRUMCache};
     /// use std::sync::Arc;
+    /// use rumtk_core::core::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, String>;
     ///
-    /// fn init_cache(k: &String) -> String {
-    ///    String::from(k)
+    /// fn init_cache(k: &String) -> RUMResult<String> {
+    ///    Ok(String::from(k))
     /// }
     ///
     /// let mut cache: StringCache = new_cache();
@@ -133,7 +134,7 @@ pub mod cache_macros {
     ///     &raw mut cache,
     ///     &test_key,
     ///     || {init_cache(&test_key)}
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!(test_key.as_str(), v.as_str(), "The inserted key is not the same to what was passed as input!");
     ///
@@ -159,20 +160,21 @@ pub mod cache_macros {
     /// key in the cache. Be careful not to override necessary data.
     ///
     /// ```
-    /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
+    /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_get, rumtk_cache_push};
     /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push};
     /// use std::sync::Arc;
+    /// use rumtk_core::core::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, Vec<String>>;
     ///
-    /// fn init_cache(k: &String) -> Vec<String> {
-    ///    vec![]
+    /// fn init_cache(k: &String) -> RUMResult<Vec<String>> {
+    ///    Ok(vec![])
     /// }
     ///
     /// let mut cache: StringCache = new_cache();
     ///
     /// let test_key: String = String::from("Hello World");
-    /// let test_value: String = String::from("?????");
+    /// let test_value: Vec<String> = vec![String::from("?????")];
     ///
     /// rumtk_cache_fetch!(
     ///     &raw mut cache,
@@ -180,12 +182,18 @@ pub mod cache_macros {
     ///     || {init_cache(&test_key)}
     /// );
     ///
-    /// let v = rumtk_cache_push!(
+    /// rumtk_cache_push!(
     ///     &raw mut cache,
-    ///     &test_key
+    ///     &test_key,
+    ///     test_value.clone()
     /// );
     ///
-    /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
+    /// let v = rumtk_cache_get!(
+    ///     &raw mut cache,
+    ///     &test_key
+    /// ).unwrap();
+    ///
+    /// assert_eq!(test_value.get(0).unwrap(), v.get(0).unwrap(), "The inserted key is not the same to what was passed as input!");
     ///
     ///
     /// ```
@@ -211,18 +219,19 @@ pub mod cache_macros {
     /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get};
     /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push, cache_get};
     /// use std::sync::Arc;
+    /// use rumtk_core::core::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, Vec<String>>;
     ///
-    /// fn init_cache(k: &String) -> Vec<String> {
-    ///    vec![]
+    /// fn init_cache(k: &String) -> RUMResult<Vec<String>> {
+    ///    Ok(vec![])
     /// }
     ///
     /// let mut cache: StringCache = new_cache();
     /// static DEFAULT_VEC: Vec<String> = vec![];
     ///
     /// let test_key: String = String::from("Hello World");
-    /// let test_value: String = String::from("?????");
+    /// let test_value: Vec<String> = vec![String::from("?????")];
     ///
     /// rumtk_cache_fetch!(
     ///     &raw mut cache,
@@ -232,15 +241,16 @@ pub mod cache_macros {
     ///
     /// rumtk_cache_push!(
     ///     &raw mut cache,
-    ///     &test_key
+    ///     &test_key,
+    ///     test_value.clone()
     /// );
     ///
     /// let v = rumtk_cache_get!(
     ///     &raw mut cache,
     ///     &test_key
-    /// );
+    /// ).unwrap();
     ///
-    /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
+    /// assert_eq!(test_value.get(0).unwrap(), v.get(0).unwrap(), "The inserted key is not the same to what was passed as input!");
     ///
     ///
     /// ```
@@ -255,67 +265,6 @@ pub mod cache_macros {
             #[allow(clippy::macro_metavars_in_unsafe)]
             unsafe {
                 cache_get($cache, $key)
-            }
-        }};
-    }
-
-    ///
-    /// Retrieves the cached item in mutable mode. What this means is that the internal [Spin Lock](std::sync::RwLock)
-    /// is set to write. Therefore, this macro will block until `all read` requests are satisfied. Any further `read`
-    /// requests will be blocked until you finish making use of the item. Avoid using this macro often unless
-    /// the cache usage is limited to safe interfaces. You are essentially bypassing the no globals ethos and
-    /// thus these APIs should be used with care!!!!!!
-    ///
-    /// ```
-    /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get, rumtk_cache_get_mut};
-    /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push, cache_get};
-    /// use std::sync::Arc;
-    ///
-    /// type StringCache = LazyRUMCache<String, Vec<String>>;
-    ///
-    /// fn init_cache(k: &String) -> Vec<String> {
-    ///    vec![]
-    /// }
-    ///
-    /// let mut cache: StringCache = new_cache();
-    /// static mut DEFAULT_VEC: Vec<String> = vec![];
-    ///
-    /// let test_key: String = String::from("Hello World");
-    /// let test_value: String = String::from("?????");
-    ///
-    /// rumtk_cache_fetch!(
-    ///     &raw mut cache,
-    ///     &test_key,
-    ///     init_cache
-    /// );
-    ///
-    /// rumtk_cache_get_mut!(
-    ///     &raw mut cache,
-    ///     &test_key,
-    ///     &mut DEFAULT_VEC
-    /// ).push(test_value.clone());
-    ///
-    /// let v = rumtk_cache_get!(
-    ///     &raw mut cache,
-    ///     &test_key,
-    ///     &DEFAULT_VEC
-    /// );
-    ///
-    /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
-    ///
-    ///
-    /// ```
-    ///
-    #[macro_export]
-    macro_rules! rumtk_cache_get_mut {
-        ( $cache:expr, $key:expr, $default_function:expr ) => {{
-            use $crate::cache::cache_get_mut;
-            // Do not remove the clippy disable decorator here since we do intend to expand within
-            // the unsafe block. Expanding elsewhere prevents us from getting access to the cache's
-            // internal references due to compiler error
-            #[allow(clippy::macro_metavars_in_unsafe)]
-            unsafe {
-                cache_get_mut($cache, $key, $default_function)
             }
         }};
     }
