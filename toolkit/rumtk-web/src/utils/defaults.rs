@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::Params;
 use crate::utils::ConstTextMap;
 use phf_macros::phf_ordered_map;
 /*
@@ -122,4 +121,4 @@ pub const DEFAULT_SCRIPT_IMPORT: &str = "import";
 /*
     Slices
  */
-pub const DEFAULT_EMPTY_PARAMS: &Params = &[("", "")];
+pub const DEFAULT_EMPTY_PARAMS: &[(&str, &str); 1] = &[("", "")];

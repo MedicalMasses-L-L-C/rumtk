@@ -246,7 +246,7 @@ pub type RouterAppState = State<SharedAppState>;
 ///
 /// rumtk_web_save_conf!(&path);
 /// let app_state = rumtk_web_load_conf!(Args::default());
-/// let config = rumtk_web_conf_get!(app_state, |conf: &AppConf| { conf.clone() });
+/// let config = rumtk_web_get_config!(app_state).clone();
 ///
 /// if fs::exists(&path).unwrap() {
 ///     fs::remove_file(&path).unwrap();
@@ -408,11 +408,9 @@ macro_rules! rumtk_web_get_config {
 /// let state = rumtk_new_lock!(AppState::new());
 /// let lang = RUMString::from("en");
 ///
-/// rumtk_web_set_config!(state, |conf: &mut AppConf| {
-///     conf.lang = RUMString::from(lang.clone())
-/// });
+/// rumtk_web_set_config!(state).lang = RUMString::from(lang.clone());
 ///
-/// let new_lang = rumtk_web_get_config!(state.lang.clone();
+/// let new_lang = rumtk_web_get_config!(state).lang.clone();
 ///
 /// assert_eq!(new_lang, lang, "Changing the language field in the configuration was not successful!");
 /// ```

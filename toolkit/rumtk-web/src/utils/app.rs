@@ -500,7 +500,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
 ///     let job_id = rumtk_web_get_job_manager!()?.spawn_task(upload_processor(form))?;
-///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state.clone());
+///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state)?.to_rumstring();
 ///
 ///     rumtk_web_render_page_contents!(
 ///         &vec![
@@ -741,9 +741,9 @@ macro_rules! rumtk_web_register_app_switches {
 /// ### With Page and Component definition
 /// ```
 ///     use rumtk_core::strings::{rumtk_format};
-///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_get_text_item, rumtk_web_register_app_switches, rumtk_web_conf_get};
+///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_get_text_item, rumtk_web_register_app_switches, rumtk_web_get_config};
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
-///     use rumtk_web::{SharedAppState, RenderedPageComponents};
+///     use rumtk_web::{SharedAppState, RenderedPageComponentsResult};
 ///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData, AppConf};
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 ///     use rumtk_web::utils::types::RUMWebTemplate;
@@ -752,16 +752,16 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///
 ///     // About page
-///     pub fn about(app_state: SharedAppState) -> RenderedPageComponents {
-///         let title_coop = rumtk_web_render_component!("title", [("type", "coop_values")], app_state.clone());
-///         let title_team = rumtk_web_render_component!("title", [("type", "meet_the_team")], app_state.clone());
+///     pub fn about(app_state: SharedAppState) -> RenderedPageComponentsResult {
+///         let title_coop = rumtk_web_render_component!("title", [("type", "coop_values")], app_state)?.to_rumstring();
+///         let title_team = rumtk_web_render_component!("title", [("type", "meet_the_team")], app_state)?.to_rumstring();
 ///     
-///         let text_card_story = rumtk_web_render_component!("text_card", [("type", "story")], app_state.clone());
-///         let text_card_coop = rumtk_web_render_component!("text_card", [("type", "coop_values")], app_state.clone());
+///         let text_card_story = rumtk_web_render_component!("text_card", [("type", "story")], app_state)?.to_rumstring();
+///         let text_card_coop = rumtk_web_render_component!("text_card", [("type", "coop_values")], app_state)?.to_rumstring();
 ///     
-///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), ("type", "personnel")], app_state.clone());
+///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), ("type", "personnel")], app_state)?.to_rumstring();
 ///     
-///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state.clone());
+///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_rumstring();
 ///     
 ///         vec![
 ///             text_card_story,
@@ -795,7 +795,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
-///         let custom_css_enabled = rumtk_web_conf_get!(state, |conf: &AppConf| { conf.custom_css });
+///         let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 ///
 ///         rumtk_web_render_html!(MyDiv {
 ///             contents: RUMString::from(contents),

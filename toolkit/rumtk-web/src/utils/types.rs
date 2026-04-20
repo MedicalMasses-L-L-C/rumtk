@@ -24,6 +24,7 @@ use phf::Map;
 pub use rumtk_core::strings::RUMString;
 pub use rumtk_core::strings::{AsStr, CompactStringExt, RUMStringConversions, StringLike};
 use rumtk_core::types::RUMHashMap;
+use std::fmt::{Debug, Display};
 use std::sync::Arc;
 
 pub type RUMWebData = RUMHashMap<RUMString, RUMString>;
@@ -56,9 +57,6 @@ pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTML
 
 pub use askama::Template as RUMWebTemplate;
 use rumtk_core::core::RUMResult;
-/* Params? */
-pub type Params<'a> = [(&'a str, &'a str)];
-pub type FixedParams<'a, const N: usize> = [(&'a str, &'a str); N];
 
 
 ///
@@ -77,7 +75,11 @@ impl RUMWebDataProxy {
         &self.0
     }
 
-    pub fn from_params(data: &Params) -> Self {
+    pub fn from_params<K, V, const N: usize>(data: &[(K, V); N]) -> Self
+    where
+        K: Display + Sized,
+        V: Display + Sized,
+    {
         let mut new_params = RUMWebData::with_capacity(data.len());
 
         for (k, v) in data.iter() {
@@ -96,14 +98,20 @@ impl From<&RUMWebData> for RUMWebDataProxy {
     }
 }
 
-impl From<&&Params<'_>> for RUMWebDataProxy {
-    fn from(data: &&Params) -> Self {
+impl<const N: usize> From<&&[(&str, &str); N]> for RUMWebDataProxy {
+    fn from(data: &&[(&str, &str); N]) -> Self {
         Self::from_params(data)
     }
 }
 
-impl<const N: usize> From<&FixedParams<'_, N>> for RUMWebDataProxy {
-    fn from(data: &FixedParams<'_, N>) -> Self {
+impl<const N: usize> From<&[(&str, &str); N]> for RUMWebDataProxy {
+    fn from(data: &[(&str, &str); N]) -> Self {
+        Self::from_params(data)
+    }
+}
+
+impl<const N: usize> From<&[(&str, &RUMString); N]> for RUMWebDataProxy {
+    fn from(data: &[(&str, &RUMString); N]) -> Self {
         Self::from_params(data)
     }
 }

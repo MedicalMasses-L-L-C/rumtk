@@ -91,18 +91,19 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::utils::{SharedAppState, RenderedPageComponents};
+/// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page};
 ///
-/// pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
-///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
+/// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state)?.to_rumstring();
 ///
-///     vec![
+///     Ok(vec![
 ///         title_welcome,
-///     ]
+///     ])
 /// }
 ///
-/// let r = rumtk_format!("{:?}", &rumtk_web_register_page!("index", index));
+/// rumtk_web_register_page!("index", index);
+/// let r = rumtk_format!("{:?}", &rumtk_web_get_page!("index"));
 /// let p = rumtk_format!("{:?}", &rumtk_web_get_page!("index"));
 ///
 ///  assert_eq!(&r, &p, "{}", rumtk_format!("The registered page does not match the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
@@ -113,19 +114,20 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::utils::{SharedAppState, RenderedPageComponents};
+/// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page};
 ///
-/// pub fn index(app_state: SharedAppState) -> RenderedPageComponents {
-///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
+/// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state)?.to_rumstring();
 ///
-///     vec![
+///     Ok(vec![
 ///         title_welcome,
-///     ]
+///     ])
 /// }
 ///
 /// let default = rumtk_format!("{:?}", rumtk_web_get_default_page!());
-/// let r = rumtk_format!("{:?}", &rumtk_web_register_page!("index", index));
+/// rumtk_web_register_page!("index", index);
+/// let r = rumtk_format!("{:?}", &rumtk_web_get_page!("index"));
 /// let p = rumtk_format!("{:?}", &rumtk_web_get_page!(""));
 ///
 ///  assert_ne!(&default, &p, "{}", rumtk_format!("The default page matches the retrieved page!\nGot: {:?}\nExpected: {:?}", &r, &p));
@@ -160,17 +162,17 @@ macro_rules! rumtk_web_get_default_page {
 ///```
 /// use std::ops::Deref;
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::utils::{SharedAppState, RenderedPageComponents};
+/// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_pages, rumtk_web_get_page};
 ///
 /// use rumtk_web::pages::UserPages;
 ///
-///  fn my_page(app_state: SharedAppState) -> RenderedPageComponents {
-///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state.clone());
+///  fn my_page(app_state: SharedAppState) -> RenderedPageComponentsResult {
+///     let title_welcome = rumtk_web_render_component!("title", [("type", "welcome")], app_state)?.to_rumstring();
 ///
-///     vec![
+///     Ok(vec![
 ///         title_welcome,
-///     ]
+///     ])
 /// }
 ///
 /// let my_page_name = "my_page";

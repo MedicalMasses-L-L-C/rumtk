@@ -195,7 +195,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 ///     (PARAMS_TITLE, "Hello World!")
 /// ];
 /// let state = SharedAppState::default();
-/// let rendered = rumtk_web_render_component!("title", params, state);
+/// let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_rumstring();
 ///
 /// assert_eq!(rendered, TRIMMED_HTML_TITLE_RENDER, "Commponent rendered improperly!");
 /// ```
@@ -259,7 +259,7 @@ macro_rules! rumtk_web_render_html {
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
 ///
 /// let app_state = SharedAppState::default();
-/// let mydiv = rumtk_web_render_component!("div", [("type", "story")], app_state.clone());
+/// let mydiv = rumtk_web_render_component!("div", [("type", "story")], app_state).unwrap().to_rumstring();
 ///
 /// let expected_page = RUMString::new("<div class='div-default'>default</div>");
 /// let page_response = rumtk_web_render_page_contents!(

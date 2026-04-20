@@ -132,7 +132,7 @@ pub mod cache_macros {
     /// let v = rumtk_cache_fetch!(
     ///     &raw mut cache,
     ///     &test_key,
-    ///     init_cache
+    ///     || {init_cache(&test_key)}
     /// );
     ///
     /// assert_eq!(test_key.as_str(), v.as_str(), "The inserted key is not the same to what was passed as input!");
@@ -177,13 +177,12 @@ pub mod cache_macros {
     /// rumtk_cache_fetch!(
     ///     &raw mut cache,
     ///     &test_key,
-    ///     init_cache
+    ///     || {init_cache(&test_key)}
     /// );
     ///
     /// let v = rumtk_cache_push!(
     ///     &raw mut cache,
-    ///     &test_key,
-    ///     &vec![test_value.clone()]
+    ///     &test_key
     /// );
     ///
     /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
@@ -228,19 +227,17 @@ pub mod cache_macros {
     /// rumtk_cache_fetch!(
     ///     &raw mut cache,
     ///     &test_key,
-    ///     init_cache
+    ///     || {init_cache(&test_key)}
     /// );
     ///
     /// rumtk_cache_push!(
     ///     &raw mut cache,
-    ///     &test_key,
-    ///     &vec![test_value.clone()]
+    ///     &test_key
     /// );
     ///
     /// let v = rumtk_cache_get!(
     ///     &raw mut cache,
-    ///     &test_key,
-    ///     &DEFAULT_VEC
+    ///     &test_key
     /// );
     ///
     /// assert_eq!(test_value.as_str(), v.get(0).unwrap().as_str(), "The inserted key is not the same to what was passed as input!");
