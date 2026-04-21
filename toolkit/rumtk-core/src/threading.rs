@@ -592,7 +592,21 @@ pub mod threading_functions {
         F::Output: Send + 'static,
     {
         let rt = init_runtime(get_default_system_thread_count());
-        rt.block_on(task)
+        // You need to wrap our call to block_on with a call to tokio::task::block_in_place to force 
+        // cleanup of async executor and therefore avoid panics from the tokio runtime!
+        // Per Tokio's documentation, spawn_blocking would be better since it moves the task to an 
+        // executor meant for blocking tasks instead of moving tasks out of the current thread and 
+        // converting the thread into a clocking executor. The reason we don't do that is because 
+        // the call to this function expects to block the current thread until completion and then 
+        // return the result. If there's an issue with IO, revisit this function.
+        //
+        // https://docs.rs/tokio/latest/tokio/task/fn.block_in_place.html
+        // https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
+        // https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+        // https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+        tokio::task::block_in_place(move || {
+            rt.block_on(task)
+        })
     }
 
     pub fn new_lock<T>(data: T) -> SafeLock<T> {
