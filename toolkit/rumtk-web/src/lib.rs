@@ -27,6 +27,7 @@ pub mod css;
 pub mod pages;
 pub mod static_components;
 pub mod utils;
+pub mod js;
 
 pub use app::*;
 pub use utils::*;
