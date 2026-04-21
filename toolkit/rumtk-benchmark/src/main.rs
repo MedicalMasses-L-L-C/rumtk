@@ -13,7 +13,7 @@ fn main() {
             ("other", pages::other::other),
         ],
         vec![],
-        vec![("upload", forms::upload::upload_form),]
+        vec![("basic_benchmark", forms::basic_benchmark::basic_benchmark),]
     );
 
     rumtk_web_run_app!(app_components);
