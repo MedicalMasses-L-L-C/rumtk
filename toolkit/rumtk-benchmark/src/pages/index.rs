@@ -16,48 +16,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use rumtk_web::defaults::*;
 use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
-const APP_SCRIPT: &str = r"
-    var pdfData = {
-        filename: '',
-        contents: ''
-    };
-
-    document.getElementById('file').addEventListener('change', function(event) {
-            const selectedFile = event.target.files[0];
-            if (selectedFile) {
-              // You can use the FileReader API to read the contents if needed
-              const reader = new FileReader();
-              pdfData.filename = selectedFile.name;
-
-              // Define what happens when the file is loaded
-              reader.onload = function(e) {
-                pdfData.contents = e.target.result;
-                console.log(pdfData);
-              };
-
-              // Read the file as text (or use readAsDataURL for images)
-              reader.readAsDataURL(selectedFile);
-            }
-        }
-    );
-";
-
 pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let upload_form = rumtk_web_render_component!(
+    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "intro")], app_state)?.to_rumstring();
+    let text_card_intro = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "instructions")], app_state)?.to_rumstring();
+    let basic_benchmark = rumtk_web_render_component!(
         "form",
         [
-            ("type", "upload"),
-            ("title", "welcome"),
-            ("target", "progress_hidden"),
-            ("endpoint", "pdf")
+            (PARAMS_TYPE, "basic_benchmark"),
+            (PARAMS_TITLE, "basic benchmark"),
+            (PARAMS_TARGET, "progress_hidden"),
+            (PARAMS_ENDPOINT, "basic_benchmark")
         ],
         app_state
     )?.to_rumstring();
-    let cache_script =
-        rumtk_web_render_component!("script", [("contents", APP_SCRIPT)], app_state)?.to_rumstring();
 
-    Ok(vec![upload_form, cache_script])
+    Ok(vec![title_intro, text_card_intro, basic_benchmark])
 }
