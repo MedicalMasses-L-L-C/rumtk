@@ -19,10 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::defaults::{
-    DEFAULT_NO_TEXT, PARAMS_ENDPOINT, PARAMS_TARGET, PARAMS_TITLE, SECTION_ENDPOINTS,
-};
-use crate::utils::defaults::{
-    DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_MODULE, PARAMS_TYPE, SECTION_MODULES,
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES,
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
@@ -69,12 +66,12 @@ use crate::{
     ext = "html"
 )]
 struct Form<'a> {
-    typ: RUMString,
-    title: RUMString,
-    module: RUMString,
-    endpoint: RUMString,
+    typ: &'a str,
+    title: &'a str,
+    module: &'a str,
+    endpoint: &'a str,
     elements: &'a [RUMString],
-    css_class: RUMString,
+    css_class: &'a str,
     custom_css_enabled: bool,
     auto_hide_progress: bool,
 }
@@ -88,8 +85,8 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let title_elem = match title.is_empty() {
-        true => RUMString::default(),
-        false => rumtk_web_render_component!("title", [(PARAMS_TYPE, title)], state)?.to_rumstring(),
+        true => DEFAULT_NO_TEXT,
+        false => &rumtk_web_render_component!("title", [(PARAMS_TYPE, title)], state)?.to_rumstring(),
     };
 
     let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);
@@ -103,12 +100,12 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let elements = rumtk_web_get_form!(typ)?;
 
     rumtk_web_render_html!(Form {
-        typ: RUMString::from(typ),
+        typ,
         title: title_elem,
-        module: RUMString::from(module_name),
-        endpoint: RUMString::from(endpoint_url),
+        module: module_name,
+        endpoint: endpoint_url,
         elements: elements.iter().as_ref(),
-        css_class: RUMString::from(css_class),
+        css_class: css_class,
         custom_css_enabled,
         auto_hide_progress: auto_hide_progress == "progress_hidden",
     })
