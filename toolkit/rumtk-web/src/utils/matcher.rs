@@ -87,7 +87,10 @@ pub async fn default_component_matcher(
 pub fn match_maker(match_response: HTMLResult) -> Response<Body> {
     match match_response {
         Ok(res) => res.into_response(),
-        Err(e) => Html(String::default()).into_response(),
+        Err(e) => {
+            println!("Error: {}", e);
+            Html(String::default()).into_response()
+        },
     }
 }
 
