@@ -23,6 +23,12 @@
           "title": "Basic",
           "url": "./"
         }
+      },
+      "text": {
+        "instructions": {
+          "title": "",
+          "description": "## Intro\nThis is a simple applet showcasing the power of the [rumtk](https://github.com/MedicalMasses-L-L-C/rumtk) framework. The goal of this applet is to provide a simple interface for running different kinds of benchmarks on the framework. I also hope to add an export feature to the applet so the results can be saved to disk for record keeping.\n\nAmong the benchmarks, we hope to track the following:\n* `Basic`: A simple run of the selected utility and version. The result will be a simple breakdown of time spent by the utility to process across **100** runs.\n* `Flame`: Similar to above but the result is a flame graph of a single processing run.\n\n## Contributing\nIf you appreciate the work done in this project, please, visit the following links:\n* [OpenCollective](https://opencollective.com/medicalmasses-llc)\n\nNavigate to [MedicalMasses L.L.C.'s](https://medicalmasses.com) website\n\nOr reach out to [Luis's email](mailto:lsantos@medicalmasses.com)."
+        }
       }
     }
   },
