@@ -1,15 +1,16 @@
 {
   "title": "Benchmarks",
   "description": "",
-  "company": "MedicalMasses L.L.C.",
+  "company": "",
   "copyright": "2026",
   "lang": "en",
   "theme": "",
   "custom_css": false,
   "header_conf": {
+    "logo_source": "https://www.medicalmasses.com/static/img/logo.webp",
     "logo_size": "small",
-    "disable_navlinks": false,
-    "disable_logo": true
+    "disable_navlinks": true,
+    "disable_logo": false
   },
   "footer_conf": {
     "socials_list": "",
@@ -19,12 +20,8 @@
     "en": {
       "links": {
         "index": {
-          "title": "Home",
+          "title": "Basic",
           "url": "./"
-        },
-        "other": {
-          "title": "Other",
-          "url": "/other"
         }
       }
     }
