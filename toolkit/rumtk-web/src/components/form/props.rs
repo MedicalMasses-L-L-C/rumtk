@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::strings::{rumtk_format, RUMString};
+use rumtk_core::strings::{rumtk_format, CompactStringExt, RUMString, RUMStringConversions};
 
 type EventHandler<'a> = (&'a str, &'a str);
 type EventHandlers<'a> = Vec<EventHandler<'a>>;
@@ -35,6 +35,7 @@ pub struct InputProps<'a> {
     pub accept: Option<&'a str>,
     pub alt: Option<&'a str>,
     pub aria_label: Option<&'a str>,
+    pub for_element: Option<&'a str>,
     pub event_handlers: Option<EventHandlers<'a>>,
     pub max_length: Option<usize>,
     pub min_length: Option<usize>,
@@ -56,19 +57,22 @@ impl InputProps<'_> {
             handler_string += &rumtk_format!(" {}={:?}", handler_name, handler_function);
         }
 
-        handler_string
+        handler_string.trim().to_rumstring()
     }
 
     pub fn to_rumstring(&self) -> RUMString {
         let default_text = RUMString::default();
-        rumtk_format!(
-            "{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+        let mut options = vec![
             match &self.id {
                 Some(id) => rumtk_format!("id={:?}", id),
                 None => default_text.clone(),
             },
             match &self.name {
                 Some(name) => rumtk_format!("name={:?}", name),
+                None => default_text.clone(),
+            },
+            match &self.for_element {
+                Some(name) => rumtk_format!("for={:?}", name),
                 None => default_text.clone(),
             },
             match &self.typ {
@@ -143,7 +147,12 @@ impl InputProps<'_> {
                 true => rumtk_format!("required"),
                 false => default_text.clone(),
             },
-        )
+        ];
+        options
+            .into_iter()
+            .filter(|itm| !itm.is_empty())
+            .collect::<Vec<_>>()
+            .join_compact(" ")
     }
 
     pub fn to_string(&self) -> String {
