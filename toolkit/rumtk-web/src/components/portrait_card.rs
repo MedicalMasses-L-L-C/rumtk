@@ -71,7 +71,7 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> RU
                 "contact_card",
                 [
                     ("section", section),
-                    ("type", i_name.as_str()),
+                    (PARAMS_TYPE, i_name.as_str()),
                 ],
                 app_state
             )?.to_rumstring();

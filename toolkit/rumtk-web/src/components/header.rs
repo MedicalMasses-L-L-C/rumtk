@@ -19,7 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::navlink::navlink;
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, SECTION_LINKS};
+use crate::defaults::PARAMS_TARGET;
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
@@ -68,7 +69,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
         nav_links.push(
             navlink(
                 &[],
-                &RUMWebData::from([("target".to_rumstring(), key.to_rumstring())]),
+                &RUMWebData::from([(PARAMS_TARGET.to_rumstring(), key.to_rumstring())]),
                 app_state.clone(),
             )
             .unwrap_or_default()
@@ -91,7 +92,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
         true => vec![rumtk_web_render_component!(
             "title",
             [(
-                "type",
+                PARAMS_TYPE,
                 rumtk_web_get_config!(state).title.as_str()
             )],
             state

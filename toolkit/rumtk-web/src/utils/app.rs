@@ -753,13 +753,13 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///     // About page
 ///     pub fn about(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///         let title_coop = rumtk_web_render_component!("title", [("type", "coop_values")], app_state)?.to_rumstring();
-///         let title_team = rumtk_web_render_component!("title", [("type", "meet_the_team")], app_state)?.to_rumstring();
+///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_rumstring();
+///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?.to_rumstring();
 ///     
-///         let text_card_story = rumtk_web_render_component!("text_card", [("type", "story")], app_state)?.to_rumstring();
-///         let text_card_coop = rumtk_web_render_component!("text_card", [("type", "coop_values")], app_state)?.to_rumstring();
+///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?.to_rumstring();
+///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?.to_rumstring();
 ///     
-///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), ("type", "personnel")], app_state)?.to_rumstring();
+///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?.to_rumstring();
 ///     
 ///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_rumstring();
 ///     

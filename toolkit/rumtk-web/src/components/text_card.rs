@@ -53,7 +53,7 @@ pub fn text_card(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let formatted_label = rumtk_web_render_component!("formatted_label", [("type", typ)], state)?.to_rumstring();
+    let formatted_label = rumtk_web_render_component!("formatted_label", [(PARAMS_TYPE, typ)], state)?.to_rumstring();
 
     rumtk_web_render_html!(TextCard {
         formatted_label,

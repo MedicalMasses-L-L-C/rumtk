@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST,
+    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_SOCIAL_LIST, PARAMS_TYPE
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
@@ -65,14 +65,14 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppStat
         false => rumtk_web_render_component!(
             "contact_button",
             [
-                ("type", "contact"),
-                ("function", "goto_contact"),
-                ("class", "centered")
+                (PARAMS_TYPE, "contact"),
+                (PARAMS_FUNCTION, "goto_contact"),
+                (PARAMS_CSS_CLASS, "centered")
             ],
             state
         )?.to_rumstring(),
     };
-    let socials = rumtk_web_render_component!("socials", [("social_list", social_list)], state)?.to_rumstring();
+    let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_rumstring();
 
     rumtk_web_render_html!(Footer {
         company,

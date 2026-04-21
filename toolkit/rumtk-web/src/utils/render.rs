@@ -222,7 +222,7 @@ macro_rules! rumtk_web_render_component {
     ( $component:expr, $path:expr, $params:expr, $app_state:expr ) => {{
         use $crate::components::div::div;
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
-        
+
         let params = rumtk_web_params_map!(&$params);
 
         match rumtk_web_get_component!($component) {
@@ -259,7 +259,7 @@ macro_rules! rumtk_web_render_html {
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
 ///
 /// let app_state = SharedAppState::default();
-/// let mydiv = rumtk_web_render_component!("div", [("type", "story")], app_state).unwrap().to_rumstring();
+/// let mydiv = rumtk_web_render_component!("div", [(PARAMS_TYPE, "story")], app_state).unwrap().to_rumstring();
 ///
 /// let expected_page = RUMString::new("<div class='div-default'>default</div>");
 /// let page_response = rumtk_web_render_page_contents!(
