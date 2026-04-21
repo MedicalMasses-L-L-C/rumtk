@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::defaults::DEFAULT_APP_CONFIG;
 use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
@@ -218,7 +219,7 @@ impl From<AppConf> for AppState {
 pub type RouterAppState = State<SharedAppState>;
 
 ///
-/// Load the configuration for this app at the specified path. By default, we look into 
+/// Load the configuration for this app at the specified path. By default, we look into
 /// [DEFAULT_APP_CONFIG](crate::utils::defaults::DEFAULT_APP_CONFIG) as the location of the configuration.
 ///
 /// ## Example
@@ -258,7 +259,7 @@ pub type RouterAppState = State<SharedAppState>;
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
     ( $args:expr ) => {{
-        $crate::utils::defaults::DEFAULT_APP_CONFIG;
+        use $crate::defaults::{DEFAULT_APP_CONFIG};
         rumtk_web_load_conf!($args, DEFAULT_APP_CONFIG)
     }};
     ( $args:expr, $path:expr ) => {{

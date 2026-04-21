@@ -123,6 +123,7 @@ pub const DEFAULT_SCRIPT_IMPORT: &str = "import";
     Assets
  */
 pub const DEFAULT_APP_CONFIG: &str = "./app.json";
+pub const DEFAULT_LOGO_SOURCE: &str = "/static/img/logo.webp";
 
 /*
     Slices
