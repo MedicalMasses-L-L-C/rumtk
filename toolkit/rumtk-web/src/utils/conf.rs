@@ -42,6 +42,7 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 
 #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
+    pub logo_source: Option<RUMString>,
     pub logo_size: RUMString,
     pub disable_navlinks: bool,
     pub disable_logo: bool,

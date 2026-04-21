@@ -19,13 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::navlink::navlink;
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_LINKS};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_html, RUMWebData, RUMWebTemplate,
 };
-use axum::response::Html;
 use rumtk_core::strings::RUMStringConversions;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -107,11 +106,13 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
         false => rumtk_web_render_component!(
             "logo",
             [
-                ("type", "diamond"),
                 (
-                    "class",
-                    rumtk_web_get_config!(state).header_conf.logo_size
-                    .as_str()
+                    PARAMS_SOURCE_URL,
+                    rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or_default().as_str()
+                ),
+                (
+                    PARAMS_CSS_CLASS,
+                    rumtk_web_get_config!(state).header_conf.logo_size.as_str()
                 ),
             ],
             state

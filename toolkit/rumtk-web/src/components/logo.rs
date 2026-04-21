@@ -18,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::defaults::{DEFAULT_LOGO_SOURCE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
+use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_param_eq, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html,
     RUMWebTemplate,
 };
 
@@ -32,32 +32,26 @@ use crate::{
             <link href='/static/components/logo.css' rel='stylesheet'>
         {% endif %}
         <div class='centered logo'>
-        {% if diamond %}
-            <img src='/static/img/logo.webp' alt='Webp Logo' class='logo-{{ css_class }}' fetchpriority='high' />
-        {% else %}
-            <img src='/static/img/logo.svg' alt='SVG Logo' fetchpriority='high'/>
-        {% endif %}
+        <img src='{{ source }}' alt='Logo' class='logo-{{ css_class }}' fetchpriority='high' />
         </div>
     ",
     ext = "html"
 )]
-pub struct Logo {
-    diamond: bool,
-    css_class: RUMString,
+pub struct Logo<'a> {
+    source: &'a str,
+    css_class: &'a str,
     custom_css_enabled: bool,
 }
 
-const DEFAULT_TYPE: &str = "diamond";
-
 pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
-    let diamond = rumtk_web_get_param_eq!(params, PARAMS_TYPE, DEFAULT_TYPE, false);
+    let source = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_LOGO_SOURCE);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     rumtk_web_render_html!(Logo {
-        diamond,
-        css_class: RUMString::from(css_class),
+        source,
+        css_class,
         custom_css_enabled
     })
 }

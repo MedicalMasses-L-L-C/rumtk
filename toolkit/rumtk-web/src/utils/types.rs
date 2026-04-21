@@ -116,6 +116,12 @@ impl<const N: usize> From<&[(&str, &RUMString); N]> for RUMWebDataProxy {
     }
 }
 
+impl<const N: usize> From<&[(&str, RUMString); N]> for RUMWebDataProxy {
+    fn from(data: &[(&str, RUMString); N]) -> Self {
+        Self::from_params(data)
+    }
+}
+
 impl<const N: usize> From<&[(&str, RUMID); N]> for RUMWebDataProxy {
     fn from(data: &[(&str, RUMID); N]) -> Self {
         Self::from_params(data)
