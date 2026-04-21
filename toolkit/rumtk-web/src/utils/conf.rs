@@ -26,6 +26,7 @@ use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
+use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
@@ -54,6 +55,9 @@ pub struct FooterConf {
     pub disable_contact_button: bool,
 }
 
+
+pub type PipelineConf = Option<RUMHashMap<RUMString, RUMCommandLine>>;
+
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
 /// a series of fields that represent the web app initial state or configuration. The idea is that
@@ -75,6 +79,7 @@ pub struct AppConf {
 
     strings: RootNestedNestedTextMap,
     config: NestedNestedTextMap,
+    pipelines: Option<PipelineConf>,
     //pub opts: TextMap,
 }
 
