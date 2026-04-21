@@ -38,10 +38,7 @@ pub use utils::*;
 #[cfg(test)]
 mod tests {
     use crate::defaults::PARAMS_TITLE;
-    use crate::testdata::{
-        create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_FORMDATA_REQUEST,
-        TRIMMED_HTML_TITLE_RENDER,
-    };
+    use crate::testdata::{create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_TITLE_RENDER};
     use crate::{
         rumtk_web_init_components, rumtk_web_render_component, rumtk_web_render_html,
         rumtk_web_render_redirect, RUMWebRedirect, SharedAppState,
@@ -54,6 +51,14 @@ mod tests {
     fn test_compile_form() {
         let expected_form = TESTDATA_EXPECTED_FORMDATA();
         let form_data = create_test_form(TESTDATA_FORMDATA_REQUEST).expect("Form");
+
+        assert_eq!(form_data, expected_form, "Form results mismatch!");
+    }
+    
+    #[test]
+    fn test_compile_empty_form() {
+        let expected_form = TESTDATA_EXPECTED_FORMDATA_EMPTY();
+        let form_data = create_test_form(TESTDATA_FORMDATA_EMPTY_REQUEST).expect("Form");
 
         assert_eq!(form_data, expected_form, "Form results mismatch!");
     }

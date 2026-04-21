@@ -72,6 +72,20 @@ pub const TESTDATA_FORMDATA_REQUEST: TESTDATA_REQUEST_FUNCTION = || -> Request {
         .unwrap()
 };
 
+pub const TESTDATA_FORMDATA_EMPTY_REQUEST: TESTDATA_REQUEST_FUNCTION = || -> Request {
+    let body_buffer = RUMVec::<u8>::new();
+    Request::builder()
+        .method(Method::POST)
+        .uri("/upload")
+        .header(HOST, "localhost")
+        .header(
+            CONTENT_TYPE,
+            "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+        )
+        .body(body_buffer.into())
+        .unwrap()
+};
+
 pub const TESTDATA_EXPECTED_FORMDATA: TESTDATA_FORMDATA_FUNCTION = || -> FormData {
     let mut expected_form = FormData::default();
 
@@ -82,6 +96,12 @@ pub const TESTDATA_EXPECTED_FORMDATA: TESTDATA_FORMDATA_FUNCTION = || -> FormDat
         "profile_pic".into(),
         "[Binary Data of the Image File]".into(),
     );
+
+    expected_form
+};
+
+pub const TESTDATA_EXPECTED_FORMDATA_EMPTY: TESTDATA_FORMDATA_FUNCTION = || -> FormData {
+    let mut expected_form = FormData::default();
 
     expected_form
 };
