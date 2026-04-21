@@ -93,7 +93,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let module_name = rumtk_web_get_text_item!(&module_store, module, DEFAULT_NO_TEXT);
 
     let endpoint_store = rumtk_web_get_config_section!(state, SECTION_ENDPOINTS);
-    let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, DEFAULT_NO_TEXT);
+    let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, endpoint);
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
@@ -105,7 +105,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
         module: module_name,
         endpoint: endpoint_url,
         elements: elements.iter().as_ref(),
-        css_class: css_class,
+        css_class,
         custom_css_enabled,
         auto_hide_progress: auto_hide_progress == "progress_hidden",
     })
