@@ -35,6 +35,16 @@ pub struct FormData {
     pub files: RUMHashMap<RUMString, FormBuffer>,
 }
 
+impl FormData {
+    pub fn len(&self) -> usize {
+        self.form.len()
+    }
+    
+    pub fn is_empty(&self) -> bool {
+        self.form.is_empty()
+    }
+}
+
 pub type FormResult = RUMResult<FormData>;
 
 pub async fn get_type(content_type: &str) -> &'static str {
