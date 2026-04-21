@@ -1,7 +1,8 @@
 /*
  *     rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  *     This toolkit aims to be reliable, simple, performant, and standards compliant.
- *     Copyright (C) 2026  Luis M. Santos, M.D.
+ *     Copyright (C) 2026  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
+ *     Copyright (C) 2026  MedicalMasses L.L.C. <contact@medicalmasses.com>
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,13 +17,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_web::defaults::PARAMS_TYPE;
-use rumtk_web::rumtk_web_render_component;
-use rumtk_web::utils::*;
 
-pub fn other(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let title_coop =
-        rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_rumstring();
 
-    Ok(vec![title_coop])
-}
+

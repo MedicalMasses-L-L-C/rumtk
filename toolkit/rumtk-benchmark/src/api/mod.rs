@@ -17,24 +17,4 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-mod forms;
-mod pages;
-mod api;
-
-use rumtk_web::{
-    rumtk_web_register_app_components, rumtk_web_register_app_switches, rumtk_web_run_app,
-    AppComponents,
-};
-
-fn main() {
-    let app_components = rumtk_web_register_app_components!(
-        vec![
-            ("index", pages::index::index),
-        ],
-        vec![],
-        vec![("basic_benchmark", forms::basic_benchmark::basic_benchmark),]
-    );
-
-    rumtk_web_run_app!(app_components);
-}
+pub mod benchmark;
