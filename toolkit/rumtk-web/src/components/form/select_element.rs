@@ -26,7 +26,7 @@ type SelectOptions<'a> = Vec<(&'a str, &'a str)>;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <select size='{{ count }}' {{props|safe}}>
+        <select size='{{ count }}' class='{{css_class}}' {{props|safe}}>
           {% for (item_value, item_text) in items %}
             <option value='{{item_value}}'>{{item_text}}</option>
           {% endfor %}
@@ -44,10 +44,10 @@ pub struct SelectElement<'a> {
 fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
     let rows: Vec<&str> = data.split(",").collect();
     let mut result: SelectOptions = vec![];
-    
+
     for item in rows {
         let pair: Vec<&str> = item.split("=").collect();
-        
+
         let r = match pair.len() {
             0 => {
                 return result;
@@ -59,21 +59,21 @@ fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
             _ => {
                 let val = pair[0];
                 let text = pair[1];
-                
+
                 (val, text)
             }
         };
-        
+
         result.push(r);
     }
-    
+
     result
 }
 
 pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
     let items = parse_select_data(data);
     let count = items.len();
-    
+
     rumtk_web_render_html!(SelectElement {
         items,
         props: &props.to_rumstring().replace("\\\\", "\\"),
