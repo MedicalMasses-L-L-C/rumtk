@@ -12,4 +12,11 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# Project files
 /toolkit/rumtk-web/static/css/bundle.min.css
+*.json
+*.css
+*.log
+*.v2
+perf.*
