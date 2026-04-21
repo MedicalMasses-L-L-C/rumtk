@@ -27,9 +27,11 @@ use rumtk_core::core::RUMResult;
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 
-pub mod form;
 pub mod form_element;
 pub mod props;
+pub mod input_element;
+pub mod select_element;
+pub mod form;
 
 pub type FormElements = Vec<RUMString>;
 pub type FormCache = LazyRUMCache<RUMString, FormElements>;

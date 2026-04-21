@@ -45,6 +45,7 @@ pub struct InputProps<'a> {
     pub disabled: bool,
     pub hidden: bool,
     pub required: bool,
+    pub multiple: bool,
 }
 
 impl InputProps<'_> {

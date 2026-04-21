@@ -1,8 +1,9 @@
 /*
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
- * Copyright (C) 2026  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
- * Copyright (C) 2026  MedicalMasses L.L.C. <contact@medicalmasses.com>
+ * Copyright (C) 2025  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
+ * Copyright (C) 2025  Ethan Dixon
+ * Copyright (C) 2025  MedicalMasses L.L.C. <contact@medicalmasses.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::form::input_element::input_element;
 use crate::components::form::props::InputProps;
-use crate::components::form::select_element::select_element;
-use crate::defaults::{ELEMENT_INPUT, ELEMENT_LABEL, ELEMENT_SELECT};
 use crate::utils::types::HTMLResult;
-use rumtk_core::strings::rumtk_format;
+use crate::{rumtk_web_render_html, RUMWebTemplate};
 
-pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
-    match element {
-        ELEMENT_INPUT | ELEMENT_LABEL => input_element(element, data, props, css_class),
-        ELEMENT_SELECT => select_element(element, data, props, css_class),
-        _ => Err(rumtk_format!("Element of type {} not supported!", element))
-    }
+#[derive(RUMWebTemplate, Debug, Clone)]
+#[template(
+    source = "
+        <{{element}} {{props|safe}} class='{{css_class}}'>{{data}}</{{element}}>
+    ",
+    ext = "html"
+)]
+pub struct InputElement<'a> {
+    element: &'a str,
+    data: &'a str,
+    props: &'a str,
+    css_class: &'a str,
+}
+
+pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
+    rumtk_web_render_html!(InputElement {
+        element,
+        data,
+        props: &props.to_rumstring().replace("\\\\", "\\"),
+        css_class
+    })
 }

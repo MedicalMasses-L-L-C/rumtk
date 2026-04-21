@@ -129,3 +129,10 @@ pub const DEFAULT_LOGO_SOURCE: &str = "/static/img/logo.webp";
     Slices
  */
 pub const DEFAULT_EMPTY_PARAMS: &[(&str, &str); 1] = &[("", "")];
+
+/*
+    Elements
+ */
+pub const ELEMENT_INPUT: &str = "input";
+pub const ELEMENT_LABEL: &str = "label";
+pub const ELEMENT_SELECT: &str = "select";
