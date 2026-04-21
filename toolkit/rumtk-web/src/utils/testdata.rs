@@ -23,7 +23,7 @@ use std::io::Write;
 use crate::form_data::{compile_form_data, FormResult};
 use crate::{FormData, RouterForm};
 use axum::extract::{FromRequest, Request};
-use axum::http::header::{CONTENT_TYPE, HOST};
+use axum::http::header::{CONTENT_LENGTH, CONTENT_TYPE, HOST};
 use axum::http::Method;
 use rumtk_core::core::RUMVec;
 use rumtk_core::rumtk_resolve_task;
@@ -58,6 +58,14 @@ const TESTDATA_FORM_BODY: TESTDATA_REQUEST_BODY_FUNCTION = || {
     buffer
 };
 
+const TESTDATA_FORM_BODY_EMPTY_BOUNDARY: TESTDATA_REQUEST_BODY_FUNCTION = || {
+    let mut buffer = RUMVec::<u8>::new();
+
+    write!(buffer, "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n").unwrap();
+
+    buffer
+};
+
 pub const TESTDATA_FORMDATA_REQUEST: TESTDATA_REQUEST_FUNCTION = || -> Request {
     let body_buffer = TESTDATA_FORM_BODY();
     Request::builder()
@@ -82,6 +90,21 @@ pub const TESTDATA_FORMDATA_EMPTY_REQUEST: TESTDATA_REQUEST_FUNCTION = || -> Req
             CONTENT_TYPE,
             "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
         )
+        .body(body_buffer.into())
+        .unwrap()
+};
+
+pub const TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES: TESTDATA_REQUEST_FUNCTION = || -> Request {
+    let body_buffer = TESTDATA_FORM_BODY_EMPTY_BOUNDARY();
+    Request::builder()
+        .method(Method::POST)
+        .uri("/upload")
+        .header(HOST, "localhost")
+        .header(
+            CONTENT_TYPE,
+            "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+        )
+        .header(CONTENT_LENGTH, "38")
         .body(body_buffer.into())
         .unwrap()
 };

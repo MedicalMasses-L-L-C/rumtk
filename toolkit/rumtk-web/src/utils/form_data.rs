@@ -88,6 +88,7 @@ pub async fn get_type(content_type: &str) -> &'static str {
 ///
 pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
     let mut form_data = FormData::default();
+    
     while let field_result = form.next_field().await {
         match field_result {
             Ok(field_option) => match field_option {
@@ -97,6 +98,11 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                         None => FORM_DATA_TYPE_DEFAULT,
                     };
                     let name = field.name().unwrap_or_default().to_rumstring();
+                    
+                    // If we got an empty field name, discard.
+                    if name.is_empty() {
+                        continue;
+                    }
 
                     let data = match field.bytes().await {
                         Ok(bytes) => bytes,
@@ -113,7 +119,18 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                         &form_data.form.insert(name, file_id);
                     }
                 }
-                _ => {}
+                None => {
+                    // Ok so this one is important to be careful with.
+                    // During some testing, I was able to pass a form with no fields. 
+                    // This form is not 0 bytes as it does contain one boundary line and then the 
+                    // new line. However, unlike during the browser test, it was not possible to 
+                    // craft a unit test that replicates the issue perhaps because the unit test has 
+                    // a fixed buffer? Not sure, it is strange. Without a unit test, it is not clear
+                    // how to report issue to axum. At any rate, we should be handling this bit 
+                    // anyways. So if we encounter a None for the next field, let's assume the form 
+                    // is complete.
+                    break;
+                }
             },
             Err(e) => {
                 // Just return what you got. This is tricky, because anything that axum does not like could
