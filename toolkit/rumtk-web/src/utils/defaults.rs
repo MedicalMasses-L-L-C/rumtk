@@ -55,6 +55,7 @@ pub const PARAMS_ITEM: &str = "item";
 pub const PARAMS_INVERTED: &str = "inverted";
 pub const PARAMS_SECTION: &str = "section";
 pub const PARAMS_FUNCTION: &str = "function";
+pub const PARAMS_SOURCE_URL: &str = "source";
 pub const PARAMS_TARGET: &str = "target";
 pub const PARAMS_SIZE: &str = "size";
 pub const PARAMS_CONTENTS: &str = "contents";
@@ -117,6 +118,11 @@ Disallow: /static/
 pub const DEFAULT_SCRIPT: &str = "default";
 pub const DEFAULT_SCRIPT_MODULE: &str = "module";
 pub const DEFAULT_SCRIPT_IMPORT: &str = "import";
+
+/*
+    Assets
+ */
+pub const DEFAULT_APP_CONFIG: &str = "./app.json";
 
 /*
     Slices

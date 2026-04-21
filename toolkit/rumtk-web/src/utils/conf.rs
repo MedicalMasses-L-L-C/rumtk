@@ -218,8 +218,8 @@ impl From<AppConf> for AppState {
 pub type RouterAppState = State<SharedAppState>;
 
 ///
-/// Load the configuration for this app at the specified path. By default, we look into `./app.json`
-/// as the location of the configuration.
+/// Load the configuration for this app at the specified path. By default, we look into 
+/// [DEFAULT_APP_CONFIG](crate::utils::defaults::DEFAULT_APP_CONFIG) as the location of the configuration.
 ///
 /// ## Example
 /// ```
@@ -258,7 +258,8 @@ pub type RouterAppState = State<SharedAppState>;
 #[macro_export]
 macro_rules! rumtk_web_load_conf {
     ( $args:expr ) => {{
-        rumtk_web_load_conf!($args, "./app.json")
+        $crate::utils::defaults::DEFAULT_APP_CONFIG;
+        rumtk_web_load_conf!($args, DEFAULT_APP_CONFIG)
     }};
     ( $args:expr, $path:expr ) => {{
         use rumtk_core::rumtk_deserialize;
@@ -298,7 +299,7 @@ macro_rules! rumtk_web_load_conf {
 /// the current working directory. This is done to pre-craft a default configuration skeleton so
 /// a consumer of the framework can simply update that file before testing and shipping to production.
 ///
-/// By default, we generate the skeleton in `./app.json`.
+/// By default, we generate the skeleton in [DEFAULT_APP_CONFIG](crate::utils::defaults::DEFAULT_APP_CONFIG).
 ///
 /// ## Example
 /// ```
@@ -327,7 +328,8 @@ macro_rules! rumtk_web_load_conf {
 #[macro_export]
 macro_rules! rumtk_web_save_conf {
     (  ) => {{
-        rumtk_web_save_conf!("./app.json")
+        $crate::utils::defaults::DEFAULT_APP_CONFIG;
+        rumtk_web_save_conf!(DEFAULT_APP_CONFIG)
     }};
     ( $path:expr ) => {{
         use rumtk_core::rumtk_serialize;
