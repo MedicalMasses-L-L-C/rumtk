@@ -33,7 +33,12 @@ fn main() {
             ("index", pages::index::index),
         ],
         vec![],
-        vec![("basic_benchmark", forms::basic_benchmark::basic_benchmark),]
+        vec![
+            ("basic_benchmark", forms::basic_benchmark::basic_benchmark),
+        ],
+        vec![
+            ("benchmarks/basic", api::benchmarks::basic::benchmark)
+        ]
     );
 
     rumtk_web_run_app!(app_components);
