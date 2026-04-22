@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #![feature(once_cell_get_mut)]
+#![feature(macro_metavar_expr)]
 extern crate core;
 
 pub mod api;

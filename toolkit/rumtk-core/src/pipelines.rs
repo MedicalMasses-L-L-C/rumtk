@@ -19,11 +19,12 @@
  */
 
 pub mod pipeline_types {
+    use crate::core::{RUMResult, RUMVec};
     use crate::strings::{RUMString, RUMStringConversions};
     use crate::types::{RUMBuffer, RUMDeserialize, RUMHashMap, RUMSerialize};
-
-    use crate::core::{RUMResult, RUMVec};
     use std::process::{Child, Command};
+
+    pub static EMPTY_COMMAND_LINE: RUMCommandLine = RUMCommandLine::new();
 
     pub type RUMCommandArgs = Vec<RUMString>;
     pub type RUMCommandEnv = RUMHashMap<RUMString, RUMString>;
@@ -624,9 +625,7 @@ pub mod pipeline_macros {
         ( $($command:expr),+ ) => {{
             use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
 
-            let pipeline = pipeline_generate_pipeline(&vec![
-                $($command),+
-            ])?;
+            let pipeline = pipeline_generate_pipeline(&vec![$($command),+])?;
 
             pipeline_wait_pipeline(pipeline)
         }};
@@ -716,9 +715,78 @@ pub mod pipeline_macros {
         ( $($command:expr),+ ) => {{
             use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
 
-            let pipeline = pipeline_generate_pipeline(&vec![
-                $($command),+
-            ])?;
+            let pipeline = pipeline_generate_pipeline(&vec![$($command),+])?;
+
+            pipeline_await_pipeline(pipeline)
+        }};
+    }
+
+    ///
+    /// This macro is similar to [rumtk_pipeline_run](crate::rumtk_pipeline_run). The difference here 
+    /// is that the function takes a pipeline structure ([RUMCommandLine](crate::pipelines::pipeline_types::RUMCommandLine))
+    /// In other words, this macro simply runs an already defined pipeline.
+    /// 
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::{RUMResult};
+    /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let f = || -> RUMResult<RUMBuffer> {
+    ///     let pipeline = vec![
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    /// 
+    ///     rumtk_pipeline_quick_run!(pipeline)
+    /// };
+    /// 
+    /// f().unwrap();
+    /// ```
+    /// 
+    #[macro_export]
+    macro_rules! rumtk_pipeline_quick_run {
+        ( $pipeline:expr ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
+
+            let pipeline = pipeline_generate_pipeline(&$pipeline)?;
+
+            pipeline_wait_pipeline(pipeline)
+        }};
+    }
+
+
+    ///
+    /// This macro is similar to [rumtk_pipeline_run_async](crate::rumtk_pipeline_run_async). The difference here 
+    /// is that the function takes a pipeline structure ([RUMCommandLine](crate::pipelines::pipeline_types::RUMCommandLine))
+    /// In other words, this macro simply runs an already defined pipeline.
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::core::{RUMResult};
+    /// use rumtk_core::strings::RUMStringConversions;
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let f = async || -> RUMResult<RUMBuffer> {
+    ///     let pipeline = vec![
+    ///         rumtk_pipeline_command!("ls"),
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_quick_run_async!(pipeline).await
+    /// };
+    ///
+    /// rumtk_resolve_task!(f()).unwrap();
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_pipeline_quick_run_async {
+        ( $pipeline:expr ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
+
+            let pipeline = pipeline_generate_pipeline(&$pipeline)?;
 
             pipeline_await_pipeline(pipeline)
         }};

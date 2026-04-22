@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 pub use ahash::AHashMap as RUMHashMap;
 pub use bytes::Bytes as RUMBuffer;
 pub use clap::Parser as RUMCLIParser;
@@ -27,5 +26,24 @@ pub use serde::{
     Deserialize as RUMDeserialize, Deserializer as RUMDeserializer, Serialize as RUMSerialize,
     Serializer as RUMSerializer,
 };
+use std::any::TypeId;
 pub use tokio::net::TcpListener as RUMTcpListener;
 pub use uuid::Uuid as RUMID;
+
+///
+/// Helper for quickly checking if incoming data is of an expected type.
+/// 
+/// ## Example
+/// ```
+/// use rumtk_core::types::is_type;
+/// 
+/// let i = 5;
+/// let j = 10;
+/// let is_int = is_type(&i, &j);
+/// 
+/// assert!(is_int, "The compared type is not an integer!")
+/// ```
+/// 
+pub const fn is_type<T: 'static, R: 'static>(_: &T, target: &R) -> bool {
+    TypeId::of::<T>() == TypeId::of::<R>()
+}

@@ -25,6 +25,9 @@
 #![feature(buf_read_has_data_left)]
 #![feature(mapped_lock_guards)]
 #![feature(str_as_str)]
+#![feature(const_trait_impl)]
+#![feature(const_cmp)]
+#![feature(macro_metavar_expr)]
 
 pub mod cache;
 pub mod cli;
