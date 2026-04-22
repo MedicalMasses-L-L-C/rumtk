@@ -50,5 +50,9 @@ pub const DEFAULT_CSS: &str = r"
 
         footer {
         }
+        
+        pre a {
+            filter: invert()
+        }
 
     ";
