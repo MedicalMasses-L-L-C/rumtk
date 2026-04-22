@@ -55,7 +55,7 @@ pub struct FooterConf {
 }
 
 
-pub type PipelineConf = Option<RUMHashMap<RUMString, RUMCommandLine>>;
+pub type PipelineConf = Option<RUMHashMap<RUMString, RUMHashMap<RUMString, RUMCommandLine>>>;
 
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
