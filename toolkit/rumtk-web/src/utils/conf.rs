@@ -27,9 +27,9 @@ pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::strings::RUMStringConversions;
-use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer, RUMID};
+use rumtk_core::types::{RUMDeserialize, RUMSerialize, RUMID};
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
-use rumtk_core::{rumtk_critical_section_read, rumtk_generate_id, rumtk_new_lock};
+use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
 
 pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
 pub type NestedTextMap = RUMOrderedMap<RUMString, TextMap>;
