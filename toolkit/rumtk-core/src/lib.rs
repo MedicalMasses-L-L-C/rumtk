@@ -497,6 +497,7 @@ mod tests {
         };
         let address_info = server.get_address_info().unwrap();
         let (ip, port) = rumtk_get_ip_port!(address_info);
+        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
@@ -608,6 +609,7 @@ mod tests {
         let address_info = server.get_address_info().unwrap();
         let (ip, port) = rumtk_get_ip_port!(address_info);
         println!("Sleeping");
+        rumtk_sleep!(1);
         let mut client = match rumtk_connect!(port) {
             Ok(client) => client,
             Err(e) => panic!("Failed to create server because {}", e),
