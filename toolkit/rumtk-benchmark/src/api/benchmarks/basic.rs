@@ -18,9 +18,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use rumtk_core::rumtk_pipeline_quick_run_async;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
-use rumtk_web::defaults::PARAMS_TARGET;
+use rumtk_core::rumtk_pipeline_quick_run_async;
+use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::{JobResult, JobResultType};
 use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_get_pipeline, rumtk_web_render_component, rumtk_web_render_page_contents};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
@@ -28,7 +28,7 @@ use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
-            let pipeline = rumtk_web_get_pipeline!(state, pipeline_name);
+            let pipeline = rumtk_web_get_pipeline!(state, "basic", pipeline_name);
             let result = rumtk_pipeline_quick_run_async!(pipeline).await?;
 
             Ok(JobResultType::JSON(result.to_vec().to_rumstring()))
@@ -40,7 +40,7 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
 
 pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
     let job_id = rumtk_web_get_job_manager!()?.spawn_task(basic_processor(form, state.clone()))?;
-    let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_TARGET, job_id)], state)?.to_rumstring();
+    let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_ID, job_id)], state)?.to_rumstring();
 
     rumtk_web_render_page_contents!(
         &vec![
