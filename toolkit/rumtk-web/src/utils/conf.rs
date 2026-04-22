@@ -396,22 +396,27 @@ macro_rules! rumtk_web_get_config_section {
 /// ```
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_web::{AppState};
+/// use rumtk_web::defaults::DEFAULT_TEXT_ITEM;
 /// use rumtk_web::{rumtk_web_get_pipeline};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 ///
-/// let pipeline = rumtk_web_get_pipeline!(state, "default");
+/// let pipeline = rumtk_web_get_pipeline!(state, DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM);
 ///
 /// assert_eq!(pipeline, vec![], "Pipeline field in the configuration was not empty!");
 /// ```
 /// 
 #[macro_export]
 macro_rules! rumtk_web_get_pipeline {
+    (  ) => {{
+        use $crate::defaults::DEFAULT_TEXT_ITEM;
+        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM)
+    }};
     ( $conf:expr, $pipeline:expr ) => {{
         use $crate::defaults::DEFAULT_TEXT_ITEM;
-        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, $pipeline:expr)
+        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, $pipeline)
     }};
-    ( $conf:expr, $pipeline_category, $pipeline:expr ) => {{
+    ( $conf:expr, $pipeline_category:expr, $pipeline:expr ) => {{
         use $crate::rumtk_web_get_config;
         use $crate::AppConf;
         rumtk_web_get_config!($conf).get_pipeline($pipeline_category, $pipeline)
