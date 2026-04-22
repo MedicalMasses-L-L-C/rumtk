@@ -20,7 +20,6 @@
  */
 
 pub const ANIMATIONS_CSS: &str = r"
-
         @keyframes slide {
             from {
                 background-position-x: 0;
@@ -28,5 +27,10 @@ pub const ANIMATIONS_CSS: &str = r"
             to {
                 background-position-x: 100vw;
             }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     ";
