@@ -41,8 +41,8 @@ mod tests {
     use crate::defaults::PARAMS_TITLE;
     use crate::testdata::{create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_TITLE_RENDER};
     use crate::{
-        rumtk_web_init_components, rumtk_web_render_component, rumtk_web_render_template,
-        rumtk_web_render_redirect, RUMWebRedirect, SharedAppState,
+        rumtk_web_init_components, rumtk_web_render_component, rumtk_web_render_redirect,
+        rumtk_web_render_template, RUMWebRedirect, SharedAppState,
     };
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMStringConversions;

@@ -47,11 +47,14 @@ pub struct BenchmarkMeta {
     pub runs: usize,
 }
 
+#[derive(Default, Debug, RUMDeserialize, RUMSerialize)]
 pub struct BasicBenchmarkReport {
     pub time: usize,
     pub user_time: usize,
     kernel_time: usize,
 }
+
+#[derive(Default, Debug, RUMDeserialize, RUMSerialize)]
 pub struct BenchmarkReport {
     pub meta: BenchmarkMeta,
     pub basic: Option<BasicBenchmarkReport>,
