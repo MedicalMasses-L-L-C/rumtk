@@ -19,7 +19,7 @@
  */
 
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_html};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_template};
 use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 
 #[derive(RUMWebTemplate, Debug)]
@@ -37,7 +37,7 @@ pub fn loader(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
 
-    rumtk_web_render_html!(Loader {
+    rumtk_web_render_template!(Loader {
             css_class
         }
     )
