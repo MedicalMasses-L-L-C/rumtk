@@ -146,5 +146,5 @@ pub const UNTRIMMED_HTML_RENDER: &str = "\n        \n           \n        \n    
 pub const TRIMMED_HTML_RENDER: &str = "<div class='div-default'>default</div>";
 pub const TRIMMED_HTML_RENDER_META: &str = "<meta charset='UTF-8'>\n<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n<meta name='viewport' content='width=device-width, initial-scale=1.0' />\n<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>\n<meta name='description' content=''>\n<title></title>\n<link rel='icon' type='image/png' href='/static/img/icon.png'>";
 pub const TRIMMED_HTML_TITLE_RENDER: &str = "<div class='f14 centered title-default-container'>\n<a id='default'>\n<h2 class='title-default'>DEFAULT</h2>\n<h2 class='title-default-overlay no-select'>DEFAULT</h2>\n</a>\n</div>";
-pub const JOB_LOADER_TEST_PATTERN: &str = "<div class='loader-default' hx-get='/component/my_element?id=";
+pub const JOB_LOADER_TEST_PATTERN: &str = "hx-trigger='every 2s' hx-swap='outerHTML' hx-target='#loader-";
 

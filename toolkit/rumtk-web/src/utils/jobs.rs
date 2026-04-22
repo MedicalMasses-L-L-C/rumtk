@@ -117,7 +117,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// as it sees fit.
 ///
 /// ## Example
-/// 
+///
 /// ### Loader Render
 /// ```
 /// use rumtk_core::{rumtk_async_sleep, rumtk_new_lock};
@@ -146,7 +146,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
-/// 
+///
 ///     let job_data = match job_result {
 ///         JobResultType::TEXT(t) => t,
 ///         _ => RUMString::new("")
@@ -194,14 +194,14 @@ macro_rules! rumtk_web_generate_job_id {
 ///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
-/// 
+///
 ///     assert!(job_result.is_text(), "Job did not return the expected results! => {:?}", job_result);
 ///
 ///     let job_data = match job_result {
 ///         JobResultType::TEXT(t) => t,
 ///         _ => RUMString::new("")
 ///     };
-/// 
+///
 ///     assert!(job_data.as_str().contains(HELLO_STR), "Job data is missing expected string! Expected {}, Got {}", HELLO_STR, &job_data);
 ///
 ///     rumtk_web_post_process_html!(job_data)
@@ -245,7 +245,7 @@ macro_rules! rumtk_web_check_on_job {
                 );
             },
         };
-        
+
         match result {
             Some(r) => r.clone()?,
             None => JobResultType::NONE,
