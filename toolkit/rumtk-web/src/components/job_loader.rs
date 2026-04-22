@@ -25,7 +25,7 @@ use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='loader-{{css_class}}' hx-get='/component/{{element_name}}?id={{job_id}}' hx-trigger='every 2s' hx-swap='outerHTML'>{{loader|safe}}</div>
+        <div id='loader-{{job_id}}' hx-get='/component/{{element_name}}?id={{job_id}}' hx-trigger='every 2s' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>{{loader|safe}}</div>
     ",
     ext = "html"
 )]
