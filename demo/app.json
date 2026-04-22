@@ -32,5 +32,10 @@
       }
     }
   },
-  "config": {}
+  "config": {},
+  "pipelines": {
+    "basic": {
+      "parser": []
+    }
+  }
 }
