@@ -275,6 +275,7 @@ macro_rules! rumtk_web_post_process_html {
 /// ## Example
 /// ```
 /// use rumtk_core::strings::RUMString;
+/// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::pages::index::index;
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
 ///

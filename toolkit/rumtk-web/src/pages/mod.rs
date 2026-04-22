@@ -96,6 +96,7 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
+/// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page};
 ///
@@ -119,6 +120,7 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
+/// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page};
 ///
@@ -167,6 +169,7 @@ macro_rules! rumtk_web_get_default_page {
 ///```
 /// use std::ops::Deref;
 /// use rumtk_core::strings::rumtk_format;
+/// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_pages, rumtk_web_get_page};
 ///

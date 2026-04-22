@@ -40,10 +40,7 @@ pub use utils::*;
 mod tests {
     use crate::defaults::PARAMS_TITLE;
     use crate::testdata::{create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{
-        rumtk_web_init_components, rumtk_web_render_component, rumtk_web_render_redirect,
-        rumtk_web_render_template, RUMWebRedirect, SharedAppState,
-    };
+    use crate::{rumtk_web_init_components, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, RUMWebRedirect, SharedAppState};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMStringConversions;
 
@@ -128,7 +125,7 @@ mod tests {
         #[template(source = "<div></div>", ext = "html")]
         struct Div {}
 
-        let result = rumtk_web_render_template(Div {}, RUMWebRedirect::None).unwrap();
+        let result = rumtk_web_render(Div {}, RUMWebRedirect::None).unwrap();
         let expected = RUMWebResponse::into_get_response("<div></div>");
 
         assert_eq!(result, expected, "Test Div template rendered improperly!");
