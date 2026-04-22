@@ -78,7 +78,7 @@ pub struct AppConf {
 
     strings: RootNestedNestedTextMap,
     config: NestedNestedTextMap,
-    pipelines: Option<PipelineConf>,
+    pipelines: PipelineConf,
     //pub opts: TextMap,
 }
 
@@ -101,6 +101,18 @@ impl AppConf {
         }
         if !copyright.is_empty() {
             self.copyright = copyright;
+        }
+    }
+
+    pub fn get_pipeline(&self, pipeline_name: &str) -> RUMCommandLine {
+        match self.pipelines {
+            Some(ref pipelines) => {
+                match pipelines.get(pipeline_name) {
+                    Some(pipeline) => pipeline.clone(),
+                    None => vec![]
+                }
+            }
+            None => vec![],
         }
     }
 
@@ -375,14 +387,38 @@ macro_rules! rumtk_web_get_config_section {
 }
 
 ///
+/// Retrieve access to a named pipeline as defined by the app configuration.
+///
+/// ## Example
+/// ```
+/// use rumtk_core::rumtk_new_lock;
+/// use rumtk_web::{AppState};
+/// use rumtk_web::{rumtk_web_get_pipeline};
+///
+/// let state = rumtk_new_lock!(AppState::new());
+///
+/// let pipeline = rumtk_web_get_pipeline!(state, "default");
+///
+/// assert_eq!(pipeline, vec![], "Pipeline field in the configuration was not empty!");
+/// ```
+/// 
+#[macro_export]
+macro_rules! rumtk_web_get_pipeline {
+    ( $conf:expr, $pipeline:expr ) => {{
+        use $crate::rumtk_web_get_config;
+        use $crate::AppConf;
+        rumtk_web_get_config!($conf).get_pipeline($pipeline)
+    }};
+}
+
+///
 /// Get field state from the configuration section of the [SharedAppState] object. The configuration
 /// is of type [AppConf].
 ///
 /// ## Example
 /// ```
 /// use rumtk_core::rumtk_new_lock;
-/// use rumtk_core::strings::RUMString;
-/// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
+/// use rumtk_web::{AppState};
 /// use rumtk_web::{rumtk_web_set_config, rumtk_web_get_config};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
@@ -408,7 +444,7 @@ macro_rules! rumtk_web_get_config {
 /// ```
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_core::strings::RUMString;
-/// use rumtk_web::{AppState, ClipboardID, SharedAppState, AppConf};
+/// use rumtk_web::{AppState};
 /// use rumtk_web::{rumtk_web_set_config, rumtk_web_get_config};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
