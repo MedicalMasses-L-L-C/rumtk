@@ -28,7 +28,7 @@ use rumtk_core::types::RUMBuffer;
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub enum JobResultType<T = RUMString> {
     File(JobBuffer),
     JSON(RUMString),
@@ -36,6 +36,24 @@ pub enum JobResultType<T = RUMString> {
     RustType(T),
     #[default]
     NONE,
+}
+
+impl JobResultType {
+    pub fn is_file(&self) -> bool {
+        matches!(self, JobResultType::File(_))
+    }
+    pub fn is_json(&self) -> bool {
+        matches!(self, JobResultType::JSON(_))
+    }
+    pub fn is_text(&self) -> bool {
+        matches!(self, JobResultType::TEXT(_))
+    }
+    pub fn is_type(&self) -> bool {
+        matches!(self, JobResultType::RustType(_))
+    }
+    pub fn is_none(&self) -> bool {
+        matches!(self, JobResultType::NONE)
+    }
 }
 
 pub type JobResult = RUMResult<JobResultType>;
@@ -157,6 +175,8 @@ macro_rules! rumtk_web_generate_job_id {
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
 /// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
 ///
+/// const HELLO_STR: &str = "Hello World";
+///
 /// let workers: usize = 5;
 /// rumtk_web_init_job_manager!(&workers);
 /// rumtk_web_init_components!(
@@ -166,7 +186,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// );
 ///
 /// async fn basic_processor() -> JobResult {
-///     Ok(JobResultType::TEXT(RUMString::new("Hello World")))
+///     Ok(JobResultType::TEXT(RUMString::new(HELLO_STR)))
 /// }
 ///
 /// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -174,11 +194,15 @@ macro_rules! rumtk_web_generate_job_id {
 ///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
+/// 
+///     assert!(job_result.is_text(), "Job did not return the expected results! => {:?}", job_result);
 ///
 ///     let job_data = match job_result {
 ///         JobResultType::TEXT(t) => t,
 ///         _ => RUMString::new("")
 ///     };
+/// 
+///     assert!(job_data.as_str().contains(HELLO_STR), "Job data is missing expected string! Expected {}, Got {}", HELLO_STR, &job_data);
 ///
 ///     rumtk_web_post_process_html!(job_data)
 /// }
@@ -187,11 +211,11 @@ macro_rules! rumtk_web_generate_job_id {
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
 /// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
-/// 
+///
 /// rumtk_sleep!(1);
 /// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
 ///
-/// assert!(rendered.as_str().contains(JOB_LOADER_TEST_PATTERN), "Element did not render loader!");
+/// assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
 ///
 /// ```
 ///
