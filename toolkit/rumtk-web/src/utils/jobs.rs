@@ -62,7 +62,7 @@ type JobManager = TaskManager<JobResult>;
 
 static mut TASK_MANAGER: Option<JobManager> = None;
 
-pub fn job_str_id_to_id(id: &str) -> JobID {
+pub fn job_str_id_to_id(id: &str) -> RUMResult<JobID> {
     id_to_uuid(id)
 }
 
@@ -230,7 +230,7 @@ macro_rules! rumtk_web_check_on_job {
         use $crate::defaults::{PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
         use $crate::{rumtk_web_get_job_manager, rumtk_web_render_component};
 
-        let id = id_to_uuid($job_id);
+        let id = id_to_uuid($job_id)?;
         let job_finished = rumtk_web_get_job_manager!()?.is_finished(&id);
         let result = match job_finished {
             true => &rumtk_web_get_job_manager!()?.wait_on(&id)?.result,

@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::core::RUMResult;
+use crate::strings::rumtk_format;
 use crate::types::RUMID;
 use nanoid::nanoid;
 use uuid::Uuid;
@@ -36,8 +38,11 @@ pub fn generate_id(typ: RUMID_TYPE, size: usize) -> String {
     }
 }
 
-pub fn id_to_uuid(id: &str) -> RUMID {
-    Uuid::parse_str(id).unwrap()
+pub fn id_to_uuid(id: &str) -> RUMResult<RUMID> {
+    match Uuid::parse_str(id) {
+        Ok(rumid) => Ok(rumid),
+        Err(e) => Err(rumtk_format!("Issue converting id => {} to UUID!", id))
+    }
 }
 
 #[macro_export]
