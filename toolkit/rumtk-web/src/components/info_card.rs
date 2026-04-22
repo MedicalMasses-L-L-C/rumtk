@@ -26,7 +26,7 @@ use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLP
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_param_eq, rumtk_web_get_text_item,
-    rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -79,7 +79,7 @@ pub fn info_card(
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
 
-    rumtk_web_render_html!(InfoCard {
+    rumtk_web_render_template!(InfoCard {
         title,
         description: desc,
         inverted,

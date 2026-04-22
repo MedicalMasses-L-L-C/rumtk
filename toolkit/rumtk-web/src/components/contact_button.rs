@@ -23,7 +23,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -69,7 +69,7 @@ pub fn contact_button(
 
     let title = rumtk_web_render_component!("title", [(PARAMS_TYPE, typ)], state)?.to_rumstring();
 
-    rumtk_web_render_html!(ContactButton {
+    rumtk_web_render_template!(ContactButton {
         title,
         send_function: RUMString::from(send_function),
         css_class: RUMString::from(css_class),

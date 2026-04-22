@@ -22,7 +22,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, S
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::TextMap;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -58,7 +58,7 @@ pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState
     let itm = rumtk_web_get_text_item!(&text_store, typ, &TextMap::default());
     let text = RUMString::from(rumtk_web_get_text_item!(&itm, "title", typ));
 
-    rumtk_web_render_html!(Title {
+    rumtk_web_render_template!(Title {
         typ: RUMString::from(typ),
         text,
         css_class: RUMString::from(css_class),

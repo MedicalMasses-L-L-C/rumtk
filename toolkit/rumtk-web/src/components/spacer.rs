@@ -21,7 +21,7 @@
 use crate::utils::defaults::{PARAMS_SIZE, SECTION_DEFAULT};
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug)]
@@ -46,7 +46,7 @@ pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppStat
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_html!(Spacer {
+    rumtk_web_render_template!(Spacer {
         size,
         custom_css_enabled
     })

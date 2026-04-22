@@ -19,7 +19,7 @@
  */
 use crate::components::form::props::InputProps;
 use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_render_template, RUMWebTemplate};
 
 type SelectOptions<'a> = Vec<(&'a str, &'a str)>;
 
@@ -74,7 +74,7 @@ pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: 
     let items = parse_select_data(data);
     let count = items.len();
 
-    rumtk_web_render_html!(SelectElement {
+    rumtk_web_render_template!(SelectElement {
         items,
         props: &props.to_rumstring().replace("\\\\", "\\"),
         count,

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(Debug)]
 pub struct HTMXElement {
@@ -39,7 +39,7 @@ pub struct HTMX {
 }
 
 pub fn htmx() -> HTMLResult {
-    rumtk_web_render_html!(HTMX {
+    rumtk_web_render_template!(HTMX {
         lib: HTMXElement {
             version: "2.0.8",
             sha: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"

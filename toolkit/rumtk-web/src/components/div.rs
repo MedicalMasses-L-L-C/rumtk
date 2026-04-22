@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug)]
@@ -46,7 +46,7 @@ pub fn div(_path_components: URLPath, params: URLParams, state: SharedAppState) 
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_html!(Div {
+    rumtk_web_render_template!(Div {
         contents: RUMString::from(contents),
         css_class: RUMString::from(css_class),
         custom_css_enabled

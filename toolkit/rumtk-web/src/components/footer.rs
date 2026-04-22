@@ -23,7 +23,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -74,7 +74,7 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppStat
     };
     let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_rumstring();
 
-    rumtk_web_render_html!(Footer {
+    rumtk_web_render_template!(Footer {
         company,
         copyright,
         button: contact_button,

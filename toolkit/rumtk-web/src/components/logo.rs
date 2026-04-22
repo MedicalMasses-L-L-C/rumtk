@@ -28,7 +28,7 @@
 use crate::utils::defaults::{DEFAULT_LOGO_SOURCE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -57,7 +57,7 @@ pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_html!(Logo {
+    rumtk_web_render_template!(Logo {
         source,
         css_class,
         custom_css_enabled

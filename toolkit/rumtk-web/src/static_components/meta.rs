@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
-use crate::{rumtk_web_get_config, rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -40,7 +40,7 @@ pub struct Meta<'a> {
 }
 
 pub fn meta(state: SharedAppState) -> HTMLResult {
-    rumtk_web_render_html!(Meta {
+    rumtk_web_render_template!(Meta {
         title: rumtk_web_get_config!(state).title.as_str(),
         description: rumtk_web_get_config!(state).description.as_str()
     })

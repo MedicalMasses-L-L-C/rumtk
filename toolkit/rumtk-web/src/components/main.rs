@@ -21,7 +21,7 @@
 use crate::defaults::DEFAULT_NO_TEXT;
 use crate::{
     rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component,
-    rumtk_web_render_contents, rumtk_web_render_html, HTMLResult, RUMWebTemplate, SharedAppState,
+    rumtk_web_render_contents, rumtk_web_render_template, HTMLResult, RUMWebTemplate, SharedAppState,
     URLParams, URLPath,
 };
 use rumtk_core::strings::RUMString;
@@ -55,5 +55,5 @@ pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) 
         rumtk_web_render_contents(&body_components)
     });
 
-    rumtk_web_render_html!(Main { contents })
+    rumtk_web_render_template!(Main { contents })
 }

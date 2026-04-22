@@ -797,7 +797,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///         let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 ///
-///         rumtk_web_render_html!(MyDiv {
+///         rumtk_web_render_template!(MyDiv {
 ///             contents: RUMString::from(contents),
 ///             css_class: RUMString::from(css_class),
 ///             custom_css_enabled

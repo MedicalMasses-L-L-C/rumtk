@@ -24,7 +24,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
 };
 use rumtk_core::rumtk_generate_id;
 
@@ -76,7 +76,7 @@ pub fn content_viewer(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_html!(ContentViewer {
+    rumtk_web_render_template!(ContentViewer {
         id,
         typ,
         contents,

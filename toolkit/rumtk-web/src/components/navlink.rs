@@ -22,7 +22,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET,
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::{DEFAULT_TEXT, DEFAULT_TEXTMAP};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -59,7 +59,7 @@ pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppSta
     let title = rumtk_web_get_text_item!(&itm, "title", &DEFAULT_TEXT());
     let url = rumtk_web_get_text_item!(&itm, "url", &DEFAULT_TEXT());
 
-    rumtk_web_render_html!(NavLink {
+    rumtk_web_render_template!(NavLink {
         target: NavItem { title, url },
         css_class: RUMString::from(css_class),
         custom_css_enabled

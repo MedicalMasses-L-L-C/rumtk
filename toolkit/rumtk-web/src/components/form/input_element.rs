@@ -20,7 +20,7 @@
  */
 use crate::components::form::props::InputProps;
 use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -37,7 +37,7 @@ pub struct InputElement<'a> {
 }
 
 pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
-    rumtk_web_render_html!(InputElement {
+    rumtk_web_render_template!(InputElement {
         element,
         data,
         props: &props.to_rumstring().replace("\\\\", "\\"),

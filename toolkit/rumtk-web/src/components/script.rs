@@ -23,7 +23,7 @@ use crate::defaults::{
 };
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -49,7 +49,7 @@ pub fn script(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_SCRIPT);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 
-    rumtk_web_render_html!(Script {
+    rumtk_web_render_template!(Script {
         id,
         typ,
         script: RUMString::from(contents),

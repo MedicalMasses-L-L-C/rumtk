@@ -24,7 +24,7 @@ use crate::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item,
-    rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug)]
@@ -99,7 +99,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let elements = rumtk_web_get_form!(typ)?;
 
-    rumtk_web_render_html!(Form {
+    rumtk_web_render_template!(Form {
         typ,
         title: title_elem,
         module: module_name,

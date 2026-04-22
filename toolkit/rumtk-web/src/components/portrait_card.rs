@@ -22,7 +22,7 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_html, RUMWebData, RUMWebTemplate,
+    rumtk_web_render_template, RUMWebData, RUMWebTemplate,
 };
 use rumtk_core::core::RUMResult;
 use rumtk_core::strings::RUMStringConversions;
@@ -94,7 +94,7 @@ pub fn portrait_card(
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_html!(PortraitCard {
+    rumtk_web_render_template!(PortraitCard {
         icon_data,
         css_class: RUMString::from(css_class),
         custom_css_enabled

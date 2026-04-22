@@ -86,6 +86,11 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> String {
         .to_string()
 }
 
+pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
+    let filtered = rumtk_web_trim_rendered_html(html);
+    Ok(url.into_web_response(Some(filtered)))
+}
+
 ///
 /// Render the given component template into an `HTML Body response` or a `URL Redirect response`.
 /// If you provide the [RUMWebRedirect] in the `url` parameter configured for redirection, then we
@@ -95,7 +100,7 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> String {
 /// ```
 /// use rumtk_web::{HTMLBody, RUMString, RUMWebRedirect, RUMWebResponse};
 /// use rumtk_web::RUMWebTemplate;
-/// use rumtk_web::rumtk_web_render_html;
+/// use rumtk_web::rumtk_web_render;
 ///
 /// #[derive(RUMWebTemplate)]
 /// #[template(
@@ -104,18 +109,17 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> String {
 /// )]
 /// struct Div { }
 ///
-/// let result = rumtk_web_render_html(Div{}, RUMWebRedirect::None).unwrap();
+/// let result = rumtk_web_render(Div{}, RUMWebRedirect::None).unwrap();
 /// let expected = RUMWebResponse::into_get_response("<div></div>");
 ///
 /// assert_eq!(result, expected, "Test Div template rendered improperly!");
 /// ```
 ///
-pub fn rumtk_web_render_html<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
+pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
         Ok(html) => {
-            let filtered = rumtk_web_trim_rendered_html(html);
-            Ok(url.into_web_response(Some(filtered)))
+            rumtk_web_post_process(html, url)
         }
         Err(e) => {
             let tn = std::any::type_name::<T>();
@@ -125,7 +129,7 @@ pub fn rumtk_web_render_html<T: RUMWebTemplate>(template: T, url: RUMWebRedirect
 }
 
 pub fn rumtk_web_render_contents(elements: &[RUMString]) -> HTMLResult {
-    rumtk_web_render_html(ContentBlock { elements }, RUMWebRedirect::None)
+    rumtk_web_render(ContentBlock { elements }, RUMWebRedirect::None)
 }
 
 pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
@@ -236,16 +240,32 @@ macro_rules! rumtk_web_render_component {
 }
 
 #[macro_export]
-macro_rules! rumtk_web_render_html {
+macro_rules! rumtk_web_render_template {
     ( $page:expr ) => {{
-        use $crate::utils::{rumtk_web_render_html, RUMWebRedirect};
+        use $crate::utils::{rumtk_web_render, RUMWebRedirect};
 
-        rumtk_web_render_html($page, RUMWebRedirect::None)
+        rumtk_web_render($page, RUMWebRedirect::None)
     }};
     ( $page:expr, $redirect_url:expr ) => {{
-        use $crate::utils::rumtk_web_render_html;
+        use $crate::utils::rumtk_web_render;
 
-        rumtk_web_render_html($page, $redirect_url)
+        rumtk_web_render($page, $redirect_url)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_web_post_process_html {
+    ( $html:expr ) => {{
+        use rumtk_core::strings::{RUMStringConversions};
+        use $crate::utils::{rumtk_web_post_process, RUMWebRedirect};
+
+        rumtk_web_post_process($html.to_string(), RUMWebRedirect::None)
+    }};
+    ( $html:expr, $redirect_url:expr ) => {{
+        use rumtk_core::strings::{RUMStringConversions};
+        use $crate::utils::rumtk_web_post_process;
+
+        rumtk_web_post_process($html.to_string(), $redirect_url)
     }};
 }
 

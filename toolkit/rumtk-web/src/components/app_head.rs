@@ -20,7 +20,7 @@
  */
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_render_component, rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -68,7 +68,7 @@ pub fn app_head(
     //Let's render the head component
     let html_htmx = rumtk_web_render_component!(htmx);
 
-    rumtk_web_render_html!(AppShellHead {
+    rumtk_web_render_template!(AppShellHead {
         meta: html_meta,
         css: html_css,
         fontawesome: html_fontawesome,

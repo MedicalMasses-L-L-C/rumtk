@@ -23,7 +23,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
 use rumtk_core::strings::{rumtk_format, RUMStringConversions};
@@ -87,7 +87,7 @@ pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppSta
 
     let icons = get_social_list(&social_list, &state);
 
-    rumtk_web_render_html!(Socials {
+    rumtk_web_render_template!(Socials {
         icons,
         css_class: RUMString::from(css_class),
         custom_css_enabled

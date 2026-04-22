@@ -23,7 +23,7 @@ use crate::components::form::select_element::select_element;
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, ELEMENT_SELECT, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_html, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug)]
@@ -53,7 +53,7 @@ pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let props = InputProps::default();
     let contents = &select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?.to_rumstring();
 
-    rumtk_web_render_html!(Select {
+    rumtk_web_render_template!(Select {
         contents,
         css_class,
         custom_css_enabled

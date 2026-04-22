@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_EMPTY_PARAMS, DEFAULT_TEXT_ITEM};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
 use rumtk_core::rumtk_critical_section_read;
@@ -62,7 +62,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
         state
     )?.to_rumstring();
 
-    rumtk_web_render_html!(AppBody {
+    rumtk_web_render_template!(AppBody {
         theme: RUMString::from(theme),
         header,
         main,

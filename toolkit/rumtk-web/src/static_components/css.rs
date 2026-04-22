@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_html, RUMWebTemplate};
+use crate::{rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -31,5 +31,5 @@ use crate::{rumtk_web_render_html, RUMWebTemplate};
 pub struct CSS {}
 
 pub fn css() -> HTMLResult {
-    rumtk_web_render_html!(CSS {})
+    rumtk_web_render_template!(CSS {})
 }

@@ -22,7 +22,7 @@ use crate::components::{app_body::app_body, app_head::app_head};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html, rumtk_web_set_config,
+    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template, rumtk_web_set_config,
     RUMWebTemplate,
 };
 use rumtk_core::{rumtk_critical_section_read, rumtk_critical_section_write};
@@ -64,7 +64,7 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppSt
         app_body(path_components, params, state.clone())
     });
 
-    rumtk_web_render_html!(AppShell {
+    rumtk_web_render_template!(AppShell {
         lang: RUMString::from(lang),
         head,
         body

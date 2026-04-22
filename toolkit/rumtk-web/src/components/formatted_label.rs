@@ -24,7 +24,7 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_html,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
     rumtk_web_render_markdown, RUMWebTemplate,
 };
 
@@ -61,7 +61,7 @@ pub fn formatted_label(
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = rumtk_web_render_markdown!(desc);
 
-    rumtk_web_render_html!(FormattedLabel {
+    rumtk_web_render_template!(FormattedLabel {
         text: html,
         css_class: RUMString::from(css_class),
         custom_css_enabled
