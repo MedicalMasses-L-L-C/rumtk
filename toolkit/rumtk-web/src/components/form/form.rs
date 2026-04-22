@@ -18,9 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES,
-};
+use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item,
@@ -30,7 +28,7 @@ use crate::{
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div id='form-{{typ}}-box'>
+        <div id='form-{{htmx_target}}-box'>
             {% if custom_css_enabled %}
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
@@ -41,7 +39,7 @@ use crate::{
             {% if !title.is_empty() %}
                 {{title|safe}}
             {% endif %}
-            <form id='form-{{typ}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='outerHTML' hx-target='#form-{{typ}}-box'>
+            <form id='form-{{htmx_target}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
                 {% for element in elements %}
                     {{ element|safe }}
                 {% endfor %}
@@ -70,6 +68,8 @@ struct Form<'a> {
     title: &'a str,
     module: &'a str,
     endpoint: &'a str,
+    htmx_target: &'a str,
+    htmx_swap_mode: &'a str,
     elements: &'a [RUMString],
     css_class: &'a str,
     custom_css_enabled: bool,
@@ -81,7 +81,9 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_NO_TEXT);
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
     let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
-    let auto_hide_progress = rumtk_web_get_text_item!(params, PARAMS_TARGET, "progress_hidden");
+    let auto_hide_progress = rumtk_web_get_text_item!(params, PARAMS_PROGRESS_MODE, DEFAULT_PROGRESS_MODE);
+    let htmx_swap_mode = rumtk_web_get_text_item!(params, PARAMS_SWAP_MODE, DEFAULT_HTMX_SWAP_MODE);
+    let htmx_target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let title_elem = match title.is_empty() {
@@ -104,9 +106,11 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
         title: title_elem,
         module: module_name,
         endpoint: endpoint_url,
+        htmx_target,
+        htmx_swap_mode,
         elements: elements.iter().as_ref(),
         css_class,
         custom_css_enabled,
-        auto_hide_progress: auto_hide_progress == "progress_hidden",
+        auto_hide_progress: auto_hide_progress == DEFAULT_PROGRESS_MODE,
     })
 }

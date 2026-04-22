@@ -38,6 +38,8 @@ pub const DEFAULT_TEXT_ITEM: &str = "default";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
 pub const DEFAULT_NO_TEXT: &str = "";
 pub const DEFAULT_JOB_LOADER_NAME: &str = "job_loader";
+pub const DEFAULT_HTMX_SWAP_MODE: &str = "outerHTML";
+pub const DEFAULT_PROGRESS_MODE: &str = "hidden";
 
 /*
     Options
@@ -63,6 +65,8 @@ pub const PARAMS_CONTENTS: &str = "contents";
 pub const PARAMS_MODULE: &str = "module";
 pub const PARAMS_ENDPOINT: &str = "endpoint";
 pub const PARAMS_ELEMENT: &str = "element";
+pub const PARAMS_SWAP_MODE: &str = "swap_mode";
+pub const PARAMS_PROGRESS_MODE: &str = "progress_mode";
 
 /*
    CONF SECTIONS
