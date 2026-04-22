@@ -104,11 +104,14 @@ impl AppConf {
         }
     }
 
-    pub fn get_pipeline(&self, pipeline_name: &str) -> RUMCommandLine {
+    pub fn get_pipeline(&self, pipeline_category: &str, pipeline_name: &str) -> RUMCommandLine {
         match self.pipelines {
-            Some(ref pipelines) => {
-                match pipelines.get(pipeline_name) {
-                    Some(pipeline) => pipeline.clone(),
+            Some(ref categories) => {
+                match categories.get(pipeline_category) {
+                    Some(pipelines) => match pipelines.get(pipeline_name) {
+                        Some(pipeline) => pipeline.to_owned(),
+                        None => vec![]
+                    },
                     None => vec![]
                 }
             }
@@ -405,9 +408,13 @@ macro_rules! rumtk_web_get_config_section {
 #[macro_export]
 macro_rules! rumtk_web_get_pipeline {
     ( $conf:expr, $pipeline:expr ) => {{
+        use $crate::defaults::DEFAULT_TEXT_ITEM;
+        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, $pipeline:expr)
+    }};
+    ( $conf:expr, $pipeline_category, $pipeline:expr ) => {{
         use $crate::rumtk_web_get_config;
         use $crate::AppConf;
-        rumtk_web_get_config!($conf).get_pipeline($pipeline)
+        rumtk_web_get_config!($conf).get_pipeline($pipeline_category, $pipeline)
     }};
 }
 
