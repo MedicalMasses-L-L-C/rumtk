@@ -37,6 +37,7 @@ pub const DEFAULT_OUTBOUND_LISTENING_ADDRESS: &str = "0.0.0.0:3000";
 pub const DEFAULT_TEXT_ITEM: &str = "default";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
 pub const DEFAULT_NO_TEXT: &str = "";
+pub const DEFAULT_JOB_LOADER_NAME: &str = "job_loader";
 
 /*
     Options
@@ -61,6 +62,7 @@ pub const PARAMS_SIZE: &str = "size";
 pub const PARAMS_CONTENTS: &str = "contents";
 pub const PARAMS_MODULE: &str = "module";
 pub const PARAMS_ENDPOINT: &str = "endpoint";
+pub const PARAMS_ELEMENT: &str = "element";
 
 /*
    CONF SECTIONS

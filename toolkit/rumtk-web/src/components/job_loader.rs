@@ -18,8 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_html};
+use crate::defaults::{DEFAULT_JOB_LOADER_NAME, DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template};
 use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 
 #[derive(RUMWebTemplate, Debug)]
@@ -38,12 +38,12 @@ pub struct JobLoader<'a> {
 
 pub fn job_loader(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-    let element_name = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
+    let element_name = rumtk_web_get_text_item!(params, PARAMS_ELEMENT, DEFAULT_JOB_LOADER_NAME);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let loader = &rumtk_web_render_component!("loader", [(PARAMS_CSS_CLASS, css_class)], state)?.to_rumstring();
 
-    rumtk_web_render_html!(JobLoader {
+    rumtk_web_render_template!(JobLoader {
             job_id,
             element_name,
             loader,
