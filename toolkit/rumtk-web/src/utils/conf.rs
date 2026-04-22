@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::DEFAULT_APP_CONFIG;
 use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
@@ -119,21 +118,19 @@ impl AppConf {
         match self.config.get(&self.lang) {
             Some(l) => match l.get(section) {
                 Some(i) => i.clone(),
-                None => match self.config.get(DEFAULT_TEXT_ITEM) {
-                    Some(l) => match l.get(section) {
-                        Some(i) => i.clone(),
-                        None => TextMap::default(),
-                    },
-                    None => TextMap::default(),
-                },
+                None => self.get_default_item(section),
             },
-            None => match self.config.get(DEFAULT_TEXT_ITEM) {
-                Some(l) => match l.get(section) {
-                    Some(i) => i.clone(),
-                    None => TextMap::default(),
-                },
+            None => self.get_default_item(section),
+        }
+    }
+    
+    pub fn get_default_item(&self, section: &str) -> TextMap {
+        match self.config.get(DEFAULT_TEXT_ITEM) {
+            Some(l) => match l.get(section) {
+                Some(i) => i.clone(),
                 None => TextMap::default(),
             },
+            None => TextMap::default(),
         }
     }
 }
