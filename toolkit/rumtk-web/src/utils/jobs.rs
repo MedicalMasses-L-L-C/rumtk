@@ -88,3 +88,143 @@ macro_rules! rumtk_web_generate_job_id {
         job_str_id_to_id($id)
     }};
 }
+
+///
+/// THis macro allows you to check if a background job has completed.
+///
+/// If the job has completed, return the result which is of type [JobResult].
+///
+/// If the job is still going, force render a drop in loader component set to retry the check. This
+/// loader gets passed the calling element name (`$element_name`) so that it can render the results
+/// as it sees fit.
+///
+/// ## Example
+/// 
+/// ### Loader Render
+/// ```
+/// use rumtk_core::{rumtk_async_sleep, rumtk_new_lock};
+/// use rumtk_core::strings::{RUMString, ToCompactString};
+/// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
+/// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
+/// use rumtk_web::utils::jobs::{JobResult, JobResultType};
+/// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
+/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
+///
+/// let workers: usize = 5;
+/// rumtk_web_init_job_manager!(&workers);
+/// rumtk_web_init_components!(
+///     Some(vec![
+///         ("my_element", my_element)
+///     ])
+/// );
+///
+/// async fn basic_processor() -> JobResult {
+///     rumtk_async_sleep!(100).await;
+///     Ok(JobResultType::TEXT(RUMString::new("Hello World")))
+/// }
+///
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
+///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+///
+///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
+/// 
+///     let job_data = match job_result {
+///         JobResultType::TEXT(t) => t,
+///         _ => RUMString::new("")
+///     };
+///
+///     rumtk_web_post_process_html!(job_data)
+/// }
+///
+/// let app_state = rumtk_new_lock!(AppState::default());
+/// let mut params = RUMWebData::new();
+/// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
+/// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+///
+/// assert!(rendered.as_str().contains(JOB_LOADER_TEST_PATTERN), "Element did not render loader!");
+///
+/// ```
+///
+/// ### Component Render
+/// ```
+/// use rumtk_core::{rumtk_sleep, rumtk_new_lock};
+/// use rumtk_core::strings::{RUMString, ToCompactString};
+/// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
+/// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
+/// use rumtk_web::utils::jobs::{JobResult, JobResultType};
+/// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
+/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
+///
+/// let workers: usize = 5;
+/// rumtk_web_init_job_manager!(&workers);
+/// rumtk_web_init_components!(
+///     Some(vec![
+///         ("my_element", my_element)
+///     ])
+/// );
+///
+/// async fn basic_processor() -> JobResult {
+///     Ok(JobResultType::TEXT(RUMString::new("Hello World")))
+/// }
+///
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
+///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+///
+///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
+///
+///     let job_data = match job_result {
+///         JobResultType::TEXT(t) => t,
+///         _ => RUMString::new("")
+///     };
+///
+///     rumtk_web_post_process_html!(job_data)
+/// }
+///
+/// let app_state = rumtk_new_lock!(AppState::default());
+/// let mut params = RUMWebData::new();
+/// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
+/// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+/// 
+/// rumtk_sleep!(1);
+/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+///
+/// assert!(rendered.as_str().contains(JOB_LOADER_TEST_PATTERN), "Element did not render loader!");
+///
+/// ```
+///
+#[macro_export]
+macro_rules! rumtk_web_check_on_job {
+    ( $element_name:expr, $job_id:expr, $state:expr ) => {{
+        use $crate::defaults::{DEFAULT_TEXT_ITEM};
+        rumtk_web_check_on_job!($element_name, $job_id, DEFAULT_TEXT_ITEM, $state)
+    }};
+    ( $element_name:expr, $job_id:expr, $css_class:expr, $state:expr ) => {{
+        use rumtk_core::id::id_to_uuid;
+        use $crate::defaults::{PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
+        use $crate::{rumtk_web_get_job_manager, rumtk_web_render_component};
+
+        let id = id_to_uuid($job_id);
+        let job_finished = rumtk_web_get_job_manager!()?.is_finished(&id);
+        let result = match job_finished {
+            true => &rumtk_web_get_job_manager!()?.wait_on(&id)?.result,
+            false => {
+                return rumtk_web_render_component!(
+                    "job_loader",
+                    [
+                        (PARAMS_ID, $job_id),
+                        (PARAMS_ELEMENT, $element_name),
+                        (PARAMS_CSS_CLASS, $css_class),
+                    ], $state
+                );
+            },
+        };
+        
+        match result {
+            Some(r) => r.clone()?,
+            None => JobResultType::NONE,
+        }
+    }};
+}
