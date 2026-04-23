@@ -349,7 +349,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// ### With Existing Page and Component and Form
 /// ```
 /// use rumtk_core::strings::RUMString;
-/// use rumtk_web::AppComponents;
+/// use rumtk_web::{AppComponents, SharedAppState};
 /// use rumtk_web::components::UserComponents;
 /// use rumtk_web::pages::UserPages;
 /// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
@@ -358,7 +358,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// use rumtk_web::components::form::props::InputProps;
 /// use rumtk_web::rumtk_web_register_app_components;
 ///
-/// fn upload_form(builder: FormElementBuilder) -> FormElements {
+/// fn upload_form(builder: FormElementBuilder, _state: &SharedAppState) -> FormElements {
 ///     vec![
 ///         builder(
 ///             "input",
@@ -511,7 +511,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///     )
 /// }
 ///
-/// fn upload_form(builder: FormElementBuilder) -> FormElements {
+/// fn upload_form(builder: FormElementBuilder, _state: &SharedAppState) -> FormElements {
 ///     vec![
 ///         builder(
 ///             "input",
@@ -812,7 +812,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         })
 ///     }
 ///
-///     fn my_form (builder: FormElementBuilder) -> FormElements {
+///     fn my_form (builder: FormElementBuilder, _state: &SharedAppState) -> FormElements {
 ///         vec![
 ///             builder("input", "", InputProps::default(), "default")
 ///         ]
