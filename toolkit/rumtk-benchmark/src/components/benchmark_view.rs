@@ -18,19 +18,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::strings::RUMString;
-use rumtk_web::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
+use rumtk_web::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS, PARAMS_ID};
 use rumtk_web::jobs::JobResultType;
-use rumtk_web::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_render_template};
+use rumtk_web::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_markdown, rumtk_web_render_template};
 use rumtk_web::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='benchmark-view-{{css_class}}'></div>
+        <div class='f24 benchmark-view-{{css_class}} md'>{{data|safe}}</div>
     ",
     ext = "html"
 )]
 pub struct BenchmarkReportView<'a> {
+    data: &'a str,
     css_class: &'a str,
 }
 
@@ -41,11 +42,15 @@ pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: Share
     let job_result = rumtk_web_check_on_job!("benchmark_view", job_id, state);
 
     let job_data = match job_result {
-        JobResultType::RustType(t) => t,
+        JobResultType::TEXT(t) => t,
         _ => RUMString::new("")
     };
+    
+    let markdown_data = rumtk_web_render_markdown!(job_data);
+    let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, markdown_data)], state)?.to_rumstring();
 
     rumtk_web_render_template!(BenchmarkReportView {
+            data: data.as_str(),
             css_class
         }
     )
