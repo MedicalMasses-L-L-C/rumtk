@@ -23,11 +23,7 @@ use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{
-    rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints,
-    rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_job_manager,
-    rumtk_web_init_pages,
-};
+use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
 use rumtk_core::core::RUMResult;
@@ -114,8 +110,7 @@ struct Args {
     pub skip_default_css: bool,
 }
 
-async fn run_app(args: Args, skip_serve: bool) -> RUMResult<()> {
-    let state = rumtk_web_load_conf!(&args);
+async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResult<()> {
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
         .deflate(true)
@@ -265,10 +260,11 @@ pub struct AppSwitches {
 ///
 pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUMResult<()> {
     let args = Args::parse();
+    let state = rumtk_web_load_conf!(&args);
 
     rumtk_web_init_components!(app_components.components);
     rumtk_web_init_pages!(app_components.pages);
-    rumtk_web_init_forms!(app_components.forms);
+    rumtk_web_init_forms!(app_components.forms, state);
     rumtk_web_init_api_endpoints!(app_components.apis);
     rumtk_web_compile_css_bundle!(
         &args.css_source_dir,
@@ -276,7 +272,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
     );
 
     rumtk_web_init_job_manager!(&args.threads);
-    let task = run_app(args, switches.skip_serve);
+    let task = run_app(args, state, switches.skip_serve);
     rumtk_resolve_task!(task)
 }
 

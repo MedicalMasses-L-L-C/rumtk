@@ -20,8 +20,8 @@
  */
 use crate::components::form::form_element::form_element;
 use crate::components::form::props::InputProps;
-use crate::rumtk_web_render_component;
 use crate::utils::HTMLResult;
+use crate::{rumtk_web_render_component, SharedAppState};
 use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::core::RUMResult;
 use rumtk_core::strings::RUMString;
@@ -37,7 +37,7 @@ pub type FormElements = Vec<RUMString>;
 pub type FormCache = LazyRUMCache<RUMString, FormElements>;
 pub type FormElementBuilder =
     fn(element: &str, data: &str, props: InputProps, css: &str) -> RUMString;
-pub type FormBuilderFunction = fn(builder: FormElementBuilder) -> FormElements;
+pub type FormBuilderFunction = fn(builder: FormElementBuilder, state: &SharedAppState) -> FormElements;
 pub type FormItem<'a> = (&'a str, FormBuilderFunction);
 pub type Forms<'a> = Vec<FormItem<'a>>;
 pub type FormCacheItem = FormElements;
@@ -53,16 +53,16 @@ fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -
     rumtk_web_render_component!(|| -> HTMLResult { form_element(element, data, props, css) })
 }
 
-pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction) {
+pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction, state: &SharedAppState) {
     let key = RUMString::from(name);
     let _ = rumtk_cache_fetch!(&raw mut FORM_CACHE, &key, new_form_entry);
-    let data = element_builder(build_form_element);
+    let data = element_builder(build_form_element, state);
     rumtk_cache_push!(&raw mut FORM_CACHE, &key, data);
 }
 
-pub fn register_forms(forms: Option<Forms>) {
+pub fn register_forms(forms: Option<Forms>, state: &SharedAppState) {
     for (form_name, form_builder) in forms.unwrap_or_default() {
-        register_form_elements(form_name, &form_builder);
+        register_form_elements(form_name, &form_builder, &state);
     }
 }
 
@@ -75,10 +75,10 @@ pub fn get_form(name: &str) -> RUMResult<FormCacheItem> {
 ///
 #[macro_export]
 macro_rules! rumtk_web_init_forms {
-    ( $forms:expr ) => {{
+    ( $forms:expr, $state:expr ) => {{
         use $crate::components::form::register_forms;
 
-        register_forms($forms);
+        register_forms($forms, &$state.clone());
     }};
 }
 
