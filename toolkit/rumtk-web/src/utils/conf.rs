@@ -21,6 +21,7 @@
 use crate::jobs::{Job, JobID};
 use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
+use askama::PrimitiveType;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
@@ -40,6 +41,8 @@ pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
 pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
 pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNestedTextMap>;
 
+pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
+
 #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
     pub logo_source: Option<RUMString>,
@@ -54,8 +57,34 @@ pub struct FooterConf {
     pub disable_contact_button: bool,
 }
 
+#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
+pub struct PipelineConf {
+    pub setup_settings: TextMap,
+    pub categories: Option<RUMHashMap<RUMString, PipelineGroup>>
+}
 
-pub type PipelineConf = Option<RUMHashMap<RUMString, RUMHashMap<RUMString, RUMCommandLine>>>;
+impl PipelineConf {
+    pub fn get_pipeline_category(&self, pipeline_category: &str) -> Option<&PipelineGroup> {
+        match self.categories {
+            Some(ref categories) => {
+                match categories.get(pipeline_category) {
+                    Some(pipelines) => Some(pipelines),
+                    None => None
+                }
+            }
+            None => None,
+        }
+    }
+    pub fn get_pipeline(&self, pipeline_category: &str, pipeline_name: &str) -> RUMCommandLine {
+        match self.get_pipeline_category(pipeline_category) {
+            Some(group) => match group.get(pipeline_name) {
+                Some(pipeline) => pipeline.to_owned(),
+                None => RUMCommandLine::new()
+            },
+            None => RUMCommandLine::new()
+        }
+    }
+}
 
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
@@ -104,19 +133,8 @@ impl AppConf {
         }
     }
 
-    pub fn get_pipeline(&self, pipeline_category: &str, pipeline_name: &str) -> RUMCommandLine {
-        match self.pipelines {
-            Some(ref categories) => {
-                match categories.get(pipeline_category) {
-                    Some(pipelines) => match pipelines.get(pipeline_name) {
-                        Some(pipeline) => pipeline.to_owned(),
-                        None => vec![]
-                    },
-                    None => vec![]
-                }
-            }
-            None => vec![],
-        }
+    pub fn get_pipelines(&self) -> &PipelineConf {
+        &self.pipelines
     }
 
     pub fn get_text(&self, item: &str) -> NestedTextMap {
@@ -138,7 +156,7 @@ impl AppConf {
             None => self.get_default_item(section),
         }
     }
-    
+
     pub fn get_default_item(&self, section: &str) -> TextMap {
         match self.config.get(DEFAULT_TEXT_ITEM) {
             Some(l) => match l.get(section) {
@@ -401,25 +419,17 @@ macro_rules! rumtk_web_get_config_section {
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 ///
-/// let pipeline = rumtk_web_get_pipeline!(state, DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM);
+/// let pipeline = rumtk_web_get_pipeline!(state).get_pipeline(DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM);
 ///
 /// assert_eq!(pipeline, vec![], "Pipeline field in the configuration was not empty!");
 /// ```
-/// 
+///
 #[macro_export]
 macro_rules! rumtk_web_get_pipeline {
-    (  ) => {{
-        use $crate::defaults::DEFAULT_TEXT_ITEM;
-        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM)
-    }};
-    ( $conf:expr, $pipeline:expr ) => {{
-        use $crate::defaults::DEFAULT_TEXT_ITEM;
-        rumtk_web_get_pipeline!($conf:expr, DEFAULT_TEXT_ITEM, $pipeline)
-    }};
-    ( $conf:expr, $pipeline_category:expr, $pipeline:expr ) => {{
+    ( $conf:expr ) => {{
         use $crate::rumtk_web_get_config;
         use $crate::AppConf;
-        rumtk_web_get_config!($conf).get_pipeline($pipeline_category, $pipeline)
+        rumtk_web_get_config!($conf).get_pipelines()
     }};
 }
 
