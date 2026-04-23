@@ -35,7 +35,7 @@ pub const FORM_CSS: &str = r"
 
                 width: 70%;
                 min-width: 200px;
-                max-width: 650px;
+                max-width: 1000px;
 
                 justify-items: center;
                 justify-content: center;
