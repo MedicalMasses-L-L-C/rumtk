@@ -34,8 +34,11 @@
   },
   "config": {},
   "pipelines": {
-    "basic": {
-      "parser": []
+    "setup_settings": {},
+    "categories": {
+      "basic": {
+        "parser": []
+      }
     }
   }
 }
