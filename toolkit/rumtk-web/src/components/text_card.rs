@@ -31,7 +31,7 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/text_card.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered text-card-{{css_class}}'>
+        <div class='centered text-card-{{css_class}} md'>
           {{formatted_label|safe}}
         </div>
     ",

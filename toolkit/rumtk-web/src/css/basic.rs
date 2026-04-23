@@ -59,4 +59,13 @@ pub const BASIC_CSS: &str = r"
         .margin-1x {
             margin: 1em;
         }
+
+        .md a {
+            filter: invert();
+        }
+
+        .md td, .md th {
+            padding: 5px;
+        }
+        
     ";
