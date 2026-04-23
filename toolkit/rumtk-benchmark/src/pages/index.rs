@@ -29,7 +29,7 @@ pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
             (PARAMS_TYPE, "basic_benchmark"),
             (PARAMS_TITLE, "basic benchmark"),
             (PARAMS_TARGET, "basic_benchmark"),
-            (PARAMS_SWAP_MODE, "innerHTML"),
+            (PARAMS_SWAP_MODE, "outerHTML"),
             (PARAMS_ENDPOINT, "/api/benchmarks/basic")
         ],
         app_state
