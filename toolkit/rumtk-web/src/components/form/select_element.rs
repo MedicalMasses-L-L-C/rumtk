@@ -72,7 +72,10 @@ fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
 
 pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
     let items = parse_select_data(data);
-    let count = items.len();
+    let count = match props.multiple {
+        true => items.len(),
+        false => 1,
+    };
 
     rumtk_web_render_template!(SelectElement {
         items,
