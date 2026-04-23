@@ -20,35 +20,35 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
         {% if custom_css_enabled %}
-            <link href='/static/components/div.css' rel='stylesheet'>
+            <link href='/static/components/container.css' rel='stylesheet'>
         {% endif %}
-        <div class='div-{{css_class}}'>{{contents|safe}}</div>
+        <div class='centered container-default container-{{css_class}}'>{{contents|safe}}</div>
     ",
     ext = "html"
 )]
-pub struct Div<'a> {
+pub struct Container<'a> {
     contents: &'a str,
     css_class: &'a str,
     custom_css_enabled: bool,
 }
 
-pub fn div(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    rumtk_web_render_template!(Div {
-        contents: contents,
-        css_class: css_class,
+    let inner = rumtk_web_render_component!("div", [(PARAMS_CSS_CLASS, css_class), (PARAMS_CONTENTS, contents)], state)?.to_rumstring();
+
+    rumtk_web_render_template!(Container {
+        contents: inner.as_str(),
+        css_class,
         custom_css_enabled
     })
 }

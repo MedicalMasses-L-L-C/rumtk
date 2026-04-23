@@ -52,6 +52,7 @@ mod title;
 mod select;
 mod loader;
 mod job_loader;
+mod container;
 
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentItem<'a> = (&'a str, ComponentFunction);
@@ -96,6 +97,7 @@ pub fn init_components(user_components: Option<UserComponents>) {
     register_component("loader", loader::loader);
     register_component("job_loader", job_loader::job_loader);
     register_component("content_viewer", content_viewer::content_viewer);
+    register_component("container", container::container);
     register_component("select", select::select);
     register_component("div", div::div);
 
