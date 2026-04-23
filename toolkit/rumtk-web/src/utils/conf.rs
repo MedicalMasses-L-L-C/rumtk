@@ -75,6 +75,16 @@ impl PipelineConf {
             None => None,
         }
     }
+    pub fn get_available_pipeline_names(&self, pipeline_category: &str) -> Vec<&RUMString> {
+        match self.get_pipeline_category(pipeline_category) {
+            Some(group) => {
+                let mut keys = group.keys().collect::<Vec<&RUMString>>();
+                keys.sort_unstable();
+                keys
+            },
+            None => vec![]
+        }
+    }
     pub fn get_pipeline(&self, pipeline_category: &str, pipeline_name: &str) -> RUMCommandLine {
         match self.get_pipeline_category(pipeline_category) {
             Some(group) => match group.get(pipeline_name) {
