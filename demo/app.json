@@ -37,7 +37,13 @@
     "setup_settings": {},
     "categories": {
       "basic": {
-        "parser": []
+        "parser": [
+          {
+            "path": "hyperfine",
+            "args": ["-w", "50", "../target/debug/rumtk-hl7-v2-parse", "--export-markdown", "/dev/stdout"],
+            "env": {}
+          }
+        ]
       }
     }
   }
