@@ -120,6 +120,14 @@ pub const LIST_CSS: &str = r"
         border-radius: 15px;
     }
 
+    .container-default {
+        max-width: 1700px;
+        padding: 20px;
+        background-color: var(--color-indigo);
+
+        border-radius: 15px;
+    }
+
     .title-default-container {
         display: block;
         height: 40px;
