@@ -9,3 +9,4 @@ rumtk-web = { version = "0.7.0", path = "../rumtk-web" }
 askama = "0.15.6"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.149"
+pulldown-cmark = "0.13.3"
