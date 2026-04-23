@@ -281,8 +281,12 @@ pub type RouterAppState = State<SharedAppState>;
 ///
 /// let path = "./test_conf.json";
 ///
+/// if fs::exists(&path).unwrap() {
+///     fs::remove_file(&path).unwrap();
+/// }
+///
 /// rumtk_web_save_conf!(&path);
-/// let app_state = rumtk_web_load_conf!(Args::default());
+/// let app_state = rumtk_web_load_conf!(Args::default(), &path);
 /// let config = rumtk_web_get_config!(app_state).clone();
 ///
 /// if fs::exists(&path).unwrap() {
