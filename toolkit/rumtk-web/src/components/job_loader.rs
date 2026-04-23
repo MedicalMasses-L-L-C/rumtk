@@ -25,7 +25,11 @@ use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div id='loader-{{job_id}}' hx-get='/component/{{element_name}}?id={{job_id}}' hx-trigger='every 2s' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>{{loader|safe}}</div>
+        <div id='loader-{{job_id}}' class='centered container-default job-loader-{{css_class}}-container'>
+            <div class='centered' hx-get='/component/{{element_name}}?id={{job_id}}' hx-trigger='every 2s' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>
+                {{loader|safe}}
+            </div>
+        </div>
     ",
     ext = "html"
 )]
