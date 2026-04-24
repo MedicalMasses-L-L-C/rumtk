@@ -672,6 +672,25 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 
 ///
 /// Convert buffer to string.
+///
+/// ## Example
+/// ```
+/// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+/// use rumtk_core::types::RUMBuffer;
+///
+/// const expected: &str = "Hello World!";
+/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let result = string_to_buffer(expected);
+///
+/// assert_eq!(result, expected, "str to RUMBuffer conversion failed!");
+/// ```
+///
+pub fn string_to_buffer(data: &str) -> RUMBuffer {
+    RUMBuffer::copy_from_slice(data.as_bytes())
+}
+
+///
+/// Convert buffer to string.
 /// 
 /// ## Example
 /// ```
