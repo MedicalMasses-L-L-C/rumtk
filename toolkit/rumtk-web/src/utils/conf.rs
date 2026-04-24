@@ -59,11 +59,15 @@ pub struct FooterConf {
 
 #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct PipelineConf {
-    pub setup_settings: TextMap,
+    pub settings: Option<TextMap>,
     pub categories: Option<RUMHashMap<RUMString, PipelineGroup>>
 }
 
 impl PipelineConf {
+    pub fn get_settings(&self) -> Option<&TextMap> {
+        self.settings.as_ref()
+    }
+    
     pub fn get_pipeline_category(&self, pipeline_category: &str) -> Option<&PipelineGroup> {
         match self.categories {
             Some(ref categories) => {
