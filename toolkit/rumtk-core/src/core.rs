@@ -23,6 +23,7 @@ use crate::types::RUMBuffer;
 use rand::{distr::Alphanumeric, Rng, RngExt};
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
+pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
 
 pub type RUMError = RUMString;
 
