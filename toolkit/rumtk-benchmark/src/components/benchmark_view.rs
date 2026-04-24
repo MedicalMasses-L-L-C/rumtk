@@ -39,7 +39,10 @@ pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: Share
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let job_result = rumtk_web_check_on_job!("benchmark_view", job_id, state).unwrap_or_default();
+    let job_result = match rumtk_web_check_on_job!("benchmark_view", job_id, state) {
+        Some(result) => result?.to_rumstring(),
+        None => RUMString::default()
+    };
     
     let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, job_result)], state)?.to_rumstring();
 
