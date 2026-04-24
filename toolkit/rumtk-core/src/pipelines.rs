@@ -834,4 +834,83 @@ pub mod pipeline_macros {
             pipeline_await_pipeline(pipeline)
         }};
     }
+
+    ///
+    /// Pipe a string buffer into pipeline.
+    /// 
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_pipe_string_data, rumtk_pipeline_command, rumtk_pipeline_quick_run};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::buffer_to_string;
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_pipe_string_data!(&mut pipeline, input);
+    ///
+    ///     rumtk_pipeline_quick_run!(pipeline)
+    /// };
+    /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
+    /// 
+    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
+    /// ```
+    /// 
+    #[macro_export]
+    macro_rules! rumtk_pipeline_pipe_string_data {
+        ( $pipeline:expr, $data:expr ) => {{
+            use $crate::{rumtk_pipeline_pipe_buffer};
+            use $crate::strings::string_to_buffer;
+            use $crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline};
+
+            let buffer = string_to_buffer($data);
+
+            rumtk_pipeline_pipe_buffer!($pipeline, &buffer)
+        }};
+    }
+
+    ///
+    /// Pipe a [RUMBuffer] buffer into pipeline.
+    /// 
+    /// ## Example
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_pipe_buffer, rumtk_pipeline_command, rumtk_pipeline_quick_run};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::buffer_to_string;
+    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::strings::string_to_buffer;
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_pipe_buffer!(&mut pipeline, &string_to_buffer(input));
+    ///
+    ///     rumtk_pipeline_quick_run!(pipeline)
+    /// };
+    /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
+    ///
+    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
+    /// ```
+    ///
+    #[macro_export]
+    macro_rules! rumtk_pipeline_pipe_buffer {
+        ( $pipeline:expr, $data:expr ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline};
+
+            pipeline_add_stdin_data_to_pipeline($pipeline, $data)
+        }};
+    }
 }
