@@ -135,11 +135,12 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
 /// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
 /// ```
 ///
-pub fn new_random_buffer<const N: usize>() -> RUMBuffer {
+pub fn new_random_buffer<const N: usize>() -> [u8; N] {
     let mut buffer = [0u8; N];
     match getrandom::fill(&mut buffer) {
         Ok(_) => {}
         Err(_) => {}
     };
-    RUMBuffer::copy_from_slice(buffer.as_slice())
+    
+    buffer
 }
