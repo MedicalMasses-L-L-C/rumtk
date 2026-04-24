@@ -33,6 +33,7 @@ pub use meta::*;
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(
     source = "
+        {{meta|safe}}
         {{report|safe}}
     ",
     ext = "html"

@@ -37,13 +37,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::utils::types::RUMWebTemplate;
 use rumtk_core::core::RUMResult;
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
 use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 use std::convert::{From, TryFrom};
+use std::env::consts;
 use std::fmt::Debug;
 
-#[derive(Default, Debug, RUMDeserialize, RUMSerialize)]
+#[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
+#[template(
+    source = "
+        <table>
+            <tbody>
+                <tr>
+                    <td>Architecture: </td>
+                    <td>{{arch}}</td>
+                </tr>
+                <tr>
+                    <td>OS: </td>
+                    <td>{{os}}</td>
+                </tr>
+            </tbody>
+        </table>
+    ",
+    ext = "html"
+)]
 pub struct BenchmarkMeta {
     pub arch: RUMString,
     pub os: RUMString,
@@ -52,8 +71,8 @@ pub struct BenchmarkMeta {
 impl BenchmarkMeta {
     pub fn new() -> RUMResult<Self> {
         Ok(Self {
-            arch: RUMString::new(""),
-            os: RUMString::new("")
+            arch: RUMString::from(consts::ARCH),
+            os: RUMString::from(consts::OS)
         })
     }
 }
