@@ -729,3 +729,28 @@ pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
 pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
     RUMBuffer::copy_from_slice(buffer)
 }
+
+///
+/// Given a set of keys and replacements, transform the input string.
+///
+/// ## Example
+/// ```
+/// use rumtk_core::strings::string_format;
+/// use rumtk_core::types::RUMBuffer;
+///
+/// const expected: &str = "Hello World!";
+/// const template: &str = "Hello {}!";
+/// let result = string_format(template, &[("{}", "World")]);
+///
+/// assert_eq!(result.as_str(), expected, "Formatting of string failed!");
+/// ```
+///
+pub fn string_format(input: &str, formatting: &[(&str, &str)]) -> RUMString {
+    let mut output = String::from(input);
+
+    for item in formatting.iter() {
+        output = output.as_str().replace(item.0, item.1);
+    }
+
+    output.to_rumstring()
+}
