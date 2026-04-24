@@ -28,35 +28,7 @@ use rumtk_core::types::RUMBuffer;
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
-#[derive(Default, Debug, Clone, PartialEq)]
-pub enum JobResultType<T = RUMString> {
-    File(JobBuffer),
-    JSON(RUMString),
-    TEXT(RUMString),
-    RustType(T),
-    #[default]
-    NONE,
-}
-
-impl JobResultType {
-    pub fn is_file(&self) -> bool {
-        matches!(self, JobResultType::File(_))
-    }
-    pub fn is_json(&self) -> bool {
-        matches!(self, JobResultType::JSON(_))
-    }
-    pub fn is_text(&self) -> bool {
-        matches!(self, JobResultType::TEXT(_))
-    }
-    pub fn is_type(&self) -> bool {
-        matches!(self, JobResultType::RustType(_))
-    }
-    pub fn is_none(&self) -> bool {
-        matches!(self, JobResultType::NONE)
-    }
-}
-
-pub type JobResult = RUMResult<JobResultType>;
+pub type JobResult = RUMResult<Option<RUMString>>;
 pub type Job = Task<JobResult>;
 type JobManager = TaskManager<JobResult>;
 
@@ -124,7 +96,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// use rumtk_core::strings::{RUMString, ToCompactString};
 /// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
-/// use rumtk_web::utils::jobs::{JobResult, JobResultType};
+/// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
 /// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
 ///
@@ -248,7 +220,7 @@ macro_rules! rumtk_web_check_on_job {
 
         match result {
             Some(r) => r.clone()?,
-            None => JobResultType::NONE,
+            None => None,
         }
     }};
 }
