@@ -21,6 +21,8 @@ use crate::strings::rumtk_format;
 use crate::strings::RUMString;
 use crate::types::RUMBuffer;
 
+pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
+
 pub type RUMError = RUMString;
 
 ///
@@ -125,18 +127,16 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::core::new_random_buffer;
+/// use rumtk_core::core::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
-/// const BUFFER_SIZE: usize = 1024;
-///
-/// let buffer = new_random_buffer();
+/// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
 /// assert_eq!(buffer.is_empty(), false, "Function returned an empty random buffer which was unexpected!");
-/// assert_eq!(buffer.len(), BUFFER_SIZE, "The new random buffer does not have the expected size!");
+/// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
 /// ```
 ///
-pub fn new_random_buffer() -> RUMBuffer {
-    let mut buffer = [0u8; 1024];
+pub fn new_random_buffer<const N: usize>() -> RUMBuffer {
+    let mut buffer = [0u8; N];
     match getrandom::fill(&mut buffer) {
         Ok(_) => {}
         Err(_) => {}
