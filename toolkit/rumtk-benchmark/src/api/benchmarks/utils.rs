@@ -17,6 +17,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use rumtk_core::core::RUMVec;
+use rumtk_core::strings::{string_format, CompactStringExt, RUMString, RUMStringConversions};
 
+pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &str) -> RUMString {
+    let mut lines: RUMVec<RUMString> = RUMVec::with_capacity(buffer.len());
 
+    for item in buffer {
+        lines.push(string_format("{}", &[("{}", item)]));
+    }
+
+    let data = lines.join_compact("\n");
+
+    template.replace("{data}", data.as_str()).to_rumstring()
+}
 

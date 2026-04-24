@@ -18,26 +18,50 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::api::benchmarks::utils::generate_data;
 use crate::utils::types::{BasicBenchmarkReport, BenchmarkReport};
-use rumtk_core::rumtk_pipeline_quick_run_async;
-use rumtk_core::strings::{rumtk_format, RUMArrayConversions, RUMStringConversions};
+use rumtk_core::core::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
+use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions};
+use rumtk_core::{rumtk_pipeline_pipe_string_data, rumtk_pipeline_quick_run_async};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
-use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_get_pipeline, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};
+use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_get_pipelines, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template, TextMap};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
-            let pipeline = rumtk_web_get_pipeline!(state).get_pipeline("basic", pipeline_name);
+            let settings = match rumtk_web_get_pipelines!(state).get_settings() {
+                Some(settings) => settings.clone(),
+                None => TextMap::new()
+            };
+            // Generate the data.
+            let random_data = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(DEFAULT_BUFFER_ITEM_COUNT * 2);
+            let template = match settings.get("template") {
+                Some(template) => template,
+                None => &RUMString::default(),
+            };
+            let line_pattern = match settings.get("line_pattern") {
+                Some(line_pattern) => line_pattern,
+                None => &RUMString::default(),
+            };
+            let data = generate_data(template, &random_data, line_pattern);
+
+            // Prepare the pipeline
+            let mut pipeline = rumtk_web_get_pipelines!(state).get_pipeline("basic", pipeline_name);
+            rumtk_pipeline_pipe_string_data!(&mut pipeline, data.as_str());
+
+            // Execute the pipeline
             let result = rumtk_pipeline_quick_run_async!(pipeline).await?;
 
+            // Generate report
             let report = match std::str::from_utf8(&result) {
                 Ok(results) => BenchmarkReport::<BasicBenchmarkReport>::try_from(results)?,
                 Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
             };
 
-            Ok(Some(rumtk_web_render_template!(report)?.to_rumstring()))
+            // Render the HTML result.
+            Ok(Some(rumtk_web_render_template!(report)))
         },
         None => Ok(None)
     }
