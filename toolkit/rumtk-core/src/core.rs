@@ -20,6 +20,7 @@
 use crate::strings::rumtk_format;
 use crate::strings::RUMString;
 use crate::types::RUMBuffer;
+use rand::{distr::Alphanumeric, Rng, RngExt};
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 
@@ -121,8 +122,9 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
 }
 
 ///
-/// Generates a new random buffer using the `getrandom` crate and wrapped inside a [RUMBuffer](RUMBuffer).
-/// The buffer will be exactly 1024 bytes.
+/// Generates a new random buffer using the `rand` crate and wrapped inside a [RUMBuffer](RUMBuffer).
+/// 
+/// The buffer size can be adjusted via the turbofish method => `new_random_buffer::<10>()`.
 ///
 /// ## Example
 ///
@@ -137,10 +139,30 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
 ///
 pub fn new_random_buffer<const N: usize>() -> [u8; N] {
     let mut buffer = [0u8; N];
-    match getrandom::fill(&mut buffer) {
-        Ok(_) => {}
-        Err(_) => {}
-    };
-    
+    rand::fill(&mut buffer);
     buffer
+}
+
+///
+/// Generates a new random string using the `rand` crate and wrapped inside a [RUMString](RUMString).
+///
+/// The buffer size can be adjusted via the turbofish method => `new_random_buffer::<10>()`.
+///
+/// ## Example
+///
+/// ```
+/// use rumtk_core::core::{new_random_string_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+///
+/// let buffer = new_random_string_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
+///
+/// assert_eq!(buffer.is_empty(), false, "Function returned an empty random buffer which was unexpected!");
+/// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
+/// ```
+///
+pub fn new_random_string_buffer<const N: usize>() -> RUMString {
+    rand::rng()
+        .sample_iter(&Alphanumeric)
+        .take(N) // Length of the string
+        .map(char::from)
+        .collect()
 }
