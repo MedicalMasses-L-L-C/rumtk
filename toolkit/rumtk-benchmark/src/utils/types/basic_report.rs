@@ -61,7 +61,7 @@ use std::fmt::Debug;
                     <td>{{user_time}}</td>
                     <td>{{kernel_time}}</td>
                     <td>{{runs}}</td>
-                    <td></td>
+                    <td>{{units}}</td>
                 </tr>
             </tbody>
         </table>
@@ -70,6 +70,7 @@ use std::fmt::Debug;
 )]
 pub struct BasicBenchmarkReport {
     pub command: RUMString,
+    pub units: RUMString,
     pub mean_time: f32,
     pub mean_delta: f32,
     pub min: f32,
@@ -106,6 +107,7 @@ impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
                 let user_time: f32 = string_find_value(s, &["User:.*?,", "\\d+.\\d+|\\d+"]).unwrap_or_default();
                 let kernel_time: f32 = string_find_value(s, &["System:.*?]", "\\d+.\\d+|\\d+"]).unwrap_or_default();
                 let runs: usize = string_find_value(s, &["\\d+ runs", "\\d+"]).unwrap_or_default();
+                let units: RUMString = string_find_value(s, &["Mean \\[.*?\\]", "\\[.*?\\]"]).unwrap_or_default();
 
                 Ok(Self {
                     command: key_line.get(1).unwrap().trim().to_rumstring(),
@@ -117,6 +119,7 @@ impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
                     runs,
                     user_time,
                     kernel_time,
+                    units
                 })
             },
             false => Err(rumtk_format!("Data is missing the key fields. Got => {}", key_line.len()))
