@@ -146,7 +146,7 @@ pub fn new_random_buffer<const N: usize>() -> [u8; N] {
 ///
 /// Generates a new random string using the `rand` crate and wrapped inside a [RUMString](RUMString).
 ///
-/// The buffer size can be adjusted via the turbofish method => `new_random_buffer::<10>()`.
+/// The buffer size can be adjusted via the turbofish method => `new_random_string_buffer::<10>()`.
 ///
 /// ## Example
 ///
@@ -165,4 +165,32 @@ pub fn new_random_string_buffer<const N: usize>() -> RUMString {
         .take(N) // Length of the string
         .map(char::from)
         .collect()
+}
+
+///
+/// Generates a new random set of [RUMString] using the `rand` crate.
+///
+/// The buffer size for each item can be adjusted via the turbofish method => `new_random_string_set::<10>()`.
+///
+/// ## Example
+///
+/// ```
+/// use rumtk_core::core::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE};
+///const item_count: usize = 5;
+/// 
+/// let buffer = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(item_count);
+///
+/// assert_eq!(buffer.is_empty(), false, "Function returned an empty random buffer which was unexpected!");
+/// assert_eq!(buffer.len(), item_count, "The new random buffer does not have the expected item count!");
+/// assert_eq!(buffer.get(0).unwrap().len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
+/// ```
+///
+pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMString> {
+    let mut set = RUMVec::<RUMString>::with_capacity(item_count);
+    
+    for _ in 0..item_count {
+        set.push(new_random_string_buffer::<N>())
+    }
+    
+    set
 }
