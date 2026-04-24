@@ -18,17 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::HTMLResult;
 use rumtk_core::core::RUMResult;
 use rumtk_core::id::id_to_uuid;
 use rumtk_core::strings::rumtk_format;
-use rumtk_core::strings::RUMString;
 use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
 use rumtk_core::types::RUMBuffer;
 
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
-pub type JobResult = RUMResult<Option<RUMString>>;
+pub type JobResult = RUMResult<Option<HTMLResult>>;
 pub type Job = Task<JobResult>;
 type JobManager = TaskManager<JobResult>;
 
