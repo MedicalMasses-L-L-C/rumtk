@@ -25,6 +25,8 @@ pub mod rumtk_search {
     use crate::strings::{rumtk_format, CompactStringExt, RUMString};
     use crate::types::RUMHashMap;
     use regex::Regex;
+    use std::fmt::Debug;
+    use std::str::FromStr;
     /**************************** Globals **************************************/
     static mut re_cache: RegexCache = new_cache();
     /**************************** Constants**************************************/
@@ -135,5 +137,35 @@ pub mod rumtk_search {
         let key = RUMString::from(expr);
         let re: Regex = rumtk_cache_fetch!(&raw mut re_cache, &key, || {compile_regex(expr)})?;
         Ok(string_list(input, &re).join_compact(join_pattern))
+    }
+
+    ///
+    /// Given a string input and a set of RegEx patterns, find the target value and return it as
+    /// the given target type `T`.
+    ///
+    /// ```
+    /// use rumtk_core::search::rumtk_search::string_find_value;
+    ///
+    /// let haystack = "Range (min \\xe2\\x80\\xa6 max):     0.6 ms \\xe2\\x80\\xa6   2.9 ms    1273 runs";
+    /// let patterns = ["\\d+ runs", "\\d+"];
+    /// let expected = 1273;
+    /// let result = string_find_value::<usize>(haystack, &patterns);
+    ///
+    /// assert_eq!(result, Ok(expected), "Did not find the needle in the haystack or returned the wrong type!");
+    /// ```
+    /// Use \" \" in join_pattern if you wish to have spaces in between matches.
+    ///
+    pub fn string_find_value<T: Default + FromStr>(input: &str, patterns: &[&str]) -> RUMResult<T> {
+        let mut haystack = input;
+        let mut needle = RUMString::default();
+        let mut result = T::default();
+
+        for expr in patterns {
+            needle = string_search(haystack, expr, " ")?;
+            haystack = &needle;
+        }
+
+        result = needle.trim().parse::<T>().unwrap_or_default();
+        Ok(result)
     }
 }

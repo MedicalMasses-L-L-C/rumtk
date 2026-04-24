@@ -298,6 +298,16 @@ mod tests {
         println!("Passed!")
     }
 
+    #[test]
+    fn test_find_value_in_string() {
+        let haystack = "Range (min \\xe2\\x80\\xa6 max):     0.6 ms \\xe2\\x80\\xa6   2.9 ms    1273 runs";
+        let patterns = ["\\d+ runs", "\\d+"];
+        let expected = 1273;
+        let result = string_find_value::<usize>(haystack, &patterns);
+        
+        assert_eq!(result, Ok(expected), "Did not find the needle in the haystack or returned the wrong type!");
+    }
+
     ///////////////////////////////////Threading Tests/////////////////////////////////////////////////
     #[test]
     fn test_default_num_threads() {
