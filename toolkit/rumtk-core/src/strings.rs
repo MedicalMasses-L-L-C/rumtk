@@ -691,7 +691,7 @@ pub fn string_to_buffer(data: &str) -> RUMBuffer {
 
 ///
 /// Convert buffer to string.
-/// 
+///
 /// ## Example
 /// ```
 /// use rumtk_core::strings::buffer_to_string;
@@ -700,7 +700,7 @@ pub fn string_to_buffer(data: &str) -> RUMBuffer {
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from_static(expected.as_bytes());
 /// let result = buffer_to_string(&buffer).unwrap();
-/// 
+///
 /// assert_eq!(result, expected, "Buffer to RUMString conversion failed!");
 /// ```
 ///
@@ -709,4 +709,23 @@ pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
         Ok(string) => Ok(string),
         Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
     }
+}
+
+///
+/// Convert slice of `&[u8]` to [RUMBuffer].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::strings::slice_to_buffer;
+/// use rumtk_core::types::RUMBuffer;
+///
+/// const expected: &str = "Hello World!";
+/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let result = slice_to_buffer(expected.as_bytes());
+///
+/// assert_eq!(result, buffer, "Slice to RUMBuffer conversion failed!");
+/// ```
+///
+pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
+    RUMBuffer::copy_from_slice(buffer)
 }
