@@ -27,9 +27,9 @@ use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
 
 pub type HTMLResponse = Response<Body>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HTMLBody(Html<String>);
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RedirectBody(Redirect);
 
 #[derive(Default, Debug)]
@@ -41,7 +41,7 @@ pub enum RUMWebRedirect {
     None,
 }
 
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub enum RUMWebResponse {
     GetResponse(HTMLBody),
     RedirectResponse(RedirectBody),
