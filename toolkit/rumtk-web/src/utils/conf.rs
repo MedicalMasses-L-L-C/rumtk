@@ -429,17 +429,17 @@ macro_rules! rumtk_web_get_config_section {
 /// use rumtk_core::rumtk_new_lock;
 /// use rumtk_web::{AppState};
 /// use rumtk_web::defaults::DEFAULT_TEXT_ITEM;
-/// use rumtk_web::{rumtk_web_get_pipeline};
+/// use rumtk_web::{rumtk_web_get_pipelines};
 ///
 /// let state = rumtk_new_lock!(AppState::new());
 ///
-/// let pipeline = rumtk_web_get_pipeline!(state).get_pipeline(DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM);
+/// let pipeline = rumtk_web_get_pipelines!(state).get_pipeline(DEFAULT_TEXT_ITEM, DEFAULT_TEXT_ITEM);
 ///
 /// assert_eq!(pipeline, vec![], "Pipeline field in the configuration was not empty!");
 /// ```
 ///
 #[macro_export]
-macro_rules! rumtk_web_get_pipeline {
+macro_rules! rumtk_web_get_pipelines {
     ( $conf:expr ) => {{
         use $crate::rumtk_web_get_config;
         use $crate::AppConf;
