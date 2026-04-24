@@ -18,11 +18,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use rumtk_core::strings::{rumtk_format, RUMArrayConversions, RUMString, RUMStringConversions};
+use crate::utils::types::{BasicBenchmarkReport, BenchmarkReport};
+use rumtk_core::strings::{rumtk_format, RUMArrayConversions, RUMStringConversions};
 use rumtk_core::rumtk_pipeline_quick_run_async;
 use rumtk_web::defaults::PARAMS_ID;
-use rumtk_web::jobs::{JobResult, JobResultType};
-use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_get_pipeline, rumtk_web_render_component, rumtk_web_render_page_contents};
+use rumtk_web::jobs::JobResult;
+use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_get_pipeline, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
@@ -33,21 +34,16 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
             let result = rumtk_pipeline_quick_run_async!(pipeline).await?;
             println!("{:?}", result);
 
-            let md_table = match std::str::from_utf8(&result) {
-                Ok(results) => {
-                    let collection = results
-                        .split('\n')
-                        .collect::<Vec<&str>>();
-                    collection[collection.len() - 4..collection.len()].join("\n")
-                },
+            let report = match std::str::from_utf8(&result) {
+                Ok(results) => BenchmarkReport::<BasicBenchmarkReport>::try_from(results)?,
                 Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
             };
             println!("Results????");
-            println!("{:?}", md_table);
+            println!("{:?}", report);
 
-            Ok(JobResultType::TEXT(md_table.to_rumstring()))
+            Ok(Some(rumtk_web_render_template!(report)?.to_rumstring()))
         },
-        None => Ok(JobResultType::TEXT(RUMString::default()))
+        None => Ok(None)
     }
 
 }
