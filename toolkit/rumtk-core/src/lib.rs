@@ -52,10 +52,8 @@ mod tests {
     use crate::cache::RUMCache;
     use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
-    use crate::strings::{
-        rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils,
-    };
-    use crate::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
+    use crate::strings::{buffer_to_string, rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
+    use crate::types::{RUMBuffer, RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use compact_str::CompactString;
     use serde_json::to_string;
     use std::process::Stdio;
@@ -439,9 +437,7 @@ mod tests {
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
-    use crate::pipelines::pipeline_functions::{
-        pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process,
-    };
+    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::block_on_task;
     use crate::threading::threading_manager::*;
@@ -769,6 +765,26 @@ mod tests {
 
         sys_ls_process.wait();
         sys_wc_process.wait();
+    }
+
+    #[test]
+    fn test_quick_pipe() {let data = RUMBuffer::from_static(b"Hello World");
+        let wc_name = "wc";
+        let mut wc_command = RUMCommand::default();
+        wc_command.path = RUMString::from(wc_name);
+        let mut pipeline = vec![
+            wc_command
+        ];
+        
+        pipeline_add_stdin_data_to_pipeline(&mut pipeline, &data);
+        
+        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+        let result_string = buffer_to_string(&processor().unwrap()).unwrap();
+        let binding = result_string.as_str().replace('\n', "");
+        let result_items: Vec<&str> = binding.split("      ").collect();
+        let result = result_items.get(2).unwrap().trim().parse::<i32>().unwrap();
+        
+        assert_eq!(result, 2, "Data was not piped properly!")
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
