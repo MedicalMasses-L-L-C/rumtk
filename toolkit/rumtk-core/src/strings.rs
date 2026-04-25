@@ -712,25 +712,6 @@ pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
 }
 
 ///
-/// Convert slice of `&[u8]` to [RUMBuffer].
-///
-/// ## Example
-/// ```
-/// use rumtk_core::strings::slice_to_buffer;
-/// use rumtk_core::types::RUMBuffer;
-///
-/// const expected: &str = "Hello World!";
-/// let buffer = RUMBuffer::from_static(expected.as_bytes());
-/// let result = slice_to_buffer(expected.as_bytes());
-///
-/// assert_eq!(result, buffer, "Slice to RUMBuffer conversion failed!");
-/// ```
-///
-pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
-    RUMBuffer::copy_from_slice(buffer)
-}
-
-///
 /// Given a set of keys and replacements, transform the input string.
 ///
 /// ## Example

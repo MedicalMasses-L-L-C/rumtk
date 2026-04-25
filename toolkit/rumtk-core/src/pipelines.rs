@@ -646,13 +646,13 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_buffer};
+    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run!(
-    ///         rumtk_pipeline_command!("ls", new_random_buffer()),
+    ///         rumtk_pipeline_command!("ls", new_random_rumbuffer::<0>()),
     ///         rumtk_pipeline_command!("wc")
     ///     )?;
     ///
@@ -711,13 +711,13 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_buffer};
+    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("wc", new_random_buffer())
+    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<0>())
     ///     ).await?;
     ///
     ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
@@ -731,7 +731,7 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_buffer};
+    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
     /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
     /// use rumtk_core::types::RUMBuffer;
     ///
@@ -739,7 +739,7 @@ pub mod pipeline_macros {
     ///
     /// let f = async || -> RUMResult<RUMBuffer> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("wc", new_random_buffer())
+    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<0>())
     ///     ).await?;
     ///
     ///     Ok(result)
@@ -837,7 +837,7 @@ pub mod pipeline_macros {
 
     ///
     /// Pipe a string buffer into pipeline.
-    /// 
+    ///
     /// ## Example
     /// ```
     /// use rumtk_core::{rumtk_pipeline_pipe_string_data, rumtk_pipeline_command, rumtk_pipeline_quick_run};
@@ -859,10 +859,10 @@ pub mod pipeline_macros {
     ///     rumtk_pipeline_quick_run!(pipeline)
     /// };
     /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
-    /// 
+    ///
     /// assert_eq!(result, expected, "String correctly piped into pipeline!");
     /// ```
-    /// 
+    ///
     #[macro_export]
     macro_rules! rumtk_pipeline_pipe_string_data {
         ( $pipeline:expr, $data:expr ) => {{
@@ -878,7 +878,7 @@ pub mod pipeline_macros {
 
     ///
     /// Pipe a [RUMBuffer] buffer into pipeline.
-    /// 
+    ///
     /// ## Example
     /// ```
     /// use rumtk_core::{rumtk_pipeline_pipe_buffer, rumtk_pipeline_command, rumtk_pipeline_quick_run};

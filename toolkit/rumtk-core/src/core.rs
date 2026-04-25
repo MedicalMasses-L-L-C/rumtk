@@ -123,6 +123,25 @@ pub fn clamp_index(given_indx: &isize, max_size: &isize) -> RUMResult<usize> {
 }
 
 ///
+/// Convert slice of `&[u8]` to [RUMBuffer].
+///
+/// ## Example
+/// ```
+/// use rumtk_core::core::slice_to_buffer;
+/// use rumtk_core::types::RUMBuffer;
+///
+/// const expected: &str = "Hello World!";
+/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let result = slice_to_buffer(expected.as_bytes());
+///
+/// assert_eq!(result, buffer, "Slice to RUMBuffer conversion failed!");
+/// ```
+///
+pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
+    RUMBuffer::copy_from_slice(buffer)
+}
+
+///
 /// Generates a new random buffer using the `rand` crate and wrapped inside a [RUMBuffer](RUMBuffer).
 /// 
 /// The buffer size can be adjusted via the turbofish method => `new_random_buffer::<10>()`.
@@ -142,6 +161,26 @@ pub fn new_random_buffer<const N: usize>() -> [u8; N] {
     let mut buffer = [0u8; N];
     rand::fill(&mut buffer);
     buffer
+}
+
+///
+/// Generates a new random buffer using the `rand` crate and wrapped inside a [RUMBuffer](RUMBuffer).
+///
+/// The buffer size can be adjusted via the turbofish method => `new_random_buffer::<10>()`.
+///
+/// ## Example
+///
+/// ```
+/// use rumtk_core::core::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+///
+/// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
+///
+/// assert_eq!(buffer.is_empty(), false, "Function returned an empty random buffer which was unexpected!");
+/// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
+/// ```
+///
+pub fn new_random_rumbuffer<const N: usize>() -> RUMBuffer {
+    slice_to_buffer(&new_random_buffer::<N>())
 }
 
 ///
