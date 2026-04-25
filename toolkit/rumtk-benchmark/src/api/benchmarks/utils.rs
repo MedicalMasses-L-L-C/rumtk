@@ -23,8 +23,14 @@ use rumtk_core::strings::{string_format, CompactStringExt, RUMString, RUMStringC
 pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &str) -> RUMString {
     let mut lines: RUMVec<RUMString> = RUMVec::with_capacity(buffer.len());
 
-    for item in buffer {
-        lines.push(string_format("{}", &[("{}", item)]));
+    for i in 0..buffer.len() {
+        let item = buffer.get(i).unwrap();
+        lines.push(string_format(item_pattern, 
+                                 &[
+                                     ("{line}", item),
+                                     ("{line_number}", i.to_string().as_str())
+                                 ]
+        ));
     }
 
     let data = lines.join_compact("\n");
