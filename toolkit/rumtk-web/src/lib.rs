@@ -38,11 +38,13 @@ pub use utils::*;
 ///
 #[cfg(test)]
 mod tests {
-    use crate::defaults::PARAMS_TITLE;
+    use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID, PARAMS_TITLE};
+    use crate::jobs::JobResult;
     use crate::testdata::{create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_init_components, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, RUMWebRedirect, SharedAppState};
+    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
-    use rumtk_core::strings::RUMStringConversions;
+    use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
+    use rumtk_core::{rumtk_new_lock, rumtk_sleep};
 
     ///////////////////////////////////FormData/////////////////////////////////////////////////
     #[test]
@@ -134,4 +136,43 @@ mod tests {
     ///////////////////////////////////HTML/////////////////////////////////////////////////
     #[test]
     fn test_render_html_component() {}
+
+    ///////////////////////////////////Jobs/////////////////////////////////////////////////
+    #[test]
+    fn test_job_run() {
+        const HELLO_STR: &str = "Hello World";
+
+        let workers: usize = 5;
+        rumtk_web_init_job_manager!(&workers);
+        rumtk_web_init_components!(
+            Some(vec![
+                ("my_element", my_element)
+            ])
+        );
+
+        async fn basic_processor() -> JobResult {
+            Ok(Some(rumtk_web_post_process_html!(RUMString::new(HELLO_STR))))
+        }
+
+        fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+            let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
+            let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+
+            let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
+
+            let job_data = job_result.unwrap()?.to_rumstring();
+
+            rumtk_web_post_process_html!(job_data)
+        }
+
+        let app_state = rumtk_new_lock!(AppState::default());
+        let mut params = RUMWebData::new();
+        let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
+        params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+
+        rumtk_sleep!(1);
+        let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+
+        assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
+    }
 }

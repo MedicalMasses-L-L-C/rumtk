@@ -475,7 +475,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// ```
 /// use rumtk_core::{rumtk_pipeline_run_async, rumtk_pipeline_command};
 /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
-/// use rumtk_web::{APIPath, AppComponents, FormData, HTMLResult, RUMWebData, SharedAppState};
+/// use rumtk_web::{rumtk_web_post_process_html, APIPath, AppComponents, FormData, HTMLResult, RUMWebData, RUMWebResponse, SharedAppState};
 /// use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents};
 /// use rumtk_web::api::UserAPIEndpoints;
 /// use rumtk_web::components::UserComponents;
@@ -484,7 +484,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// use rumtk_web::pages::index::index;
 /// use rumtk_web::components::div::div;
 /// use rumtk_web::components::form::props::InputProps;
-/// use rumtk_web::jobs::{JobResult, JobResultType};
+/// use rumtk_web::jobs::{JobResult};
 /// use rumtk_web::utils::defaults::{PARAMS_TARGET};
 /// use rumtk_web::rumtk_web_register_app_components;
 ///
@@ -497,7 +497,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///         rumtk_pipeline_command!("wc")
 ///     ).await?;
 ///
-///     Ok(JobResultType::JSON(result.to_vec().to_rumstring()))
+///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_rumstring())))
 /// }
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {

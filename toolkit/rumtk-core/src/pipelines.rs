@@ -731,7 +731,7 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
+    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
     /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
     /// use rumtk_core::types::RUMBuffer;
     ///
@@ -739,7 +739,7 @@ pub mod pipeline_macros {
     ///
     /// let f = async || -> RUMResult<RUMBuffer> {
     ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<0>())
+    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<DEFAULT_BUFFER_CHUNK_SIZE>())
     ///     ).await?;
     ///
     ///     Ok(result)

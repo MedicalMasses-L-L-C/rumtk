@@ -110,7 +110,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 /// async fn basic_processor() -> JobResult {
 ///     rumtk_async_sleep!(100).await;
-///     Ok(JobResultType::TEXT(RUMString::new("Hello World")))
+///     Ok(None)
 /// }
 ///
 /// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -120,7 +120,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 ///
 ///     let job_data = match job_result {
-///         JobResultType::TEXT(t) => t,
+///         Some(t) => t?.to_rumstring(),
 ///         _ => RUMString::new("")
 ///     };
 ///
@@ -143,7 +143,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// use rumtk_core::strings::{RUMString, ToCompactString};
 /// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
-/// use rumtk_web::utils::jobs::{JobResult, JobResultType};
+/// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
 /// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
 ///
@@ -158,7 +158,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// );
 ///
 /// async fn basic_processor() -> JobResult {
-///     Ok(JobResultType::TEXT(RUMString::new(HELLO_STR)))
+///     Ok(Some(rumtk_web_post_process_html!(RUMString::new(HELLO_STR))))
 /// }
 ///
 /// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -167,14 +167,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 ///
-///     assert!(job_result.is_text(), "Job did not return the expected results! => {:?}", job_result);
-///
-///     let job_data = match job_result {
-///         JobResultType::TEXT(t) => t,
-///         _ => RUMString::new("")
-///     };
-///
-///     assert!(job_data.as_str().contains(HELLO_STR), "Job data is missing expected string! Expected {}, Got {}", HELLO_STR, &job_data);
+///     let job_data = job_result.unwrap()?.to_rumstring();
 ///
 ///     rumtk_web_post_process_html!(job_data)
 /// }
