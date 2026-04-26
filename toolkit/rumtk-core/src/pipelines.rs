@@ -63,7 +63,7 @@ pub mod pipeline_types {
 pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::core::RUMResult;
-    use crate::strings::rumtk_format;
+    use crate::strings::{rumtk_format, string_format, StringReplacementPair};
     use std::io::{Read, Write};
 
     use crate::threading::threading_functions::async_sleep;
@@ -400,7 +400,7 @@ pub mod pipeline_functions {
     /// let result_items: Vec<&str> = binding.split("      ").collect();
     /// let result = result_items.get(2).unwrap().trim().parse::<i32>().unwrap();
     ///
-    /// assert_eq!(result, 2, "Data was not piped properly!")
+    /// assert_eq!(result, 2, "Data was not piped properly!");
     /// ```
     ///
     pub fn pipeline_add_stdin_data_to_pipeline<'a>(pipeline: &'a mut RUMCommandLine, data: &RUMBuffer) -> &'a RUMCommandLine {
@@ -412,6 +412,52 @@ pub mod pipeline_functions {
         };
 
         pipeline
+    }
+
+    ///
+    /// Patches the arguments of the first command with the pattern=replacement pairs!
+    ///
+    /// ## Example
+    /// ```
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::pipelines::pipeline_functions::pipeline_patch_args;
+    /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMCommandLine};
+    /// use rumtk_core::rumtk_pipeline_quick_run;
+    /// use rumtk_core::strings::{buffer_to_string, RUMString};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// let ls_name = "ls";
+    /// let mut ls_command = RUMCommand::default();
+    /// ls_command.path = RUMString::from(ls_name);
+    /// ls_command.args.push(RUMString::from("{options}"));
+    /// let mut pipeline = vec![
+    ///     ls_command
+    /// ];
+    /// pipeline_patch_args(&mut pipeline, &[("{options}", "-la")]);
+    /// println!("{:#?}", pipeline);
+    ///
+    /// let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+    /// let result_string = buffer_to_string(&processor().unwrap()).unwrap();
+    /// let results: Vec<&str> = result_string.as_str().split("\n").collect();
+    /// let dot_dir = results.get(1).unwrap().chars().last().unwrap();
+    ///
+    /// assert_eq!(dot_dir, '.', "Incorrect options passed!");
+    /// ```
+    ///
+    pub fn pipeline_patch_args<'a>(pipeline: &'a mut RUMCommandLine, replacements: &StringReplacementPair) -> RUMResult<&'a RUMCommandLine> {
+        let mut cmd: &mut RUMCommand = match pipeline.get_mut(0) {
+            Some(command) => command,
+            None => return Err(rumtk_format!("No commands in pipeline????"))
+        };
+        let mut new_args = RUMCommandArgs::with_capacity(cmd.args.len());
+
+        for arg in cmd.args.iter() {
+            new_args.push(string_format(arg, replacements));
+        }
+
+        cmd.args = new_args;
+
+        Ok(pipeline)
     }
 
     ///

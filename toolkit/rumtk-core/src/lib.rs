@@ -58,6 +58,7 @@ mod tests {
     use serde_json::to_string;
     use std::process::Stdio;
     use std::sync::Arc;
+    use tokio::io::AsyncBufReadExt;
     use tokio::sync::RwLock;
 
     #[test]
@@ -302,7 +303,7 @@ mod tests {
         let patterns = ["\\d+ runs", "\\d+"];
         let expected = 1273;
         let result = string_find_value::<usize>(haystack, &patterns);
-        
+
         assert_eq!(result, Ok(expected), "Did not find the needle in the haystack or returned the wrong type!");
     }
 
@@ -437,7 +438,7 @@ mod tests {
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
-    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process};
+    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_generate_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::block_on_task;
     use crate::threading::threading_manager::*;
@@ -775,16 +776,36 @@ mod tests {
         let mut pipeline = vec![
             wc_command
         ];
-        
+
         pipeline_add_stdin_data_to_pipeline(&mut pipeline, &data);
-        
+
         let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
         let result_string = buffer_to_string(&processor().unwrap()).unwrap();
         let binding = result_string.as_str().replace('\n', "");
         let result_items: Vec<&str> = binding.split("      ").collect();
         let result = result_items.get(2).unwrap().trim().parse::<i32>().unwrap();
-        
-        assert_eq!(result, 2, "Data was not piped properly!")
+
+        assert_eq!(result, 2, "Data was not piped properly!");
+    }
+
+    #[test]
+    fn test_patch_pipeline_arguments() {let data = RUMBuffer::from_static(b"Hello World");
+        let ls_name = "ls";
+        let mut ls_command = RUMCommand::default();
+        ls_command.path = RUMString::from(ls_name);
+        ls_command.args.push(RUMString::from("{options}"));
+        let mut pipeline = vec![
+            ls_command
+        ];
+        pipeline_patch_args(&mut pipeline, &[("{options}", "-la")]);
+        println!("{:#?}", pipeline);
+
+        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+        let result_string = buffer_to_string(&processor().unwrap()).unwrap();
+        let results: Vec<&str> = result_string.as_str().split("\n").collect();
+        let dot_dir = results.get(1).unwrap().chars().last().unwrap();
+
+        assert_eq!(dot_dir, '.', "Incorrect options passed!");
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

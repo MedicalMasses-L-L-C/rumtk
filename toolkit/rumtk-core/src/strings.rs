@@ -40,6 +40,7 @@ pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
 pub type RUMString = CompactString;
 pub type EscapeException<'a> = (&'a str, &'a str);
 pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
+pub type StringReplacementPair<'a> = [(&'a str, &'a str)];
 pub type Grapheme<'a> = &'a str;
 pub type GraphemeStringView<'a> = RUMVec<Grapheme<'a>>;
 pub type GraphemePattern<'a> = &'a [Grapheme<'a>];
@@ -726,7 +727,7 @@ pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
 /// assert_eq!(result.as_str(), expected, "Formatting of string failed!");
 /// ```
 ///
-pub fn string_format(input: &str, formatting: &[(&str, &str)]) -> RUMString {
+pub fn string_format(input: &str, formatting: &StringReplacementPair) -> RUMString {
     let mut output = String::from(input);
 
     for item in formatting.iter() {
