@@ -798,7 +798,6 @@ mod tests {
             ls_command
         ];
         pipeline_patch_args(&mut pipeline, &[("{options}", "-la")]);
-        println!("{:#?}", pipeline);
 
         let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
         let result_string = buffer_to_string(&processor().unwrap()).unwrap();
