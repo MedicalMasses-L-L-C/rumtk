@@ -994,7 +994,7 @@ pub mod pipeline_macros {
         ( $pipeline:expr, $replacements:expr ) => {{
             use $crate::pipelines::pipeline_functions::{pipeline_patch_args};
 
-            pipeline_patch_args!($pipeline, $replacements)
+            pipeline_patch_args($pipeline, $replacements)
         }};
     }
 }
