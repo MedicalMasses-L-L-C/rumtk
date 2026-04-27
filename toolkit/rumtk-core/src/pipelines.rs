@@ -63,7 +63,7 @@ pub mod pipeline_types {
 pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::core::RUMResult;
-    use crate::strings::{rumtk_format, string_format, StringReplacementPair};
+    use crate::strings::{rumtk_format, string_format, CompactStringExt, RUMString, StringReplacementPair};
     use std::io::{Read, Write};
 
     use crate::threading::threading_functions::async_sleep;
@@ -368,6 +368,8 @@ pub mod pipeline_functions {
             pipeline.push(parent_process);
         }
 
+        print_pipeline(commands);
+
         Ok(pipeline)
     }
 
@@ -412,6 +414,20 @@ pub mod pipeline_functions {
         };
 
         pipeline
+    }
+
+    ///
+    /// Flatten the [RUMCommandLine] structure into a single string representing the pipeline and
+    /// print it or log it.
+    ///
+    fn print_pipeline(pipeline: &RUMCommandLine) {
+        let mut pipeline_components = Vec::<RUMString>::with_capacity(pipeline.len());
+
+        for pipe in pipeline.iter() {
+            pipeline_components.push(rumtk_format!("{} {}", pipe.path, pipe.args.clone().join_compact(" ")));
+        }
+
+        println!("{}", pipeline_components.join_compact(" | "));
     }
 
     ///
