@@ -51,28 +51,42 @@ use std::fmt::Debug;
         <table>
             <tbody>
                 <tr>
-                    <td>Architecture: </td>
+                    <td><strong>Architecture: </strong></td>
                     <td>{{arch}}</td>
                 </tr>
                 <tr>
-                    <td>OS: </td>
+                    <td><strong>OS: </strong></td>
                     <td>{{os}}</td>
+                </tr>
+                <tr>
+                    <td>
+                    <details>
+                        <summary><strong><u>Test File Sizes in MB </u></strong></summary>
+                        <ul>
+                            {% for s in test_file_sizes.iter() %}
+                            <li>{{s}}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 </tr>
             </tbody>
         </table>
+        <div class='gap-10'></div>
     ",
     ext = "html"
 )]
 pub struct BenchmarkMeta {
     pub arch: RUMString,
     pub os: RUMString,
+    pub test_file_sizes: Vec<f32>,
 }
 
 impl BenchmarkMeta {
     pub fn new() -> RUMResult<Self> {
         Ok(Self {
             arch: RUMString::from(consts::ARCH),
-            os: RUMString::from(consts::OS)
+            os: RUMString::from(consts::OS),
+            test_file_sizes: vec![],
         })
     }
 }

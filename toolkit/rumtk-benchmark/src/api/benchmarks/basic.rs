@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+use super::utils::FILE_SIZE_MB;
 use crate::api::benchmarks::utils::{generate_temp_dir, generate_test_runs};
 use crate::utils::types::{BasicBenchmarkReport, BenchmarkReport};
 use rumtk_core::rumtk_pipeline_quick_run_async;
@@ -30,18 +30,19 @@ use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
-            let mut temp_dir = generate_temp_dir()?;
-            let pipeline_runs = generate_test_runs("basic", pipeline_name.as_str(), &state, 1, &mut Some(&mut temp_dir))?;
+            let mut temp_data = generate_temp_dir()?;
+            let pipeline_runs = generate_test_runs("basic", pipeline_name.as_str(), &state, 1, &mut Some(&mut temp_data))?;
             let pipeline = pipeline_runs.first().unwrap();
 
             // Execute the pipeline
             let result = rumtk_pipeline_quick_run_async!(pipeline).await?;
 
             // Generate report
-            let report = match std::str::from_utf8(&result) {
+            let mut report = match std::str::from_utf8(&result) {
                 Ok(results) => BenchmarkReport::<BasicBenchmarkReport>::try_from(results)?,
                 Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
             };
+            report.meta.test_file_sizes = temp_data.get_file_sizes::<FILE_SIZE_MB>()?;
 
             // Render the HTML result.
             Ok(Some(rumtk_web_render_template!(report)))

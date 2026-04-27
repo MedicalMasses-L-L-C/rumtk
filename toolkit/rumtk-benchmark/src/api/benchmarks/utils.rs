@@ -23,14 +23,35 @@ use rumtk_core::rumtk_pipeline_patch_args;
 use rumtk_core::rumtk_pipeline_pipe_string_data;
 use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString, RUMStringConversions};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
+
+use std::fs;
 use std::io::Write;
 use tempfile::{tempdir, NamedTempFile, TempDir};
+
+pub const FILE_SIZE_KB: usize = 1024;
+pub const FILE_SIZE_MB: usize = 1024 * 1024;
 
 pub type RUMPipelineRuns = Vec<RUMCommandLine>;
 
 pub struct TempData {
     pub temp_dir: TempDir,
     pub temp_files: Vec<NamedTempFile>,
+}
+
+impl TempData {
+    pub fn get_file_sizes<const SIZE: usize>(&self) -> RUMResult<Vec<f32>> {
+        let mut sizes = Vec::<f32>::with_capacity(self.temp_files.len());
+
+        for file in &self.temp_files {
+            let new_size = match fs::metadata(file.path().to_str().unwrap()) {
+                Ok(metadata) => metadata.len() as f32 / SIZE as f32,
+                Err(e) => return Err(rumtk_format!("Maybe a temp file is unexpectedly missing??? => {}", e)),
+            };
+            sizes.push(new_size);
+        }
+
+        Ok(sizes)
+    }
 }
 
 pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &str) -> RUMString {
