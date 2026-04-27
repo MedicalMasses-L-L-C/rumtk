@@ -122,7 +122,7 @@ impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
                     units
                 })
             },
-            false => Err(rumtk_format!("Data is missing the key fields. Got => {}", key_line.len()))
+            false => Err(rumtk_format!("Data is missing the key fields. You are probably missing --outout file flag in hyperfine. Got => {:?}", key_line))
         }
     }
 }

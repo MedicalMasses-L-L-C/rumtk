@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::api::benchmarks::utils::generate_test_runs;
+use crate::api::benchmarks::utils::{generate_temp_dir, generate_test_runs};
 use crate::utils::types::{BasicBenchmarkReport, BenchmarkReport};
 use rumtk_core::rumtk_pipeline_quick_run_async;
 use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMStringConversions};
@@ -30,7 +30,8 @@ use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
-            let pipeline_runs = generate_test_runs("basic", pipeline_name.as_str(), &state, 1);
+            let mut temp_dir = generate_temp_dir()?;
+            let pipeline_runs = generate_test_runs("basic", pipeline_name.as_str(), &state, 1, &mut Some(&mut temp_dir))?;
             let pipeline = pipeline_runs.first().unwrap();
 
             // Execute the pipeline
