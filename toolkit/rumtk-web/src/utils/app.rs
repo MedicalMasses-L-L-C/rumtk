@@ -141,6 +141,7 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
         .with_state(state)
         .layer(comression_layer);
 
+    println!("binding IP {}", &args.ip.as_str());
     let listener = RUMTcpListener::bind(&args.ip.as_str())
         .await
         .expect("There was an issue biding the listener.");
