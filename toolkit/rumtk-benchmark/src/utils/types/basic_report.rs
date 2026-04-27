@@ -101,7 +101,7 @@ impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
                     }
                     None => return Err(rumtk_format!("Issue parsing BasicBenchmarkReport. Input => {}", s))
                 };
-                println!("{:?}", mean_values);
+
                 let mean_time = mean_values.get(0).unwrap().trim().parse::<f32>().unwrap_or_default();
                 let mean_delta = mean_values.get(1).unwrap().trim().parse::<f32>().unwrap_or_default();
                 let user_time: f32 = string_find_value(s, &["User:.*?,", "\\d+.\\d+|\\d+"]).unwrap_or_default();
