@@ -1,6 +1,6 @@
 [package]
 name = "rumtk-benchmark"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 
 [dependencies]
@@ -10,3 +10,4 @@ askama = "0.15.6"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.149"
 pulldown-cmark = "0.13.3"
+tempfile = "3.27.0"

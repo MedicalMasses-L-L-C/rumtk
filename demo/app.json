@@ -43,14 +43,14 @@
         "parser": [
           {
             "path": "hyperfine",
-            "args": ["-w", "50", "--export-markdown", "/dev/stdout", "--input", "/dev/stdin", "--output", "/dev/null", "--shell", "none", "../target/debug/rumtk-hl7-v2-parse"],
+            "args": ["-w", "50", "--export-markdown", "/dev/stdout", "--input", "{test_file}", "--output", "/dev/null", "--shell", "none", "../target/debug/rumtk-hl7-v2-parse"],
             "env": {}
           }
         ],
         "parser_release": [
           {
             "path": "hyperfine",
-            "args": ["-w", "50", "../target/release/rumtk-hl7-v2-parse", "--export-markdown", "/dev/stdout", "--output", "/dev/null"],
+            "args": ["-w", "50", "--export-markdown", "/dev/stdout", "--input", "{test_file}", "--output", "/dev/null", "--shell", "none", "../target/release/rumtk-hl7-v2-parse"],
             "env": {}
           }
         ]
