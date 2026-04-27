@@ -988,9 +988,11 @@ pub mod pipeline_macros {
     /// use rumtk_core::strings::string_to_buffer;
     ///
     ///
-    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
+    /// let f = || -> RUMResult<RUMBuffer> {
     ///     let mut pipeline = vec![
-    ///         rumtk_pipeline_command!("ls")
+    ///         rumtk_pipeline_command!("ls", RUMBuffer::default(), &vec![
+    ///             "{options}".into()
+    ///         ])
     ///     ];
     ///
     ///     rumtk_pipeline_patch_args!(&mut pipeline, &[("{options}", "-la")]);
@@ -998,7 +1000,7 @@ pub mod pipeline_macros {
     ///     rumtk_pipeline_quick_run!(pipeline)
     /// };
     ///
-    /// let result_string = buffer_to_string(&processor().unwrap()).unwrap();
+    /// let result_string = buffer_to_string(&f().unwrap()).unwrap();
     /// let results: Vec<&str> = result_string.as_str().split("\n").collect();
     /// let dot_dir = results.get(1).unwrap().chars().last().unwrap();
     ///
