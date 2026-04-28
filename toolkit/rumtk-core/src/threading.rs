@@ -507,6 +507,7 @@ pub mod threading_functions {
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
     use tokio::runtime::Runtime;
+    use tokio::task::JoinHandle;
     use tokio::time::sleep as tokio_sleep;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
@@ -586,6 +587,20 @@ pub mod threading_functions {
     /// assert_eq!(Hello, result, "Result mismatches expected! {} vs. {}", Hello, result);
     /// ```
     ///
+    /// ## Notes
+    ///     You need to wrap our call to block_on with a call to tokio::task::block_in_place to force
+    ///     cleanup of async executor and therefore avoid panics from the tokio runtime!
+    ///     Per Tokio's documentation, spawn_blocking would be better since it moves the task to an
+    ///     executor meant for blocking tasks instead of moving tasks out of the current thread and
+    ///     converting the thread into a clocking executor. The reason we don't do that is because
+    ///     the call to this function expects to block the current thread until completion and then
+    ///     return the result. If there's an issue with IO, revisit this function.
+    ///
+    ///     https://docs.rs/tokio/latest/tokio/task/fn.block_in_place.html
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    ///
     pub fn block_on_task<R, F>(task: F) -> R
     where
         F: Future<Output = R> + Send + 'static,
@@ -607,6 +622,37 @@ pub mod threading_functions {
         tokio::task::block_in_place(move || {
             rt.block_on(task)
         })
+    }
+
+    ///
+    /// This helper should be used for spawning tasks that would normally block the async runtime.
+    /// However, here we use the appropriate `tokio` facilities to signal the runtime on how
+    /// to handle this, potentially blocking, task. For waiting on potentially blocking futures, use
+    /// [block_on_task] instead!
+    ///
+    ///
+    ///
+    /// ## Notes
+    ///     You need to wrap our call to block_on with a call to tokio::task::block_in_place to force
+    ///     cleanup of async executor and therefore avoid panics from the tokio runtime!
+    ///     Per Tokio's documentation, spawn_blocking would be better since it moves the task to an
+    ///     executor meant for blocking tasks instead of moving tasks out of the current thread and
+    ///     converting the thread into a clocking executor. The reason we don't do that is because
+    ///     the call to this function expects to block the current thread until completion and then
+    ///     return the result. If there's an issue with IO, revisit this function.
+    ///
+    ///     https://docs.rs/tokio/latest/tokio/task/fn.block_in_place.html
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    ///
+    pub fn spawn_blocking_sync_task<R, F>(task: F) -> JoinHandle<R>
+    where
+        F: FnOnce() -> R + Send + 'static,
+        R: Send + 'static,
+    {
+        let rt = init_runtime(get_default_system_thread_count());
+        rt.spawn_blocking(task)
     }
 
     pub fn new_lock<T>(data: T) -> SafeLock<T> {
@@ -825,12 +871,20 @@ pub mod threading_macros {
     macro_rules! rumtk_spawn_task {
         ( $func:expr ) => {{
             use $crate::rumtk_init_threads;
-            let rt = rumtk_init_threads!().expect("Runtime is not initialized!");
+            let rt = rumtk_init_threads!();
             rt.spawn($func)
         }};
         ( $rt:expr, $func:expr ) => {{
             $rt.spawn($func)
         }};
+    }
+
+    #[macro_export]
+    macro_rules! rumtk_spawn_blocking_task {
+        ( $func:expr ) => {{
+            use $crate::threading::threading_functions::spawn_blocking_sync_task;
+            spawn_blocking_sync_task($func)
+        }}
     }
 
     ///
@@ -902,10 +956,19 @@ pub mod threading_macros {
         }};
     }
 
+    ///
+    /// This macro allows to resolve a `sync` closure that was executed in a safe thread.
+    /// You cannot run this macro outside the `async` context.
+    ///
     #[macro_export]
-    macro_rules! rumtk_resolve_task_from_async {
-        ( $rt:expr, $future:expr ) => {{
-            let handle = $rt.spawn_blocking(async move { future.await })
+    macro_rules! rumtk_resolve_sync_task {
+        ( $closure:expr ) => {{
+            use $crate::threading::threading_functions::spawn_blocking_sync_task;
+            use $crate::strings::rumtk_format;
+            match spawn_blocking_sync_task($closure).await {
+                Ok(result) => result,
+                Err(e) => Err(rumtk_format!("Issue with blocking task => {}", e))
+            }
         }};
     }
 
