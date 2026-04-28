@@ -438,7 +438,7 @@ mod tests {
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
     use crate::net::tcp::LOCALHOST;
-    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_generate_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
+    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::block_on_task;
     use crate::threading::threading_manager::*;
@@ -751,14 +751,14 @@ mod tests {
         let ls_name = "ls";
         let mut ls_command = RUMCommand::default();
         ls_command.path = RUMString::from(ls_name);
-        let mut sys_ls_command = pipeline_generate_command(&ls_command);
+        let mut sys_ls_command = pipeline_create_command(&ls_command);
         sys_ls_command.stdin(Stdio::piped());
         sys_ls_command.stdout(Stdio::piped());
 
         let wc_name = "wc";
         let mut wc_command = RUMCommand::default();
         wc_command.path = RUMString::from(wc_name);
-        let mut sys_wc_command = pipeline_generate_command(&wc_command);
+        let mut sys_wc_command = pipeline_create_command(&wc_command);
 
         let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
         pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
@@ -777,9 +777,7 @@ mod tests {
             wc_command
         ];
 
-        pipeline_add_stdin_data_to_pipeline(&mut pipeline, &data);
-
-        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_run!(&pipeline, &data)};
         let result_string = buffer_to_string(&processor().unwrap()).unwrap();
         let binding = result_string.as_str().replace('\n', "");
         let result_items: Vec<&str> = binding.split("      ").collect();
@@ -799,7 +797,7 @@ mod tests {
         ];
         pipeline_patch_args(&mut pipeline, &[("{options}", "-la")]);
 
-        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+        let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_run!(&pipeline)};
         let result_string = buffer_to_string(&processor().unwrap()).unwrap();
         let results: Vec<&str> = result_string.as_str().split("\n").collect();
         let dot_dir = results.get(1).unwrap().chars().last().unwrap();
