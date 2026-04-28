@@ -350,7 +350,10 @@ pub mod pipeline_functions {
     /// ```
     ///
     pub fn pipeline_generate_pipeline(commands: &RUMCommandLine) -> RUMResult<RUMPipeline> {
-        let first_command = commands.first().unwrap();
+        let first_command = match commands.first() {
+            Some(command) => command,
+            None => return Err(rumtk_format!("A commandline was expected but no commands were given! Got => {:?}", commands)),
+        };
 
         // Setup pipeline
         let mut pipeline = vec![];
