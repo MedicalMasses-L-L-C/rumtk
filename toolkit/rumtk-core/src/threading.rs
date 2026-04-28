@@ -588,6 +588,7 @@ pub mod threading_functions {
     /// ```
     ///
     /// ## Notes
+    /// ```text
     ///     You need to wrap our call to block_on with a call to tokio::task::block_in_place to force
     ///     cleanup of async executor and therefore avoid panics from the tokio runtime!
     ///     Per Tokio's documentation, spawn_blocking would be better since it moves the task to an
@@ -600,6 +601,7 @@ pub mod threading_functions {
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    /// ```
     ///
     pub fn block_on_task<R, F>(task: F) -> R
     where
@@ -633,6 +635,7 @@ pub mod threading_functions {
     ///
     ///
     /// ## Notes
+    /// ```text
     ///     You need to wrap our call to block_on with a call to tokio::task::block_in_place to force
     ///     cleanup of async executor and therefore avoid panics from the tokio runtime!
     ///     Per Tokio's documentation, spawn_blocking would be better since it moves the task to an
@@ -645,6 +648,7 @@ pub mod threading_functions {
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html#method.block_on
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
+    /// ```
     ///
     pub fn spawn_blocking_sync_task<R, F>(task: F) -> JoinHandle<R>
     where

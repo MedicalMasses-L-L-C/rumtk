@@ -229,9 +229,7 @@ pub mod pipeline_functions {
     /// sys_ls_process.wait();
     /// sys_wc_process.wait();
     ///
-    /// let mut pipeline = vec![sys_ls_process, sys_wc_process];
-    ///
-    /// let out_data = pipeline_get_stdout(pipeline).unwrap();
+    /// let out_data = pipeline_get_stdout(sys_wc_process).unwrap();
     ///
     /// assert_eq!(out_data.is_empty(), false, "No output detected... {:?}", &out_data);
     /// ```
@@ -295,7 +293,7 @@ pub mod pipeline_functions {
     /// ls_command.path = RUMString::from(ls_name);
     /// let mut sys_ls_command = pipeline_create_command(&ls_command);
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
-    /// pipeline_pipe_into_process(&mut sys_ls_process, &Some(RUMBuffer::default())).unwrap();
+    /// pipeline_pipe_into_process(&mut sys_ls_process, &RUMBuffer::default()).unwrap();
     ///
     /// let out = sys_ls_process.wait_with_output().unwrap();
     ///
@@ -328,26 +326,20 @@ pub mod pipeline_functions {
     /// ## Example
     ///
     /// ```
-    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::strings::{RUMStringConversions, RUMString};
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_pipeline};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_get_stdout, pipeline_wait_pipeline};
+    /// use rumtk_core::types::RUMBuffer;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
+    /// ls_command.args = vec!["-la".to_rumstring()];
     ///
-    /// let wc_name = "wc";
-    /// let mut wc_command = RUMCommand::default();
-    /// wc_command.path = RUMString::from(wc_name);
+    /// let mut process = pipeline_generate_command(&ls_command, &RUMBuffer::default()).unwrap();
+    /// let result = pipeline_get_stdout(process).unwrap();
     ///
-    /// let commands = vec![
-    ///     ls_command,
-    ///     wc_command
-    /// ];
-    ///
-    /// let pipeline = pipeline_generate_pipeline(&commands).unwrap();
-    ///
-    /// assert_eq!(pipeline.len(), commands.len(), "Pipeline generation returned unexpected number of items!");
+    /// assert!(result.len() > 0, "Command generation failed to generate a valid command!");
     /// ```
     ///
     pub fn pipeline_generate_command(command: &RUMCommand, data: &RUMBuffer) -> RUMResult<RUMPipelineProcess> {
@@ -366,9 +358,8 @@ pub mod pipeline_functions {
     /// ## Example
     /// ```
     /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::pipelines::pipeline_functions::pipeline_add_stdin_data_to_pipeline;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMCommandLine};
-    /// use rumtk_core::rumtk_pipeline_quick_run;
+    /// use rumtk_core::rumtk_pipeline_run;
     /// use rumtk_core::strings::{buffer_to_string, RUMString};
     /// use rumtk_core::types::RUMBuffer;
     ///
@@ -380,9 +371,7 @@ pub mod pipeline_functions {
     ///     wc_command
     /// ];
     ///
-    /// pipeline_add_stdin_data_to_pipeline(&mut pipeline, &data);
-    ///
-    /// let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+    /// let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_run!(&pipeline, &data)};
     /// let result_string = buffer_to_string(&processor().unwrap()).unwrap();
     /// let binding = result_string.as_str().replace('\n', "");
     /// let result_items: Vec<&str> = binding.split("      ").collect();
@@ -436,7 +425,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::pipelines::pipeline_functions::pipeline_patch_args;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMCommandLine};
-    /// use rumtk_core::rumtk_pipeline_quick_run;
+    /// use rumtk_core::rumtk_pipeline_run;
     /// use rumtk_core::strings::{buffer_to_string, RUMString};
     /// use rumtk_core::types::RUMBuffer;
     ///
@@ -448,9 +437,8 @@ pub mod pipeline_functions {
     ///     ls_command
     /// ];
     /// pipeline_patch_args(&mut pipeline, &[("{options}", "-la")]);
-    /// println!("{:#?}", pipeline);
     ///
-    /// let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_quick_run!(pipeline)};
+    /// let processor = || -> RUMResult<RUMBuffer> {rumtk_pipeline_run!(&pipeline)};
     /// let result_string = buffer_to_string(&processor().unwrap()).unwrap();
     /// let results: Vec<&str> = result_string.as_str().split("\n").collect();
     /// let dot_dir = results.get(1).unwrap().chars().last().unwrap();
@@ -473,8 +461,9 @@ pub mod pipeline_functions {
     ///
     /// ```
     /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMBuffer;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_await_pipeline};
     /// use rumtk_core::{rumtk_resolve_task};
     ///
     /// let ls_name = "ls";
@@ -485,13 +474,12 @@ pub mod pipeline_functions {
     /// let mut wc_command = RUMCommand::default();
     /// wc_command.path = RUMString::from(wc_name);
     ///
-    /// let commands = vec![
+    /// let pipeline = vec![
     ///     ls_command,
     ///     wc_command
     /// ];
     ///
-    /// let pipeline = pipeline_generate_pipeline(&commands).unwrap();
-    /// let result = rumtk_resolve_task!(pipeline_await_pipeline(pipeline)).unwrap();
+    /// let result = rumtk_resolve_task!(pipeline_await_pipeline(&pipeline, &RUMBuffer::default())).unwrap();
     ///
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
@@ -513,7 +501,8 @@ pub mod pipeline_functions {
     /// ```
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_wait_pipeline};
+    /// use rumtk_core::types::RUMBuffer;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -523,13 +512,12 @@ pub mod pipeline_functions {
     /// let mut wc_command = RUMCommand::default();
     /// wc_command.path = RUMString::from(wc_name);
     ///
-    /// let commands = vec![
+    /// let pipeline = vec![
     ///     ls_command,
     ///     wc_command
     /// ];
     ///
-    /// let pipeline = pipeline_generate_pipeline(&commands).unwrap();
-    /// let result = pipeline_wait_pipeline(pipeline).unwrap();
+    /// let result = pipeline_wait_pipeline(&pipeline, &RUMBuffer::default()).unwrap();
     ///
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
@@ -637,13 +625,13 @@ pub mod pipeline_macros {
     /// ### Simple
     ///
     /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = async || -> RUMResult<()> {
-    ///     let result = rumtk_pipeline_run!(
+    ///     let result = rumtk_pipeline_quick_run!(
     ///         rumtk_pipeline_command!("ls"),
     ///         rumtk_pipeline_command!("wc")
     ///     ).unwrap();
@@ -655,35 +643,15 @@ pub mod pipeline_macros {
     /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
-    /// ### With Buffer Piped In
-    ///
-    /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
-    /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
-    ///
-    /// let f = || -> RUMResult<()> {
-    ///     let result = rumtk_pipeline_run!(
-    ///         rumtk_pipeline_command!("ls", new_random_rumbuffer::<0>()),
-    ///         rumtk_pipeline_command!("wc")
-    ///     )?;
-    ///
-    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
-    ///     Ok(())
-    /// };
-    ///
-    /// f().unwrap();
-    /// ```
-    ///
     #[macro_export]
-    macro_rules! rumtk_pipeline_run {
+    macro_rules! rumtk_pipeline_quick_run {
         ( $($command:expr),+ ) => {{
-            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
+            use $crate::types::RUMBuffer;
+            use $crate::pipelines::pipeline_functions::{pipeline_wait_pipeline};
 
-            let pipeline = pipeline_generate_pipeline(&vec![$($command),+])?;
+            let pipeline = vec![$($command),+];
 
-            pipeline_wait_pipeline(pipeline)
+            pipeline_wait_pipeline(&pipeline, &RUMBuffer::default())
         }};
     }
 
@@ -702,13 +670,13 @@ pub mod pipeline_macros {
     /// ### Simple
     ///
     /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run_async, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let f = async || -> RUMResult<()> {
-    ///     let result = rumtk_pipeline_run_async!(
+    ///     let result = rumtk_pipeline_quick_run_async!(
     ///         rumtk_pipeline_command!("ls"),
     ///         rumtk_pipeline_command!("wc")
     ///     ).await?;
@@ -720,71 +688,28 @@ pub mod pipeline_macros {
     /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
-    /// ### With Buffer Piped In
-    ///
-    /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer};
-    /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
-    ///
-    /// let f = async || -> RUMResult<()> {
-    ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<0>())
-    ///     ).await?;
-    ///
-    ///     assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
-    ///     Ok(())
-    /// };
-    ///
-    /// rumtk_resolve_task!(f()).unwrap();
-    /// ```
-    ///
-    /// ### With Buffer Piped In W/ Return
-    ///
-    /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
-    /// use rumtk_core::core::{RUMResult, new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
-    /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
-    /// use rumtk_core::types::RUMBuffer;
-    ///
-    /// let expected = "1024\n";
-    ///
-    /// let f = async || -> RUMResult<RUMBuffer> {
-    ///     let result = rumtk_pipeline_run_async!(
-    ///         rumtk_pipeline_command!("wc", new_random_rumbuffer::<DEFAULT_BUFFER_CHUNK_SIZE>())
-    ///     ).await?;
-    ///
-    ///     Ok(result)
-    /// };
-    ///
-    /// let result = rumtk_resolve_task!(f()).unwrap();
-    /// let string = result.to_vec().to_rumstring();
-    /// let result_buffer_size = string.split("      ").last().unwrap().split("    ").last().unwrap().to_rumstring();
-    ///
-    /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
-    /// assert_eq!(&result_buffer_size, expected, "Pipeline returned an unexpected result from command wc! => {:?}\nvs.\n{:?}", &result_buffer_size, &expected);
-    /// ```
-    ///
     #[macro_export]
-    macro_rules! rumtk_pipeline_run_async {
+    macro_rules! rumtk_pipeline_quick_run_async {
         ( $($command:expr),+ ) => {{
-            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
+            use $crate::types::RUMBuffer;
+            use $crate::pipelines::pipeline_functions::{pipeline_await_pipeline};
 
-            let pipeline = pipeline_generate_pipeline(&vec![$($command),+])?;
+            let pipeline = vec![$($command),+];
 
-            pipeline_await_pipeline(pipeline)
+            pipeline_await_pipeline(&pipeline.clone(), &RUMBuffer::default().clone())
         }};
     }
 
     ///
-    /// This macro is similar to [rumtk_pipeline_run](crate::rumtk_pipeline_run). The difference here 
+    /// This macro is similar to [rumtk_pipeline_quick_run](crate::rumtk_pipeline_quick_run). The difference here
     /// is that the function takes a pipeline structure ([RUMCommandLine](crate::pipelines::pipeline_types::RUMCommandLine))
     /// In other words, this macro simply runs an already defined pipeline.
     /// 
     /// ## Example
+    ///
+    /// ### Run the pipeline
     /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
@@ -795,32 +720,83 @@ pub mod pipeline_macros {
     ///         rumtk_pipeline_command!("wc")
     ///     ];
     /// 
-    ///     rumtk_pipeline_quick_run!(pipeline)
+    ///     rumtk_pipeline_run!(&pipeline)
     /// };
     /// 
     /// f().unwrap();
     /// ```
+    ///
+    /// ### Pipe Buffer to Pipeline
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let f = |input: &RUMBuffer| -> RUMResult<RUMBuffer> {
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_run!(&pipeline, &input)
+    /// };
+    /// let result = buffer_to_string(&f(&string_to_buffer(data)).unwrap()).unwrap();
+    ///
+    /// assert_eq!(result, expected, "Buffer correctly piped into pipeline!");
+    /// ```
+    ///
+    /// ### Pipe String to Pipeline
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::{string_to_buffer, buffer_to_string};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_run!(&pipeline, &string_to_buffer(input))
+    /// };
+    /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
+    ///
+    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
+    /// ```
     /// 
     #[macro_export]
-    macro_rules! rumtk_pipeline_quick_run {
+    macro_rules! rumtk_pipeline_run {
         ( $pipeline:expr ) => {{
-            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_wait_pipeline};
+            use $crate::types::RUMBuffer;
 
-            let pipeline = pipeline_generate_pipeline(&$pipeline)?;
+            rumtk_pipeline_run!($pipeline, &RUMBuffer::default())
+        }};
+        ( $pipeline:expr, $data:expr ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_wait_pipeline};
 
-            pipeline_wait_pipeline(pipeline)
+            pipeline_wait_pipeline($pipeline, $data)
         }};
     }
 
 
     ///
-    /// This macro is similar to [rumtk_pipeline_run_async](crate::rumtk_pipeline_run_async). The difference here 
+    /// This macro is similar to [rumtk_pipeline_quick_run_async](crate::rumtk_pipeline_quick_run_async). The difference here
     /// is that the function takes a pipeline structure ([RUMCommandLine](crate::pipelines::pipeline_types::RUMCommandLine))
     /// In other words, this macro simply runs an already defined pipeline.
     ///
     /// ## Example
     /// ```
-    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run_async, rumtk_resolve_task, rumtk_init_threads};
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::core::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
     /// use rumtk_core::types::RUMBuffer;
@@ -831,18 +807,70 @@ pub mod pipeline_macros {
     ///         rumtk_pipeline_command!("wc")
     ///     ];
     ///
-    ///     rumtk_pipeline_quick_run_async!(pipeline).await
+    ///     rumtk_pipeline_run_async!(&pipeline).await
     /// };
     ///
     /// rumtk_resolve_task!(f()).unwrap();
     /// ```
     ///
+    /// ### Pipe Buffer to Pipeline
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_spawn_task};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let task = rumtk_spawn_task!(async {
+    ///     let input = RUMBuffer::from("Hello World!");
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_run_async!(&pipeline, &input).await
+    /// });
+    ///
+    /// let result = buffer_to_string(&rumtk_resolve_task!(task).unwrap().unwrap()).unwrap();
+    ///
+    /// assert_eq!(result, expected, "Buffer correctly piped into pipeline!");
+    /// ```
+    ///
+    /// ### Pipe String to Pipeline
+    ///
+    /// ```
+    /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_spawn_task};
+    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::strings::{string_to_buffer, buffer_to_string};
+    /// use rumtk_core::types::RUMBuffer;
+    ///
+    /// const data: &str = "Hello World!";
+    /// const expected: &str = "      0       2      12\n";
+    ///
+    ///
+    /// let task = rumtk_spawn_task!(async {
+    ///     let input = string_to_buffer(data);
+    ///     let mut pipeline = vec![
+    ///         rumtk_pipeline_command!("wc")
+    ///     ];
+    ///
+    ///     rumtk_pipeline_run_async!(&pipeline, &input).await
+    /// });
+    ///
+    /// let result = buffer_to_string(&rumtk_resolve_task!(task).unwrap().unwrap()).unwrap();
+    ///
+    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
+    /// ```
+    ///
     #[macro_export]
-    macro_rules! rumtk_pipeline_quick_run_async {
+    macro_rules! rumtk_pipeline_run_async {
         ( $pipeline:expr ) => {{
             use $crate::types::RUMBuffer;
 
-            rumtk_pipeline_quick_run_async!($pipeline, &RUMBuffer::default())
+            rumtk_pipeline_run_async!($pipeline, &RUMBuffer::default())
         }};
         ( $pipeline:expr, $data:expr ) => {{
             use $crate::pipelines::pipeline_functions::{pipeline_await_pipeline};
@@ -852,90 +880,11 @@ pub mod pipeline_macros {
     }
 
     ///
-    /// Pipe a string buffer into pipeline.
-    ///
-    /// ## Example
-    /// ```
-    /// use rumtk_core::{rumtk_pipeline_pipe_string_data, rumtk_pipeline_command, rumtk_pipeline_quick_run};
-    /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::buffer_to_string;
-    /// use rumtk_core::types::RUMBuffer;
-    ///
-    /// const data: &str = "Hello World!";
-    /// const expected: &str = "      0       2      12\n";
-    ///
-    ///
-    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
-    ///     let mut pipeline = vec![
-    ///         rumtk_pipeline_command!("wc")
-    ///     ];
-    ///
-    ///     rumtk_pipeline_pipe_string_data!(&mut pipeline, input);
-    ///
-    ///     rumtk_pipeline_quick_run!(pipeline)
-    /// };
-    /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
-    ///
-    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
-    /// ```
-    ///
-    #[macro_export]
-    macro_rules! rumtk_pipeline_pipe_string_data {
-        ( $pipeline:expr, $data:expr ) => {{
-            use $crate::{rumtk_pipeline_pipe_buffer};
-            use $crate::strings::string_to_buffer;
-            use $crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline};
-
-            let buffer = string_to_buffer($data);
-
-            rumtk_pipeline_pipe_buffer!($pipeline, &buffer)
-        }};
-    }
-
-    ///
-    /// Pipe a [RUMBuffer] buffer into pipeline.
-    ///
-    /// ## Example
-    /// ```
-    /// use rumtk_core::{rumtk_pipeline_pipe_buffer, rumtk_pipeline_command, rumtk_pipeline_quick_run};
-    /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::buffer_to_string;
-    /// use rumtk_core::types::RUMBuffer;
-    /// use rumtk_core::strings::string_to_buffer;
-    ///
-    /// const data: &str = "Hello World!";
-    /// const expected: &str = "      0       2      12\n";
-    ///
-    ///
-    /// let f = |input: &str| -> RUMResult<RUMBuffer> {
-    ///     let mut pipeline = vec![
-    ///         rumtk_pipeline_command!("wc")
-    ///     ];
-    ///
-    ///     rumtk_pipeline_pipe_buffer!(&mut pipeline, &string_to_buffer(input));
-    ///
-    ///     rumtk_pipeline_quick_run!(pipeline)
-    /// };
-    /// let result = buffer_to_string(&f(data).unwrap()).unwrap();
-    ///
-    /// assert_eq!(result, expected, "String correctly piped into pipeline!");
-    /// ```
-    ///
-    #[macro_export]
-    macro_rules! rumtk_pipeline_pipe_buffer {
-        ( $pipeline:expr, $data:expr ) => {{
-            use $crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline};
-
-            pipeline_add_stdin_data_to_pipeline($pipeline, $data)
-        }};
-    }
-
-    ///
     /// Patch the pipeline's arguments with desired dynamic options.
     ///
     /// ## Example
     /// ```
-    /// use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_command, rumtk_pipeline_quick_run};
+    /// use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::strings::buffer_to_string;
     /// use rumtk_core::types::RUMBuffer;
@@ -951,7 +900,7 @@ pub mod pipeline_macros {
     ///
     ///     rumtk_pipeline_patch_args!(&mut pipeline, &[("{options}", "-la")]);
     ///
-    ///     rumtk_pipeline_quick_run!(pipeline)
+    ///     rumtk_pipeline_run!(&pipeline)
     /// };
     ///
     /// let result_string = buffer_to_string(&f().unwrap()).unwrap();
