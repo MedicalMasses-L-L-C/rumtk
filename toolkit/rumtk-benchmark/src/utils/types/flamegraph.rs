@@ -17,49 +17,43 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::strings::RUMString;
-use rumtk_core::types::{RUMDeserialize, RUMSerialize};
+use base64::prelude::*;
+use rumtk_core::core::RUMResult;
+use rumtk_core::search::rumtk_search::{string_find_value, string_search};
+use rumtk_core::strings::{rumtk_format, string_to_buffer, RUMString, RUMStringConversions};
+use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;
 
-mod meta;
-mod basic_report;
-mod flamegraph;
+pub fn to_data_uri(data: &str, mime: &str) -> RUMString {
+    // data:image/svg+xml;base64,
+    let b64 = BASE64_STANDARD.encode(data);
+    rumtk_format!("data:{mime};base64,{}", b64)
+}
 
-pub use basic_report::*;
-pub use flamegraph::*;
-pub use meta::*;
-
-type ReportRawResults<'a> = (&'a str, &'a str);
-pub type BasicBenchmarkReportBundle = BenchmarkReport<BasicBenchmarkReport, FlamegraphBenchmarkVisualizer>;
-
+///
+/// Extracts basic call stack information for later display. Note, this type should be paired with
+/// the output of `flamegraph` (See the crate [flamegraph-rs](https://github.com/flamegraph-rs/flamegraph))
+///
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(
     source = "
-        {{meta|safe}}
-        {{report|safe}}
-        {{visualization|safe}}
+        <object type='image/svg+xml' data='{{data}}' alt='Flamegraph' img='' width='100%'>
+        </object>
     ",
     ext = "html"
 )]
-pub struct BenchmarkReport<T: Debug + RUMWebTemplate, V: Debug + RUMWebTemplate> {
-    pub meta: BenchmarkMeta,
-    pub report: T,
-    pub visualization: V,
+pub struct FlamegraphBenchmarkVisualizer {
+    pub data: RUMString
 }
 
-impl<'a> TryFrom<ReportRawResults<'a>> for BasicBenchmarkReportBundle {
+impl<'a> TryFrom<&'a str> for FlamegraphBenchmarkVisualizer {
     type Error = RUMString;
-    fn try_from(data: ReportRawResults) -> Result<Self, Self::Error>
-    {
-        let (raw_report, raw_visualization) = data;
-        let report = BasicBenchmarkReport::try_from(raw_report)?;
-        let visualization = FlamegraphBenchmarkVisualizer::try_from(raw_visualization)?;
+    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+        let flamegraph_html = string_find_value::<RUMString>(s, &["(?s)<\\?xml.*</svg>"]).unwrap_or_default();
         Ok(Self {
-            meta: BenchmarkMeta::new()?,
-            report,
-            visualization
+            data: to_data_uri(flamegraph_html.as_str(), "image/svg+xml")
         })
     }
 }
