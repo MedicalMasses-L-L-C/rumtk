@@ -17,10 +17,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use super::utils::FILE_SIZE_MB;
-use crate::api::benchmarks::utils::{generate_temp_dir, generate_test_runs};
-use crate::utils::types::{BasicBenchmarkReport, BenchmarkReport};
-use rumtk_core::rumtk_pipeline_quick_run_async;
+use super::utils::{run_pipeline, run_visualization, FILE_SIZE_MB};
+use crate::api::benchmarks::utils::generate_temp_dir;
+use crate::utils::types::BasicBenchmarkReportBundle;
 use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMStringConversions};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
@@ -31,15 +30,17 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
             let mut temp_data = generate_temp_dir()?;
-            let pipeline_runs = generate_test_runs("basic", pipeline_name.as_str(), &state, 1, &mut Some(&mut temp_data))?;
-            let pipeline = pipeline_runs.first().unwrap();
-
-            // Execute the pipeline
-            let result = rumtk_pipeline_quick_run_async!(pipeline).await?;
+            let pipeline_result = run_pipeline("basic", pipeline_name.as_str(), &state, &mut Some(&mut temp_data)).await?;
+            let visualization = run_visualization("basic", pipeline_name.as_str(), "flamegraph", &state).await?;
 
             // Generate report
-            let mut report = match std::str::from_utf8(&result) {
-                Ok(results) => BenchmarkReport::<BasicBenchmarkReport>::try_from(results)?,
+            let mut report = match std::str::from_utf8(&pipeline_result) {
+                Ok(results) => {
+                    match std::str::from_utf8(&visualization) {
+                        Ok(visualization_results) => BasicBenchmarkReportBundle::try_from((results, visualization_results))?,
+                        Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by visualization pipeline: {}", e)),
+                    }
+                },
                 Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
             };
             report.meta.test_file_sizes = temp_data.get_file_sizes::<FILE_SIZE_MB>()?;
