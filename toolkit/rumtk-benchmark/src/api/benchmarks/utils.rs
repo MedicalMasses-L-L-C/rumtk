@@ -19,11 +19,12 @@
  */
 use rumtk_core::core::{new_random_string_set, RUMResult, RUMVec, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
-use rumtk_core::rumtk_pipeline_patch_args;
 use rumtk_core::rumtk_pipeline_pipe_string_data;
-use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::strings::{rumtk_format, string_format, string_to_buffer, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_quick_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
 
+use rumtk_core::types::RUMBuffer;
 use std::fs;
 use std::io::Write;
 use tempfile::{tempdir, NamedTempFile, TempDir};
@@ -156,5 +157,30 @@ pub fn generate_temp_dir() -> RUMResult<TempData> {
         }),
         Err(e) => Err(rumtk_format!("Failed to create temporary directory because => {}", e))
     }
+}
+
+pub async fn run_pipeline(category: &str, pipeline_name: &str, state: &SharedAppState, temp_data: &mut Option<&mut TempData>) -> RUMResult<RUMBuffer> {
+    let pipeline_runs = generate_test_runs(category, pipeline_name, &state, 1, temp_data)?;
+    let pipeline = pipeline_runs.first().unwrap();
+
+    // Execute the pipeline
+    Ok(rumtk_pipeline_quick_run_async!(pipeline).await?)
+}
+
+pub async fn run_visualization(category: &str, pipeline_name: &str, visualization_name: &str, state: &SharedAppState) -> RUMResult<RUMBuffer> {
+    let mut visualization = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", visualization_name);
+    let pipeline_runs = generate_test_runs(category, pipeline_name, &state, 1, &mut None)?;
+    let pipeline = pipeline_runs.first().unwrap();
+    match pipeline.first() {
+        Some(command) => {
+            rumtk_pipeline_patch_args!(&mut visualization, &[
+                ("{command}", command.args.last().unwrap())
+            ]);
+        }
+        None => return Err(rumtk_format!("No commands found for pipeline => {}/{}", category, pipeline_name)),
+    }
+
+    // Execute the pipeline
+    Ok(rumtk_pipeline_quick_run_async!(visualization).await?)
 }
 
