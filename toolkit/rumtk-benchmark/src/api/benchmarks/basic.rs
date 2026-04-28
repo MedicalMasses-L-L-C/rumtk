@@ -30,8 +30,8 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
             let mut temp_data = generate_temp_dir()?;
-            let pipeline_result = run_pipeline("basic", pipeline_name.as_str(), &state, &mut Some(&mut temp_data)).await?;
-            let visualization = run_visualization("basic", pipeline_name.as_str(), "flamegraph", &state).await?;
+            let pipeline_result = run_pipeline("basic", pipeline_name.as_str(), &state, &mut temp_data).await?;
+            let visualization = run_visualization("basic", pipeline_name.as_str(), "flamegraph", &state, &mut temp_data).await?;
 
             // Generate report
             let mut report = match std::str::from_utf8(&pipeline_result) {

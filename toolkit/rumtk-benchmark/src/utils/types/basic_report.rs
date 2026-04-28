@@ -87,6 +87,12 @@ impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
         let collection = s
             .split('\n')
             .collect::<Vec<&str>>();
+
+        if collection.len() <= 2 {
+            println!("Nothing found to build report with! Input => {}", s);
+            return Ok(Self::default());
+        }
+
         let items = collection[collection.len() - 2..collection.len()].join("\n");
         let key_line = items
             .as_str()

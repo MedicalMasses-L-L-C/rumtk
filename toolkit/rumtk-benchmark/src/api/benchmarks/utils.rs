@@ -19,9 +19,8 @@
  */
 use rumtk_core::core::{new_random_string_set, RUMResult, RUMVec, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
-use rumtk_core::rumtk_pipeline_pipe_string_data;
-use rumtk_core::strings::{rumtk_format, string_format, string_to_buffer, CompactStringExt, RUMString, RUMStringConversions};
-use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_quick_run_async};
+use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
 
 use rumtk_core::types::RUMBuffer;
@@ -52,6 +51,15 @@ impl TempData {
         }
 
         Ok(sizes)
+    }
+
+    pub fn new_temp_file(&mut self) -> RUMResult<&mut NamedTempFile> {
+        let temp_file = match NamedTempFile::new_in(&self.temp_dir) {
+            Ok(temp_file) => temp_file,
+            Err(e) => return Err(rumtk_format!("Failed to create temporary file because => {}", e))
+        };
+        self.temp_files.push(temp_file);
+        Ok(self.temp_files.last_mut().unwrap())
     }
 }
 
@@ -87,7 +95,7 @@ pub fn generate_test_run_data(settings: &TextMap) -> RUMString {
     generate_data(template.as_str(), &random_data, line_pattern.as_str())
 }
 
-pub fn generate_temp_test_run_data(temp_dir: &TempDir, settings: &TextMap) -> RUMResult<NamedTempFile> {
+pub fn generate_temp_test_run_data<'a>(temp_file: &'a mut NamedTempFile, settings: &TextMap) -> RUMResult<&'a NamedTempFile> {
     // Generate the data.
     let random_data = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(DEFAULT_BUFFER_ITEM_COUNT * 2);
     let template = match settings.get("template") {
@@ -100,10 +108,6 @@ pub fn generate_temp_test_run_data(temp_dir: &TempDir, settings: &TextMap) -> RU
     };
     let data = generate_data(template.as_str(), &random_data, line_pattern.as_str());
 
-    let mut temp_file = match NamedTempFile::new_in(temp_dir) {
-        Ok(temp_file) => temp_file,
-        Err(e) => return Err(rumtk_format!("Failed to create temporary file because => {}", e))
-    };
     match temp_file.as_file().write(data.as_bytes()) {
         Ok(_) => (),
         Err(e) => return Err(rumtk_format!("Failed to write temporary file because => {}", e))
@@ -112,26 +116,15 @@ pub fn generate_temp_test_run_data(temp_dir: &TempDir, settings: &TextMap) -> RU
     Ok(temp_file)
 }
 
-pub fn generate_test_run(pipeline: &RUMCommandLine, settings: &TextMap, temp: &mut Option<&mut TempData>) -> RUMResult<RUMCommandLine> {
-    // Prepare the pipeline
+pub fn generate_test_run(pipeline: &RUMCommandLine, settings: &TextMap, temp_data: &mut TempData) -> RUMResult<RUMCommandLine> {
     let mut new_pipeline = pipeline.clone();
-
-    match temp {
-        Some(temp_data) => {
-            let temp_file = generate_temp_test_run_data(&temp_data.temp_dir, settings)?;
-            rumtk_pipeline_patch_args!(&mut new_pipeline, &[("{test_file}", temp_file.path().to_str().unwrap())]);
-            temp_data.temp_files.push(temp_file);
-        },
-        None => {
-            let data = generate_test_run_data(settings);
-            rumtk_pipeline_pipe_string_data!(&mut new_pipeline, data.as_str());
-        }
-    };
+    let temp_file = generate_temp_test_run_data(temp_data.new_temp_file()?, settings)?;
+    rumtk_pipeline_patch_args!(&mut new_pipeline, &[("{test_file}", temp_file.path().to_str().unwrap())]);
 
     Ok(new_pipeline)
 }
 
-pub fn generate_test_runs(pipeline_category: &str, pipeline_name: &str, state: &SharedAppState, count: usize, temp: &mut Option<&mut TempData>) -> RUMResult<RUMPipelineRuns> {
+pub fn generate_test_runs(pipeline_category: &str, pipeline_name: &str, state: &SharedAppState, count: usize, temp: &mut TempData) -> RUMResult<RUMPipelineRuns> {
     let mut pipeline_runs = RUMPipelineRuns::with_capacity(count);
     // Grab settings
     let settings = match rumtk_web_get_pipelines!(state).get_settings() {
@@ -159,18 +152,18 @@ pub fn generate_temp_dir() -> RUMResult<TempData> {
     }
 }
 
-pub async fn run_pipeline(category: &str, pipeline_name: &str, state: &SharedAppState, temp_data: &mut Option<&mut TempData>) -> RUMResult<RUMBuffer> {
+pub async fn run_pipeline(category: &str, pipeline_name: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let pipeline_runs = generate_test_runs(category, pipeline_name, &state, 1, temp_data)?;
     let pipeline = pipeline_runs.first().unwrap();
 
     // Execute the pipeline
-    Ok(rumtk_pipeline_quick_run_async!(pipeline).await?)
+    Ok(rumtk_pipeline_run_async!(pipeline).await?)
 }
 
-pub async fn run_visualization(category: &str, pipeline_name: &str, visualization_name: &str, state: &SharedAppState) -> RUMResult<RUMBuffer> {
-    let mut visualization = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", visualization_name);
-    let pipeline_runs = generate_test_runs(category, pipeline_name, &state, 1, &mut None)?;
-    let pipeline = pipeline_runs.first().unwrap();
+pub async fn run_visualization(category: &str, pipeline_name: &str, visualization_name: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let mut visualization_runs = generate_test_runs("visualizers", visualization_name, &state, 1, temp_data)?;
+    let mut visualization = visualization_runs.first_mut().unwrap();
+    let pipeline = rumtk_web_get_pipelines!(state).get_pipeline(category, pipeline_name);
     match pipeline.first() {
         Some(command) => {
             rumtk_pipeline_patch_args!(&mut visualization, &[
@@ -181,6 +174,7 @@ pub async fn run_visualization(category: &str, pipeline_name: &str, visualizatio
     }
 
     // Execute the pipeline
-    Ok(rumtk_pipeline_quick_run_async!(visualization).await?)
+    let vis_data = rumtk_pipeline_run_async!(visualization).await?;
+    Ok(vis_data)
 }
 
