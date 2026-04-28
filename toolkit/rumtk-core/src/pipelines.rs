@@ -525,6 +525,9 @@ pub mod pipeline_functions {
     pub fn pipeline_wait_pipeline(pipeline: &RUMCommandLine, initial_data: &RUMBuffer) -> RUMPipelineResult {
         let mut last_data = initial_data.clone();
 
+        // Print pipeline
+        print_pipeline(&pipeline);
+
         // Now let's visit each process and await their completion!
         for c in pipeline.iter() {
             let mut p = pipeline_generate_command(&c, &last_data)?;
