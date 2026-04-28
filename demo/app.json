@@ -39,6 +39,20 @@
       "line_pattern": "OBX|{line_number}|ED|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||^PDF^^base64^{line}||||||F|||20120309132541"
     },
     "categories": {
+      "visualizers": {
+        "flamegraph": [
+          {
+            "path": "cat",
+            "args": ["{test_file}"],
+            "env": {}
+          },
+          {
+            "path": "flamegraph",
+            "args": ["-o", "/dev/stdout", "-i", "--deterministic", "-F", "999", "--", "{command}"],
+            "env": {}
+          }
+        ]
+      },
       "basic": {
         "parser": [
           {
