@@ -433,6 +433,18 @@ pub mod pipeline_functions {
         println!("{}", pipeline_components.join_compact(" | "));
     }
 
+    pub fn pipeline_patch_command_args<'a>(cmd: &'a mut RUMCommand, replacements: &StringReplacementPair) -> RUMResult<&'a RUMCommand> {
+        let mut new_args = RUMCommandArgs::with_capacity(cmd.args.len());
+
+        for arg in cmd.args.iter() {
+            new_args.push(string_format(arg, replacements));
+        }
+
+        cmd.args = new_args;
+
+        Ok(cmd)
+    }
+
     ///
     /// Patches the arguments of the first command with the pattern=replacement pairs!
     ///
@@ -464,18 +476,9 @@ pub mod pipeline_functions {
     /// ```
     ///
     pub fn pipeline_patch_args<'a>(pipeline: &'a mut RUMCommandLine, replacements: &StringReplacementPair) -> RUMResult<&'a RUMCommandLine> {
-        let mut cmd: &mut RUMCommand = match pipeline.get_mut(0) {
-            Some(command) => command,
-            None => return Err(rumtk_format!("No commands in pipeline????"))
-        };
-        let mut new_args = RUMCommandArgs::with_capacity(cmd.args.len());
-
-        for arg in cmd.args.iter() {
-            new_args.push(string_format(arg, replacements));
+        for mut cmd in pipeline.iter_mut() {
+            pipeline_patch_command_args(&mut cmd, replacements)?;
         }
-
-        cmd.args = new_args;
-
         Ok(pipeline)
     }
 
