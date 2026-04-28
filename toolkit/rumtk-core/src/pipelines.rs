@@ -63,8 +63,9 @@ pub mod pipeline_types {
 pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::core::RUMResult;
-    use crate::strings::{rumtk_format, string_format, CompactStringExt, RUMString, StringReplacementPair};
+    use crate::strings::{rumtk_format, string_format, CompactStringExt, RUMArrayConversions, RUMString, StringReplacementPair};
     use std::io::{Read, Write};
+    use std::os::unix::ffi::OsStrExt;
 
     use crate::threading::threading_functions::async_sleep;
     use crate::types::RUMBuffer;
@@ -137,7 +138,10 @@ pub mod pipeline_functions {
     ///
     pub fn pipeline_spawn_process(cmd: &mut RUMPipelineCommand) -> RUMResult<RUMPipelineProcess> {
         match cmd.spawn() {
-            Ok(process) => Ok(process),
+            Ok(process) => {
+                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_rumstring(), cmd.get_args());
+                Ok(process)
+            },
             Err(e) => Err(rumtk_format!(
                 "Failed to spawn process {:?} because => {}",
                 cmd.get_program(),
@@ -304,12 +308,13 @@ pub mod pipeline_functions {
         data: &Option<RUMBuffer>,
     ) -> RUMResult<()> {
         match data {
-            Some(data) => match process.stdin {
+            Some(data) => match process.stdin.take() {
                 Some(ref mut stdin) => match stdin.write_all(&data) {
                     Ok(_) => {}
                     Err(e) => {
                         return Err(rumtk_format!(
-                            "Failed to pipe data to stdin of process because => {}",
+                            "Failed to pipe data to stdin of process {} because => {}",
+                            process.id(),
                             e
                         ))
                     }
@@ -355,13 +360,16 @@ pub mod pipeline_functions {
             None => return Err(rumtk_format!("A commandline was expected but no commands were given! Got => {:?}", commands)),
         };
 
+        // Print pipeline
+        print_pipeline(commands);
+
         // Setup pipeline
         let mut pipeline = vec![];
 
         //Bootstrap first process in chain
         let mut root = pipeline_generate_command(&first_command);
         let mut parent_process = pipeline_spawn_process(&mut root)?;
-        pipeline_pipe_into_process(&mut parent_process, &mut first_command.data.clone())?;
+        pipeline_pipe_into_process(&mut parent_process, &mut first_command.data.clone()).unwrap_or_else(|_| {});
         pipeline.push(parent_process);
 
         for cmd in commands.iter().skip(1) {
@@ -370,8 +378,6 @@ pub mod pipeline_functions {
             parent_process = pipeline_spawn_process(&mut new_root)?;
             pipeline.push(parent_process);
         }
-
-        print_pipeline(commands);
 
         Ok(pipeline)
     }
@@ -430,7 +436,7 @@ pub mod pipeline_functions {
             pipeline_components.push(rumtk_format!("{} {}", pipe.path, pipe.args.clone().join_compact(" ")));
         }
 
-        println!("{}", pipeline_components.join_compact(" | "));
+        println!("Executing {}", pipeline_components.join_compact(" | "));
     }
 
     pub fn pipeline_patch_command_args<'a>(cmd: &'a mut RUMCommand, replacements: &StringReplacementPair) -> RUMResult<&'a RUMCommand> {
