@@ -494,8 +494,11 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///     let file = form.files.get(id).unwrap();
 ///
 ///     let result = rumtk_pipeline_run_async!(
-///         rumtk_pipeline_command!("cat", file.clone()),
-///         rumtk_pipeline_command!("wc")
+///         &vec![
+///             rumtk_pipeline_command!("cat"),
+///             rumtk_pipeline_command!("wc")
+///         ],
+///         &file.clone()
 ///     ).await?;
 ///
 ///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_rumstring())))
