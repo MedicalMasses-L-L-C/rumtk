@@ -67,7 +67,7 @@ pub mod pipeline_functions {
     use std::io::{Read, Write};
     use std::os::unix::ffi::OsStrExt;
 
-    use crate::threading::threading_functions::async_sleep;
+    use crate::rumtk_resolve_sync_task;
     use crate::types::RUMBuffer;
     use std::process::{Command, Stdio};
 
@@ -85,19 +85,19 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::pipeline_generate_command;
+    /// use rumtk_core::pipelines::pipeline_functions::pipeline_create_command;
     ///
     /// let command_name = "ls";
     /// let mut command = RUMCommand::default();
     /// command.path = RUMString::from(command_name);
     ///
-    /// let sys_command = pipeline_generate_command(&command);
+    /// let sys_command = pipeline_create_command(&command);
     ///
     /// assert_eq!(sys_command.get_program().to_str().unwrap(), command_name, "");
     ///
     /// ```
     ///
-    pub fn pipeline_generate_command(command: &RUMCommand) -> RUMPipelineCommand {
+    pub fn pipeline_create_command(command: &RUMCommand) -> RUMPipelineCommand {
         let mut cmd = Command::new(command.path.as_str());
 
         for arg in command.args.iter() {
@@ -123,13 +123,13 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_spawn_process};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_spawn_process};
     ///
     /// let command_name = "ls";
     /// let mut command = RUMCommand::default();
     /// command.path = RUMString::from(command_name);
     ///
-    /// let mut sys_command = pipeline_generate_command(&command);
+    /// let mut sys_command = pipeline_create_command(&command);
     ///
     /// let mut process = pipeline_spawn_process(&mut sys_command).unwrap();
     ///
@@ -162,17 +162,17 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_processes, pipeline_spawn_process};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_pipe_processes, pipeline_spawn_process};
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
-    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_command = pipeline_create_command(&ls_command);
     ///
     /// let wc_name = "wc";
     /// let mut wc_command = RUMCommand::default();
     /// wc_command.path = RUMString::from(wc_name);
-    /// let mut sys_wc_command = pipeline_generate_command(&wc_command);
+    /// let mut sys_wc_command = pipeline_create_command(&wc_command);
     ///
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
     /// pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
@@ -210,17 +210,17 @@ pub mod pipeline_functions {
     ///
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_spawn_process, pipeline_get_stdout, pipeline_pipe_processes};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_spawn_process, pipeline_get_stdout, pipeline_pipe_processes};
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
-    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_command = pipeline_create_command(&ls_command);
     ///
     /// let wc_name = "wc";
     /// let mut wc_command = RUMCommand::default();
     /// wc_command.path = RUMString::from(wc_name);
-    /// let mut sys_wc_command = pipeline_generate_command(&wc_command);
+    /// let mut sys_wc_command = pipeline_create_command(&wc_command);
     ///
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
     /// pipeline_pipe_processes(&mut sys_ls_process, &mut sys_wc_command).unwrap();
@@ -236,9 +236,8 @@ pub mod pipeline_functions {
     /// assert_eq!(out_data.is_empty(), false, "No output detected... {:?}", &out_data);
     /// ```
     ///
-    pub fn pipeline_get_stdout(mut pipeline: RUMPipeline) -> RUMResult<RUMBuffer> {
-        let mut last_item = pipeline.pop().unwrap();
-        match last_item.wait_with_output() {
+    pub fn pipeline_get_stdout(mut process: RUMPipelineProcess) -> RUMResult<RUMBuffer> {
+        match process.wait_with_output() {
             Ok(stdout) => Ok(RUMBuffer::from(stdout.stdout.clone())),
             Err(e) => Err(rumtk_format!(
                 "Issue reading last process output because => {}",
@@ -256,13 +255,13 @@ pub mod pipeline_functions {
     /// use rumtk_core::pipelines::pipeline_functions::pipeline_close_process_stdin;
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_into_process, pipeline_spawn_process};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_pipe_into_process, pipeline_spawn_process};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
-    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_command = pipeline_create_command(&ls_command);
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
     ///
     /// pipeline_close_process_stdin(&mut sys_ls_process);
@@ -288,13 +287,13 @@ pub mod pipeline_functions {
     /// ```
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
-    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_pipe_into_process, pipeline_spawn_process};
+    /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_pipe_into_process, pipeline_spawn_process};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
-    /// let mut sys_ls_command = pipeline_generate_command(&ls_command);
+    /// let mut sys_ls_command = pipeline_create_command(&ls_command);
     /// let mut sys_ls_process = pipeline_spawn_process(&mut sys_ls_command).unwrap();
     /// pipeline_pipe_into_process(&mut sys_ls_process, &Some(RUMBuffer::default())).unwrap();
     ///
@@ -305,11 +304,10 @@ pub mod pipeline_functions {
     ///
     pub fn pipeline_pipe_into_process(
         process: &mut RUMPipelineProcess,
-        data: &Option<RUMBuffer>,
+        data: &RUMBuffer,
     ) -> RUMResult<()> {
-        match data {
-            Some(data) => match process.stdin.take() {
-                Some(ref mut stdin) => match stdin.write_all(&data) {
+            match process.stdin.take() {
+                Some(ref mut stdin) => match stdin.write_all(data.as_slice()) {
                     Ok(_) => {}
                     Err(e) => {
                         return Err(rumtk_format!(
@@ -320,9 +318,7 @@ pub mod pipeline_functions {
                     }
                 },
                 None => {}
-            },
-            None => {}
-        }
+            }
         Ok(())
     }
 
@@ -354,32 +350,13 @@ pub mod pipeline_functions {
     /// assert_eq!(pipeline.len(), commands.len(), "Pipeline generation returned unexpected number of items!");
     /// ```
     ///
-    pub fn pipeline_generate_pipeline(commands: &RUMCommandLine) -> RUMResult<RUMPipeline> {
-        let first_command = match commands.first() {
-            Some(command) => command,
-            None => return Err(rumtk_format!("A commandline was expected but no commands were given! Got => {:?}", commands)),
-        };
+    pub fn pipeline_generate_command(command: &RUMCommand, data: &RUMBuffer) -> RUMResult<RUMPipelineProcess> {
+        let mut root = pipeline_create_command(&command);
+        let mut process = pipeline_spawn_process(&mut root)?;
+        pipeline_pipe_into_process(&mut process, data)?;
+        pipeline_close_process_stdin(&mut process);
 
-        // Print pipeline
-        print_pipeline(commands);
-
-        // Setup pipeline
-        let mut pipeline = vec![];
-
-        //Bootstrap first process in chain
-        let mut root = pipeline_generate_command(&first_command);
-        let mut parent_process = pipeline_spawn_process(&mut root)?;
-        pipeline_pipe_into_process(&mut parent_process, &mut first_command.data.clone()).unwrap_or_else(|_| {});
-        pipeline.push(parent_process);
-
-        for cmd in commands.iter().skip(1) {
-            let mut new_root = pipeline_generate_command(cmd);
-            pipeline_pipe_processes(pipeline.last_mut().unwrap(), &mut new_root)?;
-            parent_process = pipeline_spawn_process(&mut new_root)?;
-            pipeline.push(parent_process);
-        }
-
-        Ok(pipeline)
+        Ok(process)
     }
 
     ///
@@ -519,38 +496,12 @@ pub mod pipeline_functions {
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
     ///
-    pub async fn pipeline_await_pipeline(mut pipeline: RUMPipeline) -> RUMPipelineResult {
-        // Let's make sure the stdin is closed on the first process to make sure it exits instead of
-        // remain waiting for EOF in the stdin stream.
-        pipeline_close_process_stdin(pipeline.first_mut().unwrap());
-
-        // Now let's visit each process and await their completion!
-        for p in pipeline.iter_mut() {
-            loop {
-                match p.try_wait() {
-                    Ok(code) => match code {
-                        Some(code) => {
-                            if !code.success() {
-                                return Err(rumtk_format!(
-                                    "Process {} exited with non-success code => {}!",
-                                    p.id(),
-                                    code
-                                ));
-                            }
-                            break;
-                        }
-                        None => {
-                            async_sleep(DEFAULT_PROCESS_ASYNC_WAIT).await;
-                            continue;
-                        }
-                    },
-                    Err(e) => return Err(rumtk_format!("Issue with process {} => {}", p.id(), e)),
-                };
-            }
-        }
-
-        let result = pipeline_get_stdout(pipeline)?;
-        Ok(result)
+    pub async fn pipeline_await_pipeline(pipeline: &RUMCommandLine, initial_data: &RUMBuffer) -> RUMPipelineResult {
+        let pipeline_copy = pipeline.clone();
+        let data_copy = initial_data.clone();
+        rumtk_resolve_sync_task!(move || {
+            pipeline_wait_pipeline(&pipeline_copy, &data_copy)
+        })
     }
 
     ///
@@ -583,30 +534,18 @@ pub mod pipeline_functions {
     /// assert_eq!(result.is_empty(), false, "Pipeline returned no buffer from command wc! => {:?}", &result);
     /// ```
     ///
-    pub fn pipeline_wait_pipeline(mut pipeline: RUMPipeline) -> RUMPipelineResult {
-        // Let's make sure the stdin is closed on the first process to make sure it exits instead of
-        // remain waiting for EOF in the stdin stream.
-        pipeline_close_process_stdin(pipeline.first_mut().unwrap());
+    pub fn pipeline_wait_pipeline(pipeline: &RUMCommandLine, initial_data: &RUMBuffer) -> RUMPipelineResult {
+        let mut last_data = initial_data.clone();
 
         // Now let's visit each process and await their completion!
-        for p in pipeline.iter_mut() {
-            match p.wait() {
-                Ok(code) => {
-                    if !code.success() {
-                        return Err(rumtk_format!(
-                            "Process {} exited with non-success code => {}!",
-                            p.id(),
-                            code
-                        ));
-                    }
-                    continue;
-                }
-                Err(e) => return Err(rumtk_format!("Issue with process {} => {}", p.id(), e)),
-            };
+        for c in pipeline.iter() {
+            let mut p = pipeline_generate_command(&c, &last_data)?;
+            pipeline_close_process_stdin(&mut p);
+            println!("Waiting on {}", p.id());
+            last_data = pipeline_get_stdout(p)?;
         }
 
-        let result = pipeline_get_stdout(pipeline)?;
-        Ok(result)
+        Ok(last_data)
     }
 }
 
@@ -901,11 +840,14 @@ pub mod pipeline_macros {
     #[macro_export]
     macro_rules! rumtk_pipeline_quick_run_async {
         ( $pipeline:expr ) => {{
-            use $crate::pipelines::pipeline_functions::{pipeline_generate_pipeline, pipeline_await_pipeline};
+            use $crate::types::RUMBuffer;
 
-            let pipeline = pipeline_generate_pipeline(&$pipeline)?;
+            rumtk_pipeline_quick_run_async!($pipeline, &RUMBuffer::default())
+        }};
+        ( $pipeline:expr, $data:expr ) => {{
+            use $crate::pipelines::pipeline_functions::{pipeline_await_pipeline};
 
-            pipeline_await_pipeline(pipeline)
+            pipeline_await_pipeline($pipeline, $data)
         }};
     }
 
