@@ -30,9 +30,11 @@ use rumtk_web::RUMWebTemplate;
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(
     source = "
-        <pre>
-            {{data}}
-        </pre>
+        <div>
+            <pre>
+                {{ data }}
+            </pre>
+        </div>
     ",
     ext = "html"
 )]

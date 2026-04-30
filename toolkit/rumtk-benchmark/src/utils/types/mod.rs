@@ -60,6 +60,7 @@ impl<'a> TryFrom<ReportRawResults<'a>> for BenchmarkReport {
         let report = BasicBenchmarkReport::try_from(raw_report)?;
         let visualization = FlamegraphBenchmarkVisualizer::try_from(raw_visualization)?;
         let cpu_summary = CPUBenchmarkReport::try_from(cpu_summary)?;
+        println!("{:?}", &cpu_summary.render());
         Ok(Self {
             meta: BenchmarkMeta::new()?,
             report,
