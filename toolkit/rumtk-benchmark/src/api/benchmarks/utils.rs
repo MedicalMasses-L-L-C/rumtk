@@ -20,12 +20,12 @@
 use rumtk_core::core::{new_random_string_set, RUMResult, RUMVec, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::types::RUMBuffer;
 use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
 
-use rumtk_core::types::RUMBuffer;
 use std::fs;
-use std::io::Write;
+use std::io::{Read, Seek, SeekFrom, Write};
 use tempfile::{tempdir, NamedTempFile, TempDir};
 
 pub const FILE_SIZE_KB: usize = 1024;
@@ -72,6 +72,22 @@ impl TempData {
         self.perf_files.push(temp_file);
         Ok(self.perf_files.last_mut().unwrap())
     }
+}
+
+pub fn read_temp_buffer(temp_file: &mut NamedTempFile) -> RUMResult<RUMBuffer> {
+    let mut data = RUMVec::<u8>::new();
+
+    match temp_file.seek(SeekFrom::Start(0)) {
+        Ok(_) => (),
+        Err(e) => return Err(rumtk_format!("Failed to seek to start of temp file: {}", e)),
+    };
+
+    match temp_file.read_to_end(&mut data) {
+        Ok(s) => s,
+        Err(e) => return Err(rumtk_format!("Failed to read temp file contents => {}", e)),
+    };
+
+    Ok(RUMBuffer::copy_from_slice(data.as_slice()))
 }
 
 pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &str) -> RUMString {
@@ -195,6 +211,13 @@ pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, t
     let results = rumtk_pipeline_run_async!(&run).await?;
 
     Ok((results, perfdata))
+}
+
+pub async fn run_perf_stat(profile: &str, command: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    let (report, mut perfdata) = run_perf(command, &target, &state, temp_data).await?;
+
+    read_temp_buffer(&mut perfdata)
 }
 
 pub async fn run_perf_report(profile: &str, command: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
