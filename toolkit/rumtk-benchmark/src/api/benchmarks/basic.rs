@@ -17,9 +17,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use super::utils::{run_pipeline, run_visualization, FILE_SIZE_MB};
+use super::utils::{run_flamegraph, run_hyperfine, FILE_SIZE_MB};
 use crate::api::benchmarks::utils::generate_temp_dir;
-use crate::utils::types::BasicBenchmarkReportBundle;
+use crate::utils::types::BenchmarkReport;
 use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMStringConversions};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
@@ -30,20 +30,20 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     match form.form.get("basic_choice") {
         Some(pipeline_name) => {
             let mut temp_data = generate_temp_dir()?;
-            let pipeline_result = run_pipeline("basic", pipeline_name.as_str(), &state, &mut temp_data).await?;
-            let visualization = run_visualization("basic", pipeline_name.as_str(), "flamegraph", &state, &mut temp_data).await?;
+            let pipeline_result = run_hyperfine(pipeline_name.as_str(), &state, &mut temp_data).await?;
+            let visualization = run_flamegraph(pipeline_name.as_str(), &state, &mut temp_data).await?;
 
             // Generate report
             let mut report = match std::str::from_utf8(&pipeline_result) {
                 Ok(results) => {
                     match std::str::from_utf8(&visualization) {
-                        Ok(visualization_results) => BasicBenchmarkReportBundle::try_from((results, visualization_results))?,
+                        Ok(visualization_results) => BenchmarkReport::try_from((results, visualization_results))?,
                         Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by visualization pipeline: {}", e)),
                     }
                 },
                 Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
             };
-            report.meta.test_file_sizes = temp_data.get_file_sizes::<FILE_SIZE_MB>()?;
+            report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
             // Render the HTML result.
             Ok(Some(rumtk_web_render_template!(report)))
