@@ -31,6 +31,7 @@ pub mod render;
 pub mod response;
 pub mod testdata;
 pub mod types;
+pub mod conversions;
 
 pub use render::*;
 pub use types::*;
