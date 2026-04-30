@@ -17,6 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::utils::types::cpu_report::CPUBenchmarkReport;
 use rumtk_core::strings::RUMString;
 use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 use rumtk_web::RUMWebTemplate;
@@ -32,7 +33,7 @@ pub use basic_report::*;
 pub use flamegraph::*;
 pub use meta::*;
 
-type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer);
+type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
 
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(
@@ -40,6 +41,7 @@ type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer);
         {{meta|safe}}
         {{report|safe}}
         {{visualization|safe}}
+        {{cpu_summary|safe}}
     ",
     ext = "html"
 )]
@@ -47,19 +49,22 @@ pub struct BenchmarkReport {
     pub meta: BenchmarkMeta,
     pub report: BasicBenchmarkReport,
     pub visualization: FlamegraphBenchmarkVisualizer,
+    pub cpu_summary: CPUBenchmarkReport,
 }
 
 impl<'a> TryFrom<ReportRawResults<'a>> for BenchmarkReport {
     type Error = RUMString;
     fn try_from(data: ReportRawResults) -> Result<Self, Self::Error>
     {
-        let (raw_report, raw_visualization) = data;
+        let (raw_report, raw_visualization, cpu_summary) = data;
         let report = BasicBenchmarkReport::try_from(raw_report)?;
         let visualization = FlamegraphBenchmarkVisualizer::try_from(raw_visualization)?;
+        let cpu_summary = CPUBenchmarkReport::try_from(cpu_summary)?;
         Ok(Self {
             meta: BenchmarkMeta::new()?,
             report,
-            visualization
+            visualization,
+            cpu_summary,
         })
     }
 }

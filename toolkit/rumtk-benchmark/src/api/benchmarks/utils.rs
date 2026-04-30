@@ -197,11 +197,25 @@ pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, t
     Ok((results, perfdata))
 }
 
+pub async fn run_perf_report(profile: &str, command: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    let (report, mut perfdata) = run_perf(command, &target, &state, temp_data).await?;
+    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "perf");
+
+    rumtk_pipeline_patch_args!(&mut report_pipeline, &[
+        ("{target}", &target),
+        ("{perfdata}", &perfdata.path().to_str().unwrap_or_default())
+    ]);
+
+    // Execute the pipeline
+    let vis_data = rumtk_pipeline_run_async!(&report_pipeline).await?;
+    Ok(vis_data)
+}
+
 pub async fn run_flamegraph(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
     let mut flamegraph = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "flamegraph");
     let (report, mut perfdata) = run_perf("perf", &target, &state, temp_data).await?;
-    let target = rumtk_web_get_pipelines!(state).get_target(profile);
 
     rumtk_pipeline_patch_args!(&mut flamegraph, &[
         ("{target}", &target),
