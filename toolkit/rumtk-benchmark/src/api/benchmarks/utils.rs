@@ -32,6 +32,7 @@ pub const FILE_SIZE_KB: usize = 1024;
 pub const FILE_SIZE_MB: usize = 1024 * 1024;
 
 pub type RUMPipelineRuns = Vec<RUMCommandLine>;
+pub type RUMPerfReport<'a> = (RUMBuffer, &'a mut NamedTempFile);
 
 pub struct TempData {
     pub temp_dir: TempDir,
@@ -179,7 +180,7 @@ pub async fn run_hyperfine(profile: &str, state: &SharedAppState, temp_data: &mu
     Ok(rumtk_pipeline_run_async!(pipeline).await?)
 }
 
-pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, temp_data: &'a mut TempData) -> RUMResult<&'a mut NamedTempFile> {
+pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, temp_data: &'a mut TempData) -> RUMResult<RUMPerfReport<'a>> {
     let perf = rumtk_web_get_pipelines!(state).get_pipeline("perf", command);
     let settings = get_settings(&state);
     let mut perfdata = temp_data.new_perf_file()?;
@@ -191,15 +192,15 @@ pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, t
     ]);
 
     // Execute the pipeline
-    rumtk_pipeline_run_async!(&run).await?;
+    let results = rumtk_pipeline_run_async!(&run).await?;
 
-    Ok(perfdata)
+    Ok((results, perfdata))
 }
 
 pub async fn run_flamegraph(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
     let mut flamegraph = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "flamegraph");
-    let mut perfdata = run_perf("perf", &target, &state, temp_data).await?;
+    let (report, mut perfdata) = run_perf("perf", &target, &state, temp_data).await?;
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
 
     rumtk_pipeline_patch_args!(&mut flamegraph, &[
