@@ -4,7 +4,7 @@ use rumtk_web::rumtk_web_get_pipelines;
 use rumtk_web::SharedAppState;
 
 pub fn basic_benchmark(builder: FormElementBuilder, state: &SharedAppState) -> FormElements {
-    let benchmark_items = rumtk_web_get_pipelines!(state).get_available_pipeline_names("basic").join_compact(",");
+    let benchmark_items = rumtk_web_get_pipelines!(state).get_available_pipeline_names().join_compact(",");
     vec![
         builder(
             "label",
