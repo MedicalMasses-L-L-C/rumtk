@@ -51,7 +51,7 @@
           },
           {
             "path": "perf",
-            "args": ["record", "-F", "99", "--call-graph", "dwarf,64000", "-g", "-o", "{perfdata}","{target}"],
+            "args": ["record", "-F", "999", "--call-graph", "dwarf,64000", "-g", "-o", "{perfdata}","{target}"],
             "env": {}
           }
         ],
