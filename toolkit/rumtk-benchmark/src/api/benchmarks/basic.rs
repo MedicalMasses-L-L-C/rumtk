@@ -20,7 +20,7 @@
 use super::utils::{run_flamegraph, run_hyperfine, FILE_SIZE_MB};
 use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::utils::types::BenchmarkReport;
-use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMStringConversions};
+use rumtk_core::strings::{AsStr, RUMArrayConversions, RUMStringConversions};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
 use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};
@@ -34,15 +34,7 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
             let visualization = run_flamegraph(pipeline_name.as_str(), &state, &mut temp_data).await?;
 
             // Generate report
-            let mut report = match std::str::from_utf8(&pipeline_result) {
-                Ok(results) => {
-                    match std::str::from_utf8(&visualization) {
-                        Ok(visualization_results) => BenchmarkReport::try_from((results, visualization_results))?,
-                        Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by visualization pipeline: {}", e)),
-                    }
-                },
-                Err(e) => return Err(rumtk_format!("Invalid UTF-8 returned by pipeline: {}", e)),
-            };
+            let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization))?;
             report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
             // Render the HTML result.

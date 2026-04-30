@@ -55,7 +55,19 @@
             "env": {}
           }
         ],
-        "cpu_cache_summary": [
+        "cpu_summary": [
+          {
+            "path": "cat",
+            "args": ["{test_file}"],
+            "env": {}
+          },
+          {
+            "path": "perf",
+            "args": ["stat", "-B", "-e", "cache-references,cache-misses,cycles,instructions,branches,faults,migrations", "-o", "{perfdata}","{target}"],
+            "env": {}
+          }
+        ],
+        "cpu_cache": [
           {
             "path": "cat",
             "args": ["{test_file}"],
