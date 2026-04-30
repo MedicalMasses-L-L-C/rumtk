@@ -60,6 +60,7 @@ pub struct FooterConf {
 #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct PipelineConf {
     pub settings: Option<TextMap>,
+    pub targets: Option<TextMap>,
     pub categories: Option<RUMHashMap<RUMString, PipelineGroup>>
 }
 
@@ -67,7 +68,7 @@ impl PipelineConf {
     pub fn get_settings(&self) -> Option<&TextMap> {
         self.settings.as_ref()
     }
-    
+
     pub fn get_pipeline_category(&self, pipeline_category: &str) -> Option<&PipelineGroup> {
         match self.categories {
             Some(ref categories) => {
@@ -79,8 +80,8 @@ impl PipelineConf {
             None => None,
         }
     }
-    pub fn get_available_pipeline_names(&self, pipeline_category: &str) -> Vec<&RUMString> {
-        match self.get_pipeline_category(pipeline_category) {
+    pub fn get_available_pipeline_names(&self) -> Vec<&RUMString> {
+        match self.targets.as_ref() {
             Some(group) => {
                 let mut keys = group.keys().collect::<Vec<&RUMString>>();
                 keys.sort_unstable();
@@ -96,6 +97,15 @@ impl PipelineConf {
                 None => RUMCommandLine::new()
             },
             None => RUMCommandLine::new()
+        }
+    }
+    pub fn get_target(&self, profile: &str) -> RUMString {
+        match self.targets.as_ref() {
+            Some(targets) => match targets.get(profile) {
+                Some(pipeline) => pipeline.to_owned(),
+                None => RUMString::default()
+            },
+            None => RUMString::default()
         }
     }
 }
