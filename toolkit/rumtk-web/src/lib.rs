@@ -40,8 +40,8 @@ pub use utils::*;
 mod tests {
     use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
-    use crate::testdata::{create_test_form, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
+    use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
+    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, rumtk_web_trim_rendered_html, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
@@ -133,9 +133,13 @@ mod tests {
         assert_eq!(result, expected, "Test Div template rendered improperly!");
     }
 
-    ///////////////////////////////////HTML/////////////////////////////////////////////////
+
     #[test]
-    fn test_render_html_component() {}
+    fn test_trim_preformatted_component() {
+        let result = rumtk_web_trim_rendered_html(RAW_HTML_PREFORMATTED.to_string()).unwrap();
+
+        assert_eq!(result, TRIMMED_HTML_PREFORMATTED.to_string(), "Preformatted html string was filtered inappropriately.!");
+    }
 
     ///////////////////////////////////Jobs/////////////////////////////////////////////////
     #[test]
