@@ -134,9 +134,16 @@ pub mod rumtk_search {
     /// Use \" \" in join_pattern if you wish to have spaces in between matches.
     ///
     pub fn string_search(input: &str, expr: &str, join_pattern: &str) -> RUMResult<RUMString> {
+        Ok(string_search_list(input, expr)?.join_compact(join_pattern))
+    }
+
+    ///
+    /// Search for pattern and return all matches.
+    ///
+    pub fn string_search_list(input: &str, expr: &str) -> RUMResult<CapturedList> {
         let key = RUMString::from(expr);
         let re: Regex = rumtk_cache_fetch!(&raw mut re_cache, &key, || {compile_regex(expr)})?;
-        Ok(string_list(input, &re).join_compact(join_pattern))
+        Ok(string_list(input, &re))
     }
 
     ///
@@ -166,6 +173,20 @@ pub mod rumtk_search {
         }
 
         result = needle.trim().parse::<T>().unwrap_or_default();
+        Ok(result)
+    }
+
+    ///
+    /// Search for pattern and replace all matches.
+    ///
+    pub fn string_replace_all_matches(input: &str, expr: &str, replacement: &str) -> RUMResult<String> {
+        let matches = string_search_list(input, expr)?;
+        let mut result = String::from(input);
+
+        for pattern in matches.iter() {
+            result = result.as_str().replace(pattern.as_str(), replacement.as_str());
+        }
+
         Ok(result)
     }
 }
