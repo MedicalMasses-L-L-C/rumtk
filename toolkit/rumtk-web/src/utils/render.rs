@@ -21,6 +21,8 @@
 use crate::types::HTMLResult;
 use crate::{RUMWebData, RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::{Options, Parser};
+use rumtk_core::core::RUMResult;
+use rumtk_core::search::rumtk_search::{string_replace_all_matches, string_search_list};
 use rumtk_core::strings::{
     rumtk_format, AsStr, GraphemePattern, GraphemePatternPair, RUMString, RUMStringConversions,
 };
@@ -43,6 +45,8 @@ pub static MARKDOWN_OPTIONS_INIT: fn() -> Options = || -> Options {
 const TEMPLATE_NEWLINE_COMPONENT_PATTERN: GraphemePatternPair<'static> = (&["<"], &[">"]);
 const TEMPLATE_NEWLINE_COMPONENT_INNER_PATTERN: GraphemePatternPair<'static> =
     (&[">", "\n"], &["<"]);
+const TEMPLATE_MIDDLE_REGEX: &str = ">\\s+<";
+const TEMPLATE_MIDDLE_REPLACEMENT: &str = "><";
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -69,25 +73,25 @@ struct ContentBlock<'a> {
 /// ## Example
 /// ```
 /// use rumtk_web::rumtk_web_trim_rendered_html;
-/// use rumtk_web::testdata::{TRIMMED_HTML_RENDER, UNTRIMMED_HTML_RENDER};
+/// use rumtk_web::testdata::data::{TRIMMED_HTML_RENDER, UNTRIMMED_HTML_RENDER};
 ///
 /// let expected = String::from(TRIMMED_HTML_RENDER);
 /// let input = String::from(UNTRIMMED_HTML_RENDER);
-/// let filtered = rumtk_web_trim_rendered_html(input);
+/// let filtered = rumtk_web_trim_rendered_html(input).unwrap();
 ///
 /// assert_eq!(filtered, expected, "Template render trim failed!");
 /// ```
 ///
-pub fn rumtk_web_trim_rendered_html(html: String) -> String {
-    html.as_grapheme_str()
+pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
+    let filtered = html.as_grapheme_str()
         .trim(&TEMPLATE_NEWLINE_COMPONENT_PATTERN)
-        .splice(&TEMPLATE_NEWLINE_COMPONENT_INNER_PATTERN)
         .trim(&TEMPLATE_NEWLINE_COMPONENT_PATTERN)
-        .to_string()
+        .to_string();
+    string_replace_all_matches(filtered.as_str(), TEMPLATE_MIDDLE_REGEX, TEMPLATE_MIDDLE_REPLACEMENT)
 }
 
 pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
-    let filtered = rumtk_web_trim_rendered_html(html);
+    let filtered = rumtk_web_trim_rendered_html(html)?;
     Ok(url.into_web_response(Some(filtered)))
 }
 
