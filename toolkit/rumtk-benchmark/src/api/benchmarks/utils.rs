@@ -35,14 +35,15 @@ pub type RUMPipelineRuns = Vec<RUMCommandLine>;
 
 pub struct TempData {
     pub temp_dir: TempDir,
-    pub temp_files: Vec<NamedTempFile>,
+    pub test_files: Vec<NamedTempFile>,
+    pub perf_files: Vec<NamedTempFile>,
 }
 
 impl TempData {
-    pub fn get_file_sizes<const SIZE: usize>(&self) -> RUMResult<Vec<f32>> {
-        let mut sizes = Vec::<f32>::with_capacity(self.temp_files.len());
+    pub fn get_test_file_sizes<const SIZE: usize>(&self) -> RUMResult<Vec<f32>> {
+        let mut sizes = Vec::<f32>::with_capacity(self.test_files.len());
 
-        for file in &self.temp_files {
+        for file in &self.test_files {
             let new_size = match fs::metadata(file.path().to_str().unwrap()) {
                 Ok(metadata) => metadata.len() as f32 / SIZE as f32,
                 Err(e) => return Err(rumtk_format!("Maybe a temp file is unexpectedly missing??? => {}", e)),
@@ -53,13 +54,22 @@ impl TempData {
         Ok(sizes)
     }
 
-    pub fn new_temp_file(&mut self) -> RUMResult<&mut NamedTempFile> {
+    pub fn new_test_file(&mut self) -> RUMResult<&mut NamedTempFile> {
         let temp_file = match NamedTempFile::new_in(&self.temp_dir) {
             Ok(temp_file) => temp_file,
-            Err(e) => return Err(rumtk_format!("Failed to create temporary file because => {}", e))
+            Err(e) => return Err(rumtk_format!("Failed to create temporary test file because => {}", e))
         };
-        self.temp_files.push(temp_file);
-        Ok(self.temp_files.last_mut().unwrap())
+        self.test_files.push(temp_file);
+        Ok(self.test_files.last_mut().unwrap())
+    }
+
+    pub fn new_perf_file(&mut self) -> RUMResult<&mut NamedTempFile> {
+        let temp_file = match NamedTempFile::new_in(&self.temp_dir) {
+            Ok(temp_file) => temp_file,
+            Err(e) => return Err(rumtk_format!("Failed to create temporary perf file because => {}", e))
+        };
+        self.perf_files.push(temp_file);
+        Ok(self.perf_files.last_mut().unwrap())
     }
 }
 
@@ -116,26 +126,30 @@ pub fn generate_temp_test_run_data<'a>(temp_file: &'a mut NamedTempFile, setting
     Ok(temp_file)
 }
 
-pub fn generate_test_run(pipeline: &RUMCommandLine, settings: &TextMap, temp_data: &mut TempData) -> RUMResult<RUMCommandLine> {
+pub fn generate_test_run<'a>(pipeline: &RUMCommandLine, settings: &TextMap, temp_file: &'a mut NamedTempFile) -> RUMResult<RUMCommandLine> {
     let mut new_pipeline = pipeline.clone();
-    let temp_file = generate_temp_test_run_data(temp_data.new_temp_file()?, settings)?;
+    let temp_file = generate_temp_test_run_data(temp_file, settings)?;
     rumtk_pipeline_patch_args!(&mut new_pipeline, &[("{test_file}", temp_file.path().to_str().unwrap())]);
 
     Ok(new_pipeline)
 }
 
+pub fn get_settings(state: &SharedAppState) -> TextMap {
+    match rumtk_web_get_pipelines!(state).get_settings() {
+        Some(settings) => settings.clone(),
+        None => TextMap::new()
+    }
+}
+
 pub fn generate_test_runs(pipeline_category: &str, pipeline_name: &str, state: &SharedAppState, count: usize, temp: &mut TempData) -> RUMResult<RUMPipelineRuns> {
     let mut pipeline_runs = RUMPipelineRuns::with_capacity(count);
     // Grab settings
-    let settings = match rumtk_web_get_pipelines!(state).get_settings() {
-        Some(settings) => settings.clone(),
-        None => TextMap::new()
-    };
+    let settings = get_settings(&state);
     let pipeline = rumtk_web_get_pipelines!(state).get_pipeline(pipeline_category, pipeline_name);
 
     // Generate a series of pipelines ready for testing.
     for i in 0..count {
-        let new_pipeline = generate_test_run(&pipeline, &settings, temp);
+        let new_pipeline = generate_test_run(&pipeline, &settings, temp.new_test_file()?);
         pipeline_runs.push(new_pipeline?);
     }
 
@@ -146,35 +160,36 @@ pub fn generate_temp_dir() -> RUMResult<TempData> {
     match tempdir() {
         Ok(dir) => Ok(TempData {
             temp_dir: dir,
-            temp_files: vec![]
+            test_files: vec![],
+            perf_files: vec![]
         }),
         Err(e) => Err(rumtk_format!("Failed to create temporary directory because => {}", e))
     }
 }
 
-pub async fn run_pipeline(category: &str, pipeline_name: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
-    let pipeline_runs = generate_test_runs(category, pipeline_name, &state, 1, temp_data)?;
-    let pipeline = pipeline_runs.first().unwrap();
+pub async fn run_hyperfine(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let mut pipeline_runs = generate_test_runs("basic", "hyperfine", &state, 1, temp_data)?;
+    let mut pipeline = pipeline_runs.first_mut().unwrap();
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    rumtk_pipeline_patch_args!(&mut pipeline, &[
+        ("{target}", &target)
+    ]);
 
     // Execute the pipeline
     Ok(rumtk_pipeline_run_async!(pipeline).await?)
 }
 
-pub async fn run_visualization(category: &str, pipeline_name: &str, visualization_name: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
-    let mut visualization_runs = generate_test_runs("visualizers", visualization_name, &state, 1, temp_data)?;
-    let mut visualization = visualization_runs.first_mut().unwrap();
-    let pipeline = rumtk_web_get_pipelines!(state).get_pipeline(category, pipeline_name);
-    match pipeline.first() {
-        Some(command) => {
-            rumtk_pipeline_patch_args!(&mut visualization, &[
-                ("{command}", command.args.last().unwrap())
-            ]);
-        }
-        None => return Err(rumtk_format!("No commands found for pipeline => {}/{}", category, pipeline_name)),
-    }
+pub async fn run_flamegraph(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let flamegraph = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "flamegraph");
+    let settings = get_settings(&state);
+    let mut run = generate_test_run(&flamegraph, &settings, temp_data.new_perf_file()?)?;
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    rumtk_pipeline_patch_args!(&mut run, &[
+        ("{target}", &target)
+    ]);
 
     // Execute the pipeline
-    let vis_data = rumtk_pipeline_run_async!(visualization).await?;
+    let vis_data = rumtk_pipeline_run_async!(&run).await?;
     Ok(vis_data)
 }
 
