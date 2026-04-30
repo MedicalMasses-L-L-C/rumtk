@@ -75,12 +75,19 @@
           },
           {
             "path": "perf",
-            "args": ["record", "record", "-e", "cache-misses", "-o", "{perfdata}","{target}"],
+            "args": ["record", "-e", "cache-misses", "-o", "{perfdata}","{target}"],
             "env": {}
           }
         ]
       },
       "visualizers": {
+        "perf": [
+          {
+            "path": "perf",
+            "args": ["report", "-v", "-i", "{perfdata}"],
+            "env": {}
+          }
+        ],
         "flamegraph": [
           {
             "path": "flamegraph",

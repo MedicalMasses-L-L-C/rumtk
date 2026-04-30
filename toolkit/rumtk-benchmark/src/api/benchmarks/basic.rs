@@ -17,8 +17,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use super::utils::{run_flamegraph, run_hyperfine, run_perf_report, FILE_SIZE_MB};
+use super::utils::{run_flamegraph, run_hyperfine, FILE_SIZE_MB};
 use crate::api::benchmarks::utils::generate_temp_dir;
+use crate::api::benchmarks::utils::run_perf_stat;
 use crate::utils::types::BenchmarkReport;
 use rumtk_core::strings::{AsStr, RUMArrayConversions, RUMStringConversions};
 use rumtk_web::defaults::PARAMS_ID;
@@ -32,7 +33,7 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
             let mut temp_data = generate_temp_dir()?;
             let pipeline_result = run_hyperfine(pipeline_name.as_str(), &state, &mut temp_data).await?;
             let visualization = run_flamegraph(pipeline_name.as_str(), &state, &mut temp_data).await?;
-            let cpu_summary = run_perf_report(pipeline_name.as_str(), "cpu_summary", &state, &mut temp_data).await?;
+            let cpu_summary = run_perf_stat(pipeline_name.as_str(), "cpu_summary", &state, &mut temp_data).await?;
 
             // Generate report
             let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary))?;
