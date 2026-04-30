@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::strings::RUMString;
-use rumtk_core::types::{RUMDeserialize, RUMSerialize};
+use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;
@@ -32,7 +32,7 @@ pub use basic_report::*;
 pub use flamegraph::*;
 pub use meta::*;
 
-type ReportRawResults<'a> = (&'a str, &'a str);
+type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer);
 
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(

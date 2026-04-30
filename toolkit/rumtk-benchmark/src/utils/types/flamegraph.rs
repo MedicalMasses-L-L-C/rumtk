@@ -20,7 +20,7 @@
 use base64::prelude::*;
 use rumtk_core::core::RUMResult;
 use rumtk_core::search::rumtk_search::{string_find_value, string_search};
-use rumtk_core::strings::{rumtk_format, string_to_buffer, RUMString, RUMStringConversions};
+use rumtk_core::strings::{buffer_to_string, rumtk_format, string_to_buffer, RUMString, RUMStringConversions};
 use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
@@ -48,9 +48,11 @@ pub struct FlamegraphBenchmarkVisualizer {
     pub data: RUMString
 }
 
-impl<'a> TryFrom<&'a str> for FlamegraphBenchmarkVisualizer {
+impl TryFrom<&RUMBuffer> for FlamegraphBenchmarkVisualizer {
     type Error = RUMString;
-    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+    fn try_from(report: &RUMBuffer) -> Result<Self, Self::Error> {
+        let report_string = buffer_to_string(report)?;
+        let s = report_string.as_str();
         let flamegraph_html = string_find_value::<RUMString>(s, &["(?s)<\\?xml.*</svg>"]).unwrap_or_default();
         Ok(Self {
             data: to_data_uri(flamegraph_html.as_str(), "image/svg+xml")

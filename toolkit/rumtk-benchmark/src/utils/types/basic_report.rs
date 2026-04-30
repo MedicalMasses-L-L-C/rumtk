@@ -18,8 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::search::rumtk_search::{string_find_value, string_search};
-use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-use rumtk_core::types::{RUMDeserialize, RUMSerialize};
+use rumtk_core::strings::{buffer_to_string, rumtk_format, RUMString, RUMStringConversions};
+use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;
@@ -81,9 +81,11 @@ pub struct BasicBenchmarkReport {
     pub runs: usize,
 }
 
-impl<'a> TryFrom<&'a str> for BasicBenchmarkReport {
+impl TryFrom<&RUMBuffer> for BasicBenchmarkReport {
     type Error = RUMString;
-    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+    fn try_from(report: &RUMBuffer) -> Result<Self, Self::Error> {
+        let report_string = buffer_to_string(report)?;
+        let s = report_string.as_str();
         let collection = s
             .split('\n')
             .collect::<Vec<&str>>();
