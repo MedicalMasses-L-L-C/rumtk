@@ -26,13 +26,13 @@ use std::fmt::Debug;
 mod meta;
 mod basic_report;
 mod flamegraph;
+mod cpu_report;
 
 pub use basic_report::*;
 pub use flamegraph::*;
 pub use meta::*;
 
 type ReportRawResults<'a> = (&'a str, &'a str);
-pub type BasicBenchmarkReportBundle = BenchmarkReport<BasicBenchmarkReport, FlamegraphBenchmarkVisualizer>;
 
 #[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
 #[template(
@@ -43,13 +43,13 @@ pub type BasicBenchmarkReportBundle = BenchmarkReport<BasicBenchmarkReport, Flam
     ",
     ext = "html"
 )]
-pub struct BenchmarkReport<T: Debug + RUMWebTemplate, V: Debug + RUMWebTemplate> {
+pub struct BenchmarkReport {
     pub meta: BenchmarkMeta,
-    pub report: T,
-    pub visualization: V,
+    pub report: BasicBenchmarkReport,
+    pub visualization: FlamegraphBenchmarkVisualizer,
 }
 
-impl<'a> TryFrom<ReportRawResults<'a>> for BasicBenchmarkReportBundle {
+impl<'a> TryFrom<ReportRawResults<'a>> for BenchmarkReport {
     type Error = RUMString;
     fn try_from(data: ReportRawResults) -> Result<Self, Self::Error>
     {
