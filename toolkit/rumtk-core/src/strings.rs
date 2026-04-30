@@ -19,6 +19,7 @@
  */
 use crate::core::{is_unique, RUMResult, RUMVec};
 use crate::types::RUMBuffer;
+use base64::prelude::*;
 use chardetng::EncodingDetector;
 pub use compact_str::{
     format_compact as rumtk_format, CompactString, CompactStringExt, ToCompactString,
@@ -735,4 +736,30 @@ pub fn string_format(input: &str, formatting: &StringReplacementPair) -> RUMStri
     }
 
     output.to_rumstring()
+}
+
+///
+/// Convenience function for transforming a string into a `base64` encoded string.
+///
+/// ## Example
+/// ```
+///
+/// ```
+///
+pub fn string_to_b64(data: &str) -> String {
+    BASE64_STANDARD.encode(data)
+}
+
+///
+/// Convenience function for transforming a `base64` encoded string back to its original form.
+///
+/// ## Example
+/// ```
+/// ```
+///
+pub fn b64_to_string(data: &String) -> RUMResult<RUMVec<u8>> {
+    match BASE64_STANDARD.decode(data) {
+        Ok(result) => Ok(result),
+        Err(e) => Err(rumtk_format!("Failed to decode base64 string: {}", e)),
+    }
 }
