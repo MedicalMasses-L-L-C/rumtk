@@ -1,6 +1,6 @@
 [package]
 name = "rumtk-benchmark"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 
 [profile.dev]
@@ -8,7 +8,7 @@ debug = true
 strip = false
 
 [dependencies]
-rumtk-core = { version = "0.14.0", path = "../rumtk-core" }
+rumtk-core = { version = "0.14.2", path = "../rumtk-core" }
 rumtk-web = { version = "0.7.0", path = "../rumtk-web" }
 askama = "0.15.6"
 serde = { version = "1.0.228", features = ["derive", "std"] }
