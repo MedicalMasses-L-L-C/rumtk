@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use super::utils::{run_flamegraph, run_hyperfine, FILE_SIZE_MB};
+use super::utils::{run_flamegraph, run_hyperfine, run_perf_report, FILE_SIZE_MB};
 use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::api::benchmarks::utils::run_perf_stat;
 use crate::utils::types::BenchmarkReport;
@@ -34,9 +34,10 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
             let pipeline_result = run_hyperfine(pipeline_name.as_str(), &state, &mut temp_data).await?;
             let visualization = run_flamegraph(pipeline_name.as_str(), &state, &mut temp_data).await?;
             let cpu_summary = run_perf_stat(pipeline_name.as_str(), "cpu_summary", &state, &mut temp_data).await?;
+            let cpu_cache = run_perf_report(pipeline_name.as_str(), "cpu_cache", &state, &mut temp_data).await?;
 
             // Generate report
-            let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary))?;
+            let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_cache))?;
             report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
             // Render the HTML result.

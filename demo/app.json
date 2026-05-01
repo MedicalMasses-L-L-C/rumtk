@@ -75,7 +75,7 @@
           },
           {
             "path": "perf",
-            "args": ["record", "-e", "cache-misses", "-o", "{perfdata}","{target}"],
+            "args": ["record", "-s", "-e", "cache-misses,branch-misses", "-o", "{perfdata}","{target}"],
             "env": {}
           }
         ]
@@ -84,7 +84,7 @@
         "perf": [
           {
             "path": "perf",
-            "args": ["report", "-v", "-i", "{perfdata}"],
+            "args": ["report", "--stdio", "--header", "-I", "-v", "-i", "{perfdata}"],
             "env": {}
           }
         ],
