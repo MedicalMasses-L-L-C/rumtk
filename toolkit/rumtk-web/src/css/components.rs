@@ -69,13 +69,6 @@ pub const LIST_CSS: &str = r"
         flex-direction: column;
     }
 
-    @media screen
-    and (width > 700px) {
-        .portrait-card-default-row {
-            flex-direction: row;
-        }
-    }
-
     .portrait-card-default-item {
         width: 300px;
         padding: 50px;
@@ -245,25 +238,6 @@ pub const LIST_CSS: &str = r"
         align-items: center;
         padding: 10px;
         justify-content: center;
-    }
-
-    @media (width < 700px) {
-        .info-card-default-container {
-            flex-direction: column;
-            min-height: 400px;
-        }
-
-        .info-card-default-container > :first-child {
-            transform: translate(0, 30px);
-        }
-
-        .info-card-default-titlebox {
-            z-index: var(--mid-layer);
-        }
-
-        .info-card-default-descbox {
-            margin: 0;
-        }
     }
     
     .loader-default {

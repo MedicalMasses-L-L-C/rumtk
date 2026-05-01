@@ -24,7 +24,7 @@ use crate::{rumtk_web_render_template, RUMWebTemplate};
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
-            <link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href=\'/static/css/bundle.css\';' />
+        <link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href=\"/static/css/bundle.css\";' />
     ",
     ext = "html"
 )]

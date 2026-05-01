@@ -34,7 +34,7 @@ use rumtk_core::strings::RUMStringConversions;
         {% if custom_css_enabled %}
             <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}
-        <header class='header-{{ css_class }}-container'>
+        <header class='header-{{ css_class }}-container header'>
             {% if !disable_logo %}
             <div class='header-{{ css_class }}-navlogo'>
                 <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>

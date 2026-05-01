@@ -30,7 +30,7 @@ use rumtk_core::rumtk_critical_section_read;
 #[template(
     source = "
         <body class='f12 theme-{{theme}}'>
-            <a href='#main-content'>Skip to main content</a>
+            <a href='#main-content header'>Skip to main content</a>
             {{header|safe}}
             {{main|safe}}
             {{footer|safe}}
