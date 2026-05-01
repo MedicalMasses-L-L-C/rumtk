@@ -60,6 +60,7 @@ pub struct FooterConf {
 #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
 pub struct PipelineConf {
     pub settings: Option<TextMap>,
+    pub data_templates: Option<NestedTextMap>,
     pub targets: Option<TextMap>,
     pub categories: Option<RUMHashMap<RUMString, PipelineGroup>>
 }
@@ -99,6 +100,7 @@ impl PipelineConf {
             None => RUMCommandLine::new()
         }
     }
+
     pub fn get_target(&self, profile: &str) -> RUMString {
         match self.targets.as_ref() {
             Some(targets) => match targets.get(profile) {
@@ -106,6 +108,24 @@ impl PipelineConf {
                 None => RUMString::default()
             },
             None => RUMString::default()
+        }
+    }
+
+    pub fn get_template(&self, name: &str) -> Option<&TextMap> {
+        match self.data_templates.as_ref() {
+            Some(templates) => templates.get(name),
+            None => None
+        }
+    }
+
+    pub fn get_available_data_templates(&self) -> Vec<&RUMString> {
+        match self.data_templates.as_ref() {
+            Some(group) => {
+                let mut keys = group.keys().collect::<Vec<&RUMString>>();
+                keys.sort_unstable();
+                keys
+            },
+            None => vec![]
         }
     }
 }
