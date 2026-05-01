@@ -24,6 +24,7 @@ use rumtk_core::types::RUMBuffer;
 use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
 
+use rumtk_core::dependencies::clap::builder::TypedValueParser;
 use std::fs;
 use std::io::{Read, Seek, SeekFrom, Write};
 use tempfile::{tempdir, NamedTempFile, TempDir};
@@ -122,18 +123,30 @@ pub fn generate_test_run_data(settings: &TextMap) -> RUMString {
     generate_data(template.as_str(), &random_data, line_pattern.as_str())
 }
 
-pub fn generate_temp_test_run_data(profile: &str, temp_file: &mut NamedTempFile, state: &SharedAppState) -> RUMResult<&NamedTempFile> {
+pub fn generate_temp_test_run_data<'a>(profile: &'a str, temp_file: &'a mut NamedTempFile, state: &'a SharedAppState) -> RUMResult<&'a NamedTempFile> {
     let settings = get_template_settings(profile, state);
-    // Generate the data.
-    let random_data = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(DEFAULT_BUFFER_ITEM_COUNT * 2);
-    let template = match settings.get("template") {
+
+    // Extract settings.
+    let binding = RUMString::default();
+    let template = match settings.get("template"){
         Some(template) => template,
-        None => &RUMString::default(),
-    };
-    let line_pattern = match settings.get("line_pattern") {
+        None => &binding,
+    };;
+    let line_pattern = match settings.get("line_pattern"){
         Some(line_pattern) => line_pattern,
-        None => &RUMString::default(),
+        None => &binding,
     };
+    let target_size = match settings.get("target_size"){
+        Some(target_size) => target_size,
+        None => &binding,
+    }.parse::<usize>().unwrap_or_default();
+    let range = match settings.get("range"){
+        Some(range) => range,
+        None => &binding,
+    }.parse::<bool>().unwrap_or_default();
+
+    // Generate data
+    let random_data = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(DEFAULT_BUFFER_ITEM_COUNT * target_size);
     let data = generate_data(template.as_str(), &random_data, line_pattern.as_str());
 
     match temp_file.as_file().write(data.as_bytes()) {

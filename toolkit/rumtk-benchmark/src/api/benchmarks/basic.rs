@@ -21,15 +21,21 @@ use super::utils::{run_flamegraph, run_hyperfine, run_perf_report, FILE_SIZE_MB}
 use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::api::benchmarks::utils::run_perf_stat;
 use crate::utils::types::BenchmarkReport;
-use rumtk_core::strings::{AsStr, RUMArrayConversions, RUMStringConversions};
+use rumtk_core::strings::{AsStr, RUMArrayConversions, RUMString, RUMStringConversions};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
 use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
-    let choice = form.form.get("basic_choice").unwrap_or_default();
-    let template = form.form.get("basic_template").unwrap_or_default();
+    let choice = match form.form.get("basic_choice"){
+        Some(choice) => choice,
+        None => &RUMString::default(),
+    };
+    let template = match form.form.get("basic_template"){
+        Some(template) => template,
+        None => &RUMString::default(),
+    };
 
     let mut temp_data = generate_temp_dir()?;
     let pipeline_result = run_hyperfine(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
