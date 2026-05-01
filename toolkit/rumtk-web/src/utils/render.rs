@@ -182,7 +182,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 /// ```
 /// use rumtk_web::SharedAppState;
 /// use rumtk_web::static_components::meta::meta;
-/// use rumtk_web::utils::testdata::TRIMMED_HTML_RENDER_META;
+/// use rumtk_web::utils::testdata::data::TRIMMED_HTML_RENDER_META;
 /// use rumtk_web::rumtk_web_render_component;
 ///
 /// let state = SharedAppState::default();
@@ -195,7 +195,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 /// ```
 /// use rumtk_web::SharedAppState;
 /// use rumtk_web::defaults::PARAMS_TITLE;
-/// use rumtk_web::utils::testdata::TRIMMED_HTML_TITLE_RENDER;
+/// use rumtk_web::utils::testdata::data::TRIMMED_HTML_TITLE_RENDER;
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_components};
 ///
 /// rumtk_web_init_components!(None);

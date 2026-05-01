@@ -94,7 +94,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// ```
 /// use rumtk_core::{rumtk_async_sleep, rumtk_new_lock};
 /// use rumtk_core::strings::{RUMString, ToCompactString};
-/// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
+/// use rumtk_web::utils::testdata::data::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
@@ -141,7 +141,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// ```
 /// use rumtk_core::{rumtk_sleep, rumtk_new_lock};
 /// use rumtk_core::strings::{RUMString, ToCompactString};
-/// use rumtk_web::utils::testdata::{JOB_LOADER_TEST_PATTERN};
+/// use rumtk_web::utils::testdata::data::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
