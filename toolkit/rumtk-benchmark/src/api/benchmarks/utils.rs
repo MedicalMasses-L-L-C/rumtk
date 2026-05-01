@@ -199,8 +199,8 @@ pub async fn run_hyperfine(profile: &str, state: &SharedAppState, temp_data: &mu
 pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, temp_data: &'a mut TempData) -> RUMResult<RUMPerfReport<'a>> {
     let perf = rumtk_web_get_pipelines!(state).get_pipeline("perf", command);
     let settings = get_settings(&state);
+    let mut run = generate_test_run(&perf, &settings, temp_data.new_perf_file()?)?;
     let mut perfdata = temp_data.new_perf_file()?;
-    let mut run = generate_test_run(&perf, &settings, &mut perfdata)?;
 
     rumtk_pipeline_patch_args!(&mut run, &[
         ("{target}", &target),
@@ -226,7 +226,6 @@ pub async fn run_perf_report(profile: &str, command: &str, state: &SharedAppStat
     let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "perf");
 
     rumtk_pipeline_patch_args!(&mut report_pipeline, &[
-        ("{target}", &target),
         ("{perfdata}", &perfdata.path().to_str().unwrap_or_default())
     ]);
 
