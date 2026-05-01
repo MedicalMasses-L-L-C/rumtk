@@ -17,10 +17,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 use crate::defaults::{DEFAULT_JOB_LOADER_NAME, DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template};
+use crate::{rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template};
 use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
+use rumtk_core::id::id_to_uuid;
+use rumtk_core::strings::rumtk_format;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -46,6 +47,10 @@ pub fn job_loader(_path_components: URLPath, params: URLParams, state: SharedApp
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let loader = &rumtk_web_render_component!("loader", [(PARAMS_CSS_CLASS, css_class)], state)?.to_rumstring();
+
+    if !rumtk_web_get_job_manager!()?.has_job(&id_to_uuid(&job_id)?) {
+        return Err(rumtk_format!("Job ID {} does not exists!", &job_id));
+    }
 
     rumtk_web_render_template!(JobLoader {
             job_id,

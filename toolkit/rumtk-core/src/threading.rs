@@ -56,6 +56,7 @@ pub mod threading_manager {
     use std::future::Future;
     use std::sync::Arc;
     pub use std::sync::RwLock as SyncRwLock;
+    use tokio::io::AsyncReadExt;
     use tokio::task::JoinHandle;
 
     const DEFAULT_SLEEP_DURATION: f32 = 0.001f32;
@@ -487,6 +488,13 @@ pub mod threading_manager {
         ///
         fn gather(&mut self) -> TaskResults<R> {
             self.wait()
+        }
+
+        pub fn has_job(&self, id: &TaskID) -> bool {
+            match self.tasks.read().unwrap().get(id) {
+                Some(_) => true,
+                None => false,
+            }
         }
     }
 }
