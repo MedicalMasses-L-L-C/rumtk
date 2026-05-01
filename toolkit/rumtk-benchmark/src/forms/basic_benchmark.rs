@@ -5,6 +5,7 @@ use rumtk_web::SharedAppState;
 
 pub fn basic_benchmark(builder: FormElementBuilder, state: &SharedAppState) -> FormElements {
     let benchmark_items = rumtk_web_get_pipelines!(state).get_available_pipeline_names().join_compact(",");
+    let template_items = rumtk_web_get_pipelines!(state).get_available_data_templates().join_compact(",");
     vec![
         builder(
             "label",
@@ -50,6 +51,64 @@ pub fn basic_benchmark(builder: FormElementBuilder, state: &SharedAppState) -> F
                 accept: None,
                 alt: None,
                 aria_label: Some("Utility Selection for Basic Benchmark"),
+                event_handlers: None,
+                max_length: None,
+                min_length: None,
+                autocapitalize: false,
+                autocomplete: false,
+                autocorrect: false,
+                autofocus: false,
+                disabled: false,
+                hidden: false,
+                required: false,
+                multiple: false,
+            },
+            "f18"
+        ),
+        builder(
+            "label",
+            "Select message profile!",
+            InputProps {
+                id: Some("basic_template_label"),
+                name: None,
+                for_element: Some("basic_template"),
+                typ: Some("text"),
+                value: None,
+                max: None,
+                placeholder: Some("text"),
+                pattern: None,
+                accept: None,
+                alt: None,
+                aria_label: Some("Select message profile!"),
+                event_handlers: None,
+                max_length: None,
+                min_length: None,
+                autocapitalize: false,
+                autocomplete: false,
+                autocorrect: false,
+                autofocus: false,
+                disabled: false,
+                hidden: false,
+                required: false,
+                multiple: false,
+            },
+            "f18"
+        ),
+        builder(
+            "select",
+            template_items.as_str(),
+            InputProps {
+                id: Some("basic_template"),
+                name: Some("basic_template"),
+                for_element: None,
+                typ: Some("text"),
+                value: None,
+                max: None,
+                placeholder: Some("text"),
+                pattern: None,
+                accept: None,
+                alt: None,
+                aria_label: Some("Benchmark Template Selection"),
                 event_handlers: None,
                 max_length: None,
                 min_length: None,
