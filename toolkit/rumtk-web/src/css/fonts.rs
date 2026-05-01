@@ -169,6 +169,22 @@ pub const FONTS_CSS: &str = r"
             font-family: 'Xirod', monospace;
         }
 
+        .f8 {
+            font-size: 8pt;
+        }
+
+        .f9 {
+            font-size: 9pt;
+        }
+
+        .f10 {
+            font-size: 10pt;
+        }
+
+        .f11 {
+            font-size: 11pt;
+        }
+
         .f12 {
             font-size: 12pt;
         }
