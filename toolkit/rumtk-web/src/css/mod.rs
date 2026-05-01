@@ -34,6 +34,7 @@ mod imgs;
 mod index;
 mod layout;
 mod theme;
+mod media;
 
 pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
 pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
@@ -53,6 +54,7 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_def
         css += components::LIST_CSS;
         css += layout::LAYOUT_CSS;
         css += imgs::IMGS;
+        css += media::MEDIA_CSS;
     }
 
     for source in sources {
