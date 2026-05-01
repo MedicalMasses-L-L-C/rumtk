@@ -40,8 +40,8 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     let mut temp_data = generate_temp_dir()?;
     let pipeline_result = run_hyperfine(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
     let visualization = run_flamegraph(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
-    let cpu_summary = run_perf_stat(choice.as_str(), template.as_str(), "cpu_summary", &state, &mut temp_data).await?;
-    let cpu_cache = run_perf_report(choice.as_str(), template.as_str(), "cpu_cache", &state, &mut temp_data).await?;
+    let cpu_summary = run_perf_stat(choice.as_str(), "cpu_summary", template.as_str(), &state, &mut temp_data).await?;
+    let cpu_cache = run_perf_report(choice.as_str(), "cpu_cache", template.as_str(), &state, &mut temp_data).await?;
 
     // Generate report
     let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_cache))?;
