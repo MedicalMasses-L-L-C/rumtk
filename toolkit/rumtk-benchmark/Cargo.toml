@@ -1,7 +1,15 @@
 [package]
 name = "rumtk-benchmark"
 version = "0.1.6"
+license = "LGPL-3.0"
+homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-benchmark"
+documentation = "https://docs.rs/rumtk-benchmark"
+readme = "README.md"
+repository = "https://github.com/luissantosHCIT/rumtk"
+keywords = ["rumtk", "healthcare", "hl7", "v2", "optimizations"]
+categories = ["parsing", "science", "parser-implementations"]
 edition = "2021"
+rust-version = "1.81.0"
 
 [profile.dev]
 debug = true
