@@ -24,8 +24,8 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
-    rumtk_web_render_markdown, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_markdown,
+    rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -34,7 +34,7 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/formatted_label.css' rel='stylesheet'>
         {% endif %}
-        <pre class='formatted-label-{{css_class}}'>
+        <pre class='formatted-label-{{css_class}} md'>
             {{text|safe}}
         </pre>
     ",
