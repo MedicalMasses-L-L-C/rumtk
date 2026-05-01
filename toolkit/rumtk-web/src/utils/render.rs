@@ -173,7 +173,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 /// use rumtk_web::rumtk_web_render_component;
 ///
 /// let rendered = rumtk_web_render_component!(css);
-/// let expected = "<link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href='/static/css/bundle.css';' />";
+/// let expected = "<link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href=\"/static/css/bundle.css\";' />";
 ///
 /// assert_eq!(rendered, expected, "Commponent rendered improperly!");
 /// ```
