@@ -1,5 +1,6 @@
 [package]
 name = "rumtk-benchmark"
+description = "Benchmark tool to generate a report of performance characteristics. Built for the RUMTK toolkit, but not limited to it."
 version = "0.1.6"
 license = "LGPL-3.0"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-benchmark"
