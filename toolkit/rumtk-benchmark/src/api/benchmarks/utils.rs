@@ -122,7 +122,8 @@ pub fn generate_test_run_data(settings: &TextMap) -> RUMString {
     generate_data(template.as_str(), &random_data, line_pattern.as_str())
 }
 
-pub fn generate_temp_test_run_data<'a>(temp_file: &'a mut NamedTempFile, settings: &TextMap) -> RUMResult<&'a NamedTempFile> {
+pub fn generate_temp_test_run_data(profile: &str, temp_file: &mut NamedTempFile, state: &SharedAppState) -> RUMResult<&NamedTempFile> {
+    let settings = get_template_settings(profile, state);
     // Generate the data.
     let random_data = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(DEFAULT_BUFFER_ITEM_COUNT * 2);
     let template = match settings.get("template") {
@@ -143,30 +144,28 @@ pub fn generate_temp_test_run_data<'a>(temp_file: &'a mut NamedTempFile, setting
     Ok(temp_file)
 }
 
-pub fn generate_test_run<'a>(pipeline: &RUMCommandLine, settings: &TextMap, temp_file: &'a mut NamedTempFile) -> RUMResult<RUMCommandLine> {
+pub fn generate_test_run(pipeline: &RUMCommandLine, template_profile: &str, temp_file: &mut NamedTempFile, state: &SharedAppState) -> RUMResult<RUMCommandLine> {
     let mut new_pipeline = pipeline.clone();
-    let temp_file = generate_temp_test_run_data(temp_file, settings)?;
+    let temp_file = generate_temp_test_run_data(template_profile, temp_file, state)?;
     rumtk_pipeline_patch_args!(&mut new_pipeline, &[("{test_file}", temp_file.path().to_str().unwrap())]);
 
     Ok(new_pipeline)
 }
 
-pub fn get_settings(state: &SharedAppState) -> TextMap {
-    match rumtk_web_get_pipelines!(state).get_settings() {
+pub fn get_template_settings(profile: &str, state: &SharedAppState) -> TextMap {
+    match rumtk_web_get_pipelines!(state).get_template(profile) {
         Some(settings) => settings.clone(),
         None => TextMap::new()
     }
 }
 
-pub fn generate_test_runs(pipeline_category: &str, pipeline_name: &str, state: &SharedAppState, count: usize, temp: &mut TempData) -> RUMResult<RUMPipelineRuns> {
+pub fn generate_test_runs(pipeline_category: &str, pipeline_name: &str, template_profile: &str, state: &SharedAppState, count: usize, temp: &mut TempData) -> RUMResult<RUMPipelineRuns> {
     let mut pipeline_runs = RUMPipelineRuns::with_capacity(count);
-    // Grab settings
-    let settings = get_settings(&state);
     let pipeline = rumtk_web_get_pipelines!(state).get_pipeline(pipeline_category, pipeline_name);
 
     // Generate a series of pipelines ready for testing.
     for i in 0..count {
-        let new_pipeline = generate_test_run(&pipeline, &settings, temp.new_test_file()?);
+        let new_pipeline = generate_test_run(&pipeline, template_profile, temp.new_test_file()?, state);
         pipeline_runs.push(new_pipeline?);
     }
 
@@ -184,8 +183,8 @@ pub fn generate_temp_dir() -> RUMResult<TempData> {
     }
 }
 
-pub async fn run_hyperfine(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
-    let mut pipeline_runs = generate_test_runs("basic", "hyperfine", &state, 1, temp_data)?;
+pub async fn run_hyperfine(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let mut pipeline_runs = generate_test_runs("basic", "hyperfine", template_profile, &state, 1, temp_data)?;
     let mut pipeline = pipeline_runs.first_mut().unwrap();
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
     rumtk_pipeline_patch_args!(&mut pipeline, &[
@@ -196,10 +195,9 @@ pub async fn run_hyperfine(profile: &str, state: &SharedAppState, temp_data: &mu
     Ok(rumtk_pipeline_run_async!(pipeline).await?)
 }
 
-pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, temp_data: &'a mut TempData) -> RUMResult<RUMPerfReport<'a>> {
+pub async fn run_perf<'a>(command: &str, target: &str, template_profile: &str, state: &SharedAppState, temp_data: &'a mut TempData) -> RUMResult<RUMPerfReport<'a>> {
     let perf = rumtk_web_get_pipelines!(state).get_pipeline("perf", command);
-    let settings = get_settings(&state);
-    let mut run = generate_test_run(&perf, &settings, temp_data.new_perf_file()?)?;
+    let mut run = generate_test_run(&perf, template_profile, temp_data.new_perf_file()?, state)?;
     let mut perfdata = temp_data.new_perf_file()?;
 
     rumtk_pipeline_patch_args!(&mut run, &[
@@ -213,16 +211,16 @@ pub async fn run_perf<'a>(command: &str, target: &str, state: &SharedAppState, t
     Ok((results, perfdata))
 }
 
-pub async fn run_perf_stat(profile: &str, command: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+pub async fn run_perf_stat(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
-    let (report, mut perfdata) = run_perf(command, &target, &state, temp_data).await?;
+    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
 
     read_temp_buffer(&mut perfdata)
 }
 
-pub async fn run_perf_report(profile: &str, command: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+pub async fn run_perf_report(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
-    let (report, mut perfdata) = run_perf(command, &target, &state, temp_data).await?;
+    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
     let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "perf");
 
     rumtk_pipeline_patch_args!(&mut report_pipeline, &[
@@ -234,10 +232,10 @@ pub async fn run_perf_report(profile: &str, command: &str, state: &SharedAppStat
     Ok(vis_data)
 }
 
-pub async fn run_flamegraph(profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+pub async fn run_flamegraph(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
     let mut flamegraph = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "flamegraph");
-    let (report, mut perfdata) = run_perf("perf", &target, &state, temp_data).await?;
+    let (report, mut perfdata) = run_perf("perf", &target, template_profile, &state, temp_data).await?;
 
     rumtk_pipeline_patch_args!(&mut flamegraph, &[
         ("{target}", &target),

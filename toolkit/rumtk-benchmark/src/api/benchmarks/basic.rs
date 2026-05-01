@@ -28,24 +28,21 @@ use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
-    match form.form.get("basic_choice") {
-        Some(pipeline_name) => {
-            let mut temp_data = generate_temp_dir()?;
-            let pipeline_result = run_hyperfine(pipeline_name.as_str(), &state, &mut temp_data).await?;
-            let visualization = run_flamegraph(pipeline_name.as_str(), &state, &mut temp_data).await?;
-            let cpu_summary = run_perf_stat(pipeline_name.as_str(), "cpu_summary", &state, &mut temp_data).await?;
-            let cpu_cache = run_perf_report(pipeline_name.as_str(), "cpu_cache", &state, &mut temp_data).await?;
+    let choice = form.form.get("basic_choice").unwrap_or_default();
+    let template = form.form.get("basic_template").unwrap_or_default();
 
-            // Generate report
-            let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_cache))?;
-            report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
+    let mut temp_data = generate_temp_dir()?;
+    let pipeline_result = run_hyperfine(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
+    let visualization = run_flamegraph(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
+    let cpu_summary = run_perf_stat(choice.as_str(), template.as_str(), "cpu_summary", &state, &mut temp_data).await?;
+    let cpu_cache = run_perf_report(choice.as_str(), template.as_str(), "cpu_cache", &state, &mut temp_data).await?;
 
-            // Render the HTML result.
-            Ok(Some(rumtk_web_render_template!(report)))
-        },
-        None => Ok(None)
-    }
+    // Generate report
+    let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_cache))?;
+    report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
+    // Render the HTML result.
+    Ok(Some(rumtk_web_render_template!(report)))
 }
 
 pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
