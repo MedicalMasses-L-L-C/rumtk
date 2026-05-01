@@ -63,9 +63,5 @@ pub const BASIC_CSS: &str = r"
         .md a {
             filter: invert();
         }
-
-        .md td, .md th {
-            padding: 5px;
-        }
         
     ";

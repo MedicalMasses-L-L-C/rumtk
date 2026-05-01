@@ -51,4 +51,8 @@ pub const DEFAULT_CSS: &str = r"
         footer {
         }
 
+        table td, table th {
+            padding: 5px;
+        }
+
     ";
