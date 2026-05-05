@@ -19,7 +19,7 @@
  */
 use rumtk_core::core::{new_random_string_set, RUMResult, RUMVec, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
-use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString};
 use rumtk_core::types::RUMBuffer;
 use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};
@@ -104,7 +104,7 @@ pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &
         ));
     }
 
-    let data = lines.join_compact("\n");
+    let data = lines.join("\n");
 
     template.replace("{data}", data.as_str()).to_string()
 }

@@ -199,10 +199,7 @@ pub mod mllp_v2 {
         AsyncRwLock, RUMClient, RUMNetClient, RUMNetClientMessageQueue, RUMNetMessageQueue,
         RUMServer, SafeServer,
     };
-    use rumtk_core::strings::{
-        basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString,
-        RUMStringConversions, ToCompactString,
-    };
+    use rumtk_core::strings::{basic_escape, filter_non_printable_ascii, try_decode, RUMArrayConversions, RUMString, EMPTY_RUMSTRING};
     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     use rumtk_core::types::RUMOrderedMap;
     use rumtk_core::{rumtk_async_sleep, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task};
@@ -286,7 +283,7 @@ pub mod mllp_v2 {
         if message.len() == 0 {
             // Nothing to decode, and it would be helpful to upper layers to be able to decide if to
             // try again.
-            return Ok(message.to_rumstring());
+            return Ok(message.to_string()?);
         }
         if message.len() < 3 {
             return Err(rumtk_format!(
@@ -312,9 +309,9 @@ pub mod mllp_v2 {
         };
         let contents = &message[start_index..end_index];
         if contents.len() == 1 {
-            Ok(contents.to_vec().to_rumstring())
+            Ok(contents.to_vec().to_string()?)
         } else {
-            Ok(try_decode(&contents))
+            Ok(try_decode(&contents)?)
         }
     }
 
@@ -334,7 +331,7 @@ pub mod mllp_v2 {
         mllp_filter_policy: &MLLP_FILTER_POLICY,
     ) -> RUMResult<RUMString> {
         match mllp_filter_policy {
-            MLLP_FILTER_POLICY::NONE => Ok(msg.to_rumstring()),
+            MLLP_FILTER_POLICY::NONE => Ok(msg.to_string()),
             MLLP_FILTER_POLICY::ESCAPE_INPUT => Ok(basic_escape(msg, &vec![])),
             MLLP_FILTER_POLICY::FILTER_INPUT => Ok(filter_non_printable_ascii(msg)),
         }
@@ -536,7 +533,7 @@ pub mod mllp_v2 {
         /// a valid response or reach the maximum timeout defined in [TIMEOUT_SOURCE](TIMEOUT_SOURCE).
         ///
         pub async fn send_message(&mut self, message: &str, endpoint: &RUMString) -> RUMResult<()> {
-            let mut last_error = RUMString::new("");
+            let mut last_error = EMPTY_RUMSTRING.to_owned();
             for i in 0..RETRY_SOURCE {
                 self.send(message, endpoint).await?;
                 match self.wait_for_send_ack(endpoint).await {
@@ -839,7 +836,7 @@ pub mod mllp_v2 {
                     let result = channel.lock().await.receive_client_messages(&peer).await;
                     result
                 },
-                vec![(self.channel.clone(), endpoint.to_rumstring())]
+                vec![(self.channel.clone(), endpoint.to_string())]
             )
         }
 

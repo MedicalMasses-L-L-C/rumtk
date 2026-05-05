@@ -49,7 +49,7 @@ pub mod v2_parser {
     use rumtk_core::core::RUMResult;
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::{buffer_to_string, CompactStringExt};
+    use rumtk_core::strings::buffer_to_string;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -236,7 +236,7 @@ pub mod v2_parser {
             for component in self.components.iter() {
                 components.push(component.as_str())
             }
-            components.join_compact(parser_chars.component_separator.as_str())
+            components.join(parser_chars.component_separator.as_str())
         }
 
         pub fn with_raw_str(val: &str) -> V2Field {
@@ -358,13 +358,13 @@ pub mod v2_parser {
                 for field in field_group {
                     fields.push(field.to_string(parser_chars));
                 }
-                segment.push(fields.join_compact(parser_chars.repetition_separator.as_str()));
+                segment.push(fields.join(parser_chars.repetition_separator.as_str()));
             }
             rumtk_format!(
                 "{}{}{}",
                 self.name,
                 parser_chars.field_separator.as_str(),
-                segment.join_compact(parser_chars.field_separator.as_str())
+                segment.join(parser_chars.field_separator.as_str())
             )
         }
 

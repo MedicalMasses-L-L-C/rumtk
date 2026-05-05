@@ -69,7 +69,7 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
         nav_links.push(
             navlink(
                 &[],
-                &RUMWebData::from([(PARAMS_TARGET.to_string(), key.to_rumstring())]),
+                &RUMWebData::from([(PARAMS_TARGET.to_string(), key.to_string())]),
                 app_state.clone(),
             )
             .unwrap_or_default()

@@ -77,10 +77,10 @@ pub mod hl7_v2_complex_types {
                         V2PrimitiveType::Date => V2Type::V2Date(c.to_v2date()),
                         V2PrimitiveType::Time => V2Type::V2Time(c.to_v2time()),
                         V2PrimitiveType::FT => {
-                            V2Type::V2FT(c.to_v2formattedtext(&characters.repetition_separator))
+                            V2Type::V2FT(c.to_v2formattedtext(characters.repetition_separator))
                         }
                         V2PrimitiveType::Text => {
-                            V2Type::V2Text(c.to_v2text(&characters.repetition_separator))
+                            V2Type::V2Text(c.to_v2text(characters.repetition_separator))
                         }
                         V2PrimitiveType::String => V2Type::V2String(c.to_v2string()),
                         V2PrimitiveType::SNM => V2Type::V2SNM(c.to_v2telephonestring()),

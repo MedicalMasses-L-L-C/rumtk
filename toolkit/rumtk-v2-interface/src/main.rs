@@ -104,7 +104,7 @@ fn outbound_send(channel: &SafeMLLPChannel) -> RUMResult<()> {
         return channel
             .lock()
             .unwrap()
-            .send_message(&stdin_msg.as_slice().to_rumstring());
+            .send_message(&stdin_msg.as_slice().to_string());
         exit(0);
     }
     Ok(())

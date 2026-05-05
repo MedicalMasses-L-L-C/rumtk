@@ -61,7 +61,7 @@ pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let item_list = rumtk_web_modify_state!(state).pop_clipboard(&clipboard_id.to_rumstring());
+    let item_list = rumtk_web_modify_state!(state).pop_clipboard(&clipboard_id.to_string());
     let items = match item_list {
         Some(items) => items,
         None => rumtk_web_get_config_section!(state, typ),

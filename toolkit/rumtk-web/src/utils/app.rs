@@ -501,7 +501,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///         &file.clone()
 ///     ).await?;
 ///
-///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_rumstring())))
+///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_string())))
 /// }
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {

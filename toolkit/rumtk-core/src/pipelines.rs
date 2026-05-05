@@ -139,7 +139,7 @@ pub mod pipeline_functions {
     pub fn pipeline_spawn_process(cmd: &mut RUMPipelineCommand) -> RUMResult<RUMPipelineProcess> {
         match cmd.spawn() {
             Ok(process) => {
-                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_string(), cmd.get_args());
+                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_string()?, cmd.get_args());
                 Ok(process)
             },
             Err(e) => Err(rumtk_format!(
@@ -399,10 +399,10 @@ pub mod pipeline_functions {
         let mut pipeline_components = Vec::<RUMString>::with_capacity(pipeline.len());
 
         for pipe in pipeline.iter() {
-            pipeline_components.push(rumtk_format!("{} {}", pipe.path, pipe.args.clone().join_compact(" ")));
+            pipeline_components.push(rumtk_format!("{} {}", pipe.path, pipe.args.clone().join(" ")));
         }
 
-        println!("Executing {}", pipeline_components.join_compact(" | "));
+        println!("Executing {}", pipeline_components.join(" | "));
     }
 
     pub fn pipeline_patch_command_args<'a>(cmd: &'a mut RUMCommand, replacements: &StringReplacementPair) -> RUMResult<&'a RUMCommand> {

@@ -134,7 +134,7 @@ pub mod rumtk_search {
     /// Use \" \" in join_pattern if you wish to have spaces in between matches.
     ///
     pub fn string_search(input: &str, expr: &str, join_pattern: &str) -> RUMResult<RUMString> {
-        Ok(string_search_list(input, expr)?.join_compact(join_pattern))
+        Ok(string_search_list(input, expr)?.join(join_pattern))
     }
 
     ///

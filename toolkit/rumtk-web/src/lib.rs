@@ -76,7 +76,7 @@ mod tests {
     fn test_render_redirect_response() {
         let url = "http://localhost/redirected";
         let redirect =
-            rumtk_web_render_redirect!(RUMWebRedirect::Redirect(url.to_rumstring())).unwrap();
+            rumtk_web_render_redirect!(RUMWebRedirect::Redirect(url.to_string())).unwrap();
         let redirect_code = redirect.get_code();
         let redirect_url = redirect.get_url();
         assert_eq!(redirect_url, url, "Redirect url mismatch!");
@@ -87,7 +87,7 @@ mod tests {
     fn test_render_redirect_response_temporary() {
         let url = "http://localhost/redirected";
         let redirect =
-            rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_rumstring()))
+            rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_string()))
                 .unwrap();
         let redirect_code = redirect.get_code();
         let redirect_url = redirect.get_url();
@@ -99,7 +99,7 @@ mod tests {
     fn test_render_redirect_response_permanent() {
         let url = "http://localhost/redirected";
         let redirect =
-            rumtk_web_render_redirect!(RUMWebRedirect::RedirectPermanent(url.to_rumstring()))
+            rumtk_web_render_redirect!(RUMWebRedirect::RedirectPermanent(url.to_string()))
                 .unwrap();
         let redirect_code = redirect.get_code();
         let redirect_url = redirect.get_url();

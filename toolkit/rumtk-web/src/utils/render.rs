@@ -318,7 +318,7 @@ macro_rules! rumtk_web_render_page_contents {
 /// use rumtk_web::rumtk_web_render_redirect;
 ///
 /// let url = "http://localhost/redirected";
-/// let redirect = rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_rumstring()));
+/// let redirect = rumtk_web_render_redirect!(RUMWebRedirect::RedirectTemporary(url.to_string()));
 ///
 /// let result = redirect.expect("Failed to create the redirect response!").get_url();
 ///

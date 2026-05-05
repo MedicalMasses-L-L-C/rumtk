@@ -21,7 +21,7 @@
 
 use minifier::{css, html, js, json};
 use rumtk_core::core::RUMResult;
-use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
+use rumtk_core::strings::{RUMString, ToCompactString};
 
 pub enum Asset<'a> {
     CSS(&'a str),
@@ -34,7 +34,7 @@ pub fn minify_asset(asset: Asset) -> RUMResult<RUMString> {
     match asset {
         Asset::CSS(css) => match css::minify(css) {
             Ok(css) => Ok(css.to_compact_string()),
-            Err(err) => Err(err.to_rumstring()),
+            Err(err) => Err(err.to_string()),
         },
         Asset::HTML(html) => Ok(html::minify(html).to_compact_string()),
         Asset::JSON(json) => Ok(json::minify(json).to_compact_string()),

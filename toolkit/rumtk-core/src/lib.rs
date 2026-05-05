@@ -28,6 +28,7 @@
 #![feature(const_trait_impl)]
 #![feature(const_cmp)]
 #![feature(macro_metavar_expr)]
+#![feature(const_default)]
 
 pub mod cache;
 pub mod cli;

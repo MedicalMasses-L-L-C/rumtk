@@ -31,6 +31,7 @@ const ASCII_ESCAPE_CHAR: char = '\\';
 const MIN_ASCII_READABLE: char = ' ';
 const MAX_ASCII_READABLE: char = '~';
 pub const EMPTY_STRING: &str = "";
+pub static EMPTY_RUMSTRING: RUMString = RUMString::default();
 pub const DOT_STR: &str = ".";
 pub const EMPTY_STRING_OPTION: Option<&str> = Some("");
 pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -196,18 +197,13 @@ pub trait AsStr {
 
 pub trait RUMStringConversions: ToString {
     #[inline(always)]
-    fn to_rumstring(&self) -> RUMString {
-        RUMString::from(self.to_string())
-    }
-
-    #[inline(always)]
     fn to_raw(&self) -> RUMVec<u8> {
         self.to_string().as_bytes().to_vec()
     }
 
     #[inline(always)]
     fn to_buffer(&self) -> RUMBuffer {
-        RUMBuffer::from(self.to_string())
+        string_to_buffer(self.to_string().as_str())
     }
 }
 
@@ -248,18 +244,26 @@ impl StringUtils for str {}
 impl RUMStringConversions for char {}
 
 pub trait RUMArrayConversions {
-    fn to_rumstring(&self) -> RUMString;
+    fn to_string(&self) -> RUMResult<RUMString>;
 }
 
 impl RUMArrayConversions for Vec<u8> {
-    fn to_rumstring(&self) -> RUMString {
-        self.as_slice().to_string()
+    #[inline(always)]
+    fn to_string(&self) -> RUMResult<RUMString> {
+        match RUMString::from_utf8(self.to_owned()) {
+            Ok(s) => Ok(s),
+            Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e))
+        }
     }
 }
 
 impl RUMArrayConversions for &[u8] {
-    fn to_rumstring(&self) -> RUMString {
-        RUMString::from_utf8(&self).unwrap()
+    #[inline(always)]
+    fn to_string(&self) -> RUMResult<RUMString> {
+        match RUMString::from_utf8(self.to_vec()) {
+            Ok(s) => Ok(s),
+            Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e))
+        }
     }
 }
 
@@ -281,7 +285,7 @@ pub fn count_tokens_ignoring_pattern(vector: &Vec<&str>, string_token: &RUMStrin
 ///
 /// Note => Decoding is facilitated via the crates chardet-ng and encoding_rs.
 ///
-pub fn try_decode(src: &[u8]) -> RUMString {
+pub fn try_decode(src: &[u8]) -> RUMResult<RUMString> {
     let mut detector = EncodingDetector::new();
     detector.feed(&src, true);
     let encoding = detector.guess(None, true);
@@ -293,10 +297,10 @@ pub fn try_decode(src: &[u8]) -> RUMString {
 ///
 /// Note => Decoding is facilitated via the crates chardet-ng and encoding_rs.
 ///
-pub fn try_decode_with(src: &[u8], encoding_name: &str) -> RUMString {
+pub fn try_decode_with(src: &[u8], encoding_name: &str) -> RUMResult<RUMString> {
     let encoding = match Encoding::for_label(encoding_name.as_bytes()) {
         Some(v) => v,
-        None => return RUMString::from(""),
+        None => return Ok(EMPTY_RUMSTRING.clone()),
     };
     decode(src, encoding)
 }
@@ -306,11 +310,11 @@ pub fn try_decode_with(src: &[u8], encoding_name: &str) -> RUMString {
 ///
 /// Note => Decoding is facilitated via the crate encoding_rs.
 ///
-fn decode(src: &[u8], encoding: &'static Encoding) -> RUMString {
-    match encoding.decode_without_bom_handling_and_without_replacement(&src) {
+fn decode(src: &[u8], encoding: &'static Encoding) -> RUMResult<RUMString> {
+    Ok(match encoding.decode_without_bom_handling_and_without_replacement(&src) {
         Some(res) => RUMString::from(res),
-        None => RUMString::from_utf8(src).unwrap(),
-    }
+        None => src.to_string()?,
+    })
 }
 
 ///
@@ -344,7 +348,7 @@ pub fn unescape_string(escaped_str: &str) -> RUMResult<RUMString> {
             }
         }
     }
-    Ok(try_decode(result.as_slice()))
+    Ok(try_decode(result.as_slice())?)
 }
 
 ///
@@ -355,7 +359,7 @@ pub fn get_grapheme_string<'a>(
     end_grapheme: &str,
     start_index: usize,
 ) -> RUMString {
-    get_grapheme_collection(graphemes, end_grapheme, start_index).join_compact("")
+    get_grapheme_collection(graphemes, end_grapheme, start_index).join("")
 }
 
 ///
@@ -557,7 +561,7 @@ fn octal_to_byte(hoctal_str: &str) -> Result<u8, RUMString> {
 ///
 fn number_to_char(num: &u32) -> Result<RUMString, RUMString> {
     match char::from_u32(*num) {
-        Some(result) => Ok(result.to_rumstring()),
+        Some(result) => Ok(result.to_string()),
         None => Err(rumtk_format!(
             "Failed to cast number to character! Number {}",
             num
@@ -700,7 +704,7 @@ pub fn string_to_buffer(data: &str) -> RUMBuffer {
 /// ```
 ///
 pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
-    match RUMString::from_utf8(buffer.as_slice()) {
+    match buffer.as_slice().to_string() {
         Ok(string) => Ok(string),
         Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
     }

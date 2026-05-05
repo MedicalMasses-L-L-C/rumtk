@@ -45,7 +45,6 @@ pub mod cli_utils {
     use crate::core::{RUMResult, RUMVec};
     use crate::strings::{rumtk_format, RUMStringConversions};
     use crate::types::RUMBuffer;
-    use compact_str::CompactStringExt;
     use std::io::{stdin, stdout, Read, Write};
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
@@ -158,7 +157,7 @@ pub mod cli_utils {
     }
 
     pub fn print_license_notice(program: &str, year: &str, author_list: &Vec<&str>) {
-        let authors = author_list.join_compact(", ");
+        let authors = author_list.join(", ");
         let notice = rumtk_format!(
             r"  {program}  Copyright (C) {year}  {authors}
                 This program comes with ABSOLUTELY NO WARRANTY.

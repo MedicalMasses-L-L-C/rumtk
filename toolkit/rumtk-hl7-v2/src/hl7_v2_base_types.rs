@@ -30,7 +30,7 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{rumtk_format, AsStr, ToCompactString};
+    use rumtk_core::strings::{rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 
@@ -805,7 +805,7 @@ pub mod v2_primitives {
     pub use crate::hl7_v2_base_types::v2_base_types::*;
     use rumtk_core::search::rumtk_search::string_search;
     use rumtk_core::strings::{
-        rumtk_format, AsStr, CompactString, RUMString, StringUtils, DOT_STR,
+        rumtk_format, AsStr, RUMString, StringUtils, DOT_STR,
     };
 
     /**************************** Constants**************************************/
@@ -927,14 +927,14 @@ pub mod v2_primitives {
         }
 
         #[inline(always)]
-        fn to_v2text(&self, repeat_delimiter: &str) -> V2Result<V2TX> {
+        fn to_v2text(&self, repeat_delimiter: char) -> V2Result<V2TX> {
             let input: &str = self.as_str();
             let validated = input.replace(repeat_delimiter, "\r\n");
-            Ok(CompactString::from(validated))
+            Ok(RUMString::from(validated))
         }
 
         #[inline(always)]
-        fn to_v2formattedtext(&self, repeat_delimiter: &str) -> V2Result<V2FT> {
+        fn to_v2formattedtext(&self, repeat_delimiter: char) -> V2Result<V2FT> {
             let input: &str = self.as_str();
             let truncated_input = input.truncate(TRUNCATE_FT as usize);
             let validated = truncated_input.replace(repeat_delimiter, "\r\n");

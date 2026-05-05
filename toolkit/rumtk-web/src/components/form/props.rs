@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::strings::{rumtk_format, CompactStringExt, RUMString, RUMStringConversions};
+use rumtk_core::strings::{rumtk_format, CompactStringExt, RUMString};
 
 type EventHandler<'a> = (&'a str, &'a str);
 type EventHandlers<'a> = Vec<EventHandler<'a>>;
@@ -152,7 +152,7 @@ impl InputProps<'_> {
             .into_iter()
             .filter(|itm| !itm.is_empty())
             .collect::<Vec<_>>()
-            .join_compact(" ")
+            .join(" ")
     }
 
     pub fn to_string(&self) -> String {
