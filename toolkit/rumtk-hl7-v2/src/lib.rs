@@ -33,6 +33,7 @@ pub mod hl7_v2_parser;
 mod hl7_v2_scripting;
 pub mod hl7_v2_search;
 pub mod hl7_v2_types;
+mod hl7_v2_python_types;
 /*****************************************Tests****************************************/
 #[cfg(test)]
 mod tests {

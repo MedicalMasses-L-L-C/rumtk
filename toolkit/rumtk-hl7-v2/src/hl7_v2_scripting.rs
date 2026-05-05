@@ -26,6 +26,7 @@ pub mod python {
     use rumtk_core::{rumtk_python_exec, rumtk_python_exec_module};
 
     use crate::hl7_v2_parser::v2_parser::V2Message;
+    use crate::hl7_v2_python_types::PyV2Message;
 
     const EXPECTED_PROCESSOR_FUNCTION_NAME: &str = "process";
 
@@ -34,10 +35,11 @@ pub mod python {
     /// receive a [V2Message] result with the modified copy of the message.
     ///
     ///
-    pub fn process_message<'a>(module_path: &'a RUMString, message: &'a V2Message<'a>) -> RUMResult<V2Message<'a>> {
-        let closure = |py: RUMPython| -> RUMResult<V2Message> {
+    pub fn process_message(module_path: &RUMString, message: &V2Message) -> RUMResult<PyV2Message> {
+        let protected_message = PyV2Message::try_from(message)?;
+        let closure = |py: RUMPython| -> RUMResult<PyV2Message> {
             let mut args = py_new_args(py);
-            py_push_arg(py, &mut args, message)?;
+            py_push_arg(py, &mut args, &protected_message)?;
 
             let result = rumtk_python_exec_module!(
                 py,
@@ -45,7 +47,7 @@ pub mod python {
                 EXPECTED_PROCESSOR_FUNCTION_NAME,
                 &args
             );
-            let val: V2Message = py_extract_any(py, &result)?;
+            let val: PyV2Message = py_extract_any(py, &result)?;
             Ok(val)
         };
 

@@ -51,13 +51,13 @@ pub mod v2_base_types {
     pub type V2String = String;
     #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
     pub struct V2ParserCharacters {
-        pub segment_terminator: char,
-        pub field_separator: char,
-        pub component_separator: char,
-        pub repetition_separator: char,
-        pub escape_character: char,
-        pub subcomponent_separator: char,
-        pub truncation_character: char,
+        pub segment_terminator: u8,
+        pub field_separator: u8,
+        pub component_separator: u8,
+        pub repetition_separator: u8,
+        pub escape_character: u8,
+        pub subcomponent_separator: u8,
+        pub truncation_character: u8,
     }
 
     impl Default for V2ParserCharacters {
@@ -69,13 +69,13 @@ pub mod v2_base_types {
     impl V2ParserCharacters {
         pub fn new() -> V2ParserCharacters {
             V2ParserCharacters {
-                segment_terminator: V2_SEGMENT_TERMINATOR,
-                field_separator: '|',
-                component_separator: '^',
-                repetition_separator: '~',
-                escape_character: '\\',
-                subcomponent_separator: '&',
-                truncation_character: '#',
+                segment_terminator: V2_SEGMENT_TERMINATOR as u8,
+                field_separator: '|' as u8,
+                component_separator: '^' as u8,
+                repetition_separator: '~' as u8,
+                escape_character: '\\' as u8,
+                subcomponent_separator: '&' as u8,
+                truncation_character: '#' as u8,
             }
         }
         pub fn from_str(msh_fragment: &str) -> V2Result<Self> {
@@ -85,22 +85,22 @@ pub mod v2_base_types {
 
             match key_chars.len() - 1 {
                 5 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR,
-                    field_separator,
-                    component_separator: key_chars[1],
-                    repetition_separator: key_chars[2],
-                    escape_character: key_chars[3],
-                    subcomponent_separator: key_chars[4],
-                    truncation_character: key_chars[5],
+                    segment_terminator: V2_SEGMENT_TERMINATOR as u8,
+                    field_separator: field_separator as u8,
+                    component_separator: key_chars[1] as u8,
+                    repetition_separator: key_chars[2] as u8,
+                    escape_character: key_chars[3] as u8,
+                    subcomponent_separator: key_chars[4] as u8,
+                    truncation_character: key_chars[5] as u8,
                 }),
                 4 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR,
-                    field_separator,
-                    component_separator: key_chars[1],
-                    repetition_separator: key_chars[2],
-                    escape_character: key_chars[3],
-                    subcomponent_separator: key_chars[4],
-                    truncation_character: V2_TRUNCATION_CHARACTER,
+                    segment_terminator: V2_SEGMENT_TERMINATOR as u8,
+                    field_separator: field_separator as u8,
+                    component_separator: key_chars[1] as u8,
+                    repetition_separator: key_chars[2] as u8,
+                    escape_character: key_chars[3] as u8,
+                    subcomponent_separator: key_chars[4] as u8,
+                    truncation_character: V2_TRUNCATION_CHARACTER as u8,
                 }),
                 _ => Err(rumtk_format!("Wrong count of parsing characters in message header!")),
             }
@@ -148,7 +148,7 @@ pub mod v2_base_types {
         }
 
         pub fn isolate_parse_chars(key_fragment: &str) -> Vec<char> {
-            let chars = key_fragment.chars();
+            let mut chars = key_fragment.chars();
             let mut parse_chars = Vec::<char>::with_capacity(key_fragment.len());
             let field_separator = match chars.next() {
                 Some(c) => c,
@@ -158,16 +158,11 @@ pub mod v2_base_types {
             };
             parse_chars.push(field_separator);
 
-            for c in chars {
+            while let Some(c) = chars.next() {
                 if c == field_separator {
                     break;
                 }
-                parse_chars.push(match chars.next() {
-                    Some(c) => c,
-                    None => {
-                        return parse_chars;
-                    }
-                });
+                parse_chars.push(c);
             }
             parse_chars
         }

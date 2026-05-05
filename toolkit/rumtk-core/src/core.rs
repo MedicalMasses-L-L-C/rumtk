@@ -20,7 +20,7 @@
 use crate::strings::rumtk_format;
 use crate::strings::RUMString;
 use crate::types::RUMBuffer;
-use rand::{distr::Alphanumeric, Rng, RngExt};
+use rand::{distr::Alphanumeric, RngExt};
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
@@ -233,4 +233,20 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     }
     
     set
+}
+
+pub fn split_buffer(mut input: RUMBuffer, separator: u8) -> RUMVec<RUMBuffer> {
+    let mut item_list = RUMVec::<RUMBuffer>::with_capacity(100);
+    for mut i in 0..input.len() {
+        if input[i] == separator {
+            let component = input.split_to(i);
+            item_list.push(component);
+
+            // Let's consume the separator character so it does not show in any buffers.
+            i += 1;
+            let _ = input.split_to(i);
+        }
+    }
+
+    item_list
 }
