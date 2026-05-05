@@ -48,16 +48,16 @@ pub mod v2_base_types {
     /// A G-String if you will.
     /// Basic type used to derive other types for the standard implementation.
     ///
-    pub type V2String = RUMString;
+    pub type V2String = String;
     #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
     pub struct V2ParserCharacters {
-        pub segment_terminator: RUMString,
-        pub field_separator: RUMString,
-        pub component_separator: RUMString,
-        pub repetition_separator: RUMString,
-        pub escape_character: RUMString,
-        pub subcomponent_separator: RUMString,
-        pub truncation_character: RUMString,
+        pub segment_terminator: char,
+        pub field_separator: char,
+        pub component_separator: char,
+        pub repetition_separator: char,
+        pub escape_character: char,
+        pub subcomponent_separator: char,
+        pub truncation_character: char,
     }
 
     impl Default for V2ParserCharacters {
@@ -69,55 +69,63 @@ pub mod v2_base_types {
     impl V2ParserCharacters {
         pub fn new() -> V2ParserCharacters {
             V2ParserCharacters {
-                segment_terminator: V2_SEGMENT_TERMINATOR.to_rumstring(),
-                field_separator: RUMString::from("|"),
-                component_separator: RUMString::from("^"),
-                repetition_separator: RUMString::from("~"),
-                escape_character: RUMString::from("\\"),
-                subcomponent_separator: RUMString::from("&"),
-                truncation_character: RUMString::from("#"),
+                segment_terminator: V2_SEGMENT_TERMINATOR,
+                field_separator: '|',
+                component_separator: '^',
+                repetition_separator: '~',
+                escape_character: '\\',
+                subcomponent_separator: '&',
+                truncation_character: '#',
             }
         }
-        pub fn from_str(msh_segment: &str) -> V2Result<Self> {
-            let sanitized_msh_segment = Self::sanitize_parse_chars(msh_segment);
-            let msg_key_chars = Self::isolate_parse_chars(&sanitized_msh_segment);
+        pub fn from_str(msh_fragment: &str) -> V2Result<Self> {
+            let msg_key_chars = Self::isolate_parse_chars(&msh_fragment);
             let key_chars = Self::validate_msh_key_chars(&msg_key_chars)?;
-            let field_separator: &str = key_chars[0];
+            let field_separator: char = key_chars[0];
 
             match key_chars.len() - 1 {
                 5 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR.to_rumstring(),
-                    field_separator: field_separator.to_rumstring(),
-                    component_separator: key_chars.get(1).unwrap().to_rumstring(),
-                    repetition_separator: key_chars.get(2).unwrap().to_rumstring(),
-                    escape_character: key_chars.get(3).unwrap().to_rumstring(),
-                    subcomponent_separator: key_chars.get(4).unwrap().to_rumstring(),
-                    truncation_character: key_chars.get(5).unwrap().to_rumstring(),
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator,
+                    component_separator: key_chars[1],
+                    repetition_separator: key_chars[2],
+                    escape_character: key_chars[3],
+                    subcomponent_separator: key_chars[4],
+                    truncation_character: key_chars[5],
                 }),
                 4 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR.to_rumstring(),
-                    field_separator: field_separator.to_rumstring(),
-                    component_separator: key_chars.get(1).unwrap().to_rumstring(),
-                    repetition_separator: key_chars.get(2).unwrap().to_rumstring(),
-                    escape_character: key_chars.get(3).unwrap().to_rumstring(),
-                    subcomponent_separator: key_chars.get(4).unwrap().to_rumstring(),
-                    truncation_character: V2_TRUNCATION_CHARACTER.to_rumstring(),
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator,
+                    component_separator: key_chars[1],
+                    repetition_separator: key_chars[2],
+                    escape_character: key_chars[3],
+                    subcomponent_separator: key_chars[4],
+                    truncation_character: V2_TRUNCATION_CHARACTER,
                 }),
-                _ => Err("Wrong count of parsing characters in message header!".to_rumstring()),
+                _ => Err(rumtk_format!("Wrong count of parsing characters in message header!")),
             }
         }
 
-        pub fn from_msh(msh_segment: &str) -> V2Result<Self> {
-            if V2ParserCharacters::is_msh(msh_segment) {
-                V2ParserCharacters::from_str(&msh_segment[3..])
-            } else {
-                Err("The segment is not an MSH segment! This message is malformed!".to_rumstring())
+        pub fn from(input: &str) -> V2Result<Self> {
+            let msh_segment = Self::find_msh(input)?;
+            V2ParserCharacters::from_str(&msh_segment[3..])
+        }
+
+        // Message parsing operations
+        pub fn find_msh(data: &str) -> V2Result<&str> {
+            match data.find(V2_MSHEADER_PATTERN) {
+                Some(index) => {
+                    let start = index + V2_MSHEADER_PATTERN.len();
+                    let end = start + 7;
+                    Ok(&data[start..end])
+                },
+                None => Err(rumtk_format!("No MSH segment found! The message is malformed or incomplete!")),
             }
         }
 
-        pub fn validate_msh_key_chars<'a, 'b>(
-            msg_key_chars: &'a Vec<&'b str>,
-        ) -> V2Result<&'a Vec<&'b str>> {
+        pub fn validate_msh_key_chars(
+            msg_key_chars: &Vec<char>,
+        ) -> V2Result<&Vec<char>> {
             if msg_key_chars.len() < 4 {
                 return Err(rumtk_format!(
                     "Too few parser characters! Is MSH malformed? => {:?}",
@@ -139,26 +147,29 @@ pub mod v2_base_types {
             ))
         }
 
-        pub fn isolate_parse_chars(key_fragment: &str) -> Vec<&str> {
-            let fragments = key_fragment.as_grapheme_str();
-            let field_separator = fragments.at(0);
-            let mut parse_chars = Vec::<&str>::with_capacity(fragments.len());
+        pub fn isolate_parse_chars(key_fragment: &str) -> Vec<char> {
+            let chars = key_fragment.chars();
+            let mut parse_chars = Vec::<char>::with_capacity(key_fragment.len());
+            let field_separator = match chars.next() {
+                Some(c) => c,
+                None => {
+                    return parse_chars;
+                }
+            };
             parse_chars.push(field_separator);
-            for fragment in fragments.get_graphemes().iter().skip(1) {
-                if *fragment == field_separator {
+
+            for c in chars {
+                if c == field_separator {
                     break;
                 }
-                parse_chars.push(fragment);
+                parse_chars.push(match chars.next() {
+                    Some(c) => c,
+                    None => {
+                        return parse_chars;
+                    }
+                });
             }
             parse_chars
-        }
-
-        pub fn sanitize_parse_chars(fragment: &str) -> String {
-            fragment.replace("\\\\", "\\")
-        }
-
-        fn is_msh(msh_segment_token: &str) -> bool {
-            &msh_segment_token[0..3] == V2_MSHEADER_PATTERN
         }
     }
     ///
@@ -476,7 +487,7 @@ pub mod v2_base_types {
                 minute: utc_dt.minute() as u8,
                 second: utc_dt.second() as u8,
                 microsecond: utc_dt.nanosecond() / (V2_DATETIME_THOUSAND_TICK as u32),
-                offset: utc_dt.offset().to_compact_string(),
+                offset: utc_dt.offset().to_string(),
             }
         }
 
@@ -504,7 +515,7 @@ pub mod v2_base_types {
                     minute,
                     second,
                     microsecond: 0,
-                    offset,
+                    offset: offset.to_string(),
                 }),
                 2 => {
                     let ms_string = dt_vec.last().unwrap();
@@ -526,7 +537,7 @@ pub mod v2_base_types {
                         minute,
                         second,
                         microsecond,
-                        offset,
+                        offset: offset.to_string(),
                     })
                 }
                 _ => Ok(V2DateTime::new()),

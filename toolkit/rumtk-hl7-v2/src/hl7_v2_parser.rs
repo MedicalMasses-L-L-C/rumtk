@@ -38,6 +38,7 @@ pub mod v2_parser {
     pub use crate::hl7_v2_base_types::v2_primitives::{
         V2DateTime, V2ParserCharacters, V2PrimitiveCasting, V2Result, V2SearchIndex, V2String,
     };
+    use crate::hl7_v2_constants::V2_SEGMENT_TERMINATORS;
     pub use crate::hl7_v2_constants::{
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR,
@@ -48,11 +49,11 @@ pub mod v2_parser {
     use rumtk_core::core::RUMResult;
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::CompactStringExt;
+    use rumtk_core::strings::{buffer_to_string, CompactStringExt};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
-    use rumtk_core::types::RUMOrderedMap;
+    use rumtk_core::types::{RUMBuffer, RUMOrderedMap};
     use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
     /**************************** Globals ***************************************/
@@ -94,19 +95,12 @@ pub mod v2_parser {
     /// a field for other purposes is prohibited.
     /// ```
     ///
-    #[pyclass]
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
-    pub struct V2Component {
-        component: V2String,
+    pub struct V2Component<'a> {
+        component: &'a str,
     }
 
-    impl V2Component {
-        fn new() -> Self {
-            V2Component {
-                component: V2String::from(""),
-            }
-        }
-
+    impl<'a> V2Component<'a> {
         ///
         /// Constructs HL7 V2 Component.
         /// ### Per Section 2.7
@@ -153,12 +147,12 @@ pub mod v2_parser {
         ///
         pub fn from_str(item: &str) -> V2Component {
             V2Component {
-                component: V2String::from(item),
+                component: item,
             }
         }
 
         pub fn to_string(&self) -> V2String {
-            self.component.clone()
+            self.component.to_rumstring()
         }
 
         pub fn is_empty(&self) -> bool {
@@ -186,15 +180,15 @@ pub mod v2_parser {
         }
     }
 
-    impl AsStr for V2Component {
+    impl<'a> AsStr for V2Component<'a> {
         fn as_str(&self) -> &str {
-            self.component.as_str()
+            self.component
         }
     }
 
-    impl V2PrimitiveCasting for V2Component {}
+    impl<'a> V2PrimitiveCasting for V2Component<'a> {}
 
-    pub type ComponentList = Vec<V2Component>;
+    pub type ComponentList<'a> = Vec<V2Component<'a>>;
 
     ///
     /// A field is a collection of items separated by the field separation character.
@@ -212,20 +206,19 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[pyclass]
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
-    pub struct V2Field {
-        components: ComponentList,
+    pub struct V2Field<'a> {
+        components: ComponentList<'a>,
     }
 
-    impl V2Field {
+    impl<'a> V2Field<'a> {
         pub fn new() -> Self {
             V2Field {
                 components: ComponentList::new(),
             }
         }
 
-        pub fn from_str(val: &str, parser_chars: &V2ParserCharacters) -> V2Field {
+        pub fn from_str(val: &str, parser_chars: &V2ParserCharacters) -> V2Field<'a> {
             let comp_vec: Vec<&str> = val
                 .split(parser_chars.component_separator.as_str())
                 .collect();
@@ -274,21 +267,21 @@ pub mod v2_parser {
         }
     }
 
-    impl Index<isize> for V2Field {
-        type Output = V2Component;
-        fn index(&self, indx: isize) -> &V2Component {
+    impl<'a> Index<isize> for V2Field<'a> {
+        type Output = V2Component<'a>;
+        fn index(&self, indx: isize) -> &V2Component<'a> {
             self.get(indx).unwrap()
         }
     }
 
-    impl IndexMut<isize> for V2Field {
-        fn index_mut(&mut self, indx: isize) -> &mut V2Component {
+    impl<'a> IndexMut<isize> for V2Field<'a> {
+        fn index_mut(&mut self, indx: isize) -> &mut V2Component<'a> {
             self.get_mut(indx).unwrap()
         }
     }
 
-    pub type V2FieldGroup = Vec<V2Field>;
-    pub type V2FieldList = Vec<V2FieldGroup>;
+    pub type V2FieldGroup<'a> = Vec<V2Field<'a>>;
+    pub type V2FieldList<'a> = Vec<V2FieldGroup<'a>>;
 
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
@@ -306,15 +299,14 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[pyclass]
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
-    pub struct V2Segment {
-        name: RUMString,
-        description: RUMString,
-        fields: V2FieldList,
+    pub struct V2Segment<'a> {
+        name: &'a str,
+        description: &'a str,
+        fields: V2FieldList<'a>,
     }
 
-    impl V2Segment {
+    impl<'a> V2Segment<'a> {
         pub fn from_str(raw_segment: &str, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
             let raw_fields: Vec<&str> = raw_segment
                 .split(parser_chars.field_separator.as_str())
@@ -396,7 +388,7 @@ pub mod v2_parser {
             self.fields.len()
         }
 
-        fn generate_subfields(field: &str, parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
+        fn generate_subfields(field: &str, parser_chars: &V2ParserCharacters) -> Vec<V2Field<'a>> {
             let repetition_char = parser_chars.repetition_separator.as_str();
             let subfields: Vec<&str> = field.split(&repetition_char).collect();
             let mut field_group = V2FieldGroup::with_capacity(subfields.len());
@@ -407,15 +399,15 @@ pub mod v2_parser {
         }
     }
 
-    impl Index<isize> for V2Segment {
-        type Output = V2FieldGroup;
-        fn index(&self, indx: isize) -> &V2FieldGroup {
+    impl<'a> Index<isize> for V2Segment<'a> {
+        type Output = V2FieldGroup<'a>;
+        fn index(&self, indx: isize) -> &V2FieldGroup<'a> {
             self.get(indx).unwrap()
         }
     }
 
-    impl IndexMut<isize> for V2Segment {
-        fn index_mut(&mut self, indx: isize) -> &mut V2FieldGroup {
+    impl<'a> IndexMut<isize> for V2Segment<'a> {
+        fn index_mut(&mut self, indx: isize) -> &mut V2FieldGroup<'a> {
             self.get_mut(indx).unwrap()
         }
     }
@@ -431,25 +423,21 @@ pub mod v2_parser {
     /// inadvertently defined. This required first segment is known as the anchor segment.
     /// ```
     ///
-    pub type V2SegmentGroup = Vec<V2Segment>;
+    pub type V2SegmentGroup<'a> = Vec<V2Segment<'a>>;
 
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
-    pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
+    pub type SegmentMap<'a> = RUMOrderedMap<u8, V2SegmentGroup<'a>>;
 
-    #[pyclass]
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
-    pub struct V2Message {
+    pub struct V2Message<'a> {
+        raw: V2String,
         separators: V2ParserCharacters,
-        segment_groups: SegmentMap,
+        segment_groups: SegmentMap<'a>,
     }
 
-    impl V2Message {
-        pub fn from_str(raw_msg: &str) -> Self {
-            Self::try_from_str(raw_msg).expect("If calls to from_str are failing for V2Message, consider using try_from_str or the TryFrom trait! You should not see this message.")
-        }
-
+    impl<'a> V2Message<'a> {
         ///
         /// Attempts to parse incoming raw HL7 v2 message into an instance of [V2Message](V2Message).
         ///
@@ -458,14 +446,13 @@ pub mod v2_parser {
         /// ```
         /// ```
         ///
-        pub fn try_from_str(raw_msg: &str) -> V2Result<Self> {
-            let clean_msg = V2Message::sanitize(raw_msg);
-            let segment_tokens = V2Message::tokenize_segments(clean_msg.as_str());
-            let msh_segment = V2Message::find_msh(&segment_tokens)?;
-            let parse_characters = V2ParserCharacters::from_msh(msh_segment)?;
-            let segments = V2Message::extract_segments(&segment_tokens, &parse_characters)?;
+        pub fn try_from_buffer(raw_msg: &RUMBuffer) -> V2Result<Self> {
+            let raw = buffer_to_string(&raw_msg)?;
+            let parse_characters = V2ParserCharacters::from(&raw)?;
+            let segments = V2Message::extract_segments(&raw, &parse_characters)?;
 
             Ok(V2Message {
+                raw,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -477,16 +464,8 @@ pub mod v2_parser {
         /// but this is an artifact of following the standard and forcing all linefeed characters into
         /// carriage return characters as terminator.
         ///
-        pub fn to_string(&self) -> V2String {
-            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
-            for segment_key in self.segment_groups.keys() {
-                let segment_group = &self.segment_groups[segment_key];
-                for segment in segment_group {
-                    msg.push(segment.to_string(&self.separators));
-                }
-            }
-
-            msg.join_compact(self.separators.segment_terminator.as_str())
+        pub fn to_string(&self) -> &V2String {
+            &self.raw
         }
 
         pub fn len(&self) -> usize {
@@ -547,7 +526,7 @@ pub mod v2_parser {
             }
         }
 
-        pub fn find_component(&self, search_pattern: &RUMString) -> V2Result<&V2Component> {
+        pub fn find_component(&self, search_pattern: &str) -> V2Result<&V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, || {compile_search_index(search_pattern)})?;
             let segment = self.get(&index.segment, index.segment_group as usize)?;
             let field = match segment.get(index.field as isize)?.get((index.field_group - 1) as usize) {
@@ -559,7 +538,7 @@ pub mod v2_parser {
 
         pub fn find_component_mut(
             &mut self,
-            search_pattern: &RUMString,
+            search_pattern: &str,
         ) -> V2Result<&mut V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, search_pattern, || {compile_search_index(search_pattern)})?;
             let segment = self.get_mut(&index.segment, index.segment_group as usize)?;
@@ -577,16 +556,6 @@ pub mod v2_parser {
 
         pub fn segment_exists(&self, segment_index: &u8) -> bool {
             self.segment_groups.contains_key(segment_index)
-        }
-
-        // Message parsing operations
-        pub fn find_msh<'a>(segments: &Vec<&'a str>) -> V2Result<&'a str> {
-            for segment in segments {
-                if segment.starts_with(V2_MSHEADER_PATTERN) {
-                    return Ok(segment);
-                }
-            }
-            Err("No MSH segment found! The message is malformed or incomplete!".to_rumstring())
         }
 
         ///
@@ -619,34 +588,20 @@ pub mod v2_parser {
         /// assert_eq!(sanitized, RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
-        pub fn sanitize(raw_message: &str) -> V2String {
-            let mut rr_string = raw_message.replace("\n", "\r");
-
-            while rr_string.contains("\r\r") {
-                rr_string = rr_string.replace("\r\r", "\r");
-            }
-
-            rr_string.to_rumstring()
-        }
-
-        pub fn tokenize_segments(raw_message: &str) -> Vec<&str> {
-            //Per Figure 2-1. Delimiter values of the HL7 v2 2.9 standard, each segment is separated
-            // by a carriage return <cr>. The value cannot be changed by implementers.
-            let tokens: Vec<&str> = raw_message.split(V2_SEGMENT_TERMINATOR).collect();
-            let mut trimmed_tokens: Vec<&str> = Vec::new();
-            for tok in tokens {
-                trimmed_tokens.push(tok.trim());
-            }
-            trimmed_tokens
-        }
-
         pub fn extract_segments(
-            raw_segments: &Vec<&str>,
+            msg: &str,
             parser_chars: &V2ParserCharacters,
-        ) -> V2Result<SegmentMap> {
+        ) -> V2Result<SegmentMap<'a>> {
+            let dataset = msg.chars();
+            let mut last_segment_end: usize = 0;
             let mut segments: SegmentMap = SegmentMap::new();
 
-            for segment_str in raw_segments {
+            for i in dataset.len() {
+                if (V2_SEGMENT_TERMINATORS.contains(dataset[i])) {
+                    continue;
+                }
+
+                let segment_str = dataset[last_segment_end..i].as_str();
                 if segment_str.is_empty() {
                     continue;
                 }
@@ -667,75 +622,23 @@ pub mod v2_parser {
         }
     }
 
-    ///
-    /// Implementation of Python API interface so that Python code can interact and modify
-    /// [V2Component] in [V2Message]!.
-    ///
-    #[pymethods]
-    impl V2Message {
-        pub fn get_component(&self, search_pattern: &str) -> RUMPyResult<V2Component> {
-            match self.find_component(&search_pattern.to_rumstring()) {
-                Ok(component) => Ok((*component).clone()),
-                Err(e) => Err(PyValueError::new_err(e.to_string())),
-            }
-        }
-
-        pub fn set_component(&mut self, search_pattern: &str, value: &str) -> RUMPyResult<()> {
-            match self.find_component_mut(&search_pattern.to_rumstring()) {
-                Ok(component) => {
-                    component.component = RUMString::from(value);
-                    Ok(())
-                }
-                Err(e) => Err(PyValueError::new_err(e.to_string())),
-            }
-        }
-    }
-
-    impl Index<&'_ u8> for V2Message {
-        type Output = V2SegmentGroup;
-        fn index(&self, segment_index: &u8) -> &V2SegmentGroup {
+    impl<'a> Index<&'_ usize> for V2Message<'a> {
+        type Output = V2SegmentGroup<'a>;
+        fn index(&self, segment_index: &usize) -> &V2SegmentGroup<'a> {
             self.get_group(segment_index).unwrap()
         }
     }
 
-    impl IndexMut<&'_ u8> for V2Message {
-        fn index_mut(&mut self, segment_index: &u8) -> &mut V2SegmentGroup {
+    impl<'a> IndexMut<&'_ usize> for V2Message<'a> {
+        fn index_mut(&mut self, segment_index: &usize) -> &mut V2SegmentGroup<'a> {
             self.get_mut_group(segment_index).unwrap()
         }
     }
 
-    impl TryFrom<&str> for V2Message {
-        type Error = V2String;
-        fn try_from(input: &str) -> V2Result<Self> {
-            V2Message::try_from_str(input)
-        }
-    }
-
-    impl TryFrom<&&str> for V2Message {
-        type Error = V2String;
-        fn try_from(input: &&str) -> V2Result<Self> {
-            V2Message::try_from_str(input)
-        }
-    }
-
-    impl TryFrom<&String> for V2Message {
-        type Error = V2String;
-        fn try_from(input: &String) -> V2Result<Self> {
-            V2Message::try_from_str(input.as_str())
-        }
-    }
-
-    impl TryFrom<&RUMString> for V2Message {
-        type Error = V2String;
-        fn try_from(input: &RUMString) -> V2Result<Self> {
-            V2Message::try_from_str(input.as_str())
-        }
-    }
-
-    impl TryFrom<&[u8]> for V2Message {
-        type Error = V2String;
-        fn try_from(input: &[u8]) -> V2Result<Self> {
-            V2Message::try_from_str(try_decode_with(input, "ascii").as_str())
+    impl<'a> TryFrom<&RUMBuffer> for V2Message<'a> {
+        type Error = RUMString;
+        fn try_from(input: &RUMBuffer) -> V2Result<V2Message<'a>> {
+            V2Message::try_from_buffer(input)
         }
     }
 }

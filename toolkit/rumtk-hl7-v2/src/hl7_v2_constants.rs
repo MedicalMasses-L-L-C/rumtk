@@ -24,6 +24,7 @@ use ::phf_macros::phf_map;
 pub const V2_MSHEADER_PATTERN: &str = "MSH";
 pub const V2_DELETE_FIELD: &str = "\"\"";
 pub const V2_SEGMENT_TERMINATOR: char = '\r';
+pub const V2_SEGMENT_TERMINATORS: &str = "\r\n";
 pub const V2_TRUNCATION_CHARACTER: char = '#';
 
 pub const V2_DATETIME_THOUSAND_TICK: u16 = 1000;

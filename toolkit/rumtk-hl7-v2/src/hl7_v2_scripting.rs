@@ -34,7 +34,7 @@ pub mod python {
     /// receive a [V2Message] result with the modified copy of the message.
     ///
     ///
-    pub fn process_message(module_path: &RUMString, message: &V2Message) -> RUMResult<V2Message> {
+    pub fn process_message<'a>(module_path: &'a RUMString, message: &'a V2Message<'a>) -> RUMResult<V2Message<'a>> {
         let closure = |py: RUMPython| -> RUMResult<V2Message> {
             let mut args = py_new_args(py);
             py_push_arg(py, &mut args, message)?;
