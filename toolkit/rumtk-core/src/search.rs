@@ -22,7 +22,7 @@ pub mod rumtk_search {
     use crate::cache::{new_cache, LazyRUMCache};
     use crate::core::RUMResult;
     use crate::rumtk_cache_fetch;
-    use crate::strings::{rumtk_format, CompactStringExt, RUMString};
+    use crate::strings::{rumtk_format, RUMString};
     use crate::types::RUMHashMap;
     use regex::Regex;
     use std::fmt::Debug;

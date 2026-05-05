@@ -68,7 +68,7 @@ fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
             continue;
         }
 
-        let url = rumtk_web_get_text_item!(&sl_urls, name, "").to_rumstring();
+        let url = rumtk_web_get_text_item!(&sl_urls, name, "").to_string();
         sl.push(Social {
             name: RUMString::from(name),
             icon: rumtk_format!("fa-brands fa-{}", name),

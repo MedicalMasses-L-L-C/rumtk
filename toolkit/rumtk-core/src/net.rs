@@ -35,7 +35,6 @@ pub mod tcp {
         rumtk_new_lock, rumtk_resolve_task, rumtk_wait_on_task,
     };
     use ahash::HashMapExt;
-    use compact_str::ToCompactString;
     use std::collections::VecDeque;
     use std::sync::Arc;
     pub use tokio::net::{TcpListener, TcpStream};
@@ -102,7 +101,7 @@ pub mod tcp {
             if self.is_disconnected() {
                 return Err(rumtk_format!(
                     "{} disconnected!",
-                    &self.socket.peer_addr().unwrap().to_compact_string()
+                    &self.socket.peer_addr().unwrap().to_string()
                 ));
             }
 
@@ -112,7 +111,7 @@ pub mod tcp {
                     self.disconnect();
                     Err(rumtk_format!(
                         "Unable to send message to {} because {}",
-                        &self.socket.local_addr().unwrap().to_compact_string(),
+                        &self.socket.local_addr().unwrap().to_string(),
                         &e
                     ))
                 }
@@ -129,7 +128,7 @@ pub mod tcp {
             if self.is_disconnected() {
                 return Err(rumtk_format!(
                     "{} disconnected!",
-                    &self.socket.peer_addr().unwrap().to_compact_string()
+                    &self.socket.peer_addr().unwrap().to_string()
                 ));
             }
 
@@ -152,7 +151,7 @@ pub mod tcp {
                         self.disconnect();
                         Err(rumtk_format!(
                             "Received 0 bytes from {}! It might have disconnected!",
-                            &self.socket.peer_addr().unwrap().to_compact_string()
+                            &self.socket.peer_addr().unwrap().to_string()
                         ))
                     }
                     MESSAGE_BUFFER_SIZE => Ok((RUMNetMessage::from(buf), true)),
@@ -165,7 +164,7 @@ pub mod tcp {
                     self.disconnect();
                     Err(rumtk_format!(
                         "Error receiving message from {} because {}",
-                        &self.socket.peer_addr().unwrap().to_compact_string(),
+                        &self.socket.peer_addr().unwrap().to_string(),
                         &e
                     ))
                 }
@@ -176,11 +175,11 @@ pub mod tcp {
         pub async fn get_address(&self, local: bool) -> Option<RUMString> {
             match local {
                 true => match self.socket.local_addr() {
-                    Ok(addr) => Some(addr.to_compact_string()),
+                    Ok(addr) => Some(addr.to_string()),
                     Err(_) => None,
                 },
                 false => match self.socket.peer_addr() {
-                    Ok(addr) => Some(addr.to_compact_string()),
+                    Ok(addr) => Some(addr.to_string()),
                     Err(_) => None,
                 },
             }
@@ -682,7 +681,7 @@ pub mod tcp_helpers {
     pub fn to_ip_port(address_str: &str) -> ConnectionInfo {
         let mut components = address_str.split(':');
         (
-            components.next().unwrap_or_default().to_rumstring(),
+            components.next().unwrap_or_default().to_string(),
             components
                 .next()
                 .unwrap_or("0")

@@ -203,7 +203,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 ///     (PARAMS_TITLE, "Hello World!")
 /// ];
 /// let state = SharedAppState::default();
-/// let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_rumstring();
+/// let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_string();
 ///
 /// assert_eq!(rendered, TRIMMED_HTML_TITLE_RENDER, "Commponent rendered improperly!");
 /// ```
@@ -213,14 +213,14 @@ macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
         use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn() {
-            Ok(x) => x.to_rumstring(),
+            Ok(x) => x.to_string(),
             _ => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
         use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn($app_state.clone()) {
-            Ok(x) => x.to_rumstring(),
+            Ok(x) => x.to_string(),
             _ => RUMString::default(),
         }
     }};
@@ -284,7 +284,7 @@ macro_rules! rumtk_web_post_process_html {
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
 ///
 /// let app_state = SharedAppState::default();
-/// let mydiv = rumtk_web_render_component!("div", [(PARAMS_TYPE, "story")], app_state).unwrap().to_rumstring();
+/// let mydiv = rumtk_web_render_component!("div", [(PARAMS_TYPE, "story")], app_state).unwrap().to_string();
 ///
 /// let expected_page = RUMString::new("<div class='div-default'>default</div>");
 /// let page_response = rumtk_web_render_page_contents!(
@@ -292,7 +292,7 @@ macro_rules! rumtk_web_post_process_html {
 ///         mydiv
 ///     ]
 /// ).expect("Page rendered!");
-/// let rendered_page = page_response.to_rumstring();
+/// let rendered_page = page_response.to_string();
 ///
 /// assert_eq!(rendered_page, expected_page, "Page was not rendered properly!")
 /// ```
@@ -368,6 +368,6 @@ macro_rules! rumtk_web_render_markdown {
         let mut html_output = String::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
 
-        html_output.to_rumstring()
+        html_output.to_string()
     }};
 }

@@ -57,7 +57,7 @@ impl InputProps<'_> {
             handler_string += &rumtk_format!(" {}={:?}", handler_name, handler_function);
         }
 
-        handler_string.trim().to_rumstring()
+        handler_string.trim().to_string()
     }
 
     pub fn to_rumstring(&self) -> RUMString {
@@ -156,6 +156,6 @@ impl InputProps<'_> {
     }
 
     pub fn to_string(&self) -> String {
-        self.to_rumstring().to_string()
+        self.to_string().to_string()
     }
 }

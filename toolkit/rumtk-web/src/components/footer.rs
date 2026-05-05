@@ -70,9 +70,9 @@ pub fn footer(_path_components: URLPath, params: URLParams, state: SharedAppStat
                 (PARAMS_CSS_CLASS, "centered")
             ],
             state
-        )?.to_rumstring(),
+        )?.to_string(),
     };
-    let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_rumstring();
+    let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_string();
 
     rumtk_web_render_template!(Footer {
         company,

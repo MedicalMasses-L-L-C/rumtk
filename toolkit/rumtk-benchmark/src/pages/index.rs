@@ -21,8 +21,8 @@ use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
 pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "intro")], app_state)?.to_rumstring();
-    let text_card_intro = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "instructions")], app_state)?.to_rumstring();
+    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "intro")], app_state)?.to_string();
+    let text_card_intro = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "instructions")], app_state)?.to_string();
     let basic_benchmark = rumtk_web_render_component!(
         "form",
         [
@@ -33,7 +33,7 @@ pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
             (PARAMS_ENDPOINT, "/api/benchmarks/basic")
         ],
         app_state
-    )?.to_rumstring();
+    )?.to_string();
 
     Ok(vec![title_intro, text_card_intro, basic_benchmark])
 }

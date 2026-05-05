@@ -120,7 +120,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 ///
 ///     let job_data = match job_result {
-///         Some(t) => t?.to_rumstring(),
+///         Some(t) => t?.to_string(),
 ///         _ => RUMString::new("")
 ///     };
 ///
@@ -131,7 +131,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
 /// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
-/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
 ///
 /// assert!(rendered.as_str().contains(JOB_LOADER_TEST_PATTERN), "Element did not render loader!");
 ///
@@ -167,7 +167,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 ///
-///     let job_data = job_result.unwrap()?.to_rumstring();
+///     let job_data = job_result.unwrap()?.to_string();
 ///
 ///     rumtk_web_post_process_html!(job_data)
 /// }
@@ -178,7 +178,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
 ///
 /// rumtk_sleep!(1);
-/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
 ///
 /// assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
 ///

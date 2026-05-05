@@ -69,11 +69,11 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
         nav_links.push(
             navlink(
                 &[],
-                &RUMWebData::from([(PARAMS_TARGET.to_rumstring(), key.to_rumstring())]),
+                &RUMWebData::from([(PARAMS_TARGET.to_string(), key.to_rumstring())]),
                 app_state.clone(),
             )
             .unwrap_or_default()
-            .to_rumstring(),
+            .to_string(),
         );
     }
 
@@ -96,7 +96,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
                 rumtk_web_get_config!(state).title.as_str()
             )],
             state
-        )?.to_rumstring()],
+        )?.to_string()],
         false => get_nav_links(&nav_keys, state.clone()),
     };
 
@@ -117,7 +117,7 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
                 ),
             ],
             state
-        )?.to_rumstring(),
+        )?.to_string(),
     };
 
     rumtk_web_render_template!(Header {

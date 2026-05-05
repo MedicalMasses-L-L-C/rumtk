@@ -44,7 +44,7 @@ pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppS
 
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
-    let inner = rumtk_web_render_component!("div", [(PARAMS_CSS_CLASS, css_class), (PARAMS_CONTENTS, contents)], state)?.to_rumstring();
+    let inner = rumtk_web_render_component!("div", [(PARAMS_CSS_CLASS, css_class), (PARAMS_CONTENTS, contents)], state)?.to_string();
 
     rumtk_web_render_template!(Container {
         contents: inner.as_str(),

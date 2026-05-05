@@ -88,7 +88,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let title_elem = match title.is_empty() {
         true => DEFAULT_NO_TEXT,
-        false => &rumtk_web_render_component!("title", [(PARAMS_TYPE, title)], state)?.to_rumstring(),
+        false => &rumtk_web_render_component!("title", [(PARAMS_TYPE, title)], state)?.to_string(),
     };
 
     let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);

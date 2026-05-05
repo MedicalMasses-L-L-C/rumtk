@@ -46,7 +46,7 @@ pub fn job_loader(_path_components: URLPath, params: URLParams, state: SharedApp
     let element_name = rumtk_web_get_text_item!(params, PARAMS_ELEMENT, DEFAULT_JOB_LOADER_NAME);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let loader = &rumtk_web_render_component!("loader", [(PARAMS_CSS_CLASS, css_class)], state)?.to_rumstring();
+    let loader = &rumtk_web_render_component!("loader", [(PARAMS_CSS_CLASS, css_class)], state)?.to_string();
 
     if !rumtk_web_get_job_manager!()?.has_job(&id_to_uuid(&job_id)?) {
         return Err(rumtk_format!("Job ID {} does not exists!", &job_id));

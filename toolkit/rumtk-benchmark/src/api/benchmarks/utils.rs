@@ -106,7 +106,7 @@ pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &
 
     let data = lines.join_compact("\n");
 
-    template.replace("{data}", data.as_str()).to_rumstring()
+    template.replace("{data}", data.as_str()).to_string()
 }
 
 pub fn generate_test_run_data(settings: &TextMap) -> RUMString {

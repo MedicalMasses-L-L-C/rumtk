@@ -107,7 +107,7 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                         Some(content_type) => get_type(content_type).await,
                         None => FORM_DATA_TYPE_DEFAULT,
                     };
-                    let name = field.name().unwrap_or_default().to_rumstring();
+                    let name = field.name().unwrap_or_default().to_string();
                     
                     // If we got an empty field name, discard.
                     if name.is_empty() {
@@ -124,7 +124,7 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                     if typ == FORM_DATA_TYPE_DEFAULT {
                         form_data.form.insert(name, data.to_vec().to_rumstring());
                     } else {
-                        let file_id = RUMID::new_v4().to_compact_string();
+                        let file_id = RUMID::new_v4().to_string();
                         &form_data.files.insert(file_id.clone(), data);
                         &form_data.form.insert(name, file_id);
                     }

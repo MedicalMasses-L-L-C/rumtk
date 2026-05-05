@@ -45,7 +45,7 @@ pub mod pipeline_types {
             env: &RUMCommandEnv,
         ) -> Self {
             RUMCommand {
-                path: prog.to_rumstring(),
+                path: prog.to_string(),
                 args: args.clone(),
                 env: env.clone(),
                 data: data.clone(),
@@ -63,7 +63,7 @@ pub mod pipeline_types {
 pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::core::RUMResult;
-    use crate::strings::{rumtk_format, string_format, CompactStringExt, RUMArrayConversions, RUMString, StringReplacementPair};
+    use crate::strings::{rumtk_format, string_format, RUMArrayConversions, RUMString, StringReplacementPair};
     use std::io::{Read, Write};
     use std::os::unix::ffi::OsStrExt;
 
@@ -139,7 +139,7 @@ pub mod pipeline_functions {
     pub fn pipeline_spawn_process(cmd: &mut RUMPipelineCommand) -> RUMResult<RUMPipelineProcess> {
         match cmd.spawn() {
             Ok(process) => {
-                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_rumstring(), cmd.get_args());
+                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_string(), cmd.get_args());
                 Ok(process)
             },
             Err(e) => Err(rumtk_format!(
@@ -334,7 +334,7 @@ pub mod pipeline_functions {
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
     /// ls_command.path = RUMString::from(ls_name);
-    /// ls_command.args = vec!["-la".to_rumstring()];
+    /// ls_command.args = vec!["-la".to_string()];
     ///
     /// let mut process = pipeline_generate_command(&ls_command, &RUMBuffer::default()).unwrap();
     /// let result = pipeline_get_stdout(process).unwrap();
@@ -576,7 +576,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::strings::RUMStringConversions;
     ///
     /// let command = rumtk_pipeline_command!("ls", RUMBuffer::default(), &vec![
-    ///     "-l".to_rumstring()
+    ///     "-l".to_string()
     /// ]);
     /// ```
     ///

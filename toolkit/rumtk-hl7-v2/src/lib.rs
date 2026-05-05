@@ -976,12 +976,12 @@ mod tests {
 
         assert_eq!(
             expected_message,
-            payload.to_rumstring(),
+            payload.to_string(),
             "{}",
             rumtk_format!(
                 "Malformed payload! Expected: {} Found: {}",
                 expected_message,
-                payload.to_rumstring()
+                payload.to_string()
             )
         );
     }

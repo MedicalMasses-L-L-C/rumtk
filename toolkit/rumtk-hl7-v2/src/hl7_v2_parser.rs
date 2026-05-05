@@ -152,7 +152,7 @@ pub mod v2_parser {
         }
 
         pub fn to_string(&self) -> V2String {
-            self.component.to_rumstring()
+            self.component.to_string()
         }
 
         pub fn is_empty(&self) -> bool {
@@ -322,7 +322,7 @@ pub mod v2_parser {
             }
 
             let mut field_list = V2FieldList::with_capacity(raw_fields.len() - 1);
-            let field_name = raw_fields[0].to_rumstring().to_uppercase();
+            let field_name = raw_fields[0].to_string().to_uppercase();
 
             if raw_field_count > 1 {
                 if field_name == "MSH" {

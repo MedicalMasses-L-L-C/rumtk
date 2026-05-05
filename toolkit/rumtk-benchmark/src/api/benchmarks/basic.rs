@@ -53,7 +53,7 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
 
 pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
     let job_id = rumtk_web_get_job_manager!()?.spawn_task(basic_processor(form, state.clone()))?;
-    let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_ID, job_id)], state)?.to_rumstring();
+    let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_ID, job_id)], state)?.to_string();
 
     rumtk_web_render_page_contents!(
         &vec![

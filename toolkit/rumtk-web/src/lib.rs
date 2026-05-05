@@ -113,7 +113,7 @@ mod tests {
 
         let params = [(PARAMS_TITLE, "Hello World!")];
         let state = SharedAppState::default();
-        let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_rumstring();
+        let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_string();
 
         assert_eq!(
             rendered, TRIMMED_HTML_TITLE_RENDER,
@@ -164,7 +164,7 @@ mod tests {
 
             let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 
-            let job_data = job_result.unwrap()?.to_rumstring();
+            let job_data = job_result.unwrap()?.to_string();
 
             rumtk_web_post_process_html!(job_data)
         }
@@ -175,7 +175,7 @@ mod tests {
         params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
 
         rumtk_sleep!(1);
-        let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_rumstring();
+        let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
 
         assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
     }

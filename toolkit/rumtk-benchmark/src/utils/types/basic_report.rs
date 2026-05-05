@@ -118,7 +118,7 @@ impl TryFrom<&RUMBuffer> for BasicBenchmarkReport {
                 let units: RUMString = string_find_value(s, &["Mean \\[.*?\\]", "\\[.*?\\]"]).unwrap_or_default();
 
                 Ok(Self {
-                    command: key_line.get(1).unwrap().trim().to_rumstring(),
+                    command: key_line.get(1).unwrap().trim().to_string(),
                     mean_time,
                     mean_delta,
                     min: key_line.get(3).unwrap().trim().parse::<f32>().unwrap_or_default(),

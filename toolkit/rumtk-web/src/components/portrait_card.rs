@@ -74,7 +74,7 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> RU
                     (PARAMS_TYPE, i_name.as_str()),
                 ],
                 app_state
-            )?.to_rumstring();
+            )?.to_string();
             grid_row.push(item);
         }
         grid.push(grid_row);

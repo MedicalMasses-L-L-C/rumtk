@@ -79,7 +79,7 @@ pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: 
 
     rumtk_web_render_template!(SelectElement {
         items,
-        props: &props.to_rumstring().replace("\\\\", "\\"),
+        props: &props.to_string().replace("\\\\", "\\"),
         count,
         css_class,
     })

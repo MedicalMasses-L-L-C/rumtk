@@ -40,7 +40,7 @@ pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &s
     rumtk_web_render_template!(InputElement {
         element,
         data,
-        props: &props.to_rumstring().replace("\\\\", "\\"),
+        props: &props.to_string().replace("\\\\", "\\"),
         css_class
     })
 }

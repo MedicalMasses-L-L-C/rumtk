@@ -506,7 +506,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
 ///     let job_id = rumtk_web_get_job_manager!()?.spawn_task(upload_processor(form))?;
-///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state)?.to_rumstring();
+///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state)?.to_string();
 ///
 ///     rumtk_web_render_page_contents!(
 ///         &vec![
@@ -765,15 +765,15 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///     // About page
 ///     pub fn about(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_rumstring();
-///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?.to_rumstring();
+///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
+///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?.to_string();
 ///     
-///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?.to_rumstring();
-///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?.to_rumstring();
+///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?.to_string();
+///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
 ///     
-///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?.to_rumstring();
+///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?.to_string();
 ///     
-///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_rumstring();
+///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_string();
 ///     
 ///         Ok(vec![
 ///             text_card_story,

@@ -21,11 +21,9 @@ use crate::core::{is_unique, RUMResult, RUMVec};
 use crate::types::RUMBuffer;
 use base64::prelude::*;
 use chardetng::EncodingDetector;
-pub use compact_str::{
-    format_compact as rumtk_format, CompactString, CompactStringExt, ToCompactString,
-};
 use encoding_rs::Encoding;
 use std::cmp::min;
+pub use std::format as rumtk_format;
 use unicode_segmentation::UnicodeSegmentation;
 /**************************** Constants**************************************/
 const ESCAPED_STRING_WINDOW: usize = 6;
@@ -38,7 +36,7 @@ pub const EMPTY_STRING_OPTION: Option<&str> = Some("");
 pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 /**************************** Types *****************************************/
-pub type RUMString = CompactString;
+pub type RUMString = String;
 pub type EscapeException<'a> = (&'a str, &'a str);
 pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
 pub type StringReplacementPair<'a> = [(&'a str, &'a str)];
@@ -224,7 +222,7 @@ pub trait StringUtils: AsStr + RUMStringConversions {
     }
 
     fn truncate(&self, count: usize) -> RUMString {
-        self.as_grapheme_str().truncate(count).to_rumstring()
+        self.as_grapheme_str().truncate(count).to_string()
     }
 }
 
@@ -235,11 +233,6 @@ impl AsStr for String {
 }
 
 impl RUMStringConversions for RUMString {}
-impl AsStr for RUMString {
-    fn as_str(&self) -> &str {
-        self.as_str()
-    }
-}
 impl StringUtils for RUMString {}
 
 impl RUMStringConversions for str {}
@@ -260,7 +253,7 @@ pub trait RUMArrayConversions {
 
 impl RUMArrayConversions for Vec<u8> {
     fn to_rumstring(&self) -> RUMString {
-        self.as_slice().to_rumstring()
+        self.as_slice().to_string()
     }
 }
 
@@ -578,7 +571,7 @@ fn number_to_char(num: &u32) -> Result<RUMString, RUMString> {
 /// and deal with validity at a higher layer.
 ///
 fn number_to_char_unchecked(num: &u32) -> RUMString {
-    unsafe { char::from_u32_unchecked(*num).to_rumstring() }
+    unsafe { char::from_u32_unchecked(*num).to_string() }
 }
 
 ///
@@ -613,9 +606,9 @@ pub fn basic_escape(unescaped_str: &str, except: EscapeExceptions) -> RUMString 
         for (from, to) in except {
             escaped_str = escaped_str.replace(from, to);
         }
-        return escaped_str.to_rumstring();
+        return escaped_str.to_string();
     }
-    unescaped_str.to_rumstring()
+    unescaped_str.to_string()
 }
 
 ///
@@ -660,7 +653,7 @@ pub fn is_printable_char(c: &char) -> bool {
 /// Removes all non ASCII and all non printable characters from string.
 ///
 pub fn filter_ascii(unescaped_str: &str, closure: fn(char) -> bool) -> RUMString {
-    let mut filtered = unescaped_str.to_rumstring();
+    let mut filtered = unescaped_str.to_string();
     filtered.retain(closure);
     filtered
 }
@@ -735,7 +728,7 @@ pub fn string_format(input: &str, formatting: &StringReplacementPair) -> RUMStri
         output = output.as_str().replace(item.0, item.1);
     }
 
-    output.to_rumstring()
+    output.to_string()
 }
 
 ///

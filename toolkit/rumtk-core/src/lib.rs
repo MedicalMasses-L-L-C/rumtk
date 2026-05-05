@@ -553,7 +553,7 @@ mod tests {
             Err(e) => panic!("Failed to send message because {}", e),
         };
         let client_id = client.get_address().expect("Failed to get client id");
-        let incoming_message = server.receive(&client_id, true).unwrap().to_rumstring();
+        let incoming_message = server.receive(&client_id, true).unwrap().to_string();
         println!("Received message => {:?}", &incoming_message);
         assert_eq!(&incoming_message, msg, "Received message corruption!");
     }
@@ -721,8 +721,8 @@ mod tests {
         let hw_unescaped_str = strings::unescape_string(&hw_escaped_str).unwrap();
         println!("Unescaped => {}", hw_unescaped_str);
         assert_eq!(
-            hw_str.to_rumstring(),
-            hw_unescaped_str.to_rumstring(),
+            hw_str.to_string(),
+            hw_unescaped_str.to_string(),
             "Unescaped serialized JSON mismatch!"
         );
 

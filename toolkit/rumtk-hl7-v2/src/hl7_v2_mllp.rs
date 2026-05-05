@@ -488,7 +488,7 @@ pub mod mllp_v2 {
             filter_policy: MLLP_FILTER_POLICY,
             server: bool,
         ) -> RUMResult<AsyncMLLP> {
-            AsyncMLLP::new(ANYHOST.to_rumstring(), port, filter_policy, server).await
+            AsyncMLLP::new(ANYHOST.to_string(), port, filter_policy, server).await
         }
 
         ///
@@ -499,7 +499,7 @@ pub mod mllp_v2 {
             filter_policy: MLLP_FILTER_POLICY,
             server: bool,
         ) -> RUMResult<AsyncMLLP> {
-            AsyncMLLP::new(LOCALHOST.to_rumstring(), port, filter_policy, server).await
+            AsyncMLLP::new(LOCALHOST.to_string(), port, filter_policy, server).await
         }
 
         ///
@@ -811,7 +811,7 @@ pub mod mllp_v2 {
                 },
                 vec![(
                     self.channel.clone(),
-                    message.to_rumstring(),
+                    message.to_string(),
                     self.peer.clone()
                 )]
             )

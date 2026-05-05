@@ -51,7 +51,7 @@ pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     let props = InputProps::default();
-    let contents = &select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?.to_rumstring();
+    let contents = &select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?.to_string();
 
     rumtk_web_render_template!(Select {
         contents,

@@ -66,7 +66,7 @@ impl RUMWebResponse {
 
     pub fn to_rumstring(&self) -> RUMString {
         match self {
-            RUMWebResponse::GetResponse(res) => res.to_rumstring(),
+            RUMWebResponse::GetResponse(res) => res.to_string(),
             _ => RUMString::default(),
         }
     }
@@ -139,7 +139,7 @@ impl HTMLBody {
     }
 
     pub fn to_rumstring(&self) -> RUMString {
-        self.0 .0.to_compact_string()
+        self.0 .0.to_string()
     }
 }
 
@@ -163,7 +163,7 @@ impl RedirectBody {
     }
 
     pub fn location(&self) -> RUMString {
-        self.0.location().to_rumstring()
+        self.0.location().to_string()
     }
 
     pub fn status_code(&self) -> StatusCode {

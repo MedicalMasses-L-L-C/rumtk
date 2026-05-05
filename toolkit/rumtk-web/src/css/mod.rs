@@ -73,7 +73,7 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_def
 
     let minified = minify_asset(Asset::CSS(&css))
         .expect("Failed to minify the CSS contents!")
-        .to_rumstring();
+        .to_string();
 
     let file_exists = fs::exists(&out_path).unwrap_or_default();
     let skip_write_css = file_exists
@@ -81,7 +81,7 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_def
             &minified,
             &fs::read_to_string(&out_path)
                 .unwrap_or_default()
-                .to_rumstring(),
+                .to_string(),
         );
 
     if !skip_write_css {

@@ -265,13 +265,13 @@ impl AppState {
     }
 
     pub fn push_to_clipboard(&mut self, data: TextMap) -> ClipboardID {
-        let clipboard_id = rumtk_generate_id!().to_rumstring();
+        let clipboard_id = rumtk_generate_id!().to_string();
         self.clipboard.insert(clipboard_id.clone(), data);
         clipboard_id
     }
 
     pub fn request_clipboard_slice(&mut self) -> ClipboardID {
-        let clipboard_id = rumtk_generate_id!().to_rumstring();
+        let clipboard_id = rumtk_generate_id!().to_string();
         self.clipboard
             .insert(clipboard_id.clone(), TextMap::default());
         clipboard_id

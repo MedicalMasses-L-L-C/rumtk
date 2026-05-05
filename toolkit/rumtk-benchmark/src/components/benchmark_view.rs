@@ -40,11 +40,11 @@ pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: Share
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let job_result = match rumtk_web_check_on_job!("benchmark_view", job_id, state) {
-        Some(result) => result?.to_rumstring(),
+        Some(result) => result?.to_string(),
         None => RUMString::default()
     };
     
-    let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, job_result)], state)?.to_rumstring();
+    let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, job_result)], state)?.to_string();
 
     rumtk_web_render_template!(BenchmarkReportView {
             data: data.as_str(),
