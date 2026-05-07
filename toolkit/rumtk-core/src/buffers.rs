@@ -140,17 +140,23 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     set
 }
 
-pub fn split_buffer(mut input: RUMBuffer, separator: u8) -> RUMVec<RUMBuffer> {
+pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVec<RUMBuffer> {
+    let pattern_length = pattern.len();
     let mut item_list = RUMVec::<RUMBuffer>::with_capacity(100);
-    for mut i in 0..input.len() {
-        if input[i] == separator {
-            let component = input.split_to(i);
-            item_list.push(component);
+    let mut indx = buffer_find(input.as_slice(), pattern, 0);
 
-            // Let's consume the separator character so it does not show in any buffers.
-            i += 1;
-            let _ = input.split_to(i);
-        }
+    while indx < input.len() {
+        let component = input.split_to(indx);
+        item_list.push(component);
+
+        // Let's consume the separator character so it does not show in any buffers.
+        let _ = input.split_to(pattern_length);
+
+        indx = buffer_find(input.as_slice(), pattern, 0);
+    }
+
+    if input.len() > 0 {
+        item_list.push(input)
     }
 
     item_list
@@ -204,6 +210,18 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
     }
 
     usize::MAX
+}
+
+pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
+    let mut instances = RUMVec::<usize>::with_capacity(100);
+    let mut last = 0;
+
+    while last < buffer.len() {
+        last = buffer_find(buffer, pattern, last);
+        instances.push(last);
+    }
+
+    instances
 }
 
 pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {

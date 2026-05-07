@@ -79,6 +79,7 @@ mod tests {
         let field_str = RUMBuffer::from_static(DEFAULT_HL7_V2_FIELD_STRING.as_bytes());
         let encode_chars = V2ParserCharacters::new();
         let field = V2Field::from(field_str, &encode_chars);
+        println!("{}", DEFAULT_HL7_V2_FIELD_STRING);
         println!("{:#?}", &field);
         assert_eq!(field.len(), 3, "Wrong number of components in field");
         println!(

@@ -44,16 +44,16 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::buffers::{buffer_replace, buffer_to_str, buffer_to_string, split_buffer};
+    use rumtk_core::buffers::{buffer_replace, buffer_split, buffer_to_str, buffer_to_string};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::core::{clamp_index, RUMError};
     use rumtk_core::core::RUMResult;
+    use rumtk_core::core::{clamp_index, RUMError};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
+    use rumtk_core::strings::string_to_buffer;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
-    use rumtk_core::strings::string_to_buffer;
     use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap, SerdeRUMBufferProxy};
     use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
@@ -215,7 +215,7 @@ pub mod v2_parser {
 
     impl V2Field {
         pub fn from(val: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Field {
-            let mut components = split_buffer(val, parser_chars.component_separator);
+            let mut components = buffer_split(val, &[parser_chars.component_separator]);
             let mut component_list: ComponentList = ComponentList::with_capacity(components.len());
 
             for c in components {
@@ -289,7 +289,7 @@ pub mod v2_parser {
 
     impl V2Segment {
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
-            let mut raw_fields: Vec<RUMBuffer> = split_buffer(raw_segment, parser_chars.field_separator);
+            let mut raw_fields: Vec<RUMBuffer> = buffer_split(raw_segment, &[parser_chars.field_separator]);
             let raw_field_count = raw_fields.len();
 
             if raw_field_count == 0 {
@@ -340,7 +340,7 @@ pub mod v2_parser {
         }
 
         fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
-            let mut subfields: Vec<RUMBuffer> = split_buffer(field, parser_chars.repetition_separator);
+            let mut subfields: Vec<RUMBuffer> = buffer_split(field, &[parser_chars.repetition_separator]);
             let mut field_group = V2FieldGroup::with_capacity(subfields.len());
             for subfield in subfields {
                 field_group.push(V2Field::from(subfield, parser_chars))
@@ -548,7 +548,7 @@ pub mod v2_parser {
         pub fn tokenize_segments(message: RUMBuffer, parse_characters: &V2ParserCharacters) -> Vec<RUMBuffer> {
             //Per Figure 2-1. Delimiter values of the HL7 v2 2.9 standard, each segment is separated
             // by a carriage return <cr>. The value cannot be changed by implementers.
-            split_buffer(message, parse_characters.segment_terminator)
+            buffer_split(message, &[parse_characters.segment_terminator])
         }
 
         ///
