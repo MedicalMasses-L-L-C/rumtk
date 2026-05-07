@@ -19,7 +19,7 @@
  */
 use crate::strings::{buffer_to_string, string_to_buffer};
 pub use ahash::AHashMap as RUMHashMap;
-pub use bytes::Bytes as RUMBuffer;
+pub use bytes::{Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
 pub use serde;

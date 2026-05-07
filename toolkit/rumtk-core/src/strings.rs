@@ -18,8 +18,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::core::{is_unique, RUMResult, RUMVec};
-use crate::types::RUMBuffer;
+use crate::types::{RUMBuffer, RUMBufferMut};
 use base64::prelude::*;
+use bytes::BufMut;
 use chardetng::EncodingDetector;
 use encoding_rs::Encoding;
 use std::cmp::min;
@@ -717,25 +718,60 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
     }
 }
 
-pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
+pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
     let buffer_length = buffer.len();
     let pattern_length = pattern.len();
-    let mut has_pattern = false;
 
-    for i in 0..buffer_length {
+    for i in offset..buffer_length {
         if (i + pattern_length) <= buffer_length
         {
+            let mut matches = true;
             for j in 0..pattern_length {
-                has_pattern = has_pattern || buffer[i + j] != pattern[j]
+                matches = matches && buffer[i + j] == pattern[j]
             }
 
-            if !has_pattern {
-                break;
+            if matches {
+                return i;
             }
         }
     }
 
-    has_pattern
+    usize::MAX
+}
+
+pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
+    let buffer_length = buffer.len();
+    let pad_length = target_length - buffer_length;
+    let s = buffer_length + pad_length;
+    let mut slice = RUMBufferMut::with_capacity(s);
+
+    slice.put(buffer);
+
+    for _ in buffer_length..s {
+        slice.put_u8(pad);
+    }
+
+    slice.freeze()
+}
+
+pub fn buffer_replace<'a>(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
+    let mut start = buffer_find(buffer.as_slice(), pattern, 0);
+    let mut last = 0;
+    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len());
+
+    while start < buffer.len() {
+        new_buffer.put(&buffer[last ..start]);
+        last = start;
+
+        new_buffer.put(replacement);
+        start = buffer_find(buffer.as_slice(), pattern, start + replacement.len());
+    }
+
+    new_buffer.freeze()
+}
+
+pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
+    buffer_find(buffer, pattern, 0) != usize::MAX
 }
 
 ///

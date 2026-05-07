@@ -30,7 +30,7 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{buffer_has_pattern, rumtk_format, AsStr};
+    use rumtk_core::strings::{buffer_find, buffer_has_pattern, rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 
@@ -113,13 +113,12 @@ pub mod v2_base_types {
 
         // Message parsing operations
         pub fn find_msh(data: &RUMBuffer) -> V2Result<usize> {
-            let data_length = data.len();
-            for i in 0..data_length {
-                if buffer_has_pattern(data.as_slice(), V2_MSHEADER_PATTERN)
-                {
-                    return Ok(i);
-                }
+            let indx = buffer_find(data.as_slice(), V2_MSHEADER_PATTERN, 0);
+
+            if indx <= (data.len() - V2_MSHEADER_PATTERN.len()) {
+                return Ok(indx);
             }
+
             Err(rumtk_format!("No MSH segment found! The message is malformed or incomplete!"))
         }
 

@@ -49,11 +49,11 @@ pub mod v2_parser {
     use rumtk_core::core::{split_buffer, RUMResult};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::{buffer_to_str, buffer_to_string, string_to_buffer};
+    use rumtk_core::strings::{buffer_replace, buffer_to_str, buffer_to_string, string_to_buffer};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
-    use rumtk_core::types::{RUMBuffer, RUMOrderedMap, SerdeRUMBufferProxy};
+    use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap, SerdeRUMBufferProxy};
     use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
     use std::sync::Arc;
@@ -396,9 +396,9 @@ pub mod v2_parser {
         /// ```
         /// ```
         ///
-        pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
-            let sanitized = V2Message::sanitize(raw_msg)?;
-            let sanitized_string = buffer_to_string(&sanitized)?;
+        pub fn try_from_buffer(raw_msg: &RUMBuffer) -> V2Result<Self> {
+            let sanitized = V2Message::sanitize(&raw_msg);
+            let sanitized_string = buffer_to_string(&sanitized[..])?;
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
             let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
 
@@ -539,20 +539,9 @@ pub mod v2_parser {
         /// assert_eq!(sanitized, RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
-        pub fn sanitize(raw_message: RUMBuffer) -> RUMResult<RUMBuffer> {
-            match raw_message.try_into_mut() {
-                Ok(mut raw_message) => {
-                    for i in 0..raw_message.len() {
-                        if raw_message[i] == b'\n' {
-                            raw_message[i] = b'\r';
-                        }
-                    }
-                    Ok(raw_message.freeze())
-                },
-                Err(_) => {
-                    Err(rumtk_format!("Unable to modify input in place because this instance is not unique. Aborting processing..."))
-                }
-            }
+        pub fn sanitize(raw_message: &RUMBuffer) -> RUMBuffer {
+            let data = buffer_replace(&raw_message, &['\n'  as u8], &['\r' as u8]);
+            buffer_replace(&data, &['\r' as u8, '\r' as u8], &['\r' as u8])
         }
 
         pub fn tokenize_segments(message: RUMBuffer, parse_characters: &V2ParserCharacters) -> Vec<RUMBuffer> {
@@ -607,6 +596,13 @@ pub mod v2_parser {
     impl<'a> TryFrom<RUMBuffer> for V2Message {
         type Error = RUMString;
         fn try_from(input: RUMBuffer) -> V2Result<V2Message> {
+            V2Message::try_from_buffer(&input)
+        }
+    }
+
+    impl<'a> TryFrom<&RUMBuffer> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &RUMBuffer) -> V2Result<V2Message> {
             V2Message::try_from_buffer(input)
         }
     }
@@ -614,7 +610,7 @@ pub mod v2_parser {
     impl<'a> TryFrom<&[u8]> for V2Message {
         type Error = RUMString;
         fn try_from(input: &[u8]) -> V2Result<V2Message> {
-            V2Message::try_from_buffer(RUMBuffer::copy_from_slice(input))
+            V2Message::try_from_buffer(&RUMBuffer::copy_from_slice(input))
         }
     }
 
