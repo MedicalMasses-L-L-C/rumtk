@@ -25,14 +25,14 @@ pub mod v2_base_types {
     };
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use chrono::prelude::*;
-    use rumtk_core::core::{is_unique, RUMResult};
+    use rumtk_core::core::{is_unique, is_unique_byte, RUMResult};
     use rumtk_core::maths::generate_tenth_factor;
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
     use rumtk_core::strings::{rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
-    use rumtk_core::types::{RUMDeserialize, RUMSerialize};
+    use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 
     use std::fmt::Debug;
     /**************************** Constants**************************************/
@@ -78,15 +78,15 @@ pub mod v2_base_types {
                 truncation_character: '#' as u8,
             }
         }
-        pub fn from_str(msh_fragment: &str) -> V2Result<Self> {
-            let msg_key_chars = Self::isolate_parse_chars(&msh_fragment);
-            let key_chars = Self::validate_msh_key_chars(&msg_key_chars)?;
-            let field_separator: char = key_chars[0];
+        pub fn from_fragment(msh_fragment: &[u8]) -> V2Result<Self> {
+            let key_chars = Self::isolate_parse_chars(&msh_fragment);
+            Self::validate_msh_key_chars(&key_chars[0..])?;
+            let field_separator: u8 = key_chars[0];
 
             match key_chars.len() - 1 {
                 5 => Ok(V2ParserCharacters {
                     segment_terminator: V2_SEGMENT_TERMINATOR as u8,
-                    field_separator: field_separator as u8,
+                    field_separator,
                     component_separator: key_chars[1] as u8,
                     repetition_separator: key_chars[2] as u8,
                     escape_character: key_chars[3] as u8,
@@ -95,7 +95,7 @@ pub mod v2_base_types {
                 }),
                 4 => Ok(V2ParserCharacters {
                     segment_terminator: V2_SEGMENT_TERMINATOR as u8,
-                    field_separator: field_separator as u8,
+                    field_separator,
                     component_separator: key_chars[1] as u8,
                     repetition_separator: key_chars[2] as u8,
                     escape_character: key_chars[3] as u8,
@@ -106,26 +106,29 @@ pub mod v2_base_types {
             }
         }
 
-        pub fn from(input: &str) -> V2Result<Self> {
-            let msh_segment = Self::find_msh(input)?;
-            V2ParserCharacters::from_str(&msh_segment[3..])
+        pub fn from(input: &RUMBuffer) -> V2Result<Self> {
+            let msh_segment_start = Self::find_msh(input)?;
+            V2ParserCharacters::from_fragment(&input[msh_segment_start + 3..])
         }
 
         // Message parsing operations
-        pub fn find_msh(data: &str) -> V2Result<&str> {
-            match data.find(V2_MSHEADER_PATTERN) {
-                Some(index) => {
-                    let start = index + V2_MSHEADER_PATTERN.len();
-                    let end = start + 7;
-                    Ok(&data[start..end])
-                },
-                None => Err(rumtk_format!("No MSH segment found! The message is malformed or incomplete!")),
+        pub fn find_msh(data: &RUMBuffer) -> V2Result<usize> {
+            let data_length = data.len();
+            for i in 0..data_length {
+                if (i + 3) <= data_length &&
+                    data[i] == V2_MSHEADER_PATTERN[0] &&
+                    data[i + 1] == V2_MSHEADER_PATTERN[1] &&
+                    data[i + 2] == V2_MSHEADER_PATTERN[2]
+                {
+                    return Ok(i);
+                }
             }
+            Err(rumtk_format!("No MSH segment found! The message is malformed or incomplete!"))
         }
 
         pub fn validate_msh_key_chars(
-            msg_key_chars: &Vec<char>,
-        ) -> V2Result<&Vec<char>> {
+            msg_key_chars: &[u8],
+        ) -> V2Result<()> {
             if msg_key_chars.len() < 4 {
                 return Err(rumtk_format!(
                     "Too few parser characters! Is MSH malformed? => {:?}",
@@ -138,8 +141,8 @@ pub mod v2_base_types {
                     &msg_key_chars
                 ));
             }
-            if is_unique(msg_key_chars) {
-                return Ok(msg_key_chars);
+            if is_unique_byte(msg_key_chars) {
+                return Ok(());
             }
             Err(rumtk_format!(
                 "Unknown malformed parser characters! Is MSH malformed? => {:?}",
@@ -147,24 +150,22 @@ pub mod v2_base_types {
             ))
         }
 
-        pub fn isolate_parse_chars(key_fragment: &str) -> Vec<char> {
-            let mut chars = key_fragment.chars();
-            let mut parse_chars = Vec::<char>::with_capacity(key_fragment.len());
-            let field_separator = match chars.next() {
-                Some(c) => c,
-                None => {
-                    return parse_chars;
-                }
+        pub fn isolate_parse_chars(key_fragment: &[u8]) -> RUMBuffer {
+            let sep = key_fragment[0];
+            let mut window_end: usize = 0;
+            let max_fragment_size = match 20 <= key_fragment.len() {
+                true => 20, //Make sure no shenanigans with message manipulation can occur.
+                false => key_fragment.len(),
             };
-            parse_chars.push(field_separator);
 
-            while let Some(c) = chars.next() {
-                if c == field_separator {
+            for i in 0..max_fragment_size {
+                if key_fragment[i] == sep {
+                    window_end = i;
                     break;
                 }
-                parse_chars.push(c);
             }
-            parse_chars
+
+            RUMBuffer::copy_from_slice(&key_fragment[0..window_end])
         }
     }
     ///

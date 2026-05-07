@@ -703,8 +703,15 @@ pub fn string_to_buffer(data: &str) -> RUMBuffer {
 /// assert_eq!(result, expected, "Buffer to RUMString conversion failed!");
 /// ```
 ///
-pub fn buffer_to_string(buffer: &RUMBuffer) -> RUMResult<RUMString> {
-    match buffer.as_slice().to_string() {
+pub fn buffer_to_string(buffer: &[u8]) -> RUMResult<RUMString> {
+    match buffer.to_string() {
+        Ok(string) => Ok(string),
+        Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
+    }
+}
+
+pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
+    match std::str::from_utf8(buffer) {
         Ok(string) => Ok(string),
         Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
     }

@@ -57,15 +57,15 @@ pub struct RUMTKInterfaceArgs {
 }
 
 fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
-    let stdin_msg = rumtk_read_stdin!()?.as_slice().to_string();
+    let stdin_msg = rumtk_read_stdin!()?;
     if !stdin_msg.is_empty() {
-        let out_data = match rumtk_deserialize!(&stdin_msg) {
+        let out_data = match rumtk_deserialize!(&stdin_msg.as_slice().to_string()?) {
             Ok(msg) => {
                 let parsed_msg: V2Message = msg;
                 rumtk_v2_generate_message!(&parsed_msg)
             }
-            Err(e) => {
-                let msg = rumtk_v2_parse_message!(&stdin_msg)?;
+            Err(_) => {
+                let msg = rumtk_v2_parse_message!(stdin_msg)?;
 
                 if !args.quiet {
                     match rumtk_serialize!(&msg, &args.pretty)?.parse() {

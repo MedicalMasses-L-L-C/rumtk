@@ -44,6 +44,16 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
     true
 }
 
+pub fn is_unique_byte(data: &[u8]) -> bool {
+    let mut items = ahash::AHashSet::with_capacity(data.len());
+    for i in 0..data.len() {
+        if !items.insert(data[i]) {
+            return false;
+        }
+    }
+    true
+}
+
 ///
 /// Take a requested index and the maximum size of the item container.
 /// Check if the index is valid and return an error if it is.

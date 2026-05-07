@@ -49,7 +49,7 @@ pub mod v2_parser {
     use rumtk_core::core::{split_buffer, RUMResult};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::buffer_to_string;
+    use rumtk_core::strings::{buffer_to_str, buffer_to_string};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -96,10 +96,9 @@ pub mod v2_parser {
     /// a field for other purposes is prohibited.
     /// ```
     ///
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Component {
-        #[serde(with = "SerdeRUMBufferProxy")]
-        component: SerdeRUMBufferProxy,
+        component: RUMBuffer,
     }
 
     impl V2Component {
@@ -149,14 +148,12 @@ pub mod v2_parser {
         ///
         fn from(component: RUMBuffer) -> V2Component {
             V2Component {
-                component: SerdeRUMBufferProxy {
-                    inner: component
-                }
+                component
             }
         }
 
         pub fn to_string(&self) -> V2String {
-            self.component.to_string()
+            buffer_to_string(&self.component).unwrap_or_default()
         }
 
         pub fn is_empty(&self) -> bool {
@@ -168,25 +165,25 @@ pub mod v2_parser {
         }
 
         pub fn as_datetime(&self) -> RUMResult<V2DateTime> {
-            Ok(V2DateTime::from_str(&self.component)?)
+            Ok(V2DateTime::from_str(buffer_to_str(&self.component)?)?)
         }
 
         pub fn as_bool(&self) -> bool {
-            self.component.parse::<bool>().unwrap()
+            self.as_str().parse::<bool>().unwrap()
         }
 
         pub fn as_integer(&self) -> i64 {
-            self.component.parse::<i64>().unwrap()
+            self.as_str().parse::<i64>().unwrap()
         }
 
         pub fn as_float(&self) -> f64 {
-            self.component.parse::<f64>().unwrap()
+            self.as_str().parse::<f64>().unwrap()
         }
     }
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            ""
+            buffer_to_str(&self.component).unwrap_or_default()
         }
     }
 
@@ -210,7 +207,7 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -282,9 +279,9 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Segment {
-        name: &'static str,
+        name: V2String,
         description: &'static str,
         fields: V2FieldList,
     }
@@ -302,7 +299,8 @@ pub mod v2_parser {
             }
 
             let mut field_list = V2FieldList::with_capacity(raw_fields.len());
-            let field_name = raw_fields[0..3];
+
+            let field_name = buffer_to_string(&raw_fields.first().unwrap()[0..3])?;
 
             for raw_field in raw_fields {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
@@ -385,6 +383,7 @@ pub mod v2_parser {
     pub struct V2Message {
         raw: V2String,
         separators: V2ParserCharacters,
+        #[serde(skip)]
         segment_groups: SegmentMap,
     }
 
@@ -398,13 +397,13 @@ pub mod v2_parser {
         /// ```
         ///
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
-            let raw = V2Message::sanitize(raw_msg)?;
-            let raw_view = raw.clone().as_str();
-            let parse_characters = V2ParserCharacters::from(&raw_view)?;
-            let segments = V2Message::extract_segments(&raw_view, &parse_characters)?;
+            let sanitized = V2Message::sanitize(raw_msg)?;
+            let sanitized_string = buffer_to_string(&sanitized)?;
+            let parse_characters = V2ParserCharacters::from(&sanitized)?;
+            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
 
             Ok(V2Message {
-                raw,
+                raw: sanitized_string,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -416,8 +415,8 @@ pub mod v2_parser {
         /// but this is an artifact of following the standard and forcing all linefeed characters into
         /// carriage return characters as terminator.
         ///
-        pub fn to_string(&self) -> &V2String {
-            &self.raw
+        pub fn to_string(&self) -> V2String {
+            self.raw.clone()
         }
 
         pub fn len(&self) -> usize {
@@ -540,7 +539,7 @@ pub mod v2_parser {
         /// assert_eq!(sanitized, RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
-        pub fn sanitize(raw_message: RUMBuffer) -> RUMResult<V2String> {
+        pub fn sanitize(raw_message: RUMBuffer) -> RUMResult<RUMBuffer> {
             match raw_message.try_into_mut() {
                 Ok(mut raw_message) => {
                     for i in 0..raw_message.len() {
@@ -548,7 +547,7 @@ pub mod v2_parser {
                             raw_message[i] = b'\r';
                         }
                     }
-                    Ok(buffer_to_string(&raw_message.freeze())?)
+                    Ok(raw_message.freeze())
                 },
                 Err(_) => {
                     Err(rumtk_format!("Unable to modify input in place because this instance is not unique. Aborting processing..."))
