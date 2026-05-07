@@ -44,15 +44,16 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use pyo3::exceptions::PyValueError;
+    use rumtk_core::buffers::{buffer_replace, buffer_to_str, buffer_to_string, split_buffer};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::core::{clamp_index, RUMError};
-    use rumtk_core::core::{split_buffer, RUMResult};
+    use rumtk_core::core::RUMResult;
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::{buffer_replace, buffer_to_str, buffer_to_string, string_to_buffer};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
+    use rumtk_core::strings::string_to_buffer;
     use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap, SerdeRUMBufferProxy};
     use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
@@ -213,7 +214,7 @@ pub mod v2_parser {
     }
 
     impl V2Field {
-        pub fn from(mut val: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Field {
+        pub fn from(val: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Field {
             let mut components = split_buffer(val, parser_chars.component_separator);
             let mut component_list: ComponentList = ComponentList::with_capacity(components.len());
 

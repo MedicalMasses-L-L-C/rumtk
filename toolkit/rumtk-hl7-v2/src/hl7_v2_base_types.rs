@@ -25,12 +25,13 @@ pub mod v2_base_types {
     };
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use chrono::prelude::*;
-    use rumtk_core::core::{is_unique, is_unique_bytes, RUMResult};
+    use rumtk_core::buffers::{buffer_find, buffer_has_pattern, is_unique_bytes};
+    use rumtk_core::core::{is_unique, RUMResult};
     use rumtk_core::maths::generate_tenth_factor;
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{buffer_find, buffer_has_pattern, rumtk_format, AsStr};
+    use rumtk_core::strings::{rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 

@@ -18,9 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::core::{is_unique, RUMResult, RUMVec};
-use crate::types::{RUMBuffer, RUMBufferMut};
+use crate::types::RUMBuffer;
 use base64::prelude::*;
-use bytes::BufMut;
 use chardetng::EncodingDetector;
 use encoding_rs::Encoding;
 use std::cmp::min;
@@ -687,91 +686,6 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 ///
 pub fn string_to_buffer(data: &str) -> RUMBuffer {
     RUMBuffer::copy_from_slice(data.as_bytes())
-}
-
-///
-/// Convert buffer to string.
-///
-/// ## Example
-/// ```
-/// use rumtk_core::strings::buffer_to_string;
-/// use rumtk_core::types::RUMBuffer;
-///
-/// const expected: &str = "Hello World!";
-/// let buffer = RUMBuffer::from_static(expected.as_bytes());
-/// let result = buffer_to_string(&buffer).unwrap();
-///
-/// assert_eq!(result, expected, "Buffer to RUMString conversion failed!");
-/// ```
-///
-pub fn buffer_to_string(buffer: &[u8]) -> RUMResult<RUMString> {
-    match buffer.to_string() {
-        Ok(string) => Ok(string),
-        Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
-    }
-}
-
-pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
-    match std::str::from_utf8(buffer) {
-        Ok(string) => Ok(string),
-        Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
-    }
-}
-
-pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
-    let buffer_length = buffer.len();
-    let pattern_length = pattern.len();
-
-    for i in offset..buffer_length {
-        if (i + pattern_length) <= buffer_length
-        {
-            let mut matches = true;
-            for j in 0..pattern_length {
-                matches = matches && buffer[i + j] == pattern[j]
-            }
-
-            if matches {
-                return i;
-            }
-        }
-    }
-
-    usize::MAX
-}
-
-pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
-    let buffer_length = buffer.len();
-    let pad_length = target_length - buffer_length;
-    let s = buffer_length + pad_length;
-    let mut slice = RUMBufferMut::with_capacity(s);
-
-    slice.put(buffer);
-
-    for _ in buffer_length..s {
-        slice.put_u8(pad);
-    }
-
-    slice.freeze()
-}
-
-pub fn buffer_replace<'a>(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
-    let mut start = buffer_find(buffer.as_slice(), pattern, 0);
-    let mut last = 0;
-    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len());
-
-    while start < buffer.len() {
-        new_buffer.put(&buffer[last ..start]);
-        last = start;
-
-        new_buffer.put(replacement);
-        start = buffer_find(buffer.as_slice(), pattern, start + replacement.len());
-    }
-
-    new_buffer.freeze()
-}
-
-pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
-    buffer_find(buffer, pattern, 0) != usize::MAX
 }
 
 ///

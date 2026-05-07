@@ -17,9 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::strings::{buffer_to_string, string_to_buffer};
+use crate::buffers::buffer_to_string;
+pub use crate::buffers::{RUMBuffer, RUMBufferMut};
+use crate::strings::string_to_buffer;
 pub use ahash::AHashMap as RUMHashMap;
-pub use bytes::{Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
 pub use serde;

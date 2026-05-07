@@ -60,9 +60,10 @@ mod tests {
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use pyo3::unindent::Unindent;
+    use rumtk_core::buffers::{buffer_has_pattern, buffer_to_str};
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
-    use rumtk_core::strings::{basic_escape, buffer_has_pattern, buffer_to_str, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
+    use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
     use rumtk_core::{
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize,
