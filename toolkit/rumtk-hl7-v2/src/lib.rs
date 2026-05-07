@@ -59,11 +59,11 @@ mod tests {
         rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_iter_channels,
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
+    use pyo3::unindent::Unindent;
     use rumtk_core::core::RUMResult;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
-    use rumtk_core::strings::{
-        basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils,
-    };
+    use rumtk_core::strings::{basic_escape, buffer_has_pattern, buffer_to_str, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
+    use rumtk_core::types::RUMBuffer;
     use rumtk_core::{
         rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize,
         rumtk_sleep,
@@ -75,9 +75,9 @@ mod tests {
     /*********************************Test Cases**************************************/
     #[test]
     fn test_hl7_v2_field_parsing() {
-        let field_str = DEFAULT_HL7_V2_FIELD_STRING;
+        let field_str = RUMBuffer::from_static(DEFAULT_HL7_V2_FIELD_STRING.as_bytes());
         let encode_chars = V2ParserCharacters::new();
-        let field = V2Field::from_str(&field_str, &encode_chars);
+        let field = V2Field::from(field_str, &encode_chars);
         println!("{:#?}", &field);
         assert_eq!(field.len(), 3, "Wrong number of components in field");
         println!(
@@ -114,26 +114,27 @@ mod tests {
 
     #[test]
     fn test_sanitize_hl7_v2_message() {
-        let message = DEFAULT_HL7_V2_MESSAGE;
-        let sanitized_message = V2Message::sanitize(message);
-        println!("{}", message);
-        println!("{}", sanitized_message);
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(message.clone()).unwrap();
+        println!("{}", buffer_to_str(&message).unwrap());
+        println!("{}", buffer_to_str(&sanitized_message).unwrap());
         assert!(
-            message.contains('\n'),
+            message.contains(&('\n' as u8)),
             "Raw message has new line characters."
         );
         assert!(
-            !sanitized_message.contains('\n'),
+            !sanitized_message.contains(&('\n' as u8)),
             "Sanitized message has new line characters."
         );
-        assert!(!sanitized_message.contains("\r\r"), "Sanitizer failed to consolidate double carriage returns into a single carriage return per instance..");
+        assert!(!buffer_has_pattern(&sanitized_message, b"\r\r"), "Sanitizer failed to consolidate double carriage returns into a single carriage return per instance..");
     }
 
     #[test]
     fn test_tokenize_hl7_v2_message() {
-        let message = DEFAULT_HL7_V2_MESSAGE;
-        let sanitized_message = V2Message::sanitize(message);
-        let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
+        let encode_chars = V2ParserCharacters::new();
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(message).unwrap();
+        let tokens = V2Message::tokenize_segments(sanitized_message, &encode_chars);
         println!("Token count {}", tokens.len());
         assert_eq!(
             tokens.len(),
@@ -144,49 +145,47 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_encoding_characters() {
-        let message = DEFAULT_HL7_V2_MESSAGE;
-        let sanitized_message = V2Message::sanitize(message);
-        let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
-        let encode_chars = V2ParserCharacters::from_msh(tokens[0]).unwrap();
+        let encode_chars = V2ParserCharacters::new();
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(message).unwrap();
+        let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{:#?}", encode_chars);
         assert!(
-            encode_chars.segment_terminator.contains('\r'),
+            encode_chars.segment_terminator == '\r' as u8,
             "Wrong segment character!"
         );
         assert!(
-            encode_chars.field_separator.contains('|'),
+            encode_chars.field_separator == '|' as u8,
             "Wrong field character!"
         );
         assert!(
-            encode_chars.component_separator.contains('^'),
+            encode_chars.component_separator == '^' as u8,
             "Wrong component character!"
         );
         assert!(
-            encode_chars.repetition_separator.contains('~'),
+            encode_chars.repetition_separator == '~' as u8,
             "Wrong repetition character!"
         );
         assert!(
-            encode_chars.escape_character.contains('\\'),
+            encode_chars.escape_character == '\\' as u8,
             "Wrong escape character!"
         );
         assert!(
-            encode_chars.subcomponent_separator.contains('&'),
+            encode_chars.subcomponent_separator == '&' as u8,
             "Wrong subcomponent character!"
         );
         assert!(
-            encode_chars.truncation_character.contains('#'),
+            encode_chars.truncation_character == '#' as u8,
             "Wrong truncation character!"
         );
     }
 
     #[test]
     fn test_extract_hl7_v2_message_segments() {
-        let message = DEFAULT_HL7_V2_MESSAGE;
-        let sanitized_message = V2Message::sanitize(message);
-        let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
-        let msh = V2Message::find_msh(&tokens).unwrap();
-        let encode_chars = V2ParserCharacters::from_msh(&msh.as_str()).unwrap();
-        let parsed_segments = V2Message::extract_segments(&tokens, &encode_chars).unwrap();
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(message).unwrap();
+        let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
+        let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
@@ -221,12 +220,10 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_scrambled_segments() {
-        let message = HL7_V2_SCRAMBLED;
-        let sanitized_message = V2Message::sanitize(message);
-        let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
-        let msh = V2Message::find_msh(&tokens).unwrap();
-        let encode_chars = V2ParserCharacters::from_msh(&msh.as_str()).unwrap();
-        let parsed_segments = V2Message::extract_segments(&tokens, &encode_chars).unwrap();
+        let message = RUMBuffer::from_static(HL7_V2_SCRAMBLED.as_bytes());
+        let sanitized_message = V2Message::sanitize(message).unwrap();
+        let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
+        let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
@@ -257,7 +254,7 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_message() {
-        let message = V2Message::from_str(DEFAULT_HL7_V2_MESSAGE);
+        let message = V2Message::try_from(DEFAULT_HL7_V2_MESSAGE).unwrap();
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -288,7 +285,7 @@ mod tests {
     ///
     #[test]
     fn test_load_hl7_v2_message_wir_iis() {
-        let message = V2Message::from_str(HL7_V2_MESSAGE);
+        let message = V2Message::try_from(HL7_V2_MESSAGE).unwrap();
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -316,7 +313,7 @@ mod tests {
     }
     #[test]
     fn test_load_hl7_v2_message_scrambled() {
-        let message = V2Message::from_str(HL7_V2_SCRAMBLED);
+        let message = V2Message::try_from(HL7_V2_SCRAMBLED).unwrap();
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS["MSH"]),
             "Missing MSH segment!"
@@ -340,7 +337,7 @@ mod tests {
     ///
     #[test]
     fn test_load_hl7_v2_utf8_message() {
-        let message = V2Message::from_str(HL7_V2_PDF_MESSAGE);
+        let message = V2Message::try_from(HL7_V2_PDF_MESSAGE).unwrap();
         let pid = message.get(&V2_SEGMENT_IDS["PID"], 1).unwrap();
         let orc = message.get(&V2_SEGMENT_IDS["ORC"], 1).unwrap();
         let obr = message.get(&V2_SEGMENT_IDS["OBR"], 1).unwrap();
@@ -380,7 +377,7 @@ mod tests {
     ///
     #[test]
     fn test_handle_hl7_v2_message_with_repeating_fields() {
-        let message = V2Message::from_str(HL7_V2_REPEATING_FIELD_MESSAGE);
+        let message = V2Message::try_from(HL7_V2_REPEATING_FIELD_MESSAGE).unwrap();
         let msh = message.get(&V2_SEGMENT_IDS["MSH"], 1).unwrap();
         let field1 = msh
             .get(-1)
@@ -478,11 +475,11 @@ mod tests {
         let pattern = "MSH(1)-1[5].4";
         let groups = string_search_named_captures(pattern, REGEX_V2_SEARCH_DEFAULT, "1").unwrap();
         let expected = SearchGroups::from([
-            (RUMString::new("segment_group"), RUMString::new("1")),
-            (RUMString::new("sub_field"), RUMString::new("5")),
-            (RUMString::new("segment"), RUMString::new("MSH")),
-            (RUMString::new("field"), RUMString::new("-1")),
-            (RUMString::new("component"), RUMString::new("4")),
+            (RUMString::from("segment_group"), RUMString::from("1")),
+            (RUMString::from("sub_field"), RUMString::from("5")),
+            (RUMString::from("segment"), RUMString::from("MSH")),
+            (RUMString::from("field"), RUMString::from("-1")),
+            (RUMString::from("component"), RUMString::from("4")),
         ]);
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",
@@ -499,11 +496,11 @@ mod tests {
         let pattern = "MSH1.4";
         let groups = string_search_named_captures(pattern, REGEX_V2_SEARCH_DEFAULT, "1").unwrap();
         let expected = SearchGroups::from([
-            (RUMString::new("segment_group"), RUMString::new("1")),
-            (RUMString::new("sub_field"), RUMString::new("1")),
-            (RUMString::new("segment"), RUMString::new("MSH")),
-            (RUMString::new("field"), RUMString::new("1")),
-            (RUMString::new("component"), RUMString::new("4")),
+            (RUMString::from("segment_group"), RUMString::from("1")),
+            (RUMString::from("sub_field"), RUMString::from("1")),
+            (RUMString::from("segment"), RUMString::from("MSH")),
+            (RUMString::from("field"), RUMString::from("1")),
+            (RUMString::from("component"), RUMString::from("4")),
         ]);
         println!(
             "Input: {:?} Expected: {:?} Got: {:?}",
@@ -915,7 +912,7 @@ mod tests {
                 "Testing input #{} \"{}\". Expected output is \"{}\". Casting to FT type.",
                 i, input, expected_val
             );
-            let val = input.to_v2formattedtext("~").unwrap();
+            let val = input.to_v2formattedtext('~').unwrap();
             println!("{}", val.len());
             let err_msg = rumtk_format!("The expected formatted string does not match the formatted string generated from the input [In: {}, Got: {}]", input, val);
             assert_eq!(expected_val, val, "{}", &err_msg);
@@ -925,10 +922,9 @@ mod tests {
 
     #[test]
     fn test_validated_cast_component_to_type() {
-        let message = DEFAULT_HL7_V2_MESSAGE;
-        let sanitized_message = V2Message::sanitize(message);
-        let tokens = V2Message::tokenize_segments(&sanitized_message.as_str());
-        let encode_chars = V2ParserCharacters::from_msh(tokens[0]).unwrap();
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(message).unwrap();
+        let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         let v2_component = V2ComponentTypeDescriptor::new(
             "date",
             "Date",
@@ -977,12 +973,12 @@ mod tests {
 
         assert_eq!(
             expected_message,
-            payload.to_string(),
+            payload.to_string().unwrap(),
             "{}",
             rumtk_format!(
                 "Malformed payload! Expected: {} Found: {}",
                 expected_message,
-                payload.to_string()
+                payload.to_string().unwrap()
             )
         );
     }
@@ -1054,7 +1050,7 @@ mod tests {
         let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
         let expected = rumtk_format!("{}:{}", client_ip, client_port);
         assert_eq!(
-            expected, client_id,
+            &expected, client_id,
             "Expected to see client with ID: {}",
             expected
         );
@@ -1077,7 +1073,7 @@ mod tests {
         let safe_listener = rumtk_v2_mllp_listen!(PORT, MLLP_FILTER_POLICY::NONE, true).unwrap();
 
         let send_h = spawn(|| -> RUMResult<()> {
-            let message = RUMString::new("Hello World");
+            let message = RUMString::from("Hello World");
             let safe_client = rumtk_v2_mllp_connect!(PORT, MLLP_FILTER_POLICY::NONE)?;
             let (ip, port) = rumtk_v2_mllp_get_ip_port!(&safe_client)?;
             let endpoint = rumtk_format!("{}:{}", ip, port);
@@ -1147,7 +1143,7 @@ mod tests {
         let mut server_channel = server_channels.get_mut(0).unwrap().clone();
         let channel_address = server_channel.lock().unwrap().get_address_info().unwrap();
         assert_eq!(
-            &client_id,
+            client_id,
             &channel_address,
             "{}",
             rumtk_format!(
@@ -1204,7 +1200,7 @@ mod tests {
 
         assert_eq!(
             &expected_message,
-            &received_message,
+            received_message,
             "{}",
             rumtk_format!(
                 "Issue sending message through channel! Expected: {} Received: {}",

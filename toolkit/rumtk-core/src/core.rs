@@ -44,7 +44,7 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
     true
 }
 
-pub fn is_unique_byte(data: &[u8]) -> bool {
+pub fn is_unique_bytes(data: &[u8]) -> bool {
     let mut items = ahash::AHashSet::with_capacity(data.len());
     for i in 0..data.len() {
         if !items.insert(data[i]) {

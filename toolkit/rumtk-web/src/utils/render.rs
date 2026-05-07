@@ -286,7 +286,7 @@ macro_rules! rumtk_web_post_process_html {
 /// let app_state = SharedAppState::default();
 /// let mydiv = rumtk_web_render_component!("div", [(PARAMS_TYPE, "story")], app_state).unwrap().to_string();
 ///
-/// let expected_page = RUMString::new("<div class='div-default'>default</div>");
+/// let expected_page = RUMString::from("<div class='div-default'>default</div>");
 /// let page_response = rumtk_web_render_page_contents!(
 ///     &vec![
 ///         mydiv

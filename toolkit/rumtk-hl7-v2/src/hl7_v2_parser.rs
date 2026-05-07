@@ -49,7 +49,7 @@ pub mod v2_parser {
     use rumtk_core::core::{split_buffer, RUMResult};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::{buffer_to_str, buffer_to_string};
+    use rumtk_core::strings::{buffer_to_str, buffer_to_string, string_to_buffer};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -555,13 +555,19 @@ pub mod v2_parser {
             }
         }
 
+        pub fn tokenize_segments(message: RUMBuffer, parse_characters: &V2ParserCharacters) -> Vec<RUMBuffer> {
+            //Per Figure 2-1. Delimiter values of the HL7 v2 2.9 standard, each segment is separated
+            // by a carriage return <cr>. The value cannot be changed by implementers.
+            split_buffer(message, parse_characters.segment_terminator)
+        }
+
         ///
         ///
         pub fn extract_segments(
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<SegmentMap> {
-            let mut raw_segments: Vec<RUMBuffer> = split_buffer(msg, parser_chars.segment_terminator);
+            let mut raw_segments = V2Message::tokenize_segments(msg, parser_chars);
             let mut segments: SegmentMap = SegmentMap::with_capacity(raw_segments.len());
 
             for segment in raw_segments {
@@ -602,6 +608,41 @@ pub mod v2_parser {
         type Error = RUMString;
         fn try_from(input: RUMBuffer) -> V2Result<V2Message> {
             V2Message::try_from_buffer(input)
+        }
+    }
+
+    impl<'a> TryFrom<&[u8]> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &[u8]) -> V2Result<V2Message> {
+            V2Message::try_from_buffer(RUMBuffer::copy_from_slice(input))
+        }
+    }
+
+    impl<'a> TryFrom<V2String> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: V2String) -> V2Result<V2Message> {
+            V2Message::try_from(string_to_buffer(input.as_str()))
+        }
+    }
+
+    impl<'a> TryFrom<&V2String> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &V2String) -> V2Result<V2Message> {
+            V2Message::try_from(input.as_str())
+        }
+    }
+
+    impl<'a> TryFrom<&str> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &str) -> V2Result<V2Message> {
+            V2Message::try_from(string_to_buffer(input))
+        }
+    }
+
+    impl<'a> TryFrom<&&str> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &&str) -> V2Result<V2Message> {
+            V2Message::try_from(input.as_bytes())
         }
     }
 }

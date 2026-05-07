@@ -121,7 +121,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 ///     let job_data = match job_result {
 ///         Some(t) => t?.to_string(),
-///         _ => RUMString::new("")
+///         _ => RUMString::from("")
 ///     };
 ///
 ///     rumtk_web_post_process_html!(job_data)

@@ -1000,7 +1000,7 @@ pub mod mllp_v2_helpers {
 ///     let safe_listener = rumtk_v2_mllp_listen!(port, MLLP_FILTER_POLICY::NONE, true).unwrap();
 ///
 ///     let send_h = thread::spawn(|| -> RUMResult<()> {
-///         let message = RUMString::new("Hello World");
+///         let message = RUMString::from("Hello World");
 ///         let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
 ///         Ok(rumtk_v2_mllp_send!(&safe_client, "", &message.clone())?)
 ///     });
@@ -1386,7 +1386,7 @@ pub mod mllp_v2_api {
     ///     // to process send, receive, ack/nack loops on the message, so they timeout awaiting.
     ///     // This is ok because this is only an example that is also used to confirm that the
     ///     // macro is working at all!
-    ///     let expected = Err(RUMString::new("Task failed with Timeout reached while awaiting for message!"));
+    ///     let expected = Err(RUMString::from("Task failed with Timeout reached while awaiting for message!"));
     ///     assert_eq!(expected, result, "Expected to timeout while awaiting response!");
     /// ```
     ///
@@ -1413,7 +1413,7 @@ pub mod mllp_v2_api {
     ///     use rumtk_core::strings::RUMString;
     ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY};
     ///     use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_connect, rumtk_v2_mllp_send, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_get_ip_port};
-    ///     let message = RUMString::new("Hello World");
+    ///     let message = RUMString::from("Hello World");
     ///     let safe_listener = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
     ///     let (ip, port) = rumtk_v2_mllp_get_ip_port!(safe_listener).unwrap();
     ///     let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();

@@ -173,7 +173,7 @@ fn main() {
         }
     } else {
         // Build listener
-        let mut listener: RUMResult<SafeAsyncMLLP> = Err(RUMString::new(""));
+        let mut listener: RUMResult<SafeAsyncMLLP> = Err(RUMString::from(""));
         if args.ip.is_none() && args.port.is_none() {
             listener = rumtk_v2_mllp_listen!(mllp_filter_policy, args.local);
         } else if args.ip.is_none() && !args.port.is_none() {

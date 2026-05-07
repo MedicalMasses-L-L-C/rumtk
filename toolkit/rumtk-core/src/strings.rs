@@ -717,6 +717,27 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
     }
 }
 
+pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
+    let buffer_length = buffer.len();
+    let pattern_length = pattern.len();
+    let mut has_pattern = false;
+
+    for i in 0..buffer_length {
+        if (i + pattern_length) <= buffer_length
+        {
+            for j in 0..pattern_length {
+                has_pattern = has_pattern || buffer[i + j] != pattern[j]
+            }
+
+            if !has_pattern {
+                break;
+            }
+        }
+    }
+
+    has_pattern
+}
+
 ///
 /// Given a set of keys and replacements, transform the input string.
 ///

@@ -25,12 +25,12 @@ pub mod v2_base_types {
     };
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use chrono::prelude::*;
-    use rumtk_core::core::{is_unique, is_unique_byte, RUMResult};
+    use rumtk_core::core::{is_unique, is_unique_bytes, RUMResult};
     use rumtk_core::maths::generate_tenth_factor;
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
-    use rumtk_core::strings::{rumtk_format, AsStr};
+    use rumtk_core::strings::{buffer_has_pattern, rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
 
@@ -115,10 +115,7 @@ pub mod v2_base_types {
         pub fn find_msh(data: &RUMBuffer) -> V2Result<usize> {
             let data_length = data.len();
             for i in 0..data_length {
-                if (i + 3) <= data_length &&
-                    data[i] == V2_MSHEADER_PATTERN[0] &&
-                    data[i + 1] == V2_MSHEADER_PATTERN[1] &&
-                    data[i + 2] == V2_MSHEADER_PATTERN[2]
+                if buffer_has_pattern(data.as_slice(), V2_MSHEADER_PATTERN)
                 {
                     return Ok(i);
                 }
@@ -141,7 +138,7 @@ pub mod v2_base_types {
                     &msg_key_chars
                 ));
             }
-            if is_unique_byte(msg_key_chars) {
+            if is_unique_bytes(msg_key_chars) {
                 return Ok(());
             }
             Err(rumtk_format!(
