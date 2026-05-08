@@ -241,7 +241,7 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     slice.freeze()
 }
 
-pub fn buffer_replace<'a>(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
+pub fn buffer_replace(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
     let input_length = buffer.len();
     let slice = buffer.as_slice();
     let mut start = buffer_find(&slice, pattern, 0);
@@ -258,6 +258,16 @@ pub fn buffer_replace<'a>(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]
     new_buffer.put(&buffer[last..input_length]);
 
     new_buffer.freeze()
+}
+
+pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
+    let trimmed = buffer.trim_ascii();
+
+    if trimmed.len() < buffer.len() {
+        RUMBuffer::copy_from_slice(trimmed)
+    } else {
+        buffer.clone()
+    }
 }
 
 pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {

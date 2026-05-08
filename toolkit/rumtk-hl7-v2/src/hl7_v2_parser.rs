@@ -44,7 +44,7 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::buffers::{buffer_replace, buffer_split, buffer_to_str, buffer_to_string};
+    use rumtk_core::buffers::{buffer_replace, buffer_split, buffer_to_str, buffer_to_string, buffer_trim};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::core::RUMResult;
     use rumtk_core::core::{clamp_index, RUMError};
@@ -219,7 +219,7 @@ pub mod v2_parser {
             let mut component_list: ComponentList = ComponentList::with_capacity(components.len());
 
             for c in components {
-                component_list.push(V2Component::from(c))
+                component_list.push(V2Component::from(buffer_trim(&c)))
             }
 
             V2Field {
@@ -289,7 +289,8 @@ pub mod v2_parser {
 
     impl V2Segment {
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
-            let mut raw_fields: Vec<RUMBuffer> = buffer_split(raw_segment, &[parser_chars.field_separator]);
+            let segment = buffer_trim(&raw_segment);
+            let mut raw_fields: Vec<RUMBuffer> = buffer_split(segment, &[parser_chars.field_separator]);
             let raw_field_count = raw_fields.len();
 
             if raw_field_count == 0 {
@@ -541,7 +542,8 @@ pub mod v2_parser {
         /// ```
         ///
         pub fn sanitize(raw_message: &RUMBuffer) -> RUMBuffer {
-            let data = buffer_replace(&raw_message, &['\n'  as u8], &['\r' as u8]);
+            let mut data = buffer_trim(&raw_message);
+            data = buffer_replace(&data, &['\n'  as u8], &['\r' as u8]);
             buffer_replace(&data, &['\r' as u8, '\r' as u8], &['\r' as u8])
         }
 

@@ -138,7 +138,7 @@ mod tests {
         let sanitized_message = V2Message::sanitize(&message);
         println!("Input => {:?}", &sanitized_message);
         println!("Parse chars => {:#?}", &encode_chars);
-        
+
         let tokens = V2Message::tokenize_segments(sanitized_message, &encode_chars);
         println!("Token count {}", tokens.len());
         assert_eq!(
@@ -228,6 +228,7 @@ mod tests {
         let message = RUMBuffer::from_static(HL7_V2_SCRAMBLED.as_bytes());
         let sanitized_message = V2Message::sanitize(&message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
+        println!("{}", buffer_to_str(&sanitized_message.as_slice()).unwrap());
         let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
         let keys = parsed_segments.keys();
         print!("Keys: ");
