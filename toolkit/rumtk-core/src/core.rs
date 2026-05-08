@@ -19,6 +19,7 @@
  */
 use crate::strings::rumtk_format;
 use crate::strings::RUMString;
+use std::collections::VecDeque;
 
 pub type RUMError = RUMString;
 
@@ -28,6 +29,7 @@ pub type RUMError = RUMString;
 pub type RUMResult<T> = Result<T, RUMError>;
 
 pub type RUMVec<T> = Vec<T>;
+pub type RUMVecDeque<T> = VecDeque<T>;
 
 pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
     let mut keys = ahash::AHashSet::with_capacity(data.len());

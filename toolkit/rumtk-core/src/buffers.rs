@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::core::{RUMResult, RUMVec};
+use crate::core::{RUMResult, RUMVec, RUMVecDeque};
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
 pub use bytes::{BufMut, Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 use clap::builder::TypedValueParser;
@@ -140,18 +140,18 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     set
 }
 
-pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVec<RUMBuffer> {
+pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVecDeque<RUMBuffer> {
     if input.is_empty() {
-        return RUMVec::new();
+        return RUMVecDeque::new();
     }
 
     let pattern_length = pattern.len();
-    let mut item_list = RUMVec::<RUMBuffer>::with_capacity(100);
+    let mut item_list = RUMVecDeque::<RUMBuffer>::with_capacity(100);
     let mut indx = buffer_find(input.as_slice(), pattern, 0);
 
     while indx < input.len() {
         let component = input.split_to(indx);
-        item_list.push(component);
+        item_list.push_back(component);
 
         // Let's consume the separator character so it does not show in any buffers.
         let _ = input.split_to(pattern_length);
@@ -160,7 +160,7 @@ pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVec<RUMBuffer> {
     }
 
     if input.len() > 0 {
-        item_list.push(input)
+        item_list.push_back(input)
     }
 
     item_list

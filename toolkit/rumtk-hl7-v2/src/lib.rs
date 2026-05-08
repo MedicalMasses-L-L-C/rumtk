@@ -347,7 +347,14 @@ mod tests {
         let pid = message.get(&V2_SEGMENT_IDS["PID"], 1).unwrap();
         let orc = message.get(&V2_SEGMENT_IDS["ORC"], 1).unwrap();
         let obr = message.get(&V2_SEGMENT_IDS["OBR"], 1).unwrap();
-        let name1 = pid.get(5).unwrap().get(0).unwrap().get(1).unwrap().as_str();
+        let name1 = pid
+            .get(5)
+            .unwrap()
+            .get(0)
+            .unwrap()
+            .get(1)
+            .unwrap()
+            .as_str();
         let name2 = orc
             .get(12)
             .unwrap()
