@@ -77,7 +77,6 @@ pub mod v2_base_types {
             }
         }
         pub fn from_fragment(msh_fragment: &[u8]) -> V2Result<Self> {
-            println!("{}", buffer_to_str(&msh_fragment)?);
             Self::validate_msh_key_chars(&msh_fragment)?;
 
             match msh_fragment.len() {
@@ -144,7 +143,6 @@ pub mod v2_base_types {
             let msh_header_start = Self::find_msh(input)?;
             let msh_segment_start = msh_header_start + V2_MSHEADER_PATTERN.len();
             let msh_segment_end = buffer_find(input.as_slice(), &[input[msh_segment_start]], msh_segment_start + 1);
-            println!("MSH index @ {} => {:?}", &msh_header_start, &input);
             V2ParserCharacters::from_fragment(&input[msh_segment_start..msh_segment_end])
         }
 
