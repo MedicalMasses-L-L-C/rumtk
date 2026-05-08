@@ -141,6 +141,10 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 }
 
 pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVec<RUMBuffer> {
+    if input.is_empty() {
+        return RUMVec::new();
+    }
+
     let pattern_length = pattern.len();
     let mut item_list = RUMVec::<RUMBuffer>::with_capacity(100);
     let mut indx = buffer_find(input.as_slice(), pattern, 0);
@@ -192,6 +196,10 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
 }
 
 pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
+    if buffer.is_empty() {
+        return usize::MAX;
+    }
+
     let pattern_length = pattern.len();
     let buffer_length = buffer.len() - pattern_length;
 
