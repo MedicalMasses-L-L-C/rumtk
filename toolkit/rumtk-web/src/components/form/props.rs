@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::strings::{rumtk_format, CompactStringExt, RUMString};
+use rumtk_core::strings::{rumtk_format, RUMString};
 
 type EventHandler<'a> = (&'a str, &'a str);
 type EventHandlers<'a> = Vec<EventHandler<'a>>;

@@ -17,9 +17,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::core::{new_random_string_set, RUMResult, RUMVec, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
+use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
+use rumtk_core::core::{RUMResult, RUMVec};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
-use rumtk_core::strings::{rumtk_format, string_format, CompactStringExt, RUMString};
+use rumtk_core::strings::{rumtk_format, string_format, RUMString};
 use rumtk_core::types::RUMBuffer;
 use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_run_async};
 use rumtk_web::{rumtk_web_get_pipelines, SharedAppState, TextMap};

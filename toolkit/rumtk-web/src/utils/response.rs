@@ -23,7 +23,7 @@
 use axum::body::Body;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Redirect, Response};
-use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
+use rumtk_core::strings::RUMString;
 
 pub type HTMLResponse = Response<Body>;
 
@@ -64,7 +64,7 @@ impl RUMWebResponse {
         }
     }
 
-    pub fn to_rumstring(&self) -> RUMString {
+    pub fn to_string(&self) -> RUMString {
         match self {
             RUMWebResponse::GetResponse(res) => res.to_string(),
             _ => RUMString::default(),
@@ -138,7 +138,7 @@ impl HTMLBody {
         self.0.into_response()
     }
 
-    pub fn to_rumstring(&self) -> RUMString {
+    pub fn to_string(&self) -> RUMString {
         self.0 .0.to_string()
     }
 }

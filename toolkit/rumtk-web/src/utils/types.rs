@@ -22,7 +22,7 @@ pub use super::conf::*;
 use axum::extract::{Multipart, Path, Query};
 use phf::Map;
 pub use rumtk_core::strings::RUMString;
-pub use rumtk_core::strings::{AsStr, CompactStringExt, RUMStringConversions, StringLike};
+pub use rumtk_core::strings::{AsStr, RUMStringConversions, StringLike};
 use rumtk_core::types::{RUMHashMap, RUMID};
 use std::fmt::{Debug, Display};
 use std::sync::Arc;

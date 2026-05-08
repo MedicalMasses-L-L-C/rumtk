@@ -18,9 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::core::RUMResult;
 use rumtk_core::strings::{
-    rumtk_format, RUMArrayConversions, RUMString, ToCompactString,
+    rumtk_format, RUMString,
 };
 use rumtk_core::types::{RUMBuffer, RUMHashMap, RUMID};
 
@@ -122,7 +123,7 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                     };
 
                     if typ == FORM_DATA_TYPE_DEFAULT {
-                        form_data.form.insert(name, data.to_vec().to_string());
+                        form_data.form.insert(name, buffer_to_string(data.as_slice())?);
                     } else {
                         let file_id = RUMID::new_v4().to_string();
                         &form_data.files.insert(file_id.clone(), data);

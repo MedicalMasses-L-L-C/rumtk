@@ -21,7 +21,7 @@ use super::utils::{run_flamegraph, run_hyperfine, run_perf_report, FILE_SIZE_MB}
 use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::api::benchmarks::utils::run_perf_stat;
 use crate::utils::types::BenchmarkReport;
-use rumtk_core::strings::{AsStr, RUMArrayConversions, RUMString, RUMStringConversions};
+use rumtk_core::strings::{AsStr, RUMString};
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
 use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};

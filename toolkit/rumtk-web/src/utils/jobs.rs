@@ -167,7 +167,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 ///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
 ///
-///     let job_data = job_result.unwrap()?.to_string();
+///     let job_data = job_result.unwrap()?;
 ///
 ///     rumtk_web_post_process_html!(job_data)
 /// }
