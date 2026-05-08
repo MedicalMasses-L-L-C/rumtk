@@ -190,11 +190,37 @@ pub mod v2_parser {
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            buffer_to_str(&self.component).unwrap_or_default()
+            buffer_to_str(self.component.as_slice()).unwrap_or_default()
         }
     }
 
     impl V2PrimitiveCasting for V2Component {}
+
+    impl RUMSerialize for V2Component {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: RUMSerializer,
+        {
+            // Convert external type to a serializable format
+            let string = match buffer_to_str(&self.component.as_slice()) {
+                Ok(string) => string,
+                Err(err) => return Err(serde::ser::Error::custom(err)),
+            };
+            serializer.serialize_str(string)
+        }
+    }
+
+    impl<'a> RUMDeserialize<'a> for V2Component {
+        fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
+        where
+            D: RUMDeserializer<'a>,
+        {
+            let escaped_val = String::deserialize(deserializer)?;
+            Ok(Self{
+                component: string_to_buffer(&escaped_val)
+            })
+        }
+    }
 
     pub type ComponentList = Vec<V2Component>;
 
@@ -214,7 +240,7 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Default, Debug, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -292,10 +318,10 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Default, Debug, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Segment {
         name: V2String,
-        description: &'static str,
+        description: V2String,
         fields: V2FieldList,
     }
 
@@ -326,8 +352,8 @@ pub mod v2_parser {
             }
 
             let field_description = match V2_SEGMENT_DESC.get(&segment_name) {
-                Some(description) => description,
-                None => V2_EMPTY_STRING,
+                Some(description) => description.to_string(),
+                None => V2_EMPTY_STRING.to_string(),
             };
 
             Ok(V2Segment {
@@ -407,7 +433,6 @@ pub mod v2_parser {
     pub struct V2Message {
         raw: V2String,
         separators: V2ParserCharacters,
-        #[serde(skip)]
         segment_groups: SegmentMap,
     }
 
