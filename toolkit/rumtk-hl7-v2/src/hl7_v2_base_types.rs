@@ -22,7 +22,7 @@ pub mod v2_base_types {
     use crate::hl7_v2_constants::{V2_COMPONENT_TERMINATOR, V2_DATETIME_MICRO_LENGTH, V2_DATETIME_THOUSAND_TICK, V2_ESCAPE_TERMINATOR, V2_FIELD_TERMINATOR, V2_MSHEADER_PATTERN, V2_REPETITION_TERMINATOR, V2_SEARCH_EXPR_TYPE, V2_SEGMENT_IDS, V2_SEGMENT_TERMINATOR, V2_SUBCOMPONENT_TERMINATOR, V2_TRUNCATION_CHARACTER};
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use chrono::prelude::*;
-    use rumtk_core::buffers::{buffer_find, buffer_has_pattern, buffer_to_str, is_unique_bytes};
+    use rumtk_core::buffers::{buffer_find, buffer_has_pattern, buffer_to_str, buffer_to_string, is_unique_bytes};
     use rumtk_core::core::{is_unique, RUMResult};
     use rumtk_core::maths::generate_tenth_factor;
     use rumtk_core::search::rumtk_search::{

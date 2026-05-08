@@ -60,7 +60,7 @@ impl InputProps<'_> {
         handler_string.trim().to_string()
     }
 
-    pub fn to_rumstring(&self) -> RUMString {
+    pub fn to_string(&self) -> RUMString {
         let default_text = RUMString::default();
         let mut options = vec![
             match &self.id {
@@ -153,9 +153,5 @@ impl InputProps<'_> {
             .filter(|itm| !itm.is_empty())
             .collect::<Vec<_>>()
             .join(" ")
-    }
-
-    pub fn to_string(&self) -> String {
-        self.to_string().to_string()
     }
 }
