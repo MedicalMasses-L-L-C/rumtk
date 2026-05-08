@@ -19,13 +19,10 @@
  */
 
 pub mod v2_base_types {
-    use crate::hl7_v2_constants::{
-        V2_DATETIME_MICRO_LENGTH, V2_DATETIME_THOUSAND_TICK, V2_MSHEADER_PATTERN,
-        V2_SEARCH_EXPR_TYPE, V2_SEGMENT_IDS, V2_SEGMENT_TERMINATOR, V2_TRUNCATION_CHARACTER,
-    };
+    use crate::hl7_v2_constants::{V2_COMPONENT_TERMINATOR, V2_DATETIME_MICRO_LENGTH, V2_DATETIME_THOUSAND_TICK, V2_ESCAPE_TERMINATOR, V2_FIELD_TERMINATOR, V2_MSHEADER_PATTERN, V2_REPETITION_TERMINATOR, V2_SEARCH_EXPR_TYPE, V2_SEGMENT_IDS, V2_SEGMENT_TERMINATOR, V2_SUBCOMPONENT_TERMINATOR, V2_TRUNCATION_CHARACTER};
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use chrono::prelude::*;
-    use rumtk_core::buffers::{buffer_find, buffer_has_pattern, is_unique_bytes};
+    use rumtk_core::buffers::{buffer_find, buffer_has_pattern, buffer_to_str, is_unique_bytes};
     use rumtk_core::core::{is_unique, RUMResult};
     use rumtk_core::maths::generate_tenth_factor;
     use rumtk_core::search::rumtk_search::{
@@ -70,46 +67,85 @@ pub mod v2_base_types {
     impl V2ParserCharacters {
         pub fn new() -> V2ParserCharacters {
             V2ParserCharacters {
-                segment_terminator: V2_SEGMENT_TERMINATOR as u8,
-                field_separator: '|' as u8,
-                component_separator: '^' as u8,
-                repetition_separator: '~' as u8,
-                escape_character: '\\' as u8,
-                subcomponent_separator: '&' as u8,
-                truncation_character: '#' as u8,
+                segment_terminator: V2_SEGMENT_TERMINATOR,
+                field_separator: V2_FIELD_TERMINATOR,
+                component_separator: V2_COMPONENT_TERMINATOR,
+                repetition_separator: V2_REPETITION_TERMINATOR,
+                escape_character: V2_ESCAPE_TERMINATOR,
+                subcomponent_separator: V2_SUBCOMPONENT_TERMINATOR,
+                truncation_character: V2_TRUNCATION_CHARACTER,
             }
         }
         pub fn from_fragment(msh_fragment: &[u8]) -> V2Result<Self> {
-            let key_chars = Self::isolate_parse_chars(&msh_fragment);
-            Self::validate_msh_key_chars(&key_chars[0..])?;
-            let field_separator: u8 = key_chars[0];
+            println!("{}", buffer_to_str(&msh_fragment)?);
+            Self::validate_msh_key_chars(&msh_fragment)?;
 
-            match key_chars.len() - 1 {
-                5 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR as u8,
-                    field_separator,
-                    component_separator: key_chars[1] as u8,
-                    repetition_separator: key_chars[2] as u8,
-                    escape_character: key_chars[3] as u8,
-                    subcomponent_separator: key_chars[4] as u8,
-                    truncation_character: key_chars[5] as u8,
+            match msh_fragment.len() {
+                6 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: msh_fragment[1],
+                    repetition_separator: msh_fragment[2],
+                    escape_character: msh_fragment[3],
+                    subcomponent_separator: msh_fragment[4],
+                    truncation_character: msh_fragment[5],
                 }),
-                4 => Ok(V2ParserCharacters {
-                    segment_terminator: V2_SEGMENT_TERMINATOR as u8,
-                    field_separator,
-                    component_separator: key_chars[1] as u8,
-                    repetition_separator: key_chars[2] as u8,
-                    escape_character: key_chars[3] as u8,
-                    subcomponent_separator: key_chars[4] as u8,
-                    truncation_character: V2_TRUNCATION_CHARACTER as u8,
+                5 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: msh_fragment[1],
+                    repetition_separator: msh_fragment[2],
+                    escape_character: msh_fragment[3],
+                    subcomponent_separator: msh_fragment[4],
+                    truncation_character: V2_TRUNCATION_CHARACTER,
                 }),
+                4 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: msh_fragment[1],
+                    repetition_separator: msh_fragment[2],
+                    escape_character: msh_fragment[3],
+                    subcomponent_separator: V2_SUBCOMPONENT_TERMINATOR,
+                    truncation_character: V2_TRUNCATION_CHARACTER,
+                }),
+                3 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: msh_fragment[1],
+                    repetition_separator: msh_fragment[2],
+                    escape_character: V2_ESCAPE_TERMINATOR,
+                    subcomponent_separator: V2_SUBCOMPONENT_TERMINATOR,
+                    truncation_character: V2_TRUNCATION_CHARACTER,
+                }),
+                2 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: msh_fragment[1],
+                    repetition_separator: V2_REPETITION_TERMINATOR,
+                    escape_character: V2_ESCAPE_TERMINATOR,
+                    subcomponent_separator: V2_SUBCOMPONENT_TERMINATOR,
+                    truncation_character: V2_TRUNCATION_CHARACTER,
+                }),
+                1 => Ok(Self {
+                    segment_terminator: V2_SEGMENT_TERMINATOR,
+                    field_separator: msh_fragment[0],
+                    component_separator: V2_COMPONENT_TERMINATOR,
+                    repetition_separator: V2_REPETITION_TERMINATOR,
+                    escape_character: V2_ESCAPE_TERMINATOR,
+                    subcomponent_separator: V2_SUBCOMPONENT_TERMINATOR,
+                    truncation_character: V2_TRUNCATION_CHARACTER,
+                }),
+                0 => Ok(Self::new()),
                 _ => Err(rumtk_format!("Wrong count of parsing characters in message header!")),
             }
         }
 
         pub fn from(input: &RUMBuffer) -> V2Result<Self> {
-            let msh_segment_start = Self::find_msh(input)?;
-            V2ParserCharacters::from_fragment(&input[msh_segment_start + 3..])
+            let msh_header_start = Self::find_msh(input)?;
+            let msh_segment_start = msh_header_start + V2_MSHEADER_PATTERN.len();
+            let msh_segment_end = buffer_find(input.as_slice(), &[input[msh_segment_start]], msh_segment_start + 1);
+            println!("MSH index @ {} => {:?}", &msh_header_start, &input);
+            V2ParserCharacters::from_fragment(&input[msh_segment_start..msh_segment_end])
         }
 
         // Message parsing operations
@@ -145,24 +181,6 @@ pub mod v2_base_types {
                 "Unknown malformed parser characters! Is MSH malformed? => {:?}",
                 &msg_key_chars
             ))
-        }
-
-        pub fn isolate_parse_chars(key_fragment: &[u8]) -> RUMBuffer {
-            let sep = key_fragment[0];
-            let mut window_end: usize = 0;
-            let max_fragment_size = match 20 <= key_fragment.len() {
-                true => 20, //Make sure no shenanigans with message manipulation can occur.
-                false => key_fragment.len(),
-            };
-
-            for i in 0..max_fragment_size {
-                if key_fragment[i] == sep {
-                    window_end = i;
-                    break;
-                }
-            }
-
-            RUMBuffer::copy_from_slice(&key_fragment[0..window_end])
         }
     }
     ///
