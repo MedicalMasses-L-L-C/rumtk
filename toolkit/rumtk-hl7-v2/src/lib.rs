@@ -136,6 +136,9 @@ mod tests {
         let encode_chars = V2ParserCharacters::new();
         let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(&message);
+        println!("Input => {:?}", &sanitized_message);
+        println!("Parse chars => {:#?}", &encode_chars);
+        
         let tokens = V2Message::tokenize_segments(sanitized_message, &encode_chars);
         println!("Token count {}", tokens.len());
         assert_eq!(
