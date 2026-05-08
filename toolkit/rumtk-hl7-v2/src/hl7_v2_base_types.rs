@@ -143,6 +143,11 @@ pub mod v2_base_types {
             let msh_header_start = Self::find_msh(input)?;
             let msh_segment_start = msh_header_start + V2_MSHEADER_PATTERN.len();
             let msh_segment_end = buffer_find(input.as_slice(), &[input[msh_segment_start]], msh_segment_start + 1);
+
+            if msh_segment_start > input.len() || msh_segment_end > input.len() {
+                return Err(rumtk_format!("Failure to extract separator/terminator characters from message! Maybe the message is malformed!"))
+            }
+
             V2ParserCharacters::from_fragment(&input[msh_segment_start..msh_segment_end])
         }
 
@@ -179,6 +184,17 @@ pub mod v2_base_types {
                 "Unknown malformed parser characters! Is MSH malformed? => {:?}",
                 &msg_key_chars
             ))
+        }
+
+        pub fn to_buffer(&self) -> RUMBuffer {
+            RUMBuffer::copy_from_slice(&[
+                self.field_separator,
+                self.component_separator,
+                self.repetition_separator,
+                self.escape_character,
+                self.subcomponent_separator,
+                self.truncation_character,
+            ])
         }
     }
     ///

@@ -38,11 +38,11 @@ pub mod v2_parser {
     pub use crate::hl7_v2_base_types::v2_primitives::{
         V2DateTime, V2ParserCharacters, V2PrimitiveCasting, V2Result, V2SearchIndex, V2String,
     };
-    use crate::hl7_v2_constants::V2_SEGMENT_TERMINATORS;
     pub use crate::hl7_v2_constants::{
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR,
     };
+    use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
     use pyo3::exceptions::PyValueError;
     use rumtk_core::buffers::{buffer_replace, buffer_split, buffer_to_str, buffer_to_string, buffer_trim};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
@@ -589,15 +589,29 @@ pub mod v2_parser {
                     continue;
                 }
 
-                let segment: V2Segment = V2Segment::from(segment, parser_chars)?;
+                let mut segment: V2Segment = V2Segment::from(segment, parser_chars)?;
+
+                if segment.name == V2_MSHEADER_PATTERN_STR {
+                    segment.fields[0] = vec![
+                        V2Field {
+                            components: vec![
+                                V2Component {
+                                    component: parser_chars.to_buffer()
+                                }
+                            ]
+                        }
+                    ]
+                }
 
                 let key = match V2_SEGMENT_IDS.get(&segment.name) {
                     Some(k) => k,
                     None => return Err(rumtk_format!("Segment name is not a valid segment!")),
                 };
+
                 if !segments.contains_key(key) {
                     segments.insert(*key, V2SegmentGroup::new());
                 }
+
                 segments.get_mut(key).unwrap().push(segment);
             }
 
