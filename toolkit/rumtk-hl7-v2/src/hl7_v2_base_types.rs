@@ -188,7 +188,6 @@ pub mod v2_base_types {
 
         pub fn to_buffer(&self) -> RUMBuffer {
             RUMBuffer::copy_from_slice(&[
-                self.field_separator,
                 self.component_separator,
                 self.repetition_separator,
                 self.escape_character,

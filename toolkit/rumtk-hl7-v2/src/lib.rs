@@ -615,7 +615,7 @@ mod tests {
         let pattern = "MSH1.1";
         let message = rumtk_v2_parse_message!(HL7_V2_MSH_ONLY).unwrap();
         let component = rumtk_v2_find_component!(message, pattern).unwrap();
-        let expected = "|^~\\&#";
+        let expected = "^~\\&#";
         assert_eq!(
             component.as_str(),
             expected,
