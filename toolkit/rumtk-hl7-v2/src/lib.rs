@@ -34,6 +34,7 @@ mod hl7_v2_scripting;
 pub mod hl7_v2_search;
 pub mod hl7_v2_types;
 mod hl7_v2_python_types;
+mod testdata;
 /*****************************************Tests****************************************/
 #[cfg(test)]
 mod tests {
@@ -60,8 +61,9 @@ mod tests {
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use pyo3::unindent::Unindent;
-    use rumtk_core::buffers::{buffer_has_pattern, buffer_to_str};
-    use rumtk_core::core::RUMResult;
+    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_split, buffer_split_fast, buffer_to_str};
+    use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
+    use rumtk_core::core::{RUMResult, RUMVec};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
@@ -70,9 +72,10 @@ mod tests {
         rumtk_sleep,
     };
     use std::thread::spawn;
+    use std::time::Instant;
     /**********************************Constants**************************************/
     use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
-
+    use crate::testdata::data::V2_TEST_LARGE_MESSAGE;
     /*********************************Test Cases**************************************/
     #[test]
     fn test_hl7_v2_field_parsing() {
@@ -1354,6 +1357,76 @@ mod tests {
             expected_message, deserialized,
             "Deserialized Escaped JSON does not match the expected value!"
         );
+    }
+
+    ////////////////////////////Benchmark Tests/////////////////////////////////
+    #[test]
+    fn test_buffer_find_segments() {
+        let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
+
+        let start = Instant::now();
+        buffer_find(buffer, &['\r' as u8], 0);
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "buffer find of segments in large message took {} milliseconds [> 1 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_find_all_segments() {
+        let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
+
+        let start = Instant::now();
+        buffer_find_instances(buffer, &['\r' as u8]);
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "buffer find of segments in large message took {} milliseconds [> 1 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_basic_split_segments() {
+        let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let start = Instant::now();
+        let split_count = buffer.len() / BUFFER_CHUNK_SIZE;
+        let mut splits = RUMVec::<RUMBuffer>::with_capacity(split_count);
+        for i in 0..splits.len() {
+            splits.push(buffer.split_to(BUFFER_CHUNK_SIZE));
+        }
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "basic buffer splits of large message took {} milliseconds [> 1 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_split_segments() {
+        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let start = Instant::now();
+        buffer_split(buffer, &['\r' as u8]);
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "buffer split of segments in large message took {} milliseconds [> 1 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_split2_segments() {
+        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let start = Instant::now();
+        buffer_split_fast(buffer, '\r' as u8);
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "buffer split of segments in large message took {} milliseconds [> 1 ms]!", millis);
     }
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////
