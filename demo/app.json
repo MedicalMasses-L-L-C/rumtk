@@ -51,7 +51,6 @@
       }
     },
     "targets": {
-      "parser_debug": "../target/debug/rumtk-hl7-v2-parse",
       "parser_release": "../target/release/rumtk-hl7-v2-parse"
     },
     "categories": {
