@@ -166,6 +166,14 @@ pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVecDeque<RUMBuff
     item_list
 }
 
+pub fn buffer_split_fast(input: &RUMBuffer, pattern: u8) -> RUMVecDeque<&[u8]> {
+    if input.is_empty() {
+        return RUMVecDeque::new();
+    }
+
+    input.split(|c| *c == pattern).collect::<RUMVecDeque<&[u8]>>()
+}
+
 ///
 /// Convert buffer to string.
 ///
@@ -193,6 +201,12 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
         Ok(string) => Ok(string),
         Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
     }
+}
+
+pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
+    let instances = buffer.iter().filter(|c| c != &pattern).collect::<Vec<&[u8]>>();
+
+    instances.len()
 }
 
 pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
