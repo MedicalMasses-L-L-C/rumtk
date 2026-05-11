@@ -52,7 +52,8 @@ pub mod threading_manager {
     use crate::threading::thread_primitives::SafeLock;
     use crate::threading::threading_functions::{async_sleep, sleep};
     use crate::types::{RUMHashMap, RUMID};
-    use crate::{rumtk_init_threads, rumtk_resolve_task, rumtk_spawn_task, threading};
+    use crate::{rumtk_init_threads, rumtk_resolve_task, threading};
+    use std::fmt::Debug;
     use std::future::Future;
     use std::sync::Arc;
     pub use std::sync::RwLock as SyncRwLock;
@@ -156,7 +157,7 @@ pub mod threading_manager {
 
     impl<R> TaskManager<R>
     where
-        R: Sync + Send + Clone + 'static,
+        R: Debug + Sync + Send + Clone + 'static,
     {
         ///
         /// This method creates a [`TaskManager`] instance using sensible defaults.
@@ -246,12 +247,9 @@ pub mod threading_manager {
             F::Output: Send + Sized + 'static,
         {
             let id = TaskID::new_v4();
-            let rt = rumtk_init_threads!(self.workers);
-            rumtk_spawn_task!(
-                rt,
-                Self::_add_task_async(id.clone(), self.tasks.clone(), task)
-            );
-            Ok(id)
+            let tasks = self.tasks.clone();
+            rumtk_init_threads!(self.workers);
+            Ok(rumtk_resolve_task!(Self::_add_task_async(id.clone(), tasks, task)))
         }
 
         ///
@@ -262,9 +260,7 @@ pub mod threading_manager {
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let id = TaskID::new_v4();
-            let tasks = self.tasks.clone();
-            Ok(rumtk_resolve_task!(Self::_add_task_async(id.clone(), tasks, task)))
+            self.spawn_task(task)
         }
 
         async fn _add_task_async<F>(id: TaskID, tasks: SafeSyncTaskTable<R>, task: F) -> TaskID
