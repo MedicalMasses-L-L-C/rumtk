@@ -140,38 +140,35 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     set
 }
 
-pub fn buffer_split(mut input: RUMBuffer, pattern: &[u8]) -> RUMVecDeque<RUMBuffer> {
+pub fn buffer_split(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
     if input.is_empty() {
         return RUMVecDeque::new();
     }
 
-    let pattern_length = pattern.len();
-    let mut item_list = RUMVecDeque::<RUMBuffer>::with_capacity(100);
-    let mut indx = buffer_find(input.as_slice(), pattern, 0);
+    let sections = input.split(|c| *c == pattern);
+    let mut item_list = RUMVecDeque::with_capacity(10);
 
-    while indx < input.len() {
-        let component = input.split_to(indx);
-        item_list.push_back(component);
-
-        // Let's consume the separator character so it does not show in any buffers.
-        let _ = input.split_to(pattern_length);
-
-        indx = buffer_find(input.as_slice(), pattern, 0);
-    }
-
-    if input.len() > 0 {
-        item_list.push_back(input)
+    for s in sections {
+        item_list.push_back(RUMBuffer::copy_from_slice(s))
     }
 
     item_list
 }
 
-pub fn buffer_split_fast(input: &RUMBuffer, pattern: u8) -> RUMVecDeque<&[u8]> {
+pub fn buffer_split_fast(input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
     if input.is_empty() {
         return RUMVecDeque::new();
     }
 
-    input.split(|c| *c == pattern).collect::<RUMVecDeque<&[u8]>>()
+    let items = input.split(|c| *c == pattern).collect::<Vec<&[u8]>>();
+
+    let mut item_list = RUMVecDeque::<RUMBuffer>::with_capacity(items.len());
+
+    for item in items {
+        item_list.push_back(RUMBuffer::copy_from_slice(item));
+    }
+
+    item_list
 }
 
 ///
@@ -204,9 +201,24 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
 }
 
 pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
-    let instances = buffer.iter().filter(|c| c != &pattern).collect::<Vec<&[u8]>>();
+    let instances = buffer.iter().filter(|c| *c != &pattern).collect::<Vec<&u8>>();
 
     instances.len()
+}
+
+pub fn buffer_find_byte(buffer: &[u8], pattern: u8, offset: usize) -> usize {
+    if buffer.is_empty() {
+        return usize::MAX;
+    }
+
+    let iter = buffer.iter().skip(offset);
+    for (i, c) in iter.enumerate() {
+        if *c == pattern {
+            return offset + i;
+        }
+    }
+
+    usize::MAX
 }
 
 pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
@@ -215,26 +227,26 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
     }
 
     let pattern_length = pattern.len();
-    let buffer_length = buffer.len() - pattern_length;
+    let buffer_end = buffer.len();
+    let mut cursor = buffer_find_byte(buffer, pattern[0], offset);
 
-    for i in offset..buffer_length {
-        let window = &buffer[i..i + pattern_length];
-
-        if window == pattern {
-            return i;
+    while cursor < buffer_end {
+        if buffer[cursor..cursor + pattern_length] == *pattern {
+            return cursor;
         }
+        cursor = buffer_find_byte(&buffer, pattern[0], cursor + pattern_length);
     }
 
     usize::MAX
 }
 
 pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
-    let mut instances = RUMVec::<usize>::with_capacity(100);
-    let mut last = 0;
-
-    while last < buffer.len() {
-        last = buffer_find(buffer, pattern, last);
-        instances.push(last);
+    let mut instances = RUMVec::<usize>::with_capacity(10);
+    
+    let mut cursor = buffer_find(buffer, pattern, 0);
+    while cursor < buffer.len() {
+        instances.push(cursor);
+        cursor = buffer_find(buffer, pattern, cursor + 1);
     }
 
     instances
@@ -260,7 +272,7 @@ pub fn buffer_replace(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) ->
     let slice = buffer.as_slice();
     let mut start = buffer_find(&slice, pattern, 0);
     let mut last = 0;
-    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len());
+    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() * 2);
 
     while start < input_length {
         new_buffer.put(&buffer[last..start]);
