@@ -267,10 +267,9 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     slice.freeze()
 }
 
-pub fn buffer_replace(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
+pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
     let input_length = buffer.len();
-    let slice = buffer.as_slice();
-    let mut start = buffer_find(&slice, pattern, 0);
+    let mut start = buffer_find(&buffer, pattern, 0);
     let mut last = 0;
     let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() * 2);
 
@@ -279,7 +278,7 @@ pub fn buffer_replace(buffer: &RUMBuffer, pattern: &[u8], replacement: &[u8]) ->
         new_buffer.put(replacement);
 
         last = start + pattern.len();
-        start = buffer_find(&slice, pattern, last);
+        start = buffer_find(&buffer, pattern, last);
     }
     new_buffer.put(&buffer[last..input_length]);
 
