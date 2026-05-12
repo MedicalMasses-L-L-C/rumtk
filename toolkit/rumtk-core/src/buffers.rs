@@ -160,12 +160,11 @@ pub fn buffer_split_fast(input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer
         return RUMVecDeque::new();
     }
 
-    let items = input.split(|c| *c == pattern).collect::<Vec<&[u8]>>();
+    let sections = input.split(|c| *c == pattern);
+    let mut item_list = RUMVecDeque::with_capacity(10);
 
-    let mut item_list = RUMVecDeque::<RUMBuffer>::with_capacity(items.len());
-
-    for item in items {
-        item_list.push_back(RUMBuffer::copy_from_slice(item));
+    for s in sections {
+        item_list.push_back(RUMBuffer::copy_from_slice(s))
     }
 
     item_list
