@@ -208,7 +208,7 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 
 pub fn buffer_find_byte(buffer: &[u8], pattern: u8, offset: usize) -> usize {
     if buffer.is_empty() {
-        return usize::MAX;
+        return buffer.len();
     }
 
     let iter = buffer.iter().skip(offset);
@@ -218,12 +218,12 @@ pub fn buffer_find_byte(buffer: &[u8], pattern: u8, offset: usize) -> usize {
         }
     }
 
-    usize::MAX
+    buffer.len()
 }
 
 pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
     if buffer.is_empty() {
-        return usize::MAX;
+        return buffer.len();
     }
 
     let pattern_length = pattern.len();
@@ -237,12 +237,12 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
         cursor = buffer_find_byte(&buffer, pattern[0], cursor + pattern_length);
     }
 
-    usize::MAX
+    buffer.len()
 }
 
 pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
     let mut instances = RUMVec::<usize>::with_capacity(10);
-    
+
     let mut cursor = buffer_find(buffer, pattern, 0);
     while cursor < buffer.len() {
         instances.push(cursor);
@@ -297,7 +297,7 @@ pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
 }
 
 pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
-    buffer_find(buffer, pattern, 0) != usize::MAX
+    buffer_find(buffer, pattern, 0) != buffer.len()
 }
 
 pub fn is_unique_bytes(data: &[u8]) -> bool {
