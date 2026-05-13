@@ -140,21 +140,6 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     set
 }
 
-pub fn buffer_split(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
-    if input.is_empty() {
-        return RUMVecDeque::new();
-    }
-
-    let sections = input.split(|c| *c == pattern);
-    let mut item_list = RUMVecDeque::with_capacity(10);
-
-    for s in sections {
-        item_list.push_back(RUMBuffer::copy_from_slice(s))
-    }
-
-    item_list
-}
-
 pub fn buffer_split_fast(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
     if input.is_empty() {
         return RUMVecDeque::new();

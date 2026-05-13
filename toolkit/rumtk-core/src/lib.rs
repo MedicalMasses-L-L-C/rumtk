@@ -51,7 +51,7 @@ pub mod buffers;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::buffers::{buffer_find, buffer_replace, buffer_split, buffer_to_string};
+    use crate::buffers::{buffer_find, buffer_replace, buffer_split_fast, buffer_to_string};
     use crate::cache::RUMCache;
     use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
@@ -814,7 +814,7 @@ mod tests {
     #[test]
     fn test_buffer_split() {
         let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
-        let splits = buffer_split(data, '|' as u8);
+        let splits = buffer_split_fast(data, '|' as u8);
 
         assert_eq!(splits.len(), 22, "Bad buffer split! Got {:?}", splits);
     }
