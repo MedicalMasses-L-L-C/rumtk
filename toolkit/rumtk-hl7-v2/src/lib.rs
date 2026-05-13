@@ -1350,8 +1350,8 @@ mod tests {
 
     #[test]
     fn test_deserialize_stdin_v2_message_basic() {
-        let expected_message: V2Message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
-        let deserialized: V2Message = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
+        let expected_message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC);
+        let deserialized = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC);
 
         assert_eq!(
             expected_message, deserialized,

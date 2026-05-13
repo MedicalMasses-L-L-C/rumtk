@@ -566,6 +566,8 @@ pub mod v2_parser {
         /// ## Example
         ///
         /// ```
+        /// use rumtk_core::buffers::buffer_to_string;
+        /// use rumtk_core::types::RUMBuffer;
         /// use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
         ///
         /// const RAW_MSG: &str = r"MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO
@@ -582,10 +584,10 @@ pub mod v2_parser {
         /// OBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
         /// DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
         ///
-        /// let sanitized = V2Message::sanitize(RAW_MSG);
+        /// let data = RUMBuffer::from_static(RAW_MSG.as_bytes());
+        /// let sanitized = V2Message::sanitize(&data);
         ///
-        /// assert_ne!(sanitized, RAW_MSG, "V2Message's sanitize method did not change newlines into carriage return characters. \\n {} vs. \\r {}", RAW_MSG.contains("\n"), sanitized.contains("\r"));
-        /// assert_eq!(sanitized, RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
+        /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
         pub fn sanitize(raw_message: &RUMBuffer) -> RUMBuffer {

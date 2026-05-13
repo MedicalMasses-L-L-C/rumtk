@@ -130,7 +130,10 @@ pub mod serialization {
         ( $string:expr ) => {{
             use $crate::json::serialization::from_str;
 
-            from_str(&$string)
+            match from_str(&$string) {
+                Ok(s) => Ok(s),
+                Err(e) => Err(rumtk_format!("Failed to deserialize object because of {}", e)),
+            }
         }};
     }
 }
