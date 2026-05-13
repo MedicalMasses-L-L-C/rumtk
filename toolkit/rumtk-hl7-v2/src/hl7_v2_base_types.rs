@@ -142,7 +142,7 @@ pub mod v2_base_types {
         pub fn from(input: &RUMBuffer) -> V2Result<Self> {
             let msh_header_start = Self::find_msh(input)?;
             let msh_segment_start = msh_header_start + V2_MSHEADER_PATTERN.len();
-            let msh_segment_end = buffer_find(input.as_slice(), &[input[msh_segment_start]], msh_segment_start + 1);
+            let msh_segment_end = msh_segment_start + buffer_find(&input[msh_segment_start + 1..], &[input[msh_segment_start]]);
 
             if msh_segment_start > input.len() || msh_segment_end > input.len() {
                 return Err(rumtk_format!("Failure to extract separator/terminator characters from message! Maybe the message is malformed!"))
@@ -153,7 +153,7 @@ pub mod v2_base_types {
 
         // Message parsing operations
         pub fn find_msh(data: &RUMBuffer) -> V2Result<usize> {
-            let indx = buffer_find(data.as_slice(), V2_MSHEADER_PATTERN, 0);
+            let indx = buffer_find(data.as_slice(), V2_MSHEADER_PATTERN);
 
             if indx <= (data.len() - V2_MSHEADER_PATTERN.len()) {
                 return Ok(indx);
