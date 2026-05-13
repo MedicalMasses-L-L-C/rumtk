@@ -51,7 +51,7 @@ pub mod buffers;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::buffers::{buffer_find, buffer_replace, buffer_split_fast, buffer_to_string};
+    use crate::buffers::{buffer_find, buffer_replace, buffer_replace_in_place, buffer_split_fast, buffer_to_string};
     use crate::cache::RUMCache;
     use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
@@ -845,5 +845,24 @@ mod tests {
         let new = buffer_replace(data.as_slice(), pattern.as_bytes(), replacement.as_bytes());
 
         assert_eq!(new, expected, "Bad buffer replace! Got {:?}", new);
+    }
+
+    #[test]
+    fn test_buffer_replace_in_place() {
+        let pattern = "|Test";
+        let replacement = "|Tes1";
+        let mut data = RUMBuffer::copy_from_slice(b"Hello|World|Test|||||||||||||||||||");
+        let expected = RUMBuffer::from_static(b"Hello|World|Tes1|||||||||||||||||||");
+
+        data = match data.try_into_mut() {
+            Ok(mut data) => {
+                buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
+                data.freeze()
+            },
+            Err(data) => data
+        };
+
+
+        assert_eq!(data, expected, "Bad buffer replace! Got {:?}", data);
     }
 }

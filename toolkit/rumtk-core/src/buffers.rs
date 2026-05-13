@@ -208,10 +208,10 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
         return buffer.len();
     }
 
-    let iter = buffer.chunks(32);
+    let iter = buffer.chunks(256);
     for (i, chunk) in iter.enumerate() {
         if chunk.contains(&byte) {
-            return (i * 32) + buffer_chunk_find(chunk, byte);
+            return (i * 256) + buffer_chunk_find(chunk, byte);
         }
     }
 
@@ -273,6 +273,21 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     }
 
     slice.freeze()
+}
+
+pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replacement: &[u8]) {
+    let replacement_length = replacement.len();
+    let mut cursor = buffer_find(&buffer, pattern);
+    let mut remainder = buffer;
+
+    while cursor < remainder.len() {
+        for i in 0..replacement_length {
+            remainder[cursor + i] = replacement[i];
+        }
+
+        remainder = &mut remainder[cursor + pattern.len()..];
+        cursor = buffer_find(remainder, pattern);
+    }
 }
 
 pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
