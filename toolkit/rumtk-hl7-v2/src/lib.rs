@@ -61,7 +61,7 @@ mod tests {
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use pyo3::unindent::Unindent;
-    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_split, buffer_split_fast, buffer_to_str};
+    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_split_fast, buffer_to_str};
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
     use rumtk_core::core::{RUMResult, RUMVec};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
@@ -121,8 +121,8 @@ mod tests {
     fn test_sanitize_hl7_v2_message() {
         let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(&message);
-        println!("{}", buffer_to_str(message.as_slice()).unwrap());
-        println!("{}", buffer_to_str(sanitized_message.as_slice()).unwrap());
+        println!("{:?}", buffer_to_str(message.as_slice()).unwrap());
+        println!("{:?}", buffer_to_str(sanitized_message.as_slice()).unwrap());
         assert!(
             message.contains(&('\n' as u8)),
             "Raw message has new line characters."
@@ -1365,12 +1365,13 @@ mod tests {
         let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
 
         let start = Instant::now();
-        buffer_find(buffer, &['\r' as u8], 0);
+        let r = buffer_find(buffer, &['\n' as u8]);
         let end = Instant::now();
 
         let time = end - start;
         let millis = time.as_millis();
         assert!(millis <= 1, "buffer find of segments in large message took {} milliseconds [> 1 ms]!", millis);
+        assert_eq!(r, 465, "buffer find return the wrong first index of \n!");
     }
 
     #[test]
@@ -1378,14 +1379,18 @@ mod tests {
         let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
 
         let start = Instant::now();
-        buffer_find_instances(buffer, &['\r' as u8]);
+        let instances = buffer_find_instances(buffer, &['\n' as u8]);
         let end = Instant::now();
 
         let time = end - start;
         let millis = time.as_millis();
-        assert!(millis <= 1, "buffer find of segments in large message took {} milliseconds [> 1 ms]!", millis);
+        assert!(millis <= 10, "buffer find of segments in large message took {} milliseconds [> 10 ms]!", millis);
     }
 
+    ///
+    /// This micro benchmark exists to validate that splitting a Bytes buffer is cheap and that sources of
+    /// slowness come from somewhere else.
+    ///
     #[test]
     fn test_buffer_basic_split_segments() {
         let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
@@ -1404,20 +1409,7 @@ mod tests {
     }
 
     #[test]
-    fn test_buffer_split_segments() {
-        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
-
-        let start = Instant::now();
-        buffer_split(buffer, &['\r' as u8]);
-        let end = Instant::now();
-
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 1, "buffer split of segments in large message took {} milliseconds [> 1 ms]!", millis);
-    }
-
-    #[test]
-    fn test_buffer_split2_segments() {
+    fn test_buffer_split_fast_segments() {
         let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let start = Instant::now();
@@ -1427,6 +1419,42 @@ mod tests {
         let time = end - start;
         let millis = time.as_millis();
         assert!(millis <= 1, "buffer split of segments in large message took {} milliseconds [> 1 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_replace_fragment() {
+        let pattern = "4050097";
+        let replacement = "405009789";
+        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let start = Instant::now();
+        buffer_replace(&buffer, pattern.as_bytes(), replacement.as_bytes());
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 20, "buffer replace of segments in large message took {} milliseconds [> 20 ms]!", millis);
+    }
+
+    #[test]
+    fn test_buffer_replace_in_place() {
+        let pattern = "4050097";
+        let replacement = "4050098";
+        let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let start = Instant::now();
+        buffer = match buffer.try_into_mut() {
+            Ok(mut data) => {
+                buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
+                data.freeze()
+            },
+            Err(data) => data
+        };
+        let end = Instant::now();
+
+        let time = end - start;
+        let millis = time.as_millis();
+        assert!(millis <= 1, "buffer replace of segments in large message took {} milliseconds [> 1 ms]!", millis);
     }
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////

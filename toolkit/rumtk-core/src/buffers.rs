@@ -251,7 +251,7 @@ pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
     let mut remainder = buffer;
 
     let mut cursor = buffer_find(remainder, pattern);
-    while cursor < buffer.len() {
+    while cursor < remainder.len() {
         instances.push(cursor);
         remainder = &remainder[cursor + pattern.len()..];
         cursor = buffer_find(buffer, pattern);
