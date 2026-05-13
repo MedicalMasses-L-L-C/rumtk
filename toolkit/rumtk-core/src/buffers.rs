@@ -155,17 +155,20 @@ pub fn buffer_split(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer>
     item_list
 }
 
-pub fn buffer_split_fast(input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
+pub fn buffer_split_fast(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
     if input.is_empty() {
         return RUMVecDeque::new();
     }
 
-    let sections = input.split(|c| *c == pattern);
     let mut item_list = RUMVecDeque::with_capacity(10);
+    let mut offset = buffer_find_byte(input.as_slice(), pattern);
 
-    for s in sections {
-        item_list.push_back(RUMBuffer::copy_from_slice(s))
+    while offset < input.len() {
+        item_list.push_back(input.split_to(offset));
+        input.split_to(1);
+        offset = buffer_find_byte(input.as_slice(), pattern);
     }
+    item_list.push_back(input);
 
     item_list
 }
@@ -205,35 +208,54 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
     instances.len()
 }
 
-pub fn buffer_find_byte(buffer: &[u8], pattern: u8, offset: usize) -> usize {
+pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
+    for j in 0..chunk.len() {
+        if chunk[j] == byte {
+            return j;
+        }
+    }
+
+    chunk.len()
+}
+
+pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
     if buffer.is_empty() {
         return buffer.len();
     }
 
-    let iter = buffer.iter().skip(offset);
-    for (i, c) in iter.enumerate() {
-        if *c == pattern {
-            return offset + i;
+    let iter = buffer.chunks(32);
+    for (i, chunk) in iter.enumerate() {
+        if chunk.contains(&byte) {
+            return (i * 32) + buffer_chunk_find(chunk, byte);
         }
     }
 
     buffer.len()
 }
 
-pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
+pub fn buffer_find(buffer: &[u8], pattern: &[u8]) -> usize {
     if buffer.is_empty() {
         return buffer.len();
     }
 
+    let start_pattern_byte = pattern[0];
     let pattern_length = pattern.len();
-    let buffer_end = buffer.len();
-    let mut cursor = buffer_find_byte(buffer, pattern[0], offset);
+    let mut working_buffer = buffer;
+    let mut cumulative = 0;
+    let mut end = 0;
 
-    while cursor < buffer_end {
-        if buffer[cursor..cursor + pattern_length] == *pattern {
-            return cursor;
+    while (end + pattern_length) < working_buffer.len() {
+        working_buffer = &working_buffer[end..];
+
+        if working_buffer[..pattern_length] == *pattern {
+            return cumulative;
+        } else {
+            working_buffer = &working_buffer[pattern_length..];
+            cumulative += pattern_length;
         }
-        cursor = buffer_find_byte(&buffer, pattern[0], cursor + pattern_length);
+
+        end = buffer_find_byte(&working_buffer, start_pattern_byte);
+        cumulative += end;
     }
 
     buffer.len()
@@ -241,11 +263,13 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8], offset: usize) -> usize {
 
 pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
     let mut instances = RUMVec::<usize>::with_capacity(10);
+    let mut remainder = buffer;
 
-    let mut cursor = buffer_find(buffer, pattern, 0);
+    let mut cursor = buffer_find(remainder, pattern);
     while cursor < buffer.len() {
         instances.push(cursor);
-        cursor = buffer_find(buffer, pattern, cursor + 1);
+        remainder = &remainder[cursor + pattern.len()..];
+        cursor = buffer_find(buffer, pattern);
     }
 
     instances
@@ -268,18 +292,22 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
 
 pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
     let input_length = buffer.len();
-    let mut start = buffer_find(&buffer, pattern, 0);
-    let mut last = 0;
-    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() * 2);
+    let pattern_length = pattern.len();
+    let mut new_buffer =  RUMBufferMut::with_capacity(input_length * 2);
+    let mut remainder = buffer;
+    let mut end = buffer_find(&remainder, pattern);
 
-    while start < input_length {
-        new_buffer.put(&buffer[last..start]);
+    while end < remainder.len() {
+        new_buffer.put(&remainder[..end]);
         new_buffer.put(replacement);
 
-        last = start + pattern.len();
-        start = buffer_find(&buffer, pattern, last);
+        remainder = &remainder[end + pattern_length..];
+        end = buffer_find(&remainder, pattern);
     }
-    new_buffer.put(&buffer[last..input_length]);
+
+    if remainder.len() > 0 {
+        new_buffer.put(remainder);
+    }
 
     new_buffer.freeze()
 }
@@ -295,7 +323,7 @@ pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
 }
 
 pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
-    buffer_find(buffer, pattern, 0) != buffer.len()
+    buffer_find(buffer, pattern) != buffer.len()
 }
 
 pub fn is_unique_bytes(data: &[u8]) -> bool {

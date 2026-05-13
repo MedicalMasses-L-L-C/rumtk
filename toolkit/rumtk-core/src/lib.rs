@@ -51,10 +51,11 @@ pub mod buffers;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::buffers::{buffer_find, buffer_replace, buffer_split, buffer_to_string};
     use crate::cache::RUMCache;
     use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
-    use crate::strings::{buffer_to_string, rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
+    use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
     use crate::types::{RUMBuffer, RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use compact_str::CompactString;
     use serde_json::to_string;
@@ -199,7 +200,7 @@ mod tests {
     #[test]
     fn test_autodecode_utf8() {
         let input = "I ❤ my wife!";
-        let result = strings::try_decode(input.as_bytes());
+        let result = strings::try_decode(input.as_bytes()).unwrap();
         println!(
             "Input: {} Expected: {} Got: {}",
             input,
@@ -223,7 +224,7 @@ mod tests {
     #[test]
     fn test_decode() {
         let input = "I ❤ my wife!";
-        let result = strings::try_decode_with(input.as_bytes(), "utf-8");
+        let result = strings::try_decode_with(input.as_bytes(), "utf-8").unwrap();
         println!(
             "Input: {} Expected: {} Got: {}",
             input,
@@ -467,7 +468,7 @@ mod tests {
                 print!("Contents: ");
                 for arg in locked_args.iter() {
                     print!("{} ", &arg);
-                    results.push(RUMString::new(arg));
+                    results.push(RUMString::from(arg));
                 }
                 Ok(results)
             },
@@ -555,9 +556,9 @@ mod tests {
             Err(e) => panic!("Failed to send message because {}", e),
         };
         let client_id = client.get_address().expect("Failed to get client id");
-        let incoming_message = server.receive(&client_id, true).unwrap().to_string();
+        let incoming_message = server.receive(&client_id, true).unwrap().to_string().unwrap();
         println!("Received message => {:?}", &incoming_message);
-        assert_eq!(&incoming_message, msg, "Received message corruption!");
+        assert_eq!(incoming_message, msg, "Received message corruption!");
     }
 
     #[test]
@@ -581,7 +582,7 @@ mod tests {
         let incoming_client_id = clients.get(0).expect("Expected client to have connected!");
         println!("Connected client id => {}", &incoming_client_id);
         assert_eq!(
-            &incoming_client_id, &expected_client_id,
+            incoming_client_id, &expected_client_id,
             "Connected client does not match the connecting client! Client id => {}",
             &incoming_client_id
         );
@@ -808,4 +809,41 @@ mod tests {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////Buffer Tests/////////////////////////////////
+    #[test]
+    fn test_buffer_split() {
+        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let splits = buffer_split(data, '|' as u8);
+
+        assert_eq!(splits.len(), 22, "Bad buffer split! Got {:?}", splits);
+    }
+
+    #[test]
+    fn test_buffer_find() {
+        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let indx = buffer_find(data.as_slice(), &['|' as u8]);
+
+        assert_eq!(indx, 5, "Bad buffer find! Got {:?}", indx);
+    }
+
+    #[test]
+    fn test_buffer_find_long() {
+        let pattern = "|Test";
+        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let indx = buffer_find(data.as_slice(), pattern.as_bytes());
+
+        assert_eq!(indx, 11, "Bad buffer find! Got {:?}", indx);
+    }
+
+    #[test]
+    fn test_buffer_replace() {
+        let pattern = "|Test";
+        let replacement = "|Test123";
+        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let expected = RUMBuffer::from_static(b"Hello|World|Test123|||||||||||||||||||");
+        let new = buffer_replace(data.as_slice(), pattern.as_bytes(), replacement.as_bytes());
+
+        assert_eq!(new, expected, "Bad buffer replace! Got {:?}", new);
+    }
 }
