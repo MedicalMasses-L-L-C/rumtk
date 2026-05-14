@@ -139,7 +139,7 @@ pub mod v2_base_types {
             }
         }
 
-        pub fn from(input: &RUMBuffer) -> V2Result<Self> {
+        pub fn from(input: &[u8]) -> V2Result<Self> {
             if input.is_empty() {
                 return Err(rumtk_format!("Message is empty or something went wrong extracting header!"));
             }
@@ -156,8 +156,8 @@ pub mod v2_base_types {
         }
 
         // Message parsing operations
-        pub fn find_msh(data: &RUMBuffer) -> V2Result<usize> {
-            let indx = buffer_find(data.as_slice(), V2_MSHEADER_PATTERN);
+        pub fn find_msh(data: &[u8]) -> V2Result<usize> {
+            let indx = buffer_find(data, V2_MSHEADER_PATTERN);
 
             if indx <= (data.len() - V2_MSHEADER_PATTERN.len()) {
                 return Ok(indx);
