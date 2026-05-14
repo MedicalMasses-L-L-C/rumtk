@@ -501,7 +501,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///         &file.clone()
 ///     ).await?;
 ///
-///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_string())))
+///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_string()?)))
 /// }
 ///
 /// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
@@ -765,15 +765,15 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///     // About page
 ///     pub fn about(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?;
-///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?;
+///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
+///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?.to_string();
 ///     
-///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?;
-///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?;
+///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?.to_string();
+///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
 ///     
-///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?;
+///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?.to_string();
 ///     
-///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?;
+///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_string();
 ///     
 ///         Ok(vec![
 ///             text_card_story,

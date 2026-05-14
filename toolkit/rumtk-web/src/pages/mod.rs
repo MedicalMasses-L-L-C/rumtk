@@ -101,7 +101,7 @@ macro_rules! rumtk_web_register_page {
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?;
+///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,
@@ -125,7 +125,7 @@ macro_rules! rumtk_web_register_page {
 /// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?;
+///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,
@@ -176,7 +176,7 @@ macro_rules! rumtk_web_get_default_page {
 /// use rumtk_web::pages::UserPages;
 ///
 ///  fn my_page(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?;
+///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,

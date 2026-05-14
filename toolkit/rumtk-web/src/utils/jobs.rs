@@ -93,7 +93,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// ### Loader Render
 /// ```
 /// use rumtk_core::{rumtk_async_sleep, rumtk_new_lock};
-/// use rumtk_core::strings::{RUMString, ToCompactString};
+/// use rumtk_core::strings::{RUMString};
 /// use rumtk_web::utils::testdata::data::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
@@ -130,7 +130,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// let app_state = rumtk_new_lock!(AppState::default());
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
-/// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+/// params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 /// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
 ///
 /// assert!(rendered.as_str().contains(JOB_LOADER_TEST_PATTERN), "Element did not render loader!");
@@ -140,7 +140,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// ### Component Render
 /// ```
 /// use rumtk_core::{rumtk_sleep, rumtk_new_lock};
-/// use rumtk_core::strings::{RUMString, ToCompactString};
+/// use rumtk_core::strings::{RUMString};
 /// use rumtk_web::utils::testdata::data::{JOB_LOADER_TEST_PATTERN};
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
@@ -158,7 +158,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// );
 ///
 /// async fn basic_processor() -> JobResult {
-///     Ok(Some(rumtk_web_post_process_html!(RUMString::new(HELLO_STR))))
+///     Ok(Some(rumtk_web_post_process_html!(RUMString::from(HELLO_STR))))
 /// }
 ///
 /// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -175,7 +175,7 @@ macro_rules! rumtk_web_generate_job_id {
 /// let app_state = rumtk_new_lock!(AppState::default());
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
-/// params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+/// params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 ///
 /// rumtk_sleep!(1);
 /// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();

@@ -546,7 +546,7 @@ macro_rules! rumtk_web_set_config {
 /// use rumtk_web::rumtk_web_modify_state;
 ///
 /// let state = rumtk_new_lock!(AppState::new());
-/// let clipboard_id = ClipboardID::new("");
+/// let clipboard_id = ClipboardID::from("");
 ///
 /// let item_list = rumtk_web_modify_state!(state).pop_clipboard(&clipboard_id);
 ///
