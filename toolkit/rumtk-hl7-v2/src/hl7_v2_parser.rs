@@ -45,7 +45,7 @@ pub mod v2_parser {
     };
     use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMByteSliceIteratorExt};
+    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::core::{clamp_index, RUMError};
     use rumtk_core::core::{RUMResult, RUMVecDeque};
@@ -154,9 +154,9 @@ pub mod v2_parser {
         ///
         /// Will not support 2.7.8 Local encodings (\Zxxyy) until needed in the wild.
         ///
-        fn from(component: &[u8]) -> Self {
+        fn from(component: RUMBuffer) -> Self {
             Self {
-                component: RUMBuffer::copy_from_slice(component),
+                component
             }
         }
 
@@ -253,11 +253,11 @@ pub mod v2_parser {
             }
         }
 
-        pub fn from(field: &[u8], parser_chars: &V2ParserCharacters) -> Self {
+        pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             let mut component_list: ComponentList = ComponentList::new();
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
-                component_list.push(V2Component::from(&c))
+                component_list.push(V2Component::from(c))
             }
 
             Self {
@@ -326,8 +326,8 @@ pub mod v2_parser {
     }
 
     impl V2Segment {
-        pub fn from(raw_segment: &[u8], parser_chars: &V2ParserCharacters) -> V2Result<Self> {
-            let segment = buffer_slice_trim(&raw_segment);
+        pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
+            let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
             let mut raw_fields = segment.split_fast(pattern);
             let mut field_list = V2FieldList::new();
@@ -375,7 +375,7 @@ pub mod v2_parser {
             self.fields.len()
         }
 
-        fn generate_subfields(field: &[u8], parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
+        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
             if field.is_empty() {
                 return vec![V2Field::new()];
             }
@@ -422,8 +422,6 @@ pub mod v2_parser {
 
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Message {
-        #[serde(skip)]
-        raw: RUMBuffer,
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,
     }
@@ -440,10 +438,9 @@ pub mod v2_parser {
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
-            let segments = V2Message::extract_segments(&sanitized, &parse_characters)?;
+            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
 
             Ok(V2Message {
-                raw: sanitized,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -456,7 +453,7 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            buffer_to_string(&self.raw).unwrap_or_default()
+            V2String::new()
         }
 
         pub fn len(&self) -> usize {
@@ -594,7 +591,7 @@ pub mod v2_parser {
         ///
         ///
         pub fn extract_segments(
-            msg: &[u8],
+            msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<SegmentMap> {
             let mut segments: SegmentMap = SegmentMap::new();
