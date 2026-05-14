@@ -335,6 +335,10 @@ pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
     }
 }
 
+pub fn buffer_slice_trim(buffer: &[u8]) -> &[u8] {
+    buffer.trim_ascii()
+}
+
 pub fn buffer_has_pattern(buffer: &[u8], pattern: &[u8]) -> bool {
     buffer_find(buffer, pattern) != buffer.len()
 }
