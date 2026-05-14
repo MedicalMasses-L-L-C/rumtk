@@ -166,7 +166,7 @@ impl<'a> RUMBufferIteratorExt<'a> for RUMBuffer {
 ///
 /// ## Example
 /// ```
-/// use rumtk_core::core::slice_to_buffer;
+/// use rumtk_core::buffers::slice_to_buffer;
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";
@@ -188,7 +188,7 @@ pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::core::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_core::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -210,7 +210,7 @@ pub fn new_random_buffer<const N: usize>() -> [u8; N] {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::core::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_core::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -230,7 +230,7 @@ pub fn new_random_rumbuffer<const N: usize>() -> RUMBuffer {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::core::{new_random_string_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_core::buffers::{new_random_string_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_string_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -254,7 +254,7 @@ pub fn new_random_string_buffer<const N: usize>() -> RUMString {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::core::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE};
 ///const item_count: usize = 5;
 ///
 /// let buffer = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(item_count);
@@ -297,7 +297,7 @@ pub fn buffer_split_fast(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBu
 ///
 /// ## Example
 /// ```
-/// use rumtk_core::strings::buffer_to_string;
+/// use rumtk_core::buffers::buffer_to_string;
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";
@@ -442,18 +442,19 @@ pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMB
     let pattern_length = pattern.len();
     let replacement_length = replacement.len();
     let instances = buffer_find_instances(&buffer, pattern);
-    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() + (instances.len() * (replacement_length)) - (instances.len() * (pattern_length)));
+    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() + (instances.len() * (replacement_length)));
+    let mut last = 0;
 
     for (indx, chunk) in instances {
         new_buffer.put(chunk);
         new_buffer.put(replacement);
+        last = indx + pattern_length;
     }
 
     match new_buffer.is_empty() {
         true => RUMBuffer::copy_from_slice(buffer),
         false => {
-            let end = new_buffer.len() - replacement_length;
-            new_buffer.truncate(end);
+            new_buffer.put(&buffer[last..]);
             new_buffer.freeze()
         }
     }
