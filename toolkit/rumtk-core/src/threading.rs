@@ -125,7 +125,7 @@ pub mod threading_manager {
     ///         let mut results = TaskItems::<RUMString>::with_capacity(locked_args.len());
     ///
     ///         for arg in locked_args.iter() {
-    ///             results.push(RUMString::new(arg));
+    ///             results.push(RUMString::from(arg));
     ///         }
     ///
     ///         Ok(results)

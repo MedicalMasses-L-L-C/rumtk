@@ -215,7 +215,7 @@ pub mod macros {
     /// ## Pushing Binary Buffer
     /// ```
     /// use rumtk_core::rumtk_write_stdout;
-    /// use rumtk_core::core::{new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
+    /// use rumtk_core::buffers::{new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
     ///
     /// let buffer = new_random_rumbuffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
     /// rumtk_write_stdout!(buffer, true);

@@ -44,7 +44,7 @@ mod tests {
     use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
     use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_render_template, rumtk_web_trim_rendered_html, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
-    use rumtk_core::strings::{RUMString, RUMStringConversions, ToCompactString};
+    use rumtk_core::strings::{RUMString, RUMStringConversions};
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
 
     ///////////////////////////////////FormData/////////////////////////////////////////////////
@@ -156,7 +156,7 @@ mod tests {
         );
 
         async fn basic_processor() -> JobResult {
-            Ok(Some(rumtk_web_post_process_html!(RUMString::new(HELLO_STR))))
+            Ok(Some(rumtk_web_post_process_html!(RUMString::from(HELLO_STR))))
         }
 
         fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
@@ -173,7 +173,7 @@ mod tests {
         let app_state = rumtk_new_lock!(AppState::default());
         let mut params = RUMWebData::new();
         let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
-        params.insert(RUMString::from(PARAMS_ID), job_id.to_compact_string());
+        params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 
         rumtk_sleep!(1);
         let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();

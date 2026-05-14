@@ -684,7 +684,8 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 ///
 /// ## Example
 /// ```
-/// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+/// use rumtk_core::buffers::{buffer_to_string};
+/// use rumtk_core::strings::{string_to_buffer};
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";

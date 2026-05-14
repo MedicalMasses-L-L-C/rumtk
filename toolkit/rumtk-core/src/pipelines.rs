@@ -360,7 +360,8 @@ pub mod pipeline_functions {
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMCommandLine};
     /// use rumtk_core::rumtk_pipeline_run;
-    /// use rumtk_core::strings::{buffer_to_string, RUMString};
+    /// use rumtk_core::strings::{RUMString};
+    /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let data = RUMBuffer::from_static(b"Hello World");
@@ -426,7 +427,8 @@ pub mod pipeline_functions {
     /// use rumtk_core::pipelines::pipeline_functions::pipeline_patch_args;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMCommandLine};
     /// use rumtk_core::rumtk_pipeline_run;
-    /// use rumtk_core::strings::{buffer_to_string, RUMString};
+    /// use rumtk_core::strings::{RUMString};
+    /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// let ls_name = "ls";
@@ -735,7 +737,8 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::types::RUMBuffer;
-    /// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+    /// use rumtk_core::strings::{string_to_buffer};
+    /// use rumtk_core::buffers::{buffer_to_string};
     ///
     /// const data: &str = "Hello World!";
     /// const expected: &str = "      0       2      12\n";
@@ -758,7 +761,8 @@ pub mod pipeline_macros {
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::{string_to_buffer, buffer_to_string};
+    /// use rumtk_core::strings::{string_to_buffer};
+    /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// const data: &str = "Hello World!";
@@ -822,7 +826,8 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_spawn_task};
     /// use rumtk_core::core::RUMResult;
     /// use rumtk_core::types::RUMBuffer;
-    /// use rumtk_core::strings::{buffer_to_string, string_to_buffer};
+    /// use rumtk_core::buffers::{buffer_to_string};
+    /// use rumtk_core::strings::{string_to_buffer};
     ///
     /// const data: &str = "Hello World!";
     /// const expected: &str = "      0       2      12\n";
@@ -847,7 +852,8 @@ pub mod pipeline_macros {
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_spawn_task};
     /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::{string_to_buffer, buffer_to_string};
+    /// use rumtk_core::strings::{string_to_buffer};
+    /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     ///
     /// const data: &str = "Hello World!";
@@ -889,7 +895,7 @@ pub mod pipeline_macros {
     /// ```
     /// use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::core::RUMResult;
-    /// use rumtk_core::strings::buffer_to_string;
+    /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     /// use rumtk_core::strings::string_to_buffer;
     ///
