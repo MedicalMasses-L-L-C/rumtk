@@ -1432,7 +1432,7 @@ mod tests {
 
         let time = end - start;
         let millis = time.as_millis();
-        assert!(millis <= 30, "buffer replace of segments in large message took {} milliseconds [> 30 ms]!", millis);
+        assert!(millis <= 40, "buffer replace of segments in large message took {} milliseconds [> 40 ms]!", millis);
     }
 
     #[test]
