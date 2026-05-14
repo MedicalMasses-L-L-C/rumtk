@@ -119,7 +119,9 @@ impl<'a> Iterator for RUMBufferSplitIter<'a> {
 
         if self.remainder.len() > 0 {
             let v = self.remainder.split_to(self.last);
-            let _ = self.remainder.split_to(self.pattern_length);
+            if self.remainder.len() > self.pattern_length {
+                let _ = self.remainder.split_to(self.pattern_length);
+            }
             Some(v)
         } else {
             None
