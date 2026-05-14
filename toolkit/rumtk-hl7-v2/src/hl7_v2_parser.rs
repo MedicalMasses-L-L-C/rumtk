@@ -51,10 +51,10 @@ pub mod v2_parser {
     use rumtk_core::core::{RUMResult, RUMVecDeque};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::strings::string_to_buffer;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
+    use rumtk_core::strings::{string_to_buffer, AsString};
     use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap, SerdeRUMBufferProxy};
     use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
     use std::ops::{Index, IndexMut};
@@ -191,7 +191,7 @@ pub mod v2_parser {
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            buffer_to_str(self.component.as_slice()).unwrap_or_default()
+            buffer_to_str(&self.component).unwrap_or_default()
         }
     }
 
@@ -263,6 +263,14 @@ pub mod v2_parser {
             Self {
                 components: component_list,
             }
+        }
+
+        pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
+            let mut components: Vec<&str> = Vec::with_capacity(self.components.len());
+            for component in self.components.iter() {
+                components.push(component.as_str())
+            }
+            components.join(&parser_chars.component_separator.as_string())
         }
 
         pub fn len(&self) -> usize {
@@ -353,6 +361,23 @@ pub mod v2_parser {
                 description: field_description,
                 fields: field_list,
             })
+        }
+
+        pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
+            let mut segment: Vec<V2String> = Vec::with_capacity(self.fields.len());
+            for field_group in self.fields.iter() {
+                let mut fields: Vec<V2String> = Vec::with_capacity(field_group.len());
+                for field in field_group {
+                    fields.push(field.to_string(parser_chars));
+                }
+                segment.push(fields.join(&parser_chars.repetition_separator.as_string()));
+            }
+            rumtk_format!(
+                "{}{}{}",
+                self.name,
+                parser_chars.field_separator.as_string(),
+                segment.join(&parser_chars.field_separator.as_string())
+            )
         }
 
         pub fn get(&self, indx: isize) -> V2Result<&V2FieldGroup> {
@@ -453,7 +478,15 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            V2String::new()
+            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
+            for segment_key in self.segment_groups.keys() {
+                let segment_group = &self.segment_groups[segment_key];
+                for segment in segment_group {
+                    msg.push(segment.to_string(&self.separators));
+                }
+            }
+
+            msg.join(&self.separators.segment_terminator.as_string())
         }
 
         pub fn len(&self) -> usize {

@@ -188,6 +188,10 @@ pub trait StringLike {
     fn push_str(&mut self, string: &str);
 }
 
+pub trait AsString {
+    fn as_string(&self) -> RUMString;
+}
+
 pub trait AsStr {
     fn as_str(&self) -> &str;
     fn as_grapheme_str(&self) -> GraphemeStr {
@@ -264,6 +268,12 @@ impl RUMArrayConversions for &[u8] {
             Ok(s) => Ok(s),
             Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e))
         }
+    }
+}
+
+impl AsString for u8 {
+    fn as_string(&self) -> RUMString {
+        RUMString::from(char::from_u32((*self).into()).unwrap_or_default())
     }
 }
 
