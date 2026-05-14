@@ -79,7 +79,7 @@ mod tests {
     fn test_hl7_v2_field_parsing() {
         let field_str = RUMBuffer::from_static(DEFAULT_HL7_V2_FIELD_STRING.as_bytes());
         let encode_chars = V2ParserCharacters::new();
-        let field = V2Field::from(&field_str, &encode_chars);
+        let field = V2Field::from(field_str, &encode_chars);
         println!("{}", DEFAULT_HL7_V2_FIELD_STRING);
         println!("{:#?}", &field);
         assert_eq!(field.len(), 3, "Wrong number of components in field");
@@ -192,7 +192,7 @@ mod tests {
         let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
-        let parsed_segments = V2Message::extract_segments(&sanitized_message, &encode_chars).unwrap();
+        let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
@@ -231,7 +231,7 @@ mod tests {
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{}", buffer_to_str(&sanitized_message.as_slice()).unwrap());
-        let parsed_segments = V2Message::extract_segments(&sanitized_message, &encode_chars).unwrap();
+        let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
