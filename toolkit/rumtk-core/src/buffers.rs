@@ -246,15 +246,29 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8]) -> usize {
     buffer.len()
 }
 
-pub fn buffer_find_instances(buffer: &[u8], pattern: &[u8]) -> RUMVec<usize> {
-    let mut instances = RUMVec::<usize>::with_capacity(10);
-    let mut remainder = buffer;
+pub fn buffer_find_instances<'a>(buffer: &'a [u8], pattern: &[u8]) -> RUMVec<(usize, &'a [u8])> {
+    if buffer.is_empty() {
+        return RUMVec::new();
+    }
 
-    let mut cursor = buffer_find(remainder, pattern);
-    while cursor < remainder.len() {
-        instances.push(cursor);
-        remainder = &remainder[cursor + pattern.len()..];
-        cursor = buffer_find(buffer, pattern);
+    let pattern_length = pattern.len();
+    let buffer_length = buffer.len() - pattern_length;
+    let mut instances = RUMVec::<(usize, &[u8])>::with_capacity(100);
+
+    let mut cursor = buffer_find(buffer, pattern);
+    let mut cumulative = cursor;
+    let mut remainder = &buffer[..];
+
+    while cumulative < buffer_length {
+        instances.push((cumulative, &remainder[..cursor]));
+        let next = cursor + pattern_length;
+        if next <= remainder.len() {
+            remainder = &remainder[cursor + pattern_length..];
+            cursor = buffer_find(remainder, pattern);
+            cumulative += cursor;
+        } else {
+            cumulative += remainder.len();
+        }
     }
 
     instances
@@ -291,25 +305,24 @@ pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replace
 }
 
 pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
-    let input_length = buffer.len();
     let pattern_length = pattern.len();
-    let mut new_buffer =  RUMBufferMut::with_capacity(input_length * 2);
-    let mut remainder = buffer;
-    let mut end = buffer_find(&remainder, pattern);
+    let replacement_length = replacement.len();
+    let instances = buffer_find_instances(&buffer, pattern);
+    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() + (instances.len() * (replacement_length)) - (instances.len() * (pattern_length)));
 
-    while end < remainder.len() {
-        new_buffer.put(&remainder[..end]);
+    for (indx, chunk) in instances {
+        new_buffer.put(chunk);
         new_buffer.put(replacement);
-
-        remainder = &remainder[end + pattern_length..];
-        end = buffer_find(&remainder, pattern);
     }
 
-    if remainder.len() > 0 {
-        new_buffer.put(remainder);
+    match new_buffer.is_empty() {
+        true => RUMBuffer::copy_from_slice(buffer),
+        false => {
+            let end = new_buffer.len() - replacement_length;
+            new_buffer.truncate(end);
+            new_buffer.freeze()
+        }
     }
-
-    new_buffer.freeze()
 }
 
 pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
