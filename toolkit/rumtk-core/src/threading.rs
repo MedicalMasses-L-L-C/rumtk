@@ -213,31 +213,27 @@ pub mod threading_manager {
         /// ```
         /// use rumtk_core::threading::threading_manager::{TaskManager};
         /// use rumtk_core::{rumtk_init_threads, strings::rumtk_format};
-        /// use std::sync::{Arc};
-        /// use tokio::sync::Mutex;
+        /// use std::sync::{Arc, LazyLock};
         ///
-        /// type JobManager = Arc<Mutex<TaskManager<usize>>>;
+        /// type JobManager = LazyLock<TaskManager<usize>>;
+        /// static mut manager: JobManager = LazyLock::new( || TaskManager::new(&5).unwrap());
         ///
         /// async fn called_fn() -> usize {
         ///     5
         /// }
         ///
-        /// fn push_job(manager: &mut TaskManager<usize>) -> usize {
-        ///     manager.spawn_task(called_fn());
+        /// fn push_job() -> usize {
+        ///     unsafe {(*manager).spawn_task(called_fn())};
         ///     1
         /// }
         ///
-        /// async fn call_sync_fn(mut manager: JobManager) -> usize {
-        ///     let mut owned = manager.lock().await;
-        ///     push_job(&mut owned)
+        /// async fn call_sync_fn() -> usize {
+        ///     push_job()
         /// }
         ///
-        /// let workers = 5;
-        /// let mut manager = Arc::new(Mutex::new(TaskManager::new(&workers).unwrap()));
+        /// unsafe {(*manager).spawn_task(call_sync_fn())};
         ///
-        /// manager.blocking_lock().spawn_task(call_sync_fn(manager.clone()));
-        ///
-        /// let result_raw = manager.blocking_lock().wait();
+        /// let result_raw = unsafe {(*manager).wait()};
         ///
         /// ```
         ///
