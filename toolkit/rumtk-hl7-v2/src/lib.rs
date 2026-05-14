@@ -34,7 +34,6 @@ mod hl7_v2_scripting;
 pub mod hl7_v2_search;
 pub mod hl7_v2_types;
 mod hl7_v2_python_types;
-mod testdata;
 /*****************************************Tests****************************************/
 #[cfg(test)]
 mod tests {
@@ -75,7 +74,6 @@ mod tests {
     use std::time::Instant;
     /**********************************Constants**************************************/
     use crate::hl7_v2_datasets::{hl7_v2_messages::*, hl7_v2_test_fragments::*};
-    use crate::testdata::data::V2_TEST_LARGE_MESSAGE;
     /*********************************Test Cases**************************************/
     #[test]
     fn test_hl7_v2_field_parsing() {
