@@ -1049,7 +1049,7 @@ pub mod mllp_v2_api {
     ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
     ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
-    ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
+    ///     assert_eq!(expected_client_id, *client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
     /// ```
     ///
     /// ## With IP + Port
@@ -1067,7 +1067,7 @@ pub mod mllp_v2_api {
     ///     let expected_client_id = rumtk_format!("{}:{}", &client_ip, &client_port);
     ///     let client_ids = rumtk_v2_mllp_get_client_ids!(safe_listener).unwrap();
     ///     let client_id = client_ids.get(0).unwrap();
-    ///     assert_eq!(expected_client_id, client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
+    ///     assert_eq!(expected_client_id, *client_id, "Client ID does not match the expected ID! Got {} | Expected {}", &client_id, &expected_client_id);
     /// ```
     ///
     #[macro_export]
@@ -1322,7 +1322,7 @@ pub mod mllp_v2_api {
     /// let client_id = results.get(0).unwrap();
     /// let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
     /// let expected = rumtk_format!("{}:{}", client_ip, client_port);
-    /// assert_eq!(expected, client_id, "Expected to see client with ID: {}", expected);
+    /// assert_eq!(expected, *client_id, "Expected to see client with ID: {}", expected);
     /// ```
     ///
     #[macro_export]
