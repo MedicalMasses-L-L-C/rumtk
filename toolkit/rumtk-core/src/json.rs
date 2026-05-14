@@ -128,6 +128,7 @@ pub mod serialization {
     #[macro_export]
     macro_rules! rumtk_deserialize {
         ( $string:expr ) => {{
+            use $crate::strings::rumtk_format;
             use $crate::json::serialization::from_str;
 
             match from_str(&$string) {
