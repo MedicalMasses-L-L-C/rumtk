@@ -30,7 +30,6 @@ pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
     pub pattern: &'b [u8],
-    pub cummulative: usize,
     pub last: usize,
     pub pattern_length: usize,
 }
@@ -43,7 +42,14 @@ pub struct RUMSliceEnumerateIter<'a, 'b> {
     pub pattern_length: usize,
 }
 
-pub trait RUMByteSliceIterTrait {
+pub struct RUMBufferSplitIter<'a> {
+    pub remainder: RUMBuffer,
+    pub pattern: &'a [u8],
+    pub pattern_length: usize,
+    pub last: usize,
+}
+
+pub trait RUMByteSliceSplitIterTrait {
     type Item;
     fn next(&mut self) -> Option<Self::Item>;
 }
@@ -53,9 +59,18 @@ pub trait RUMByteSliceEnumeratorIterTrait {
     fn next(&mut self) -> Option<(usize, Self::Item)>;
 }
 
+pub trait RUMBufferSplitIterTrait {
+    type Item;
+    fn next(&mut self) -> Option<Self::Item>;
+}
+
 pub trait RUMByteSliceIteratorExt<'a, 'b> {
     fn split_fast(&'a self, pattern: &'b [u8]) -> RUMSliceSplitIter<'a, 'b>;
     fn enumerate_fast(&'a self, pattern: &'b [u8]) -> RUMSliceEnumerateIter<'a, 'b>;
+}
+
+pub trait RUMBufferIteratorExt<'a> {
+    fn split_fast(self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a>;
 }
 
 impl<'a, 'b> Iterator for RUMSliceSplitIter<'a, 'b> {
@@ -63,7 +78,6 @@ impl<'a, 'b> Iterator for RUMSliceSplitIter<'a, 'b> {
 
     fn next(&mut self) -> Option<Self::Item> {
         self.last = buffer_find(self.remainder, self.pattern);
-        self.cummulative += self.last;
 
         if self.remainder.len() > 0 {
             let r = Some(&self.remainder[..self.last]);
@@ -97,13 +111,28 @@ impl<'a, 'b> Iterator for RUMSliceEnumerateIter<'a, 'b> {
     }
 }
 
+impl<'a> Iterator for RUMBufferSplitIter<'a> {
+    type Item = RUMBuffer;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.last = buffer_find(&self.remainder, self.pattern);
+
+        if self.remainder.len() > 0 {
+            let v = self.remainder.split_to(self.last);
+            let _ = self.remainder.split_to(self.pattern_length);
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
 impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
     fn split_fast(&'a self, pattern: &'b [u8]) -> RUMSliceSplitIter<'a, 'b> {
         RUMSliceSplitIter {
             pattern_length: pattern.len(),
             remainder: self.clone(),
             pattern: pattern.clone(),
-            cummulative: 0,
             last: 0,
         }
     }
@@ -114,6 +143,17 @@ impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
             remainder: self.clone(),
             pattern: pattern.clone(),
             cummulative: 0,
+            last: 0,
+        }
+    }
+}
+
+impl<'a> RUMBufferIteratorExt<'a> for RUMBuffer {
+    fn split_fast(self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a> {
+        RUMBufferSplitIter {
+            pattern_length: pattern.len(),
+            remainder: self,
+            pattern: pattern.clone(),
             last: 0,
         }
     }
