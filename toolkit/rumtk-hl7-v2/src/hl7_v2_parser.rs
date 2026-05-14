@@ -254,7 +254,7 @@ pub mod v2_parser {
         }
 
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::new();
+            let mut component_list: ComponentList = ComponentList::with_capacity(5);
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
                 component_list.push(V2Component::from(c))
@@ -594,7 +594,7 @@ pub mod v2_parser {
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<SegmentMap> {
-            let mut segments: SegmentMap = SegmentMap::new();
+            let mut segments: SegmentMap = SegmentMap::with_capacity(32);
 
             for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
                 if segment.is_empty() {
