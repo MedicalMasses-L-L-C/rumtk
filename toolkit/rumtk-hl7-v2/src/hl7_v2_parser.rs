@@ -431,7 +431,8 @@ pub mod v2_parser {
 
     #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
     pub struct V2Message {
-        raw: V2String,
+        #[serde(skip)]
+        raw: RUMBuffer,
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,
     }
@@ -445,14 +446,13 @@ pub mod v2_parser {
         /// ```
         /// ```
         ///
-        pub fn try_from_buffer(raw_msg: &RUMBuffer) -> V2Result<Self> {
-            let sanitized = V2Message::sanitize(&raw_msg);
-            let sanitized_string = buffer_to_string(&sanitized[..])?;
+        pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
+            let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
-            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
+            let segments = V2Message::extract_segments(&sanitized, &parse_characters)?;
 
             Ok(V2Message {
-                raw: sanitized_string,
+                raw: sanitized,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -465,7 +465,7 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            self.raw.clone()
+            buffer_to_string(&self.raw).unwrap_or_default()
         }
 
         pub fn len(&self) -> usize {
@@ -585,12 +585,12 @@ pub mod v2_parser {
         /// DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
         ///
         /// let data = RUMBuffer::from_static(RAW_MSG.as_bytes());
-        /// let sanitized = V2Message::sanitize(&data);
+        /// let sanitized = V2Message::sanitize(data);
         ///
         /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
-        pub fn sanitize(raw_message: &RUMBuffer) -> RUMBuffer {
+        pub fn sanitize(raw_message: RUMBuffer) -> RUMBuffer {
             let mut data = buffer_trim(&raw_message);
             match data.try_into_mut() {
                 Ok(mut data) => {
@@ -614,10 +614,10 @@ pub mod v2_parser {
         ///
         ///
         pub fn extract_segments(
-            msg: RUMBuffer,
+            msg: &RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<SegmentMap> {
-            let mut raw_segments = V2Message::tokenize_segments(msg, parser_chars);
+            let mut raw_segments = V2Message::tokenize_segments(msg.clone(), parser_chars);
             let mut segments: SegmentMap = SegmentMap::with_capacity(raw_segments.len());
 
             for segment in raw_segments {
@@ -671,21 +671,21 @@ pub mod v2_parser {
     impl<'a> TryFrom<RUMBuffer> for V2Message {
         type Error = RUMString;
         fn try_from(input: RUMBuffer) -> V2Result<V2Message> {
-            V2Message::try_from_buffer(&input)
+            V2Message::try_from_buffer(input)
         }
     }
 
     impl<'a> TryFrom<&RUMBuffer> for V2Message {
         type Error = RUMString;
         fn try_from(input: &RUMBuffer) -> V2Result<V2Message> {
-            V2Message::try_from_buffer(input)
+            V2Message::try_from_buffer(input.clone())
         }
     }
 
     impl<'a> TryFrom<&[u8]> for V2Message {
         type Error = RUMString;
         fn try_from(input: &[u8]) -> V2Result<V2Message> {
-            V2Message::try_from_buffer(&RUMBuffer::copy_from_slice(input))
+            V2Message::try_from_buffer(RUMBuffer::copy_from_slice(input))
         }
     }
 
