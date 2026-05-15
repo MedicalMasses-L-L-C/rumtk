@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-v2-interface"
 description = "HL7 V2 Interface utility based on the RUMTK framework."
-version = "0.2.15"
+version = "0.2.16"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 homepage = "https://github.com/kiseitai3/rumtk/tree/main/toolkit/rumtk-v2-interface"
@@ -13,5 +13,5 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.14.2", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.9.4", path = "../rumtk-hl7-v2" }
+rumtk-core = { version = "0.15.0", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.10.0", path = "../rumtk-hl7-v2" }

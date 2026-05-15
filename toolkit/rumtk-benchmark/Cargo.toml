@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-benchmark"
 description = "Benchmark tool to generate a report of performance characteristics. Built for the RUMTK toolkit, but not limited to it."
-version = "0.1.6"
+version = "0.1.7"
 license = "LGPL-3.0"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-benchmark"
 documentation = "https://docs.rs/rumtk-benchmark"
@@ -17,8 +17,8 @@ debug = true
 strip = false
 
 [dependencies]
-rumtk-core = { version = "0.14.2", path = "../rumtk-core" }
-rumtk-web = { version = "0.7.0", path = "../rumtk-web" }
+rumtk-core = { version = "0.15.0", path = "../rumtk-core" }
+rumtk-web = { version = "0.7.3", path = "../rumtk-web" }
 askama = "0.15.6"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.149"
