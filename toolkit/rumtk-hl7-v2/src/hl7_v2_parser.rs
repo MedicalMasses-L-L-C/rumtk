@@ -351,10 +351,7 @@ pub mod v2_parser {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
             }
 
-            let field_description = match V2_SEGMENT_DESC.get(&segment_name) {
-                Some(description) => description.to_string(),
-                None => V2_EMPTY_STRING.to_string(),
-            };
+            let field_description = V2_SEGMENT_DESC(&segment_name).to_string();
 
             Ok(V2Segment {
                 name: segment_name,
@@ -648,16 +645,13 @@ pub mod v2_parser {
                     ]
                 }
 
-                let key = match V2_SEGMENT_IDS.get(&segment.name) {
-                    Some(k) => k,
-                    None => return Err(rumtk_format!("Segment name is not a valid segment!")),
-                };
+                let key = V2_SEGMENT_IDS(&segment.name);
 
-                if !segments.contains_key(key) {
-                    segments.insert(*key, V2SegmentGroup::new());
+                if !segments.contains_key(&key) {
+                    segments.insert(key, V2SegmentGroup::new());
                 }
 
-                segments.get_mut(key).unwrap().push(segment);
+                segments.get_mut(&key).unwrap().push(segment);
             }
 
             Ok(segments)

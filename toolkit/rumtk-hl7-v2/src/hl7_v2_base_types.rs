@@ -221,7 +221,7 @@ pub mod v2_base_types {
             _component: i16,
         ) -> V2SearchIndex {
             V2SearchIndex {
-                segment: *V2_SEGMENT_IDS.get(_segment).unwrap(),
+                segment: V2_SEGMENT_IDS(_segment),
                 segment_group: _segment_group,
                 field_group: _sub_field,
                 field: _field,
