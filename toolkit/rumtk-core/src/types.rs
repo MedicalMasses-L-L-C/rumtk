@@ -20,14 +20,8 @@
 pub use crate::buffers::{RUMBuffer, RUMBufferMut};
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
-pub use std::collections::HashMap as RUMHashMap;
-/*pub use serde;
-pub use serde::{
-    Deserialize as RUMDeserialize, Deserializer as RUMDeserializer, Serialize as RUMSerialize,
-    Serializer as RUMSerializer,
-};*/
-pub use nanoserde::{DeBin as RUMDeBin, DeJson as RUMDeJson, SerBin as RUMSerBin, SerJson as RUMSerJson};
 use std::any::TypeId;
+pub use std::collections::HashMap as RUMHashMap;
 pub use tokio::net::TcpListener as RUMTcpListener;
 pub use uuid::Uuid as RUMID;
 
