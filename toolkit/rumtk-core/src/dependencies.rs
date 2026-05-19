@@ -19,5 +19,6 @@
  */
 
 pub use clap;
-pub use serde;
+pub use nanoserde;
+pub use nanoserde_derive;
 pub use tokio;
