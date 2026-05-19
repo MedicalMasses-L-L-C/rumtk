@@ -17,52 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::buffers::buffer_to_string;
 pub use crate::buffers::{RUMBuffer, RUMBufferMut};
-use crate::strings::string_to_buffer;
-pub use ahash::AHashMap as RUMHashMap;
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
-pub use serde;
+pub use std::collections::HashMap as RUMHashMap;
+/*pub use serde;
 pub use serde::{
     Deserialize as RUMDeserialize, Deserializer as RUMDeserializer, Serialize as RUMSerialize,
     Serializer as RUMSerializer,
-};
+};*/
+pub use nanoserde::{DeBin as RUMDeBin, DeJson as RUMDeJson, SerBin as RUMSerBin, SerJson as RUMSerJson};
 use std::any::TypeId;
 pub use tokio::net::TcpListener as RUMTcpListener;
 pub use uuid::Uuid as RUMID;
-
-#[derive(Default, Debug, PartialEq, Clone)]
-pub struct SerdeRUMBufferProxy {
-    pub inner: RUMBuffer,
-}
-
-impl RUMSerialize for SerdeRUMBufferProxy {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        // Convert external type to a serializable format
-        let escaped = match buffer_to_string(&self.inner) {
-            Ok(string) => string,
-            Err(err) => return Err(serde::ser::Error::custom(err)),
-        };
-        serializer.serialize_str(escaped.as_str())
-    }
-}
-
-impl<'de> RUMDeserialize<'de> for SerdeRUMBufferProxy {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let escaped_val = String::deserialize(deserializer)?;
-        let val = escaped_val;
-        Ok(SerdeRUMBufferProxy{
-            inner: string_to_buffer(&val)
-        })
-    }
-}
 
 ///
 /// Helper for quickly checking if incoming data is of an expected type.
