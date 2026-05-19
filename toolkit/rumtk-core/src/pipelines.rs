@@ -20,18 +20,19 @@
 
 pub mod pipeline_types {
     use crate::core::{RUMResult, RUMVec};
+    use crate::serde::json::{RUMDeJson, RUMSerJson};
     use crate::strings::{RUMString, RUMStringConversions};
-    use crate::types::{RUMBuffer, RUMDeserialize, RUMHashMap, RUMSerialize};
+    use crate::types::{RUMBuffer, RUMHashMap};
     use std::process::{Child, Command};
 
     pub static EMPTY_COMMAND_LINE: RUMCommandLine = RUMCommandLine::new();
 
     pub type RUMCommandArgs = Vec<RUMString>;
     pub type RUMCommandEnv = RUMHashMap<RUMString, RUMString>;
-    #[derive(RUMSerialize, RUMDeserialize, PartialEq, Default, Debug, Clone)]
+    #[derive(RUMSerJson, RUMDeJson, PartialEq, Default, Debug, Clone)]
     pub struct RUMCommand {
         pub path: RUMString,
-        #[serde(skip)]
+        #[nserde(skip)]
         pub data: Option<RUMBuffer>,
         pub args: RUMCommandArgs,
         pub env: RUMCommandEnv,

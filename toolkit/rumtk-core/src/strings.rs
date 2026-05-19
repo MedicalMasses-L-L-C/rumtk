@@ -20,7 +20,7 @@
 use crate::core::{is_unique, RUMResult, RUMVec};
 use crate::types::RUMBuffer;
 use base64::prelude::*;
-use chardetng::EncodingDetector;
+use chardetng::{EncodingDetector, Iso2022JpDetection, Utf8Detection};
 use encoding_rs::Encoding;
 use std::cmp::min;
 pub use std::format as rumtk_format;
@@ -296,9 +296,9 @@ pub fn count_tokens_ignoring_pattern(vector: &Vec<&str>, string_token: &RUMStrin
 /// Note => Decoding is facilitated via the crates chardet-ng and encoding_rs.
 ///
 pub fn try_decode(src: &[u8]) -> RUMResult<RUMString> {
-    let mut detector = EncodingDetector::new();
+    let mut detector = EncodingDetector::new(Iso2022JpDetection::Allow);
     detector.feed(&src, true);
-    let encoding = detector.guess(None, true);
+    let encoding = detector.guess(None, Utf8Detection::Allow);
     decode(src, encoding)
 }
 
