@@ -45,7 +45,7 @@ pub mod v2_parser {
     };
     use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
+    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::core::{clamp_index, RUMError};
     use rumtk_core::core::{RUMResult, RUMVecDeque};
@@ -624,7 +624,7 @@ pub mod v2_parser {
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<SegmentMap> {
-            let mut segments: SegmentMap = SegmentMap::with_capacity(32);
+            let mut segments: SegmentMap = SegmentMap::with_capacity(DEFAULT_CPU_CACHE_LINE_SIZE);
 
             for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
                 if segment.is_empty() {

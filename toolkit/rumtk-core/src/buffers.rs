@@ -26,7 +26,8 @@ use tokio::io::AsyncReadExt;
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
-pub const DEFAULT_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
+pub const DEFAULT_CPU_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
+pub const DEFAULT_CPU_PAGE_SIZE: usize = 1024;
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
@@ -345,10 +346,10 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
         return buffer.len();
     }
 
-    let iter = buffer.chunks(DEFAULT_CACHE_LINE_SIZE);
+    let iter = buffer.chunks(DEFAULT_CPU_CACHE_LINE_SIZE);
     for (i, chunk) in iter.enumerate() {
         if chunk.contains(&byte) {
-            return (i * DEFAULT_CACHE_LINE_SIZE) + buffer_chunk_find(chunk, byte);
+            return (i * DEFAULT_CPU_CACHE_LINE_SIZE) + buffer_chunk_find(chunk, byte);
         }
     }
 
