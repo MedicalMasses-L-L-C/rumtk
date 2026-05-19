@@ -51,13 +51,15 @@ pub mod v2_parser {
     use rumtk_core::core::{RUMResult, RUMVecDeque};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
+    use rumtk_core::serde::compatibility::{RUMSerializableBuffer, RUMSerializableOrderedMap};
+    use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
-    use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap, SerdeRUMBufferProxy};
-    use rumtk_core::types::{RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
+    use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap};
     use std::ops::{Index, IndexMut};
+    use std::str::Chars;
     use std::sync::Arc;
     /**************************** Globals ***************************************/
 
@@ -98,15 +100,15 @@ pub mod v2_parser {
     /// a field for other purposes is prohibited.
     /// ```
     ///
-    #[derive(Default, Debug, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Component {
-        component: RUMBuffer,
+        component: RUMSerializableBuffer,
     }
 
     impl V2Component {
         pub fn new() -> Self {
             Self {
-                component: RUMBuffer::new(),
+                component: RUMSerializableBuffer(RUMBuffer::new()),
             }
         }
 
@@ -156,24 +158,24 @@ pub mod v2_parser {
         ///
         fn from(component: RUMBuffer) -> Self {
             Self {
-                component
+                component: RUMSerializableBuffer(component)
             }
         }
 
         pub fn to_string(&self) -> V2String {
-            buffer_to_string(&self.component).unwrap_or_default()
+            buffer_to_string(&self.component.0).unwrap_or_default()
         }
 
         pub fn is_empty(&self) -> bool {
-            self.component == ""
+            self.component.0 == ""
         }
 
         pub fn is_delete(&self) -> bool {
-            self.component == V2_DELETE_FIELD
+            self.component.0 == V2_DELETE_FIELD
         }
 
         pub fn as_datetime(&self) -> RUMResult<V2DateTime> {
-            Ok(V2DateTime::from_str(buffer_to_str(&self.component)?)?)
+            Ok(V2DateTime::from_str(buffer_to_str(&self.component.0)?)?)
         }
 
         pub fn as_bool(&self) -> bool {
@@ -191,37 +193,11 @@ pub mod v2_parser {
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            buffer_to_str(&self.component).unwrap_or_default()
+            buffer_to_str(&self.component.0).unwrap_or_default()
         }
     }
 
     impl V2PrimitiveCasting for V2Component {}
-
-    impl RUMSerialize for V2Component {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: RUMSerializer,
-        {
-            // Convert external type to a serializable format
-            let string = match buffer_to_str(&self.component.as_slice()) {
-                Ok(string) => string,
-                Err(err) => return Err(serde::ser::Error::custom(err)),
-            };
-            serializer.serialize_str(string)
-        }
-    }
-
-    impl<'a> RUMDeserialize<'a> for V2Component {
-        fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
-        where
-            D: RUMDeserializer<'a>,
-        {
-            let escaped_val = String::deserialize(deserializer)?;
-            Ok(Self{
-                component: string_to_buffer(&escaped_val)
-            })
-        }
-    }
 
     pub type ComponentList = Vec<V2Component>;
 
@@ -241,7 +217,7 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -326,7 +302,7 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Segment {
         name: V2String,
         description: V2String,
@@ -441,11 +417,12 @@ pub mod v2_parser {
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
     pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
+    pub type SerializableSegmentMap = RUMSerializableOrderedMap<u8, V2SegmentGroup>;
 
-    #[derive(Default, Debug, RUMSerialize, RUMDeserialize, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
-        segment_groups: SegmentMap,
+        segment_groups: SerializableSegmentMap,
     }
 
     impl V2Message {
@@ -464,7 +441,7 @@ pub mod v2_parser {
 
             Ok(V2Message {
                 separators: parse_characters,
-                segment_groups: segments,
+                segment_groups: RUMSerializableOrderedMap(segments),
             })
         }
 
@@ -475,9 +452,9 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
-            for segment_key in self.segment_groups.keys() {
-                let segment_group = &self.segment_groups[segment_key];
+            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.0.len());
+            for segment_key in self.segment_groups.0.keys() {
+                let segment_group = &self.segment_groups.0[segment_key];
                 for segment in segment_group {
                     msg.push(segment.to_string(&self.separators));
                 }
@@ -487,11 +464,11 @@ pub mod v2_parser {
         }
 
         pub fn len(&self) -> usize {
-            self.segment_groups.len()
+            self.segment_groups.0.len()
         }
 
         pub fn is_empty(&self) -> bool {
-            self.segment_groups.is_empty()
+            self.segment_groups.0.is_empty()
         }
 
         pub fn get(&self, segment_index: &u8, sub_segment: usize) -> V2Result<&V2Segment> {
@@ -525,7 +502,7 @@ pub mod v2_parser {
         }
 
         pub fn get_group(&self, segment_index: &u8) -> V2Result<&V2SegmentGroup> {
-            match self.segment_groups.get(segment_index) {
+            match self.segment_groups.0.get(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -535,7 +512,7 @@ pub mod v2_parser {
         }
 
         pub fn get_mut_group(&mut self, segment_index: &u8) -> V2Result<&mut V2SegmentGroup> {
-            match self.segment_groups.get_mut(segment_index) {
+            match self.segment_groups.0.get_mut(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -573,7 +550,7 @@ pub mod v2_parser {
         }
 
         pub fn segment_exists(&self, segment_index: &u8) -> bool {
-            self.segment_groups.contains_key(segment_index)
+            self.segment_groups.0.contains_key(segment_index)
         }
 
         ///
@@ -637,9 +614,7 @@ pub mod v2_parser {
                     segment.fields[0] = vec![
                         V2Field {
                             components: vec![
-                                V2Component {
-                                    component: parser_chars.to_buffer()
-                                }
+                                V2Component::from(parser_chars.to_buffer())
                             ]
                         }
                     ]

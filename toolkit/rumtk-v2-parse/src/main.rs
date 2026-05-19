@@ -68,14 +68,7 @@ fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
                 let msg = rumtk_v2_parse_message!(stdin_msg)?;
 
                 if !args.quiet {
-                    match rumtk_serialize!(&msg, &args.pretty)?.parse() {
-                        Ok(data) => data,
-                        Err(e) => {
-                            return Err(rumtk_format!(
-                                "Failure to identify and process message in stdin. It might not be a valid V2Message or v2 raw message! => {}", e
-                            ));
-                        }
-                    }
+                    rumtk_serialize!(&msg)
                 } else {
                     RUMString::default()
                 }

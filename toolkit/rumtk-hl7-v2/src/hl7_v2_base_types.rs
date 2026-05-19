@@ -28,9 +28,10 @@ pub mod v2_base_types {
     use rumtk_core::search::rumtk_search::{
         string_search, string_search_named_captures, SearchGroups,
     };
+    use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     use rumtk_core::strings::{rumtk_format, AsStr};
     use rumtk_core::strings::{RUMString, RUMStringConversions};
-    use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
+    use rumtk_core::types::RUMBuffer;
 
     use std::fmt::Debug;
     /**************************** Constants**************************************/
@@ -47,7 +48,7 @@ pub mod v2_base_types {
     /// Basic type used to derive other types for the standard implementation.
     ///
     pub type V2String = String;
-    #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
+    #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone)]
     pub struct V2ParserCharacters {
         pub segment_terminator: u8,
         pub field_separator: u8,
