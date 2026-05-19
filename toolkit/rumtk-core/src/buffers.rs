@@ -328,7 +328,7 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
     instances.len()
 }
 
-#[inline]
+#[inline(always)]
 pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
     for j in 0..chunk.len() {
         if chunk[j] == byte {
@@ -339,7 +339,7 @@ pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
     chunk.len()
 }
 
-#[inline]
+#[inline(always)]
 pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
     if buffer.is_empty() {
         return buffer.len();
@@ -355,6 +355,7 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
     buffer.len()
 }
 
+#[inline(always)]
 pub fn buffer_find(buffer: &[u8], pattern: &[u8]) -> usize {
     if buffer.is_empty() {
         return buffer.len();
@@ -383,6 +384,7 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8]) -> usize {
     buffer.len()
 }
 
+#[inline(always)]
 pub fn buffer_find_instances<'a>(buffer: &'a [u8], pattern: &[u8]) -> RUMVec<(usize, &'a [u8])> {
     if buffer.is_empty() {
         return RUMVec::new();
@@ -411,6 +413,7 @@ pub fn buffer_find_instances<'a>(buffer: &'a [u8], pattern: &[u8]) -> RUMVec<(us
     instances
 }
 
+#[inline(always)]
 pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     let buffer_length = buffer.len();
     let pad_length = target_length - buffer_length;
@@ -426,6 +429,7 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     slice.freeze()
 }
 
+#[inline(always)]
 pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replacement: &[u8]) {
     let replacement_length = replacement.len();
     let mut cursor = buffer_find(&buffer, pattern);
@@ -441,6 +445,7 @@ pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replace
     }
 }
 
+#[inline(always)]
 pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
     let pattern_length = pattern.len();
     let replacement_length = replacement.len();
