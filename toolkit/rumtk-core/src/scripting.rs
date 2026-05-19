@@ -24,7 +24,7 @@ pub mod python_utils {
     use std::fs::read_to_string;
     use std::path::Path;
 
-    use crate::core::RUMResult;
+    use crate::base::RUMResult;
     use crate::strings::{rumtk_format, RUMString};
 
     use pyo3::prelude::*;
@@ -444,7 +444,7 @@ pub mod python_utils {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::{py_extract_any, py_new_args, py_push_arg, py_exec, py_exec_module, py_load, RUMPython};
     ///     use rumtk_core::scripting::python_utils::{RUMPyModule};
     ///
@@ -501,7 +501,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::rumtk_python_exec_module;
     ///
     ///     fn test_module_exec() {
@@ -526,7 +526,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::rumtk_python_exec_module;
     ///
     ///     fn test_module_exec() {
@@ -551,7 +551,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::py_extract_any;
     ///     use rumtk_core::rumtk_python_exec_module;
     ///
@@ -582,7 +582,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::{py_extract_any, py_new_args, py_push_arg};
     ///     use rumtk_core::rumtk_python_exec_module;
     ///
@@ -704,7 +704,7 @@ pub mod python_macros {
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
     ///     use rumtk_core::scripting::python_utils::RUMPython;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::{rumtk_python_exec_module, rumtk_python_exec};
     ///
     ///     fn test_module_exec() {
@@ -731,7 +731,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::RUMPython;
     ///     use rumtk_core::{rumtk_python_exec_module, rumtk_python_exec};
     ///
@@ -760,7 +760,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::{py_extract_any, RUMPython};
     ///     use rumtk_core::{rumtk_python_exec_module, rumtk_python_exec};
     ///
@@ -793,7 +793,7 @@ pub mod python_macros {
     ///     use std::fs::write;
     ///     use pyo3::Python;
     ///     use uuid::Uuid;
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::scripting::python_utils::{py_extract_any, py_new_args, py_push_arg, RUMPython};
     ///     use rumtk_core::{rumtk_python_exec, rumtk_python_exec_module};
     ///

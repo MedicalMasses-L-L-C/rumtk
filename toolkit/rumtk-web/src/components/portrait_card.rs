@@ -24,7 +24,7 @@ use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
     rumtk_web_render_template, RUMWebData, RUMWebTemplate,
 };
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::RUMStringConversions;
 
 type PortraitGrid = Vec<Vec<RUMString>>;

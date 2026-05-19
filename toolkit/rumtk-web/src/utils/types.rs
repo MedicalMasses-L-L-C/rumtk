@@ -56,7 +56,7 @@ pub type APIPath = RUMString;
 pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTMLResult;
 
 pub use askama::Template as RUMWebTemplate;
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 
 
 ///

@@ -32,11 +32,11 @@
 
 pub mod cache;
 pub mod cli;
-pub mod core;
+pub mod base;
 pub mod dependencies;
 pub mod hash;
 pub mod id;
-pub mod json;
+pub mod serde;
 pub mod log;
 pub mod maths;
 pub mod net;
@@ -51,14 +51,13 @@ pub mod buffers;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::base::{clamp_index, RUMResult};
     use crate::buffers::{buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_string, buffer_trim};
     use crate::cache::RUMCache;
-    use crate::core::{clamp_index, RUMResult};
     use crate::search::rumtk_search::*;
+    use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
-    use crate::types::{RUMBuffer, RUMDeserialize, RUMDeserializer, RUMSerialize, RUMSerializer};
-    use compact_str::CompactString;
-    use serde_json::to_string;
+    use crate::types::RUMBuffer;
     use std::process::Stdio;
     use std::sync::Arc;
     use tokio::io::AsyncBufReadExt;
@@ -237,8 +236,8 @@ mod tests {
 
     #[test]
     fn test_rumcache_insertion() {
-        let mut cache: RUMCache<&str, CompactString> = RUMCache::with_capacity(5);
-        cache.insert("❤", CompactString::from("I ❤ my wife!"));
+        let mut cache: RUMCache<&str, RUMString> = RUMCache::with_capacity(5);
+        cache.insert("❤", RUMString::from("I ❤ my wife!"));
         println!("Contents: {:#?}", &cache);
         assert_eq!(cache.len(), 1, "Incorrect number of items in cache!");
         println!("Passed!")
@@ -649,7 +648,7 @@ mod tests {
 
     #[test]
     fn test_serialize_json() {
-        #[derive(RUMSerialize)]
+        #[derive(RUMSerJson)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -657,7 +656,7 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = rumtk_serialize!(&hw, true).unwrap();
+        let hw_str = rumtk_serialize!(&hw);
 
         assert!(
             !hw_str.is_empty(),
@@ -667,9 +666,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_serde_json() {
-        use serde_json::{from_str, to_string};
-
-        #[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone)]
+        #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -677,8 +674,8 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = to_string(&hw).unwrap();
-        let new_hw: MyStruct = from_str(&hw_str).unwrap();
+        let hw_str = to_json(&hw);
+        let new_hw: MyStruct = from_json(&hw_str).unwrap();
 
         assert_eq!(
             new_hw, hw,
@@ -688,7 +685,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_json() {
-        #[derive(RUMSerialize, RUMDeserialize, PartialEq)]
+        #[derive(RUMSerJson, RUMDeJson, PartialEq)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -696,7 +693,7 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = rumtk_serialize!(&hw, true).unwrap();
+        let hw_str = rumtk_serialize!(&hw);
         let new_hw: MyStruct = rumtk_deserialize!(&hw_str).unwrap();
 
         assert!(

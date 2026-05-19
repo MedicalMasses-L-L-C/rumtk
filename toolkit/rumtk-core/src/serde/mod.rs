@@ -20,7 +20,7 @@
 use crate::buffers::buffer_to_str;
 pub use crate::types::RUMOrderedMap;
 use crate::types::{RUMBuffer, RUMBufferMut};
-use core::str::Chars;
+use ::core::str::Chars;
 pub use json::*;
 pub use nanoserde::{DeJsonErr, DeJsonState, DeJsonTok, SerJsonState};
 use std::hash::Hash;

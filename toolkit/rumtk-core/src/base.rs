@@ -56,7 +56,7 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
 ///
 /// ## Min
 /// ```
-/// use ::rumtk_core::core::clamp_index;
+/// use ::rumtk_core::base::clamp_index;
 /// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 1;
@@ -66,7 +66,7 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
 ///
 /// ## Max
 /// ```
-/// use ::rumtk_core::core::clamp_index;
+/// use ::rumtk_core::base::clamp_index;
 /// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 5;
@@ -76,7 +76,7 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
 ///
 /// ## Valid
 /// ```
-/// use ::rumtk_core::core::clamp_index;
+/// use ::rumtk_core::base::clamp_index;
 /// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = 5;
@@ -86,7 +86,7 @@ pub fn is_unique<T: std::cmp::Eq + std::hash::Hash>(data: &Vec<T>) -> bool {
 ///
 /// ## Valid Negative Index (reverse lookup)
 /// ```
-/// use ::rumtk_core::core::clamp_index;
+/// use ::rumtk_core::base::clamp_index;
 /// use ::rumtk_core::strings::rumtk_format;
 /// let max: isize = 5;
 /// let i: isize = -1;

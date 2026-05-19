@@ -47,8 +47,8 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::core::{clamp_index, RUMError};
-    use rumtk_core::core::{RUMResult, RUMVecDeque};
+    use rumtk_core::base::{clamp_index, RUMError};
+    use rumtk_core::base::{RUMResult, RUMVecDeque};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::compatibility::{RUMSerializableBuffer, RUMSerializableOrderedMap};

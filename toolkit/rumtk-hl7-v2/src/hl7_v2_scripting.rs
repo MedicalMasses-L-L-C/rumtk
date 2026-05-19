@@ -19,7 +19,7 @@
  */
 
 pub mod python {
-    use rumtk_core::core::RUMResult;
+    use rumtk_core::base::RUMResult;
     use rumtk_core::scripting::python_utils::RUMPython;
     use rumtk_core::scripting::python_utils::{py_extract_any, py_new_args, py_push_arg};
     use rumtk_core::strings::RUMString;

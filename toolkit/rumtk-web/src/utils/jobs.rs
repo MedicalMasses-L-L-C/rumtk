@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::HTMLResult;
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::id::id_to_uuid;
 use rumtk_core::strings::rumtk_format;
 use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};

@@ -18,7 +18,7 @@
  */
 #![feature(str_as_str)]
 
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::dependencies::clap;
 use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};

@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::core::{RUMResult, RUMVec, RUMVecDeque};
+use crate::base::{RUMResult, RUMVec, RUMVecDeque};
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
 pub use bytes::{BufMut, Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 use clap::builder::TypedValueParser;

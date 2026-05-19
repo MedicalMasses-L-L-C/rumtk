@@ -38,7 +38,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::RUMWebTemplate;
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
 use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 use std::convert::{From, TryFrom};

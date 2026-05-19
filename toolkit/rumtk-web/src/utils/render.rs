@@ -21,7 +21,7 @@
 use crate::types::HTMLResult;
 use crate::{RUMWebData, RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::{Options, Parser};
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::search::rumtk_search::{string_replace_all_matches, string_search_list};
 use rumtk_core::strings::{
     rumtk_format, AsStr, GraphemePattern, GraphemePatternPair, RUMString, RUMStringConversions,

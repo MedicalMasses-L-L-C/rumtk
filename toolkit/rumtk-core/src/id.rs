@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::core::RUMResult;
+use crate::base::RUMResult;
 use crate::strings::rumtk_format;
 use crate::types::RUMID;
 use nanoid::nanoid;

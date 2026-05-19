@@ -42,7 +42,7 @@
 /// process first exiting.
 ///
 pub mod cli_utils {
-    use crate::core::{RUMResult, RUMVec};
+    use crate::base::{RUMResult, RUMVec};
     use crate::strings::{rumtk_format, RUMStringConversions};
     use crate::types::RUMBuffer;
     use std::io::{stdin, stdout, Read, Write};
@@ -101,7 +101,7 @@ pub mod cli_utils {
     /// use std::io::prelude::*;
     /// use std::process::{Command, Stdio};
     /// use rumtk_core::cli::cli_utils::{read_some_stdin, BUFFER_SIZE, BUFFER_CHUNK_SIZE};
-    /// use rumtk_core::core::RUMVec;
+    /// use rumtk_core::base::RUMVec;
     ///
     /// let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
     /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
@@ -175,7 +175,7 @@ pub mod macros {
     ///
     /// # Example
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::types::RUMBuffer;
     /// use rumtk_core::rumtk_read_stdin;
     ///

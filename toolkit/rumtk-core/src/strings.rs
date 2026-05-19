@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::core::{is_unique, RUMResult, RUMVec};
+use crate::base::{is_unique, RUMResult, RUMVec};
 use crate::types::RUMBuffer;
 use base64::prelude::*;
 use chardetng::{EncodingDetector, Iso2022JpDetection, Utf8Detection};
 use encoding_rs::Encoding;
 use std::cmp::min;
 pub use std::format as rumtk_format;
+pub use std::primitive::str;
 use unicode_segmentation::UnicodeSegmentation;
 /**************************** Constants**************************************/
 const ESCAPED_STRING_WINDOW: usize = 6;

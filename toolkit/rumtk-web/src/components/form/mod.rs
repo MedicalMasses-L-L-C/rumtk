@@ -23,7 +23,7 @@ use crate::components::form::props::InputProps;
 use crate::utils::HTMLResult;
 use crate::{rumtk_web_render_component, SharedAppState};
 use rumtk_core::cache::{new_cache, LazyRUMCache};
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 

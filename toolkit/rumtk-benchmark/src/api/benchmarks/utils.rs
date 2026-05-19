@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
-use rumtk_core::core::{RUMResult, RUMVec};
+use rumtk_core::base::{RUMResult, RUMVec};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::strings::{rumtk_format, string_format, RUMString};
 use rumtk_core::types::RUMBuffer;

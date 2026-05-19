@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::buffers::buffer_to_string;
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::search::rumtk_search::{string_find_value, string_search};
 use rumtk_core::strings::{rumtk_format, string_to_buffer, RUMString, RUMStringConversions};
 use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};

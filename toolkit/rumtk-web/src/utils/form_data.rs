@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::buffers::buffer_to_string;
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::{
     rumtk_format, RUMString,
 };
@@ -70,7 +70,7 @@ pub async fn get_type(content_type: &str) -> &'static str {
 /// use rumtk_web::utils::form_data::compile_form_data;
 /// use rumtk_web::FormData;
 /// use axum::extract::{Request, FromRequest};
-/// use rumtk_core::core::RUMResult;
+/// use rumtk_core::base::RUMResult;
 /// use rumtk_core::types::RUMBuffer;
 /// use rumtk_web::form_data::FormResult;
 ///

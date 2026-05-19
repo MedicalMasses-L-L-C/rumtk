@@ -18,14 +18,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::core::RUMResult;
+use crate::base::RUMResult;
 use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard};
 use crate::threading::thread_primitives::SafeLock;
 use crate::threading::threading_functions::{lock_read, new_lock, process_write_critical_section};
 use crate::types::RUMHashMap;
 use crate::{rumtk_critical_section_write, rumtk_lock_read, rumtk_new_lock};
 use clap::builder::TypedValueParser;
-use core::hash::Hash;
+use ::core::hash::Hash;
 pub use once_cell::unsync::Lazy;
 use std::fmt::Debug;
 use std::sync::LazyLock;
@@ -119,7 +119,7 @@ pub mod cache_macros {
     /// use rumtk_core::rumtk_cache_fetch;
     /// use rumtk_core::cache::{new_cache, LazyRUMCache};
     /// use std::sync::Arc;
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, String>;
     ///
@@ -163,7 +163,7 @@ pub mod cache_macros {
     /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_get, rumtk_cache_push};
     /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push};
     /// use std::sync::Arc;
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, Vec<String>>;
     ///
@@ -219,7 +219,7 @@ pub mod cache_macros {
     /// use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push, rumtk_cache_get};
     /// use rumtk_core::cache::{new_cache, LazyRUMCache, cache_push, cache_get};
     /// use std::sync::Arc;
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     ///
     /// type StringCache = LazyRUMCache<String, Vec<String>>;
     ///

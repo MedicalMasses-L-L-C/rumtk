@@ -62,7 +62,7 @@ mod tests {
     use pyo3::unindent::Unindent;
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_split_fast, buffer_to_str};
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
-    use rumtk_core::core::{RUMResult, RUMVec};
+    use rumtk_core::base::{RUMResult, RUMVec};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;

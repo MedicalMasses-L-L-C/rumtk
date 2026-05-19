@@ -20,7 +20,7 @@
  */
 
 use minifier::{css, html, js, json};
-use rumtk_core::core::RUMResult;
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::RUMString;
 
 pub enum Asset<'a> {

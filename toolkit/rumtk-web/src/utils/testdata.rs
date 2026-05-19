@@ -25,7 +25,7 @@ pub mod data {
     use axum::extract::Request;
     use axum::http::header::{CONTENT_LENGTH, CONTENT_TYPE, HOST};
     use axum::http::Method;
-    use rumtk_core::core::RUMVec;
+    use rumtk_core::base::RUMVec;
     use rumtk_core::rumtk_resolve_task;
     use std::io::Write;
 

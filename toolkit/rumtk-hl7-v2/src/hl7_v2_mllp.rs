@@ -190,7 +190,7 @@ pub mod mllp_v2 {
     //! ```
 
     use crate::hl7_v2_parser::v2_parser::rumtk_format;
-    use rumtk_core::core::{RUMResult, RUMVec};
+    use rumtk_core::base::{RUMResult, RUMVec};
     pub use rumtk_core::net::tcp::{
         AsyncMutex, AsyncMutexGuard, ClientIDList, RUMClientHandle, RUMNetMessage, RUMServerHandle,
         ANYHOST, LOCALHOST,
@@ -867,7 +867,7 @@ pub mod mllp_v2_helpers {
         AsyncMLLP, AsyncMutex, MLLPChannel, MLLPChannels, MLLPClientMessages, MLLPMessages,
         SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY,
     };
-    use rumtk_core::core::RUMResult;
+    use rumtk_core::base::RUMResult;
     use rumtk_core::net::tcp::{ClientIDList, ConnectionInfo, NET_SLEEP_TIMEOUT};
     use rumtk_core::net::tcp_helpers::to_ip_port;
     use rumtk_core::rumtk_sleep;
@@ -988,7 +988,7 @@ pub mod mllp_v2_helpers {
 ///
 /// ```
 ///     use std::thread;
-///     use rumtk_core::core::RUMResult;
+///     use rumtk_core::base::RUMResult;
 ///     use rumtk_core::rumtk_sleep;
 ///     use rumtk_core::strings::{rumtk_format, RUMString};
 ///     use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, MLLP_FILTER_POLICY};
@@ -1259,7 +1259,7 @@ pub mod mllp_v2_api {
     /// # Example Usage
     ///
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_ip_port};
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
@@ -1286,7 +1286,7 @@ pub mod mllp_v2_api {
     /// ## Example Usage
     ///
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
@@ -1297,7 +1297,7 @@ pub mod mllp_v2_api {
     /// ```
     ///
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
@@ -1310,7 +1310,7 @@ pub mod mllp_v2_api {
     /// ```
     ///
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{MLLP_FILTER_POLICY, LOCALHOST};
     /// use rumtk_hl7_v2::{rumtk_v2_mllp_listen, rumtk_v2_mllp_get_client_ids, rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port};
     /// use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};

@@ -47,7 +47,7 @@ pub mod thread_primitives {
 }
 
 pub mod threading_manager {
-    use crate::core::{RUMResult, RUMVec};
+    use crate::base::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
     use crate::threading::thread_primitives::SafeLock;
     use crate::threading::threading_functions::{async_sleep, sleep};
@@ -100,7 +100,7 @@ pub mod threading_manager {
     /// ```
     /// use std::sync::{Arc};
     /// use tokio::sync::RwLock as AsyncRwLock;
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::threading::threading_manager::{SafeTaskArgs, TaskItems, TaskManager};
     /// use rumtk_core::{rumtk_create_task, };
@@ -498,7 +498,7 @@ pub mod threading_manager {
 /// The sleep family of functions are also here.
 ///
 pub mod threading_functions {
-    use crate::core::RUMResult;
+    use crate::base::RUMResult;
     use crate::net::tcp::{AsyncOwnedRwLockReadGuard, AsyncOwnedRwLockWriteGuard, SafeLockReadGuard, SafeLockWriteGuard, SafeTokioRuntime};
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
     use num_cpus;
@@ -672,7 +672,7 @@ pub mod threading_functions {
     ///
     /// ## Example
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::threading::thread_primitives::SafeLock;
     /// use rumtk_core::threading::threading_functions::{new_lock, process_read_critical_section};
     ///
@@ -707,7 +707,7 @@ pub mod threading_functions {
     ///
     /// ## Example
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::threading::thread_primitives::SafeLock;
     /// use rumtk_core::threading::threading_functions::{new_lock, process_write_critical_section};
     ///
@@ -814,7 +814,7 @@ pub mod threading_macros {
     ///
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -832,7 +832,7 @@ pub mod threading_macros {
     ///
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -927,7 +927,7 @@ pub mod threading_macros {
     ///
     /// ```
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -1053,7 +1053,7 @@ pub mod threading_macros {
     /// ### With Default Thread Count
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -1072,7 +1072,7 @@ pub mod threading_macros {
     /// ### With Custom Thread Count
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -1091,7 +1091,7 @@ pub mod threading_macros {
     /// ### With Async Function Body
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     let result = rumtk_exec_task!(
@@ -1110,7 +1110,7 @@ pub mod threading_macros {
     /// ### With Async Function Body and No Args
     /// ```
     ///     use rumtk_core::{rumtk_exec_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     let result = rumtk_exec_task!(
@@ -1127,7 +1127,7 @@ pub mod threading_macros {
     ///
     /// ```no_run
     ///     use rumtk_core::{rumtk_init_threads, rumtk_resolve_task, rumtk_create_task_args, rumtk_create_task, rumtk_spawn_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     use rumtk_core::threading::threading_manager::SafeTaskArgs;
     ///
     ///     async fn test(args: &SafeTaskArgs<i32>) -> RUMResult<Vec<i32>> {
@@ -1203,7 +1203,7 @@ pub mod threading_macros {
     ///
     /// ```
     ///     use rumtk_core::{rumtk_async_sleep, rumtk_exec_task};
-    ///     use rumtk_core::core::RUMResult;
+    ///     use rumtk_core::base::RUMResult;
     ///     rumtk_exec_task!( async || -> RUMResult<()> {
     ///             rumtk_async_sleep!(1).await;           // Sleeps for 1 second.
     ///             rumtk_async_sleep!(0.001).await;       // Sleeps for 1 millisecond
@@ -1260,7 +1260,7 @@ pub mod threading_macros {
     ///
     /// ## Example
     /// ```
-    /// use rumtk_core::core::RUMResult;
+    /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::{rumtk_new_lock, rumtk_critical_section_read};
     ///
     /// let data = 5;

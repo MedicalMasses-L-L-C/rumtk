@@ -25,7 +25,7 @@
 /// The types here should simplify implementation of higher level layers and protocols.
 ///
 pub mod tcp {
-    use crate::core::{RUMResult, RUMVec};
+    use crate::base::{RUMResult, RUMVec};
     use crate::strings::{rumtk_format, RUMString};
     pub use crate::threading::thread_primitives::*;
     use crate::threading::threading_manager::SafeTaskArgs;
@@ -676,7 +676,6 @@ pub mod tcp {
 
 pub mod tcp_helpers {
     use crate::net::tcp::ConnectionInfo;
-    use crate::strings::RUMStringConversions;
 
     pub fn to_ip_port(address_str: &str) -> ConnectionInfo {
         let mut components = address_str.split(':');
