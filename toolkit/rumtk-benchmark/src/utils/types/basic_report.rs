@@ -19,8 +19,9 @@
  */
 use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::search::rumtk_search::{string_find_value, string_search};
+use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
+use rumtk_core::types::RUMBuffer;
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;
@@ -35,7 +36,7 @@ use std::fmt::Debug;
 /// BasicBenchmarkReport::try_from(hyperfine_str);
 /// ```
 /// 
-#[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
+#[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
         <table>

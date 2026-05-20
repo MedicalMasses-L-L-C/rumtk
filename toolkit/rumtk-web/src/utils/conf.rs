@@ -27,8 +27,9 @@ use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
+use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::RUMStringConversions;
-use rumtk_core::types::{RUMDeserialize, RUMSerialize, RUMID};
+use rumtk_core::types::RUMID;
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
 
@@ -43,7 +44,7 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 
 pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
 
-#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
     pub logo_source: Option<RUMString>,
     pub logo_size: RUMString,
@@ -51,13 +52,13 @@ pub struct HeaderConf {
     pub disable_logo: bool,
 }
 
-#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct FooterConf {
     pub socials_list: RUMString,
     pub disable_contact_button: bool,
 }
 
-#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct PipelineConf {
     pub settings: Option<TextMap>,
     pub data_templates: Option<NestedTextMap>,
@@ -137,7 +138,7 @@ impl PipelineConf {
 /// at runtime. The settings will dictate a few key project behaviors such as properly labeling
 /// some components with the company name or use the correct language text.
 ///
-#[derive(RUMSerialize, RUMDeserialize, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
@@ -361,7 +362,7 @@ macro_rules! rumtk_web_load_conf {
             Err(err) => rumtk_web_save_conf!($path),
         };
 
-        let mut conf: AppConf = match rumtk_deserialize!(json) {
+        let mut conf: AppConf = match rumtk_deserialize!(&json) {
             Ok(conf) => conf,
             Err(err) => panic!(
                 "The App config file in {} does not meet the expected structure. \
@@ -422,7 +423,7 @@ macro_rules! rumtk_web_save_conf {
         use std::fs;
         use $crate::utils::AppConf;
 
-        let json = rumtk_serialize!(AppConf::default(), true).unwrap_or_default();
+        let json = rumtk_serialize!(&AppConf::default()).unwrap_or_default();
         fs::write($path, &json);
         json
     }};

@@ -68,7 +68,7 @@ fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
                 let msg = rumtk_v2_parse_message!(stdin_msg)?;
 
                 if !args.quiet {
-                    rumtk_serialize!(&msg)
+                    rumtk_serialize!(&msg)?
                 } else {
                     RUMString::default()
                 }

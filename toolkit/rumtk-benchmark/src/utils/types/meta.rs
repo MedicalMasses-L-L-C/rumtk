@@ -39,13 +39,13 @@
  */
 use crate::utils::types::RUMWebTemplate;
 use rumtk_core::base::RUMResult;
+use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-use rumtk_core::types::{RUMDeserialize, RUMSerialize};
 use std::convert::{From, TryFrom};
 use std::env::consts;
 use std::fmt::Debug;
 
-#[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
+#[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
         <table>

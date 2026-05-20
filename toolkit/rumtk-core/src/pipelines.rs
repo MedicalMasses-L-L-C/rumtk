@@ -32,7 +32,7 @@ pub mod pipeline_types {
     #[derive(RUMSerJson, RUMDeJson, PartialEq, Default, Debug, Clone)]
     pub struct RUMCommand {
         pub path: RUMString,
-        #[nserde(skip)]
+        #[serde(skip)]
         pub data: Option<RUMBuffer>,
         pub args: RUMCommandArgs,
         pub env: RUMCommandEnv,

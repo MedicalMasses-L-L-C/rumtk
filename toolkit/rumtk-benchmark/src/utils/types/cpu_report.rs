@@ -19,8 +19,9 @@
  */
 use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::search::rumtk_search::string_find_value;
+use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::RUMString;
-use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
+use rumtk_core::types::RUMBuffer;
 use rumtk_web::conversions::to_data_uri;
 use rumtk_web::RUMWebTemplate;
 
@@ -28,7 +29,7 @@ use rumtk_web::RUMWebTemplate;
 /// Extracts basic call stack information for later display. Note, this type should be paired with
 /// the output of `flamegraph` (See the crate [flamegraph-rs](https://github.com/flamegraph-rs/flamegraph))
 ///
-#[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
+#[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
         <div class='f9'>

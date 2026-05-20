@@ -656,7 +656,7 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = rumtk_serialize!(&hw);
+        let hw_str = rumtk_serialize!(&hw).unwrap();
 
         assert!(
             !hw_str.is_empty(),
@@ -674,7 +674,7 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = to_json(&hw);
+        let hw_str = to_json(&hw).unwrap();
         let new_hw: MyStruct = from_json(&hw_str).unwrap();
 
         assert_eq!(
@@ -693,7 +693,7 @@ mod tests {
         let hw = MyStruct {
             hello: RUMString::from("World"),
         };
-        let hw_str = rumtk_serialize!(&hw);
+        let hw_str = rumtk_serialize!(&hw).unwrap();
         let new_hw: MyStruct = rumtk_deserialize!(&hw_str).unwrap();
 
         assert!(

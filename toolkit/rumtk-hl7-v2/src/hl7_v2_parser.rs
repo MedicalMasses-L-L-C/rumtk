@@ -45,14 +45,14 @@ pub mod v2_parser {
     };
     use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
-    use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::base::{clamp_index, RUMError};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
+    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::serde::compatibility::{RUMSerializableBuffer, RUMSerializableOrderedMap};
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
+    use rumtk_core::serde::RUMSerializableBuffer;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -417,12 +417,11 @@ pub mod v2_parser {
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
     pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
-    pub type SerializableSegmentMap = RUMSerializableOrderedMap<u8, V2SegmentGroup>;
 
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
-        segment_groups: SerializableSegmentMap,
+        segment_groups: SegmentMap,
     }
 
     impl V2Message {
@@ -441,7 +440,7 @@ pub mod v2_parser {
 
             Ok(V2Message {
                 separators: parse_characters,
-                segment_groups: RUMSerializableOrderedMap(segments),
+                segment_groups: segments,
             })
         }
 
@@ -452,9 +451,9 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.0.len());
-            for segment_key in self.segment_groups.0.keys() {
-                let segment_group = &self.segment_groups.0[segment_key];
+            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
+            for segment_key in self.segment_groups.keys() {
+                let segment_group = &self.segment_groups[segment_key];
                 for segment in segment_group {
                     msg.push(segment.to_string(&self.separators));
                 }
@@ -464,11 +463,11 @@ pub mod v2_parser {
         }
 
         pub fn len(&self) -> usize {
-            self.segment_groups.0.len()
+            self.segment_groups.len()
         }
 
         pub fn is_empty(&self) -> bool {
-            self.segment_groups.0.is_empty()
+            self.segment_groups.is_empty()
         }
 
         pub fn get(&self, segment_index: &u8, sub_segment: usize) -> V2Result<&V2Segment> {
@@ -502,7 +501,7 @@ pub mod v2_parser {
         }
 
         pub fn get_group(&self, segment_index: &u8) -> V2Result<&V2SegmentGroup> {
-            match self.segment_groups.0.get(segment_index) {
+            match self.segment_groups.get(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -512,7 +511,7 @@ pub mod v2_parser {
         }
 
         pub fn get_mut_group(&mut self, segment_index: &u8) -> V2Result<&mut V2SegmentGroup> {
-            match self.segment_groups.0.get_mut(segment_index) {
+            match self.segment_groups.get_mut(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -550,7 +549,7 @@ pub mod v2_parser {
         }
 
         pub fn segment_exists(&self, segment_index: &u8) -> bool {
-            self.segment_groups.0.contains_key(segment_index)
+            self.segment_groups.contains_key(segment_index)
         }
 
         ///

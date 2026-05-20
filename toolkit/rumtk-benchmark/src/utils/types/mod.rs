@@ -18,8 +18,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::cpu_report::CPUBenchmarkReport;
+use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::RUMString;
-use rumtk_core::types::{RUMBuffer, RUMDeserialize, RUMSerialize};
+use rumtk_core::types::RUMBuffer;
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;
@@ -35,7 +36,7 @@ pub use meta::*;
 
 type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
 
-#[derive(Default, Debug, RUMDeserialize, RUMSerialize, RUMWebTemplate)]
+#[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
         {{meta|safe}}

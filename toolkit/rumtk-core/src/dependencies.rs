@@ -19,6 +19,4 @@
  */
 
 pub use clap;
-pub use nanoserde;
-pub use nanoserde_derive;
 pub use tokio;
