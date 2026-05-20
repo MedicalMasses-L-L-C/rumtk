@@ -19,25 +19,29 @@
  */
 use crate::base::RUMResult;
 use crate::strings::{rumtk_format, RUMString};
-pub use nanoserde::{DeBin as RUMDeBin, DeJson as RUMDeJson, SerBin as RUMSerBin, SerJson as RUMSerJson};
+pub use serde::{Deserialize as RUMDeJson, Deserializer as RUMJsonDeserializer, Serialize as RUMSerJson, Serializer as RUMJsonSerializer};
+use serde_json::{from_str, to_string};
 
 #[inline(always)]
     pub fn from_json<T>(input: &str) -> RUMResult<T>
     where
-        T: RUMDeJson
+        T: for<'a> RUMDeJson<'a>
     {
-        match T::deserialize_json(input) {
+        match from_str(input) {
             Ok(value) => Ok(value),
             Err(e) => Err(rumtk_format!("Failed to deserialize object because of {}", e))
         }
     }
 
     #[inline(always)]
-    pub fn to_json<T>(input: &T) -> RUMString
+    pub fn to_json<T>(input: &T) -> RUMResult<RUMString>
     where
         T: RUMSerJson
     {
-        input.serialize_json()
+        match to_string(input) {
+            Ok(value) => Ok(value),
+            Err(e) => Err(rumtk_format!("Failed to serialize object because of {}", e))
+        }
     }
 
     ///
@@ -62,7 +66,7 @@ pub use nanoserde::{DeBin as RUMDeBin, DeJson as RUMDeJson, SerBin as RUMSerBin,
     /// }
     ///
     /// let hw = MyStruct{hello: RUMString::from("World")};
-    /// let hw_str = rumtk_serialize!(&hw);
+    /// let hw_str = rumtk_serialize!(&hw).unwrap();
     ///
     /// assert!(hw_str.len() > 0, "Empty JSON string generated from the test struct!");
     ///
@@ -97,7 +101,7 @@ pub use nanoserde::{DeBin as RUMDeBin, DeJson as RUMDeJson, SerBin as RUMSerBin,
     /// }
     ///
     /// let hw = MyStruct{hello: RUMString::from("World")};
-    /// let hw_str = rumtk_serialize!(&hw);
+    /// let hw_str = rumtk_serialize!(&hw).unwrap();
     /// let new_hw: MyStruct = rumtk_deserialize!(&hw_str).unwrap();
     ///
     /// assert!(

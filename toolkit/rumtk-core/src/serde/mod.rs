@@ -18,91 +18,38 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::buffers::buffer_to_str;
+use crate::strings::string_to_buffer;
 pub use crate::types::RUMOrderedMap;
-use crate::types::{RUMBuffer, RUMBufferMut};
-use ::core::str::Chars;
+use crate::types::RUMBuffer;
+use bytes::BufMut;
 pub use json::*;
-pub use nanoserde::{DeJsonErr, DeJsonState, DeJsonTok, SerJsonState};
 use std::hash::Hash;
 
 pub mod json;
 
 #[derive(Default, Debug, PartialEq, Clone)]
-pub struct RUMSerializableOrderedMap<K: Hash + Eq, V>(pub RUMOrderedMap<K, V>);
-
-impl<K, V> RUMSerJson for RUMSerializableOrderedMap<K, V>
-where
-    K: RUMSerJson + Hash + Eq,
-    V: RUMSerJson,
-{
-    fn ser_json(&self, d: usize, s: &mut SerJsonState) {
-        s.out.push('{');
-        let len = self.0.len();
-        let indent = d + 1;
-        for (index, (k, v)) in self.0.iter().enumerate() {
-            s.indent(indent);
-            k.ser_json(indent, s);
-            s.out.push(':');
-            v.ser_json(indent, s);
-            if (index + 1) < len {
-                s.conl();
-            }
-        }
-        s.indent(d);
-        s.out.push('}');
-    }
-}
-
-impl<K, V> RUMDeJson for RUMSerializableOrderedMap<K, V>
-where
-    K: RUMDeJson + Eq + core::hash::Hash,
-    V: RUMDeJson,
-{
-    fn de_json(s: &mut DeJsonState, i: &mut Chars) -> Result<RUMSerializableOrderedMap<K, V>, DeJsonErr> {
-        let mut h = RUMOrderedMap::new();
-
-        s.curly_open(i)?;
-        while s.tok != DeJsonTok::CurlyClose {
-            let k = RUMDeJson::de_json(s, i)?;
-            s.colon(i)?;
-            let v = RUMDeJson::de_json(s, i)?;
-            s.eat_comma_curly(i)?;
-            h.insert(k, v);
-        }
-        s.curly_close(i)?;
-
-        Ok(RUMSerializableOrderedMap(h))
-    }
-}
-
-#[derive(Default, Debug, PartialEq, Clone)]
 pub struct RUMSerializableBuffer(pub RUMBuffer);
 
-impl RUMSerJson for RUMSerializableBuffer
-{
-    fn ser_json(&self, d: usize, s: &mut SerJsonState) {
-        let escaped = buffer_to_str(&self.0).unwrap_or_else(|e| {
-            eprintln!("{}", e);
-            ""
-        });
-        s.out.push('"');
-        s.out.push_str(escaped);
-        s.out.push('"');
+impl RUMSerJson for RUMSerializableBuffer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: RUMJsonSerializer,
+    {
+        // Convert external type to a serializable format
+        let string = match buffer_to_str(&self.0.as_slice()) {
+            Ok(string) => string,
+            Err(err) => return Err(serde::ser::Error::custom(err)),
+        };
+        serializer.serialize_str(string)
     }
 }
 
-impl RUMDeJson for RUMSerializableBuffer
-{
-    fn de_json(s: &mut DeJsonState, i: &mut Chars) -> Result<RUMSerializableBuffer, DeJsonErr> {
-        let mut h = RUMBufferMut::new();
-
-        s.curly_open(i)?;
-        while s.tok != DeJsonTok::CurlyClose {
-            println!("{:?}", &s.tok);
-            s.eat_comma_curly(i)?;
-        }
-        s.curly_close(i)?;
-
-        Ok(RUMSerializableBuffer(h.freeze()))
+impl<'a> RUMDeJson<'a> for RUMSerializableBuffer {
+    fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
+    where
+        D: RUMJsonDeserializer<'a>,
+    {
+        let escaped_val = String::deserialize(deserializer)?;
+        Ok(RUMSerializableBuffer(string_to_buffer(&escaped_val)))
     }
 }
