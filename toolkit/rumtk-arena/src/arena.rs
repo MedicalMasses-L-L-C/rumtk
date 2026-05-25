@@ -110,6 +110,10 @@ impl Arena {
         self.capacity - self.used
     }
 
+    ///
+    /// Checks if it is possible to allocate the next object. This is an assertion guarded operation and will
+    /// `panic`!!!!!!!
+    ///
     pub fn can_allocate(&self, size: usize) -> bool {
         let remaining = self.remaining();
         let can_allocate = remaining >= size;
