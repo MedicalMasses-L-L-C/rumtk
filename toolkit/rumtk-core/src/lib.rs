@@ -702,10 +702,10 @@ mod tests {
         );
     }
 
-    /*
+
     #[test]
     fn test_escape_unescape_json() {
-        #[derive(Serialize, Deserialize, PartialEq)]
+        #[derive(RUMSerJson, RUMDeJson, PartialEq)]
         struct MyStruct {
             hello: RUMString,
         }
@@ -714,8 +714,8 @@ mod tests {
             hello: RUMString::from("World"),
         };
 
-        let hw_str = rumtk_serialize!(&hw, true).unwrap();
-        let hw_escaped_str = strings::basic_escape(&hw_str);
+        let hw_str = rumtk_serialize!(&hw).unwrap();
+        let hw_escaped_str = strings::basic_escape(&hw_str, None);
         println!("Escaped => {}", hw_escaped_str);
 
         let hw_unescaped_str = strings::unescape_string(&hw_escaped_str).unwrap();
@@ -733,7 +733,6 @@ mod tests {
             "Deserialized JSON does not match the expected value!"
         );
     }
-    */
 
     ////////////////////////////CLI Tests/////////////////////////////////
 

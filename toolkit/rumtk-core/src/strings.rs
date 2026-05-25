@@ -40,7 +40,7 @@ pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
 /**************************** Types *****************************************/
 pub type RUMString = String;
 pub type EscapeException<'a> = (&'a str, &'a str);
-pub type EscapeExceptions<'a> = &'a [EscapeException<'a>];
+pub type EscapeExceptions<'a> = Option<&'a [EscapeException<'a>]>;
 pub type StringReplacementPair<'a> = [(&'a str, &'a str)];
 pub type Grapheme<'a> = &'a str;
 pub type GraphemeStringView<'a> = RUMVec<Grapheme<'a>>;
@@ -601,7 +601,7 @@ fn number_to_char_unchecked(num: &u32) -> RUMString {
 ///```
 ///
 pub fn escape(unescaped_str: &str) -> RUMString {
-    basic_escape(unescaped_str, &vec![("{", ""), ("}", "")])
+    basic_escape(unescaped_str, Some(&vec![("{", ""), ("}", "")]))
 }
 
 ///
@@ -616,13 +616,20 @@ pub fn escape(unescaped_str: &str) -> RUMString {
 ///```
 pub fn basic_escape(unescaped_str: &str, except: EscapeExceptions) -> RUMString {
     let escaped = is_escaped_str(unescaped_str);
-    if !escaped {
-        let mut escaped_str = unescaped_str.escape_default().to_string();
-        for (from, to) in except {
-            escaped_str = escaped_str.replace(from, to);
-        }
-        return escaped_str.to_string();
+
+    match except {
+        Some(exceptions) => {
+            if !escaped {
+                let mut escaped_str = unescaped_str.escape_default().to_string();
+                for (from, to) in exceptions {
+                    escaped_str = escaped_str.replace(from, to);
+                }
+                return escaped_str.to_string();
+            }
+        },
+        None => {}
     }
+    
     unescaped_str.to_string()
 }
 
