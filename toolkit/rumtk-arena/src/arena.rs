@@ -43,8 +43,11 @@ pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 ///
 /// ## Safety
 ///
-/// Calling `reset` simply resets the pointer to 0 and thus technically allows for the potential to
+/// * Calling `reset` simply resets the pointer to 0 and thus technically allows for the potential to
 /// leak a prior round of work's information if a pointer return by `allocate` is misused.
+/// * No calls to drop are invoked!!! You have to find a different way to manually do so. This implementation
+/// is meant to deal with quick allocation needs and not with self managed resources for which a RAII
+/// approach might be more appropriate.
 ///
 /// ## Example
 ///
@@ -99,6 +102,10 @@ impl Arena {
         }
     }
 
+    ///
+    /// Provides the remaining `uncommitted` number of bytes. This represents the number of bytes left
+    /// to add more objects.
+    ///
     pub fn remaining(&self) -> usize {
         self.capacity - self.used
     }
@@ -166,6 +173,21 @@ impl Arena {
         NonNull::new(dst).unwrap()
     }
 
+    ///
+    /// We do not truly drop objects. Instead, we move the cursor back by the requested number of bytes.
+    ///
+    /// ## Safety
+    ///
+    /// Note that this means old results remain valid and could accidentally end up in a new allocation
+    /// that could be safety sensitive.
+    ///
+    pub fn deallocate(&mut self, length: usize) {
+        self.used -= length;
+    }
+
+    ///
+    /// Resets the internal cursor. No real deallocations occur!
+    ///
     pub fn reset(&mut self) {
         self.used = 0;
     }
