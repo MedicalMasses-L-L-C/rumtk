@@ -18,6 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use memmap2::MmapMut;
+use std::ptr::NonNull;
 
 pub const ONE_KB: usize = 1024;
 pub const ONE_MB: usize = 1024 * ONE_KB;
@@ -25,7 +26,7 @@ pub const ONE_GB: usize = 1024 * ONE_MB;
 pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 
 ///
-/// Basic Arena Allocator that uses the crate `mmap2` to request wholesale allocation of memory from
+/// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
 /// the system.
 ///
 /// An arena is a memory management strategy in which you request a chunk of memory upfront and use it
@@ -39,6 +40,33 @@ pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 /// Another feature is that we implement the `Allocator` trait thus allowing you to provide an instance
 /// of the Arena to other standard collections through the nightly compiler's `allocator_api` feature.
 /// Note that this feature is considered unstable.
+///
+/// ## Safety
+///
+/// Calling `reset` simply resets the pointer to 0 and thus technically allows for the potential to
+/// leak a prior round of work's information if a pointer return by `allocate` is misused.
+///
+/// ## Example
+///
+/// ### Simple initialization and Writing of value.
+/// ```
+/// use crate::rumtk_arena::Arena;
+///
+/// let mut arena = Arena::new();
+/// let result_ptr = arena.write(5);
+///
+/// ```
+///
+/// ### Usage with a Vector.
+/// ```
+/// #![feature(allocator_api)]
+/// use crate::rumtk_arena::Arena;
+///
+/// let mut arena = Arena::new();
+/// let mut v = Vec::<usize>::with_capacity_in(5, &arena);
+/// v.push(5);
+///
+/// ```
 ///
 pub struct Arena {
     memory: MmapMut,
@@ -55,7 +83,7 @@ impl Arena {
     }
 
     ///
-    /// Allocates new Arena with the specified size. At the moment, we use the `mmap2` crate's defaults
+    /// Allocates new Arena with the specified size. At the moment, we use the `memmap2` crate's defaults
     /// for this allocation.
     ///
     pub fn with_capacity(capacity: usize) -> Self {
@@ -82,6 +110,14 @@ impl Arena {
         can_allocate
     }
 
+    ///
+    /// Commits a chunk of memory from our memory pool.
+    ///
+    /// ## Safety
+    ///
+    /// We call [Self::can_allocate] to assert that the size requested does not exceed the total
+    /// pool available. `panic` if we do not have enough memory to commit.
+    ///
     pub fn allocate(&mut self, size: usize) -> *mut u8 {
         self.can_allocate(size);
 
@@ -90,22 +126,44 @@ impl Arena {
         ptr.as_mut_ptr()
     }
 
-    pub fn write<T>(&mut self, data: T) -> *mut u8
+    ///
+    /// Writes a number of bytes into a pre allocated segment from our pool.
+    ///
+    pub fn write_bytes(&mut self, src: *const u8, dst: *mut u8, data_length: usize) {
+        unsafe {
+            std::ptr::copy_nonoverlapping(
+                src,
+                dst,
+                data_length,
+            );
+        }
+    }
+
+    ///
+    /// Commits a type object into the memory advancing the internal cursor.
+    ///
+    /// ## Order of Operations
+    /// 1. Calculate size of object.
+    /// 2. Allocate the chunk of memory via [Self::allocate].
+    /// 3. Cast object to a byte pointer.
+    /// 4. Memcopy from `src` to `dst` by the number of bytes calculated in #1.
+    ///
+    /// ## Safety
+    ///
+    /// We call [Self::allocate] first before applying a memcopy. [Self::allocate] can panic if there is a bug in
+    /// this crate due to our call of `assert`!
+    ///
+    pub fn write<T>(&mut self, data: T) -> NonNull<u8>
     where
         T: Copy
     {
         let data_length = size_of::<T>();
         let dst = self.allocate(data_length);
+        let src = std::ptr::addr_of!(data).cast::<u8>();
 
-        unsafe {
-            std::ptr::copy_nonoverlapping(
-                std::ptr::addr_of!(data).cast::<u8>(),
-                dst,
-                data_length,
-            );
-        }
+        self.write_bytes(src, dst, data_length);
 
-        dst
+        NonNull::new(dst).unwrap()
     }
 
     pub fn reset(&mut self) {
