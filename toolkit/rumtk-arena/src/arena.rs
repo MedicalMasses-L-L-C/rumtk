@@ -18,6 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use memmap2::MmapMut;
+use std::alloc::{AllocError, Allocator};
+use std::alloc::{GlobalAlloc, Layout};
 use std::ptr::NonNull;
 
 pub const ONE_KB: usize = 1024;
@@ -66,7 +68,7 @@ pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 /// use crate::rumtk_arena::Arena;
 ///
 /// let mut arena = Arena::new();
-/// let mut v = Vec::<usize>::with_capacity_in(5, &arena);
+/// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
 /// v.push(5);
 ///
 /// ```
@@ -129,7 +131,7 @@ impl Arena {
     /// We call [Self::can_allocate] to assert that the size requested does not exceed the total
     /// pool available. `panic` if we do not have enough memory to commit.
     ///
-    pub fn allocate(&mut self, size: usize) -> *mut u8 {
+    pub fn commit(&mut self, size: usize) -> *mut u8 {
         self.can_allocate(size);
 
         let ptr = &mut self.memory[self.used..self.used+size];
@@ -155,26 +157,31 @@ impl Arena {
     ///
     /// ## Order of Operations
     /// 1. Calculate size of object.
-    /// 2. Allocate the chunk of memory via [Self::allocate].
+    /// 2. Commit a chunk of memory via [Self::commit].
     /// 3. Cast object to a byte pointer.
     /// 4. Memcopy from `src` to `dst` by the number of bytes calculated in #1.
     ///
     /// ## Safety
     ///
-    /// We call [Self::allocate] first before applying a memcopy. [Self::allocate] can panic if there is a bug in
+    /// We call [Self::commit] first before applying a memcopy. [Self::commit] can panic if there is a bug in
     /// this crate due to our call of `assert`!
+    ///
+    /// Panics if casting to non null pointer somehow fails.
     ///
     pub fn write<T>(&mut self, data: T) -> NonNull<u8>
     where
         T: Copy
     {
         let data_length = size_of::<T>();
-        let dst = self.allocate(data_length);
+        let dst = self.commit(data_length);
         let src = std::ptr::addr_of!(data).cast::<u8>();
 
         self.write_bytes(src, dst, data_length);
 
-        NonNull::new(dst).unwrap()
+        match NonNull::new(dst) {
+            Some(ptr) => ptr,
+            None => panic!("Failed to allocate memory"),
+        }
     }
 
     ///
@@ -185,7 +192,7 @@ impl Arena {
     /// Note that this means old results remain valid and could accidentally end up in a new allocation
     /// that could be safety sensitive.
     ///
-    pub fn deallocate(&mut self, length: usize) {
+    pub fn uncommit(&mut self, length: usize) {
         self.used -= length;
     }
 
@@ -194,5 +201,51 @@ impl Arena {
     ///
     pub fn reset(&mut self) {
         self.used = 0;
+    }
+}
+
+unsafe impl Allocator for Arena {
+    // Required methods
+    fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
+        todo!()
+    }
+    unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
+        todo!()
+    }
+
+    // Provided methods
+    fn allocate_zeroed(
+        &self,
+        layout: Layout,
+    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    unsafe fn grow(
+        &self,
+        ptr: NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    unsafe fn grow_zeroed(
+        &self,
+        ptr: NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    unsafe fn shrink(
+        &self,
+        ptr: NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    fn by_ref(&self) -> &Self
+    where Self: Sized { todo!() }
+}
+
+unsafe impl GlobalAlloc for Arena {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        todo!()
+    }
+
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        todo!()
     }
 }
