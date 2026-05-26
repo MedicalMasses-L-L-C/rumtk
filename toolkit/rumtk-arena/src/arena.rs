@@ -21,11 +21,29 @@ use memmap2::MmapMut;
 use std::alloc::{AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
 use std::ptr::NonNull;
+use std::sync::{Arc, Mutex};
 
 pub const ONE_KB: usize = 1024;
 pub const ONE_MB: usize = 1024 * ONE_KB;
 pub const ONE_GB: usize = 1024 * ONE_MB;
 pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
+
+pub fn cast_to_nonnull(dst: &mut [u8]) -> NonNull<[u8]> {
+    match NonNull::new(dst) {
+        Some(ptr) => ptr,
+        None => panic!("Failed to allocate memory"),
+    }
+}
+
+pub fn cast_data_to_ptr<T>(data: &T) -> *const u8 {
+    std::ptr::addr_of!(*data).cast::<u8>()
+}
+
+pub fn get_data_length<T>(data: &T) -> usize {
+    size_of::<T>()
+}
+
+
 
 ///
 /// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
@@ -74,7 +92,7 @@ pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 /// ```
 ///
 pub struct Arena {
-    memory: MmapMut,
+    memory: Arc<Mutex<MmapMut>>,
     capacity: usize,
     used: usize,
 }
@@ -98,7 +116,7 @@ impl Arena {
         };
 
         Self {
-            memory,
+            memory: Arc::new(Mutex::new(memory)),
             capacity,
             used: 0,
         }
@@ -116,6 +134,7 @@ impl Arena {
     /// Checks if it is possible to allocate the next object. This is an assertion guarded operation and will
     /// `panic`!!!!!!!
     ///
+    #[inline(always)]
     pub fn can_allocate(&self, size: usize) -> bool {
         let remaining = self.remaining();
         let can_allocate = remaining >= size;
@@ -131,18 +150,18 @@ impl Arena {
     /// We call [Self::can_allocate] to assert that the size requested does not exceed the total
     /// pool available. `panic` if we do not have enough memory to commit.
     ///
-    pub fn commit(&mut self, size: usize) -> *mut u8 {
+    pub fn commit(&self, size: usize) -> &mut [u8] {
         self.can_allocate(size);
 
         let ptr = &mut self.memory[self.used..self.used+size];
         self.used += size;
-        ptr.as_mut_ptr()
+        ptr
     }
 
     ///
     /// Writes a number of bytes into a pre allocated segment from our pool.
     ///
-    pub fn write_bytes(&mut self, src: *const u8, dst: *mut u8, data_length: usize) {
+    pub fn write_bytes(&self, src: *const u8, dst: *mut u8, data_length: usize) {
         unsafe {
             std::ptr::copy_nonoverlapping(
                 src,
@@ -168,7 +187,7 @@ impl Arena {
     ///
     /// Panics if casting to non null pointer somehow fails.
     ///
-    pub fn write<T>(&mut self, data: T) -> NonNull<u8>
+    pub fn write<T>(&self, data: T)
     where
         T: Copy
     {
@@ -176,12 +195,7 @@ impl Arena {
         let dst = self.commit(data_length);
         let src = std::ptr::addr_of!(data).cast::<u8>();
 
-        self.write_bytes(src, dst, data_length);
-
-        match NonNull::new(dst) {
-            Some(ptr) => ptr,
-            None => panic!("Failed to allocate memory"),
-        }
+        self.write_bytes(src, dst.as_mut_ptr(), data_length);
     }
 
     ///
@@ -207,7 +221,8 @@ impl Arena {
 unsafe impl Allocator for Arena {
     // Required methods
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
-        todo!()
+        let r = self.commit(layout.size());
+        Ok(cast_to_nonnull(r))
     }
     unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
         todo!()
