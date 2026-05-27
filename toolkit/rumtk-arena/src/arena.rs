@@ -253,7 +253,7 @@ unsafe impl Allocator for Arena {
         Ok(cast_to_nonnull(r))
     }
     unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
-        todo!()
+        self.uncommit(layout.size());
     }
 
     // Provided methods
