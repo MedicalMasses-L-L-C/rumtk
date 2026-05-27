@@ -20,15 +20,15 @@
 use memmap2::MmapMut;
 use std::alloc::{AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
+use std::cell::RefCell;
 use std::ptr::NonNull;
-use std::sync::{Arc, Mutex};
 
 pub const ONE_KB: usize = 1024;
 pub const ONE_MB: usize = 1024 * ONE_KB;
 pub const ONE_GB: usize = 1024 * ONE_MB;
 pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 
-pub fn cast_to_nonnull(dst: &mut [u8]) -> NonNull<[u8]> {
+pub fn cast_to_nonnull(dst: *mut [u8]) -> NonNull<[u8]> {
     match NonNull::new(dst) {
         Some(ptr) => ptr,
         None => panic!("Failed to allocate memory"),
@@ -42,8 +42,6 @@ pub fn cast_data_to_ptr<T>(data: &T) -> *const u8 {
 pub fn get_data_length<T>(data: &T) -> usize {
     size_of::<T>()
 }
-
-
 
 ///
 /// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
@@ -91,13 +89,13 @@ pub fn get_data_length<T>(data: &T) -> usize {
 ///
 /// ```
 ///
-pub struct Arena {
-    memory: Arc<Mutex<MmapMut>>,
+pub struct ArenaAlloc {
+    memory: MmapMut,
     capacity: usize,
     used: usize,
 }
 
-impl Arena {
+impl ArenaAlloc {
     ///
     /// Allocates a new Arena using the [DEFAULT_ARENA_MEMORY_ALLOCATION] allocation size.
     ///
@@ -116,7 +114,7 @@ impl Arena {
         };
 
         Self {
-            memory: Arc::new(Mutex::new(memory)),
+            memory,
             capacity,
             used: 0,
         }
@@ -150,7 +148,7 @@ impl Arena {
     /// We call [Self::can_allocate] to assert that the size requested does not exceed the total
     /// pool available. `panic` if we do not have enough memory to commit.
     ///
-    pub fn commit(&self, size: usize) -> &mut [u8] {
+    pub fn commit(&mut self, size: usize) -> *mut [u8] {
         self.can_allocate(size);
 
         let ptr = &mut self.memory[self.used..self.used+size];
@@ -161,11 +159,12 @@ impl Arena {
     ///
     /// Writes a number of bytes into a pre allocated segment from our pool.
     ///
-    pub fn write_bytes(&self, src: *const u8, dst: *mut u8, data_length: usize) {
+    pub fn write_bytes(&mut self, src: *const u8, data_length: usize) {
+        let dst = self.commit(data_length);
         unsafe {
             std::ptr::copy_nonoverlapping(
                 src,
-                dst,
+                dst.as_mut_ptr(),
                 data_length,
             );
         }
@@ -187,15 +186,11 @@ impl Arena {
     ///
     /// Panics if casting to non null pointer somehow fails.
     ///
-    pub fn write<T>(&self, data: T)
-    where
-        T: Copy
-    {
+    pub fn write<T>(&mut self, data: T) {
         let data_length = size_of::<T>();
-        let dst = self.commit(data_length);
         let src = std::ptr::addr_of!(data).cast::<u8>();
 
-        self.write_bytes(src, dst.as_mut_ptr(), data_length);
+        self.write_bytes(src, data_length);
     }
 
     ///
@@ -215,6 +210,39 @@ impl Arena {
     ///
     pub fn reset(&mut self) {
         self.used = 0;
+    }
+}
+
+pub struct Arena {
+    memory: RefCell<ArenaAlloc>
+}
+impl Arena {
+    pub fn new() -> Self {
+        Self {
+            memory: RefCell::new(ArenaAlloc::new())
+        }
+    }
+
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            memory: RefCell::new(ArenaAlloc::with_capacity(capacity))
+        }
+    }
+
+    pub fn commit(&self, size: usize) -> *mut [u8] {
+        self.memory.borrow_mut().commit(size)
+    }
+
+    pub fn write<T>(&self, data: T) {
+        self.memory.borrow_mut().write(data)
+    }
+
+    pub fn uncommit(&self, length: usize) {
+        self.memory.borrow_mut().uncommit(length)
+    }
+
+    pub fn reset(&self) {
+        self.memory.borrow_mut().reset()
     }
 }
 
