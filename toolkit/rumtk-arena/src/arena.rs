@@ -28,6 +28,7 @@ pub const ONE_MB: usize = 1024 * ONE_KB;
 pub const ONE_GB: usize = 1024 * ONE_MB;
 pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 
+#[inline(always)]
 pub fn cast_to_nonnull(dst: *mut [u8]) -> NonNull<[u8]> {
     match NonNull::new(dst) {
         Some(ptr) => ptr,
@@ -35,12 +36,24 @@ pub fn cast_to_nonnull(dst: *mut [u8]) -> NonNull<[u8]> {
     }
 }
 
+#[inline(always)]
 pub fn cast_data_to_ptr<T>(data: &T) -> *const u8 {
     std::ptr::addr_of!(*data).cast::<u8>()
 }
 
+#[inline(always)]
 pub fn get_data_length<T>(data: &T) -> usize {
     size_of::<T>()
+}
+
+#[inline(always)]
+pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
+    let chunk = unsafe { &mut *data };
+    for i in offset..offset + length {
+        chunk[i] = 0;
+    }
+
+    data
 }
 
 ///
@@ -124,6 +137,7 @@ impl ArenaAlloc {
     /// Provides the remaining `uncommitted` number of bytes. This represents the number of bytes left
     /// to add more objects.
     ///
+    #[inline(always)]
     pub fn remaining(&self) -> usize {
         self.capacity - self.used
     }
@@ -148,12 +162,22 @@ impl ArenaAlloc {
     /// We call [Self::can_allocate] to assert that the size requested does not exceed the total
     /// pool available. `panic` if we do not have enough memory to commit.
     ///
+    #[inline(always)]
     pub fn commit(&mut self, size: usize) -> *mut [u8] {
         self.can_allocate(size);
 
         let ptr = &mut self.memory[self.used..self.used+size];
         self.used += size;
         ptr
+    }
+
+    ///
+    /// Grows the allocated memory. Basically, we advance the pointer by the difference
+    ///
+    #[inline(always)]
+    pub fn grow(&mut self, old_size: usize, new_size: usize) -> *mut [u8] {
+        self.uncommit(old_size);
+        self.commit(new_size)
     }
 
     ///
@@ -201,6 +225,7 @@ impl ArenaAlloc {
     /// Note that this means old results remain valid and could accidentally end up in a new allocation
     /// that could be safety sensitive.
     ///
+    #[inline(always)]
     pub fn uncommit(&mut self, length: usize) {
         self.used -= length;
     }
@@ -208,6 +233,7 @@ impl ArenaAlloc {
     ///
     /// Resets the internal cursor. No real deallocations occur!
     ///
+    #[inline(always)]
     pub fn reset(&mut self) {
         self.used = 0;
     }
@@ -231,6 +257,10 @@ impl Arena {
 
     pub fn commit(&self, size: usize) -> *mut [u8] {
         self.memory.borrow_mut().commit(size)
+    }
+
+    pub fn grow(&self, old_size: usize, new_size: usize) -> *mut [u8] {
+        self.memory.borrow_mut().grow(old_size, new_size)
     }
 
     pub fn write<T>(&self, data: T) {
@@ -260,27 +290,43 @@ unsafe impl Allocator for Arena {
     fn allocate_zeroed(
         &self,
         layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    ) -> Result<NonNull<[u8]>, AllocError> {
+        let length = layout.size();
+        let allocated = self.commit(length);
+
+        zero_memory(allocated, 0, length);
+
+        Ok(cast_to_nonnull(allocated))
+    }
     unsafe fn grow(
         &self,
         ptr: NonNull<u8>,
         old_layout: Layout,
         new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    ) -> Result<NonNull<[u8]>, AllocError> {
+        let new_ptr = self.grow(old_layout.size(), new_layout.size());
+        Ok(cast_to_nonnull(new_ptr))
+    }
     unsafe fn grow_zeroed(
         &self,
         ptr: NonNull<u8>,
         old_layout: Layout,
         new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    ) -> Result<NonNull<[u8]>, AllocError> {
+        let new_ptr = zero_memory(self.grow(old_layout.size(), new_layout.size()), old_layout.size(), new_layout.size());
+        Ok(cast_to_nonnull(new_ptr))
+    }
     unsafe fn shrink(
         &self,
         ptr: NonNull<u8>,
         old_layout: Layout,
         new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> { todo!() }
+    ) -> Result<NonNull<[u8]>, AllocError> {
+        self.uncommit(old_layout.size());
+        Ok(cast_to_nonnull(self.commit(new_layout.size())))
+    }
     fn by_ref(&self) -> &Self
-    where Self: Sized { todo!() }
+    where Self: Sized { &self }
 }
 
 unsafe impl GlobalAlloc for Arena {
