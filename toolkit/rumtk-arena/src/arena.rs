@@ -239,6 +239,53 @@ impl ArenaAlloc {
     }
 }
 
+
+///
+/// Arena Allocator wrapper with interior mutability that uses the crate `memmap2` to request
+/// wholesale allocation of memory from the system.
+///
+/// An arena is a memory management strategy in which you request a chunk of memory upfront and use it
+/// to allocate many objects in sequence. Essentially, it turns memory allocation from a heap problem
+/// into a stack problem increasing the speed of this process. It is a technique common in the video
+/// game industry to minimize the time spent asking the system for allocations.
+///
+/// Here we offer this small implementation to help speed up parsing operations in other `RUMTK` crates.
+/// This is a standalone crate with no dependencies on other `RUMTK` crates.
+///
+/// Another feature is that we implement the `Allocator` trait thus allowing you to provide an instance
+/// of the Arena to other standard collections through the nightly compiler's `allocator_api` feature.
+/// Note that this feature is considered unstable.
+///
+/// ## Safety
+///
+/// * Calling `reset` simply resets the pointer to 0 and thus technically allows for the potential to
+/// leak a prior round of work's information if a pointer return by `allocate` is misused.
+/// * No calls to drop are invoked!!! You have to find a different way to manually do so. This implementation
+/// is meant to deal with quick allocation needs and not with self managed resources for which a RAII
+/// approach might be more appropriate.
+///
+/// ## Example
+///
+/// ### Simple initialization and Writing of value.
+/// ```
+/// use crate::rumtk_arena::Arena;
+///
+/// let mut arena = Arena::new();
+/// let result_ptr = arena.write(5);
+///
+/// ```
+///
+/// ### Usage with a Vector.
+/// ```
+/// #![feature(allocator_api)]
+/// use crate::rumtk_arena::Arena;
+///
+/// let mut arena = Arena::new();
+/// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
+/// v.push(5);
+///
+/// ```
+///
 pub struct Arena {
     memory: RefCell<ArenaAlloc>
 }
