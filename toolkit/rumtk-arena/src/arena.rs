@@ -331,10 +331,10 @@ unsafe impl Allocator for Arena {
 
 unsafe impl GlobalAlloc for Arena {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        todo!()
+        self.commit(layout.size()).as_mut_ptr()
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        todo!()
+        self.uncommit(layout.size());
     }
 }
