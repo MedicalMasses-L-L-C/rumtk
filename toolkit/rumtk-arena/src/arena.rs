@@ -56,6 +56,8 @@ pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
     data
 }
 
+pub type ArenaResult<T> = Result<T, AllocError>;
+
 ///
 /// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
 /// the system.
@@ -148,11 +150,14 @@ impl ArenaAlloc {
     /// `panic`!!!!!!!
     ///
     #[inline(always)]
-    pub fn can_allocate(&self, size: usize) -> bool {
+    pub fn can_allocate(&self, size: usize) -> ArenaResult<bool> {
         let remaining = self.remaining();
         let can_allocate = remaining >= size;
-        assert!(can_allocate, "Arena is too small (Requested: {} > Available: {})", size, remaining);
-        can_allocate
+        if can_allocate {
+            Ok(can_allocate)
+        } else {
+            Err(AllocError)
+        }
     }
 
     ///
@@ -164,19 +169,19 @@ impl ArenaAlloc {
     /// pool available. `panic` if we do not have enough memory to commit.
     ///
     #[inline(always)]
-    pub fn commit(&mut self, size: usize) -> *mut [u8] {
-        self.can_allocate(size);
+    pub fn commit(&mut self, size: usize) -> ArenaResult<*mut [u8]> {
+        self.can_allocate(size)?;
 
         let ptr = &mut self.memory[self.used..self.used+size];
         self.used += size;
-        ptr
+        Ok(ptr)
     }
 
     ///
     /// Grows the allocated memory. Basically, we advance the pointer by the difference
     ///
     #[inline(always)]
-    pub fn grow(&mut self, old_size: usize, new_size: usize) -> *mut [u8] {
+    pub fn grow(&mut self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
         self.uncommit(old_size);
         self.commit(new_size)
     }
@@ -184,8 +189,8 @@ impl ArenaAlloc {
     ///
     /// Writes a number of bytes into a pre allocated segment from our pool.
     ///
-    pub fn write_bytes(&mut self, src: *const u8, data_length: usize) -> *mut [u8] {
-        let dst = self.commit(data_length);
+    pub fn write_bytes(&mut self, src: *const u8, data_length: usize) -> ArenaResult<*mut [u8]> {
+        let dst = self.commit(data_length)?;
         unsafe {
             std::ptr::copy_nonoverlapping(
                 src,
@@ -193,7 +198,7 @@ impl ArenaAlloc {
                 data_length,
             );
         }
-        dst
+        Ok(dst)
     }
 
     ///
@@ -212,12 +217,12 @@ impl ArenaAlloc {
     ///
     /// Panics if casting to non null pointer somehow fails.
     ///
-    pub fn write<T>(&mut self, data: T) -> NonNull<T> {
+    pub fn write<T>(&mut self, data: T) -> ArenaResult<NonNull<T>> {
         let data_length = size_of::<T>();
         let src = std::ptr::addr_of!(data).cast::<u8>();
 
-        let mem = cast_to_nonnull(self.write_bytes(src, data_length));
-        mem.cast()
+        let mem = cast_to_nonnull(self.write_bytes(src, data_length)?);
+        Ok(mem.cast())
     }
 
     ///
@@ -306,15 +311,15 @@ impl Arena {
         }
     }
 
-    pub fn commit(&self, size: usize) -> *mut [u8] {
+    pub fn commit(&self, size: usize) -> ArenaResult<*mut [u8]> {
         self.memory.borrow_mut().commit(size)
     }
 
-    pub fn grow_block(&self, old_size: usize, new_size: usize) -> *mut [u8] {
+    pub fn grow_block(&self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
         self.memory.borrow_mut().grow(old_size, new_size)
     }
 
-    pub fn write<T>(&self, data: T) -> NonNull<T> {
+    pub fn write<T>(&self, data: T) -> ArenaResult<NonNull<T>> {
         self.memory.borrow_mut().write(data)
     }
 
@@ -330,7 +335,7 @@ impl Arena {
 unsafe impl Allocator for Arena {
     // Required methods
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
-        let r = self.commit(layout.size());
+        let r = self.commit(layout.size())?;
         let nz_r = cast_to_nonnull(r);
         Ok(nz_r)
     }
@@ -344,7 +349,7 @@ unsafe impl Allocator for Arena {
         layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
         let length = layout.size();
-        let allocated = self.commit(length);
+        let allocated = self.commit(length)?;
 
         zero_memory(allocated, 0, length);
 
@@ -356,7 +361,7 @@ unsafe impl Allocator for Arena {
         old_layout: Layout,
         new_layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = self.grow_block(old_layout.size(), new_layout.size());
+        let new_ptr = self.grow_block(old_layout.size(), new_layout.size())?;
         let nz_new_ptr = cast_to_nonnull(new_ptr);
         Ok(nz_new_ptr)
     }
@@ -366,7 +371,7 @@ unsafe impl Allocator for Arena {
         old_layout: Layout,
         new_layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = zero_memory(self.grow_block(old_layout.size(), new_layout.size()), old_layout.size(), new_layout.size());
+        let new_ptr = zero_memory(self.grow_block(old_layout.size(), new_layout.size())?, old_layout.size(), new_layout.size());
         Ok(cast_to_nonnull(new_ptr))
     }
     unsafe fn shrink(
@@ -376,7 +381,7 @@ unsafe impl Allocator for Arena {
         new_layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
         self.uncommit(old_layout.size());
-        Ok(cast_to_nonnull(self.commit(new_layout.size())))
+        Ok(cast_to_nonnull(self.commit(new_layout.size())?))
     }
     fn by_ref(&self) -> &Self
     where Self: Sized { &self }
@@ -384,7 +389,7 @@ unsafe impl Allocator for Arena {
 
 unsafe impl GlobalAlloc for Arena {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        self.commit(layout.size()).as_mut_ptr()
+        self.commit(layout.size()).unwrap().as_mut_ptr()
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
