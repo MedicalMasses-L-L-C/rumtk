@@ -102,6 +102,7 @@ pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
 ///
 /// ```
 ///
+#[derive(Debug)]
 pub struct ArenaAlloc {
     memory: MmapMut,
     capacity: usize,
@@ -288,6 +289,7 @@ impl ArenaAlloc {
 ///
 /// ```
 ///
+#[derive(Debug)]
 pub struct Arena {
     memory: RefCell<ArenaAlloc>
 }
