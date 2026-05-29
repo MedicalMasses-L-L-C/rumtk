@@ -183,7 +183,7 @@ impl ArenaAlloc {
     ///
     /// Writes a number of bytes into a pre allocated segment from our pool.
     ///
-    pub fn write_bytes(&mut self, src: *const u8, data_length: usize) {
+    pub fn write_bytes(&mut self, src: *const u8, data_length: usize) -> *mut [u8] {
         let dst = self.commit(data_length);
         unsafe {
             std::ptr::copy_nonoverlapping(
@@ -192,6 +192,7 @@ impl ArenaAlloc {
                 data_length,
             );
         }
+        dst
     }
 
     ///
@@ -210,11 +211,12 @@ impl ArenaAlloc {
     ///
     /// Panics if casting to non null pointer somehow fails.
     ///
-    pub fn write<T>(&mut self, data: T) {
+    pub fn write<T>(&mut self, data: T) -> NonNull<T> {
         let data_length = size_of::<T>();
         let src = std::ptr::addr_of!(data).cast::<u8>();
 
-        self.write_bytes(src, data_length);
+        let mem = cast_to_nonnull(self.write_bytes(src, data_length));
+        mem.cast()
     }
 
     ///
@@ -306,11 +308,11 @@ impl Arena {
         self.memory.borrow_mut().commit(size)
     }
 
-    pub fn grow(&self, old_size: usize, new_size: usize) -> *mut [u8] {
+    pub fn grow_block(&self, old_size: usize, new_size: usize) -> *mut [u8] {
         self.memory.borrow_mut().grow(old_size, new_size)
     }
 
-    pub fn write<T>(&self, data: T) {
+    pub fn write<T>(&self, data: T) -> NonNull<T> {
         self.memory.borrow_mut().write(data)
     }
 
@@ -327,7 +329,8 @@ unsafe impl Allocator for Arena {
     // Required methods
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
         let r = self.commit(layout.size());
-        Ok(cast_to_nonnull(r))
+        let nz_r = cast_to_nonnull(r);
+        Ok(nz_r)
     }
     unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
         self.uncommit(layout.size());
@@ -351,8 +354,9 @@ unsafe impl Allocator for Arena {
         old_layout: Layout,
         new_layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = self.grow(old_layout.size(), new_layout.size());
-        Ok(cast_to_nonnull(new_ptr))
+        let new_ptr = self.grow_block(old_layout.size(), new_layout.size());
+        let nz_new_ptr = cast_to_nonnull(new_ptr);
+        Ok(nz_new_ptr)
     }
     unsafe fn grow_zeroed(
         &self,
@@ -360,7 +364,7 @@ unsafe impl Allocator for Arena {
         old_layout: Layout,
         new_layout: Layout,
     ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = zero_memory(self.grow(old_layout.size(), new_layout.size()), old_layout.size(), new_layout.size());
+        let new_ptr = zero_memory(self.grow_block(old_layout.size(), new_layout.size()), old_layout.size(), new_layout.size());
         Ok(cast_to_nonnull(new_ptr))
     }
     unsafe fn shrink(
