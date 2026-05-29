@@ -16,7 +16,7 @@ mod tests {
     #[test]
     fn test_arena_simple_allocation() {
         let arena = Arena::new();
-        let v: &str = unsafe { arena.write("hello world").as_ref() };
+        let v: &str = unsafe { arena.write("hello world").unwrap().as_ref() };
 
         assert_eq!(v, "hello world", "Failed to allocate and fill a small vector!");
     }
@@ -69,11 +69,8 @@ mod tests {
     #[test]
     fn test_arena_sallocate_more_than_allowed() {
         let arena = Arena::with_capacity(5);
-        let mut v = Vec::<usize, &Arena>::with_capacity_in(1, &arena);
+        let v = arena.commit(10);
 
-        v.push(10);
-        v.push(10);
-
-        assert_eq!(v, [10, 10], "Failed to reallocate and fill a small vector!");
+        assert!(v.is_err(), "Arena did not emit error upon allocation of byte count higher than current capacity.");
     }
 }
