@@ -1,0 +1,74 @@
+/*
+ *     rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
+ *     This toolkit aims to be reliable, simple, performant, and standards compliant.
+ *     Copyright (C) 2026  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
+ *     Copyright (C) 2026  MedicalMasses L.L.C. <contact@medicalmasses.com>
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+use crate::Arena;
+use std::collections::{HashMap, VecDeque};
+use std::hash::RandomState;
+use std::mem::MaybeUninit;
+
+pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> Vec<T, &Arena> {
+    match len {
+        Some(len) => Vec::<T, &Arena>::with_capacity_in(len, arena),
+        None => Vec::<T, &Arena>::new_in(arena),
+    }
+}
+
+pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> VecDeque<T, &Arena> {
+    match len {
+        Some(len) => VecDeque::<T, &Arena>::with_capacity_in(len, arena),
+        None => VecDeque::<T, &Arena>::new_in(arena),
+    }
+}
+
+pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> HashMap<K, T, RandomState, &Arena> {
+    match len {
+        Some(len) => HashMap::<K, T, RandomState, &Arena>::with_capacity_and_hasher_in(
+            len,
+            RandomState::new(),
+            arena,
+        ),
+        None => HashMap::<K, T, RandomState, &Arena>::new_in(arena),
+    }
+}
+
+pub fn new_box<T>(v: T, arena: &Arena) -> Box<T, &Arena> {
+    vec![1,2,4];
+    Box::<T, &Arena>::new_in(v, arena)
+}
+
+pub fn new_box_uninit<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
+    Box::new_uninit_in(arena)
+}
+
+pub fn new_box_zeroed<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
+    Box::new_zeroed_in(arena)
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_vec {
+    ( $arena:expr ) => {{
+        use $crate::collections::new_vec;
+        new_vec($arena, None)
+    }};
+    ( $arena:expr, $($item:expr),+ ) => {{
+        ::alloc::boxed::box_assume_init_into_vec_unsafe(
+            ::alloc::intrinsics::write_box_via_move(::alloc::boxed::Box::new_uninit_slice_in($arena), $($item),+)
+        )
+    }};
+}
