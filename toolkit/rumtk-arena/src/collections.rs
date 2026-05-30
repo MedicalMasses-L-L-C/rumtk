@@ -22,21 +22,25 @@ use std::collections::{HashMap, VecDeque};
 use std::hash::RandomState;
 use std::mem::MaybeUninit;
 
-pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> Vec<T, &Arena> {
+pub type ArenaVec<'a, T> = Vec<T, &'a Arena>;
+pub type ArenaVecDeque<'a, T> = VecDeque<T, &'a Arena>;
+pub type ArenaHashMap<'a, K, T> = HashMap<K, T, RandomState, &'a Arena>;
+
+pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
     match len {
         Some(len) => Vec::<T, &Arena>::with_capacity_in(len, arena),
         None => Vec::<T, &Arena>::new_in(arena),
     }
 }
 
-pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> VecDeque<T, &Arena> {
+pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
     match len {
         Some(len) => VecDeque::<T, &Arena>::with_capacity_in(len, arena),
         None => VecDeque::<T, &Arena>::new_in(arena),
     }
 }
 
-pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> HashMap<K, T, RandomState, &Arena> {
+pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T> {
     match len {
         Some(len) => HashMap::<K, T, RandomState, &Arena>::with_capacity_and_hasher_in(
             len,
@@ -70,5 +74,12 @@ macro_rules! rumtk_arena_vec {
         ::alloc::boxed::box_assume_init_into_vec_unsafe(
             ::alloc::intrinsics::write_box_via_move(::alloc::boxed::Box::new_uninit_slice_in($arena), $($item),+)
         )
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_vec {
+    ( $T:ty ) => {{
+        Vec<>
     }};
 }
