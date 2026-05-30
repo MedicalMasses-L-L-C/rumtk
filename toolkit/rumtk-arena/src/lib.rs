@@ -1,8 +1,8 @@
 #![feature(allocator_api)]
 #![feature(slice_ptr_get)]
-extern crate core;
 
 pub mod arena;
+pub mod collections;
 
 pub use arena::Arena;
 
