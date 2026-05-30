@@ -26,6 +26,10 @@ pub type ArenaVec<'a, T> = Vec<T, &'a Arena>;
 pub type ArenaVecDeque<'a, T> = VecDeque<T, &'a Arena>;
 pub type ArenaHashMap<'a, K, T> = HashMap<K, T, RandomState, &'a Arena>;
 
+///
+/// Build Vector instance of type [ArenaVec] which is arena aware and allocates items on the
+/// arena.
+///
 pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
     match len {
         Some(len) => Vec::<T, &Arena>::with_capacity_in(len, arena),
@@ -33,6 +37,10 @@ pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
     }
 }
 
+///
+/// Build Queue instance of type [ArenaVecDeque] which is arena aware and allocates items on the
+/// arena.
+///
 pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
     match len {
         Some(len) => VecDeque::<T, &Arena>::with_capacity_in(len, arena),
@@ -40,6 +48,10 @@ pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
     }
 }
 
+///
+/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware and allocates items on the
+/// arena.
+///
 pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T> {
     match len {
         Some(len) => HashMap::<K, T, RandomState, &Arena>::with_capacity_and_hasher_in(
@@ -78,8 +90,25 @@ macro_rules! rumtk_arena_vec {
 }
 
 #[macro_export]
-macro_rules! rumtk_arena_vec {
+macro_rules! rumtk_arena_vec_type {
     ( $T:ty ) => {{
-        Vec<>
+        use $crate::collections::ArenaVec;
+        ArenaVec<$T>
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_vecdeque_type {
+    ( $T:ty ) => {{
+        use $crate::collections::ArenaVecDeque;
+        ArenaVecDeque<$T>
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_hashmap_type {
+    ( $K:ty, $T:ty ) => {{
+        use $crate::collections::ArenaHashMap;
+        ArenaHashMap<$K, $T>
     }};
 }
