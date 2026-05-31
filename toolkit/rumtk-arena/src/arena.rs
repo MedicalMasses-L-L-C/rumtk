@@ -247,6 +247,12 @@ impl ArenaAlloc {
     }
 }
 
+impl Default for ArenaAlloc {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 
 ///
 /// Arena Allocator wrapper with interior mutability that uses the crate `memmap2` to request
@@ -294,7 +300,7 @@ impl ArenaAlloc {
 ///
 /// ```
 ///
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Arena {
     memory: RefCell<ArenaAlloc>
 }
