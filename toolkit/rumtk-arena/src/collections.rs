@@ -41,14 +41,12 @@ pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
 /// Build a Vector instance of type [ArenaVec] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_vec_from<'a, 'b, T>(data: &'a [T], arena: &'b Arena) -> ArenaVec<'b, T>
+pub fn new_vec_from<T, const N: usize>(data: [T; N], arena: &Arena) -> ArenaVec<T>
 where
     T: Sized + Clone
 {
     let mut v: ArenaVec<T> = new_vec(arena, Some(data.len()));
-    for d in data {
-        v.push(d.clone());
-    }
+    v.extend(data);
     v
 }
 
@@ -67,14 +65,12 @@ pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
 /// Build a Queue instance of type [ArenaVecDeque] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_vecdeque_from<'a, 'b, T>(data: &'a [T], arena: &'b Arena) -> ArenaVecDeque<'b, T>
+pub fn new_vecdeque_from<T, const N: usize>(data: [T; N], arena: &Arena) -> ArenaVecDeque<T>
 where
     T: Sized + Clone
 {
     let mut vd: ArenaVecDeque<T> = new_vecdeque(arena, Some(data.len()));
-    for d in data {
-        vd.push_back(d.clone());
-    }
+    vd.extend(data);
     vd
 }
 
@@ -97,14 +93,14 @@ pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T
 /// Build a Hash Table instance of type [ArenaHashMap] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_hashmap_from<'a, 'b, K, T>(data: &'a [(K, T)], arena: &'b Arena) -> ArenaHashMap<'b, K, T>
+pub fn new_hashmap_from<K, T, const N: usize>(data: [(K, T); N], arena: &Arena) -> ArenaHashMap<K, T>
 where
     K: Sized + Clone + Eq + Hash,
     T: Sized + Clone
 {
     let mut htable: ArenaHashMap<K, T> = new_hashmap(arena, Some(data.len()));
     for (k, v) in data {
-        htable.insert(k.clone(), v.clone());
+        htable.insert(k, v);
     }
     htable
 }
