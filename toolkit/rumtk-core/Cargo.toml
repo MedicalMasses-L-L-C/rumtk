@@ -40,4 +40,3 @@ bytes = "1.11.0"
 nanoid = "0.4.0"
 rand = "0.10.1"
 base64 = "0.22.1"
-bumpalo = { version = "3.20.3", features = ["collections", "boxed", "serde", "allocator_api"] }
