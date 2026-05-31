@@ -396,3 +396,16 @@ unsafe impl GlobalAlloc for Arena {
         self.uncommit(layout.size());
     }
 }
+
+#[macro_export]
+macro_rules! rumtk_arena_new {
+    (  ) => {{
+        use $crate::arena::Arena;
+        Arena::new()
+    }};
+    ( $capacity:expr ) => {{
+        use $crate::arena::Arena;
+
+        Arena::with_capacity($capacity)
+    }};
+}
