@@ -1,5 +1,7 @@
 #![feature(allocator_api)]
 #![feature(slice_ptr_get)]
+#![feature(liballoc_internals)]
+extern crate alloc;
 
 pub mod arena;
 pub mod collections;
@@ -8,7 +10,8 @@ pub use arena::Arena;
 
 #[cfg(test)]
 mod tests {
-    use crate::Arena;
+    use crate::collections::{ArenaHashMap, ArenaVec, ArenaVecDeque};
+    use crate::{rumtk_arena_hashmap, rumtk_arena_vec, rumtk_arena_vecdeque, Arena};
     use std::alloc::Allocator;
     use std::alloc::Layout;
     use std::ptr::NonNull;
@@ -67,10 +70,61 @@ mod tests {
     }
 
     #[test]
-    fn test_arena_sallocate_more_than_allowed() {
+    fn test_arena_allocate_more_than_allowed() {
         let arena = Arena::with_capacity(5);
         let v = arena.commit(10);
 
         assert!(v.is_err(), "Arena did not emit error upon allocation of byte count higher than current capacity.");
+    }
+
+    #[test]
+    fn test_arena_create_vec_with_macro() {
+        let arena = Arena::with_capacity(5);
+        let v: ArenaVec<String> = rumtk_arena_vec!(&arena);
+
+        assert!(v.is_empty(), "Failed to create vector with arena allocation enabled.");
+    }
+
+    #[test]
+    fn test_arena_create_vec_with_macro_with_items() {
+        let arena = Arena::with_capacity(50);
+        let expected = &["Hello", "World", "!"];
+        let v: ArenaVec<&str> = rumtk_arena_vec!(expected.clone(), &arena);
+
+        assert_eq!(v.as_slice(), expected, "Failed to create vector with arena allocation enabled and item slice.");
+    }
+
+    #[test]
+    fn test_arena_create_vecdeque_with_macro() {
+        let arena = Arena::with_capacity(5);
+        let v: ArenaVecDeque<String> = rumtk_arena_vecdeque!(&arena);
+
+        assert!(v.is_empty(), "Failed to create vector with arena allocation enabled.");
+    }
+
+    #[test]
+    fn test_arena_create_vecdeque_with_macro_with_items() {
+        let arena = Arena::with_capacity(50);
+        let expected = ["Hello", "World", "!"];
+        let mut v: ArenaVecDeque<&str> = rumtk_arena_vecdeque!(expected.clone(), &arena);
+
+        assert_eq!(v.pop_front(), Some(expected[0]), "Failed to create queue with arena allocation enabled and item slice.");
+    }
+
+    #[test]
+    fn test_arena_create_hashmap_with_macro() {
+        let arena = Arena::with_capacity(5);
+        let v: ArenaHashMap<&str, &str> = rumtk_arena_hashmap!(&arena);
+
+        assert!(v.is_empty(), "Failed to create vector with arena allocation enabled.");
+    }
+
+    #[test]
+    fn test_arena_create_hashmap_with_macro_with_items() {
+        let arena = Arena::with_capacity(120);
+        let expected = [(0, "Hello"), (1, "World"), (2, "!")];
+        let v: ArenaHashMap<usize, &str> = rumtk_arena_hashmap!(expected.clone(), &arena);
+
+        assert_eq!(v[&0], expected[0].1, "Failed to create hashmap with arena allocation enabled and item slice.");
     }
 }
