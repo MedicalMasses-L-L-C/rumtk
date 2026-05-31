@@ -18,22 +18,43 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::Arena;
+use indexmap::IndexMap;
 use std::collections::{HashMap, VecDeque};
 use std::hash::{Hash, RandomState};
 use std::mem::MaybeUninit;
 
-pub type ArenaVec<'a, T> = Vec<T, &'a Arena>;
-pub type ArenaVecDeque<'a, T> = VecDeque<T, &'a Arena>;
-pub type ArenaHashMap<'a, K, T> = HashMap<K, T, RandomState, &'a Arena>;
+pub type ArenaVec<'a, V> = Vec<V, &'a Arena>;
+pub type ArenaVecDeque<'a, V> = VecDeque<V, &'a Arena>;
+pub type ArenaHashMap<'a, K, V> = HashMap<K, V, RandomState, &'a Arena>;
+
+pub struct ArenaOrderedHashMap<'a, 'b, K, V> {
+    order: ArenaVec<'a, &'b K>,
+    data: ArenaHashMap<'a, K, V>
+}
+
+impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, 'b, K, V> {
+    pub fn new_in(arena: &Arena) -> Self {
+        Self {
+            order: ArenaVec::new_in(arena),
+            data: ArenaHashMap::new_in(arena)
+        }
+    }
+
+    pub fn with_capacity(capacity: usize) -> Self {
+        Self {
+            order: ArenaVec::with_capacity_in
+        }
+    }
+}
 
 ///
 /// Build Vector instance of type [ArenaVec] which is arena aware.
 ///
 #[inline(always)]
-pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
+pub fn new_vec<V>(arena: &Arena, len: Option<usize>) -> ArenaVec<V> {
     match len {
-        Some(len) => Vec::<T, &Arena>::with_capacity_in(len, arena),
-        None => Vec::<T, &Arena>::new_in(arena),
+        Some(len) => ArenaVec::<V>::with_capacity_in(len, arena),
+        None => ArenaVec::<V>::new_in(arena),
     }
 }
 
@@ -41,11 +62,11 @@ pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
 /// Build a Vector instance of type [ArenaVec] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_vec_from<T, const N: usize>(data: [T; N], arena: &Arena) -> ArenaVec<T>
+pub fn new_vec_from<V, const N: usize>(data: [V; N], arena: &Arena) -> ArenaVec<V>
 where
-    T: Sized + Clone
+    V: Sized + Clone
 {
-    let mut v: ArenaVec<T> = new_vec(arena, Some(data.len()));
+    let mut v: ArenaVec<V> = new_vec(arena, Some(data.len()));
     v.extend(data);
     v
 }
@@ -54,10 +75,10 @@ where
 /// Build Queue instance of type [ArenaVecDeque] which is arena aware.
 ///
 #[inline(always)]
-pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
+pub fn new_vecdeque<V>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<V> {
     match len {
-        Some(len) => VecDeque::<T, &Arena>::with_capacity_in(len, arena),
-        None => VecDeque::<T, &Arena>::new_in(arena),
+        Some(len) => ArenaVecDeque::<V>::with_capacity_in(len, arena),
+        None => ArenaVecDeque::<V>::new_in(arena),
     }
 }
 
@@ -65,11 +86,11 @@ pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
 /// Build a Queue instance of type [ArenaVecDeque] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_vecdeque_from<T, const N: usize>(data: [T; N], arena: &Arena) -> ArenaVecDeque<T>
+pub fn new_vecdeque_from<V, const N: usize>(data: [V; N], arena: &Arena) -> ArenaVecDeque<V>
 where
-    T: Sized + Clone
+    V: Sized + Clone
 {
-    let mut vd: ArenaVecDeque<T> = new_vecdeque(arena, Some(data.len()));
+    let mut vd: ArenaVecDeque<V> = new_vecdeque(arena, Some(data.len()));
     vd.extend(data);
     vd
 }
@@ -78,14 +99,14 @@ where
 /// Build a Hash Table instance of type [ArenaHashMap] which is arena aware.
 ///
 #[inline(always)]
-pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T> {
+pub fn new_hashmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, V> {
     match len {
-        Some(len) => HashMap::<K, T, RandomState, &Arena>::with_capacity_and_hasher_in(
+        Some(len) => ArenaHashMap::<K, V>::with_capacity_and_hasher_in(
             len,
             RandomState::new(),
             arena,
         ),
-        None => HashMap::<K, T, RandomState, &Arena>::new_in(arena),
+        None => ArenaHashMap::<K, V>::new_in(arena),
     }
 }
 
@@ -93,31 +114,46 @@ pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T
 /// Build a Hash Table instance of type [ArenaHashMap] which is arena aware using the items passed.
 ///
 #[inline(always)]
-pub fn new_hashmap_from<K, T, const N: usize>(data: [(K, T); N], arena: &Arena) -> ArenaHashMap<K, T>
+pub fn new_hashmap_from<K, V, const N: usize>(data: [(K, V); N], arena: &Arena) -> ArenaHashMap<K, V>
 where
     K: Sized + Clone + Eq + Hash,
-    T: Sized + Clone
+    V: Sized + Clone
 {
-    let mut htable: ArenaHashMap<K, T> = new_hashmap(arena, Some(data.len()));
+    let mut htable: ArenaHashMap<K, V> = new_hashmap(arena, Some(data.len()));
     for (k, v) in data {
         htable.insert(k, v);
     }
     htable
 }
 
+///
+/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware.
+///
 #[inline(always)]
-pub fn new_box<T>(v: T, arena: &Arena) -> Box<T, &Arena> {
-    vec![1,2,4];
-    Box::<T, &Arena>::new_in(v, arena)
+pub fn new_orderedmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, V> {
+    match len {
+        Some(len) => HashMap::<K, V, RandomState, &Arena>::with_capacity_and_hasher_in(
+            len,
+            RandomState::new(),
+            arena,
+        ),
+        None => HashMap::<K, V, RandomState, &Arena>::new_in(arena),
+    }
 }
 
 #[inline(always)]
-pub fn new_box_uninit<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
+pub fn new_box<V>(v: V, arena: &Arena) -> Box<V, &Arena> {
+    vec![1,2,4];
+    Box::<V, &Arena>::new_in(v, arena)
+}
+
+#[inline(always)]
+pub fn new_box_uninit<V>(arena: &Arena) -> Box<MaybeUninit<V>, &Arena> {
     Box::new_uninit_in(arena)
 }
 
 #[inline(always)]
-pub fn new_box_zeroed<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
+pub fn new_box_zeroed<V>(arena: &Arena) -> Box<MaybeUninit<V>, &Arena> {
     Box::new_zeroed_in(arena)
 }
 
