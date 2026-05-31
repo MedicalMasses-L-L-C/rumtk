@@ -30,6 +30,7 @@ pub type ArenaHashMap<'a, K, T> = HashMap<K, T, RandomState, &'a Arena>;
 /// Build Vector instance of type [ArenaVec] which is arena aware and allocates items on the
 /// arena.
 ///
+#[inline(always)]
 pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
     match len {
         Some(len) => Vec::<T, &Arena>::with_capacity_in(len, arena),
@@ -41,6 +42,7 @@ pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
 /// Build Queue instance of type [ArenaVecDeque] which is arena aware and allocates items on the
 /// arena.
 ///
+#[inline(always)]
 pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
     match len {
         Some(len) => VecDeque::<T, &Arena>::with_capacity_in(len, arena),
@@ -52,6 +54,7 @@ pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
 /// Build a Hash Table instance of type [ArenaHashMap] which is arena aware and allocates items on the
 /// arena.
 ///
+#[inline(always)]
 pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T> {
     match len {
         Some(len) => HashMap::<K, T, RandomState, &Arena>::with_capacity_and_hasher_in(
@@ -63,15 +66,18 @@ pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T
     }
 }
 
+#[inline(always)]
 pub fn new_box<T>(v: T, arena: &Arena) -> Box<T, &Arena> {
     vec![1,2,4];
     Box::<T, &Arena>::new_in(v, arena)
 }
 
+#[inline(always)]
 pub fn new_box_uninit<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
     Box::new_uninit_in(arena)
 }
 
+#[inline(always)]
 pub fn new_box_zeroed<T>(arena: &Arena) -> Box<MaybeUninit<T>, &Arena> {
     Box::new_zeroed_in(arena)
 }
