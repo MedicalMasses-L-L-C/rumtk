@@ -27,8 +27,7 @@ pub type ArenaVecDeque<'a, T> = VecDeque<T, &'a Arena>;
 pub type ArenaHashMap<'a, K, T> = HashMap<K, T, RandomState, &'a Arena>;
 
 ///
-/// Build Vector instance of type [ArenaVec] which is arena aware and allocates items on the
-/// arena.
+/// Build Vector instance of type [ArenaVec] which is arena aware.
 ///
 #[inline(always)]
 pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
@@ -39,8 +38,20 @@ pub fn new_vec<T>(arena: &Arena, len: Option<usize>) -> ArenaVec<T> {
 }
 
 ///
-/// Build Queue instance of type [ArenaVecDeque] which is arena aware and allocates items on the
-/// arena.
+/// Build a Vector instance of type [ArenaVec] which is arena aware using the items passed.
+///
+#[inline(always)]
+pub fn new_vec_from<T>(data: &[T], arena: &Arena) -> ArenaVec<T>
+where
+    T: Sized
+{
+    let mut v: ArenaVec<T> = new_vec(arena, Some(data.len()));
+    v.extend_from_slice(data);
+    v
+}
+
+///
+/// Build Queue instance of type [ArenaVecDeque] which is arena aware.
 ///
 #[inline(always)]
 pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
@@ -51,8 +62,20 @@ pub fn new_vecdeque<T>(arena: &Arena, len: Option<usize>) -> ArenaVecDeque<T> {
 }
 
 ///
-/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware and allocates items on the
-/// arena.
+/// Build a Queue instance of type [ArenaVecDeque] which is arena aware using the items passed.
+///
+#[inline(always)]
+pub fn new_vecdeque_from<T>(data: &[T], arena: &Arena) -> ArenaVecDeque<T>
+where
+    T: Sized
+{
+    let mut vd: ArenaVecDeque<T> = new_vecdeque(arena, Some(data.len()));
+    vd.extend_from_slice(data);
+    vd
+}
+
+///
+/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware.
 ///
 #[inline(always)]
 pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T> {
@@ -64,6 +87,20 @@ pub fn new_hashmap<K, T>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, T
         ),
         None => HashMap::<K, T, RandomState, &Arena>::new_in(arena),
     }
+}
+
+///
+/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware using the items passed.
+///
+#[inline(always)]
+pub fn new_hashmap_from<K, T>(data: &[(K, T)], arena: &Arena) -> ArenaHashMap<K, T>
+where
+    K: Sized,
+    T: Sized
+{
+    let mut htable: ArenaHashMap<K, T> = new_hashmap(arena, Some(data.len()));
+    htable.extend(data);
+    htable
 }
 
 #[inline(always)]
@@ -88,10 +125,34 @@ macro_rules! rumtk_arena_vec {
         use $crate::collections::new_vec;
         new_vec($arena, None)
     }};
-    ( $arena:expr, $($item:expr),+ ) => {{
-        ::alloc::boxed::box_assume_init_into_vec_unsafe(
-            ::alloc::intrinsics::write_box_via_move(::alloc::boxed::Box::new_uninit_slice_in($arena), $($item),+)
-        )
+    ( $items:expr, $arena:expr ) => {{
+        use $crate::collections::new_vec_from;
+
+        new_vec_from($items, $arena)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_vecdeque {
+    ( $arena:expr ) => {{
+        use $crate::collections::new_vecdeque;
+        new_vecdeque($arena, None)
+    }};
+    ( $items:expr, $arena:expr ) => {{
+        use $crate::collections::new_vecdeque_from;
+        new_vecdeque_from($items, $arena)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_hashmap {
+    ( $arena:expr ) => {{
+        use $crate::collections::new_hashmap;
+        new_hashmap($arena, None)
+    }};
+    ( $items:expr, $arena:expr ) => {{
+        use $crate::collections::new_hashmap_from;
+        new_hashmap_from($items, $arena)
     }};
 }
 
