@@ -157,27 +157,3 @@ macro_rules! rumtk_arena_hashmap {
         new_hashmap_from($items, $arena)
     }};
 }
-
-#[macro_export]
-macro_rules! rumtk_arena_vec_type {
-    ( $T:ty ) => {{
-        use $crate::collections::ArenaVec;
-        ArenaVec<$T>
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_arena_vecdeque_type {
-    ( $T:ty ) => {{
-        use $crate::collections::ArenaVecDeque;
-        ArenaVecDeque<$T>
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_arena_hashmap_type {
-    ( $K:ty, $T:ty ) => {{
-        use $crate::collections::ArenaHashMap;
-        ArenaHashMap<$K, $T>
-    }};
-}
