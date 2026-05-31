@@ -19,6 +19,7 @@
  */
 use crate::Arena;
 use indexmap::IndexMap;
+use std::collections::hash_map::Values;
 use std::collections::{HashMap, VecDeque};
 use std::hash::{Hash, RandomState};
 use std::mem::MaybeUninit;
@@ -35,15 +36,63 @@ pub struct ArenaOrderedHashMap<'a, 'b, K, V> {
 impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, 'b, K, V> {
     pub fn new_in(arena: &Arena) -> Self {
         Self {
-            order: ArenaVec::new_in(arena),
-            data: ArenaHashMap::new_in(arena)
+            order: new_vec(arena, None),
+            data: new_hashmap(arena, None)
         }
     }
 
-    pub fn with_capacity(capacity: usize) -> Self {
+    pub fn with_capacity(capacity: usize, arena: &Arena) -> Self {
         Self {
-            order: ArenaVec::with_capacity_in
+            order: new_vec(arena, Some(capacity)),
+            data: new_hashmap(arena, Some(capacity))
         }
+    }
+
+    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool {
+        self.data.contains_key(key)
+    }
+
+    pub fn insert(&mut self, key: K, value: V) -> Option<V> {
+        if self.data.contains_key(&key) {
+            let k = key.clone();
+            self.order.push(self.data.get(&k).unwrap())
+        }
+        self.data.insert(key, value)
+    }
+
+    pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V> {
+        let indx = self.order.iter().position(|&v| v == &key)?;
+        self.order.remove(indx);
+        self.data.remove(key)
+    }
+
+    pub fn get(&self, key: &K) -> Option<&V> {
+        self.data.get(key)
+    }
+
+    pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
+        self.data.get_mut(key)
+    }
+
+    pub fn len(&self) -> usize {
+        self.order.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.order.is_empty()
+    }
+
+    pub fn clear(&mut self) {
+        self.order.clear();
+        self.data.clear();
+    }
+
+    pub fn keys(&self) -> &ArenaVec<&K> {
+        &self.order
+    }
+
+    pub fn values(&self) -> Values<K, V> {
+        self.data.values()
     }
 }
 
