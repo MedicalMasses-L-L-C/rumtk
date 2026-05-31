@@ -27,6 +27,7 @@ pub type ArenaVec<'a, V> = Vec<V, &'a Arena>;
 pub type ArenaVecDeque<'a, V> = VecDeque<V, &'a Arena>;
 pub type ArenaHashMap<'a, K, V> = HashMap<K, V, RandomState, &'a Arena>;
 
+#[derive(Clone, Debug)]
 pub struct ArenaOrderedHashMap<'a, K, V> {
     order: ArenaVec<'a, K>,
     data: ArenaHashMap<'a, K, V>
