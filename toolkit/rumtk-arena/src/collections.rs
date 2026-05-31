@@ -18,7 +18,6 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::Arena;
-use indexmap::IndexMap;
 use std::collections::hash_map::Values;
 use std::collections::{HashMap, VecDeque};
 use std::hash::{Hash, RandomState};
@@ -28,40 +27,43 @@ pub type ArenaVec<'a, V> = Vec<V, &'a Arena>;
 pub type ArenaVecDeque<'a, V> = VecDeque<V, &'a Arena>;
 pub type ArenaHashMap<'a, K, V> = HashMap<K, V, RandomState, &'a Arena>;
 
-pub struct ArenaOrderedHashMap<'a, 'b, K, V> {
-    order: ArenaVec<'a, &'b K>,
+pub struct ArenaOrderedHashMap<'a, K, V> {
+    order: ArenaVec<'a, K>,
     data: ArenaHashMap<'a, K, V>
 }
 
-impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, 'b, K, V> {
-    pub fn new_in(arena: &Arena) -> Self {
+impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, K, V>
+where
+    K: Eq + Hash + Clone,
+    V: Clone
+{
+    pub fn new_in(arena: &'a Arena) -> Self {
         Self {
             order: new_vec(arena, None),
             data: new_hashmap(arena, None)
         }
     }
 
-    pub fn with_capacity(capacity: usize, arena: &Arena) -> Self {
+    pub fn with_capacity(capacity: usize, arena: &'a Arena) -> Self {
         Self {
             order: new_vec(arena, Some(capacity)),
             data: new_hashmap(arena, Some(capacity))
         }
     }
 
-    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool {
+    pub fn contains_key(&self, key: &K) -> bool {
         self.data.contains_key(key)
     }
 
     pub fn insert(&mut self, key: K, value: V) -> Option<V> {
-        if self.data.contains_key(&key) {
-            let k = key.clone();
-            self.order.push(self.data.get(&k).unwrap())
+        if !self.data.contains_key(&key) {
+            self.order.push(key.clone())
         }
         self.data.insert(key, value)
     }
 
-    pub fn remove<Q: ?Sized>(&mut self, key: &Q) -> Option<V> {
-        let indx = self.order.iter().position(|&v| v == &key)?;
+    pub fn remove(&mut self, key: &K) -> Option<V> {
+        let indx = self.order.iter().position(|v: &K| v == key)?;
         self.order.remove(indx);
         self.data.remove(key)
     }
@@ -87,7 +89,7 @@ impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, 'b, K, V> {
         self.data.clear();
     }
 
-    pub fn keys(&self) -> &ArenaVec<&K> {
+    pub fn keys(&self) -> &ArenaVec<K> {
         &self.order
     }
 
@@ -176,18 +178,35 @@ where
 }
 
 ///
-/// Build a Hash Table instance of type [ArenaHashMap] which is arena aware.
+/// Build an Ordered Hash Table instance of type [ArenaOrderedHashMap] which is arena aware.
 ///
 #[inline(always)]
-pub fn new_orderedmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaHashMap<K, V> {
+pub fn new_orderedhashmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaOrderedHashMap<K, V>
+where K: Clone, K: Eq, K: Hash, V: Clone
+{
     match len {
-        Some(len) => HashMap::<K, V, RandomState, &Arena>::with_capacity_and_hasher_in(
+        Some(len) => ArenaOrderedHashMap::<K, V>::with_capacity(
             len,
-            RandomState::new(),
             arena,
         ),
-        None => HashMap::<K, V, RandomState, &Arena>::new_in(arena),
+        None => ArenaOrderedHashMap::<K, V>::new_in(arena),
     }
+}
+
+///
+/// Build an Ordered Hash Table instance of type [ArenaOrderedHashMap] which is arena aware using the items passed.
+///
+#[inline(always)]
+pub fn new_orderedhashmap_from<K, V, const N: usize>(data: [(K, V); N], arena: &Arena) -> ArenaOrderedHashMap<K, V>
+where
+    K: Sized + Clone + Eq + Hash,
+    V: Sized + Clone
+{
+    let mut htable: ArenaOrderedHashMap<K, V> = new_orderedhashmap(arena, Some(data.len()));
+    for (k, v) in data {
+        htable.insert(k, v);
+    }
+    htable
 }
 
 #[inline(always)]
@@ -240,5 +259,17 @@ macro_rules! rumtk_arena_hashmap {
     ( $items:expr, $arena:expr ) => {{
         use $crate::collections::new_hashmap_from;
         new_hashmap_from($items, $arena)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_arena_orderedhashmap {
+    ( $arena:expr ) => {{
+        use $crate::collections::new_orderedhashmap;
+        new_orderedhashmap($arena, None)
+    }};
+    ( $items:expr, $arena:expr ) => {{
+        use $crate::collections::new_orderedhashmap_from;
+        new_orderedhashmap_from($items, $arena)
     }};
 }
