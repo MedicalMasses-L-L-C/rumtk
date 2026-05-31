@@ -1,5 +1,6 @@
 [package]
 name = "rumtk-arena"
+description = "Arena/Bump allocator library to support performance critical portions of the rumtk framework."
 version = "0.1.0"
 license = "LGPL-3.0"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-arena"
