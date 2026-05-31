@@ -611,7 +611,7 @@ pub fn escape(unescaped_str: &str) -> RUMString {
 /// ```
 ///  use rumtk_core::strings::basic_escape;
 ///  let message = "I ❤ my wife!";
-///  let escaped_message = basic_escape(&message, &vec![]);
+///  let escaped_message = basic_escape(&message, Some(&vec![]));
 ///  assert_eq!("I \\u{2764} my wife!", &escaped_message, "Did not get expected escaped string! Got {}!", &escaped_message);
 ///```
 pub fn basic_escape(unescaped_str: &str, except: EscapeExceptions) -> RUMString {
