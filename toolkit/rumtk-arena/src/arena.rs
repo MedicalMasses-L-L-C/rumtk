@@ -57,6 +57,7 @@ pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
 }
 
 pub type ArenaResult<T> = Result<T, AllocError>;
+pub type ArenaBaseAddress = NonNull<[u8]>;
 
 ///
 /// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
@@ -245,6 +246,14 @@ impl ArenaAlloc {
     pub fn reset(&mut self) {
         self.used = 0;
     }
+
+    pub fn address(&self) -> ArenaBaseAddress {
+        cast_to_nonnull(&mut self.memory[..])
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.used == 0
+    }
 }
 
 impl Default for ArenaAlloc {
@@ -335,6 +344,18 @@ impl Arena {
 
     pub fn reset(&self) {
         self.memory.borrow_mut().reset()
+    }
+
+    pub fn remaining(&self) -> usize {
+        self.memory.borrow().remaining()
+    }
+
+    pub fn address(&self) -> ArenaBaseAddress {
+        self.memory.borrow().address()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.memory.borrow().is_empty()
     }
 }
 
