@@ -29,7 +29,7 @@ pub const ONE_GB: usize = 1024 * ONE_MB;
 pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
 
 #[inline(always)]
-pub fn cast_to_nonnull(dst: *mut [u8]) -> NonNull<[u8]> {
+pub fn cast_to_nonnull<T: ?Sized>(dst: *mut T) -> NonNull<T> {
     match NonNull::new(dst) {
         Some(ptr) => ptr,
         None => panic!("Failed to allocate memory"),
@@ -57,7 +57,7 @@ pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
 }
 
 pub type ArenaResult<T> = Result<T, AllocError>;
-pub type ArenaBaseAddress = NonNull<[u8]>;
+pub type ArenaBaseAddress = *const u8;
 
 ///
 /// Basic Arena Allocator that uses the crate `memmap2` to request wholesale allocation of memory from
@@ -248,7 +248,7 @@ impl ArenaAlloc {
     }
 
     pub fn address(&self) -> ArenaBaseAddress {
-        cast_to_nonnull(&mut self.memory[..])
+        self.memory.as_ptr()
     }
 
     pub fn is_empty(&self) -> bool {
