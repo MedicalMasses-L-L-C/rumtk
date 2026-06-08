@@ -22,6 +22,7 @@ use std::collections::hash_map::Values;
 use std::collections::{HashMap, VecDeque};
 use std::hash::{Hash, RandomState};
 use std::mem::MaybeUninit;
+use std::ops::{Index, IndexMut};
 
 pub type ArenaVec<'a, V> = Vec<V, &'a Arena>;
 pub type ArenaVecDeque<'a, V> = VecDeque<V, &'a Arena>;
@@ -36,7 +37,7 @@ pub struct ArenaOrderedHashMap<'a, K, V> {
 impl<'a, 'b, K, V> ArenaOrderedHashMap<'a, K, V>
 where
     K: Eq + Hash + Clone,
-    V: Clone
+    V: Clone + PartialEq
 {
     pub fn new_in(arena: &'a Arena) -> Self {
         Self {
@@ -96,6 +97,45 @@ where
 
     pub fn values(&self) -> Values<K, V> {
         self.data.values()
+    }
+
+    fn eq_values(&self, other: &Self) -> bool {
+        let mut equal = true;
+        for k in self.keys() {
+            equal = equal && self[k] == other[k];
+        }
+        equal
+    }
+}
+
+impl<'a, 'b, K, V> PartialEq for ArenaOrderedHashMap<'a, K, V>
+where
+    K: Eq + Hash + Clone,
+    V: Clone + PartialEq
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.order == other.order && self.eq_values(other)
+    }
+}
+
+impl<'a, 'b, K, V> Index<&K> for ArenaOrderedHashMap<'a, K, V>
+where
+    K: Eq + Hash + Clone,
+    V: Clone + PartialEq
+{
+    type Output = V;
+    fn index(&self, index: &K) -> &Self::Output {
+        self.get(index).unwrap()
+    }
+}
+
+impl<'a, 'b, K, V> IndexMut<&K> for ArenaOrderedHashMap<'a, K, V>
+where
+    K: Eq + Hash + Clone,
+    V: Clone + PartialEq
+{
+    fn index_mut(&mut self, index: &K) -> &mut Self::Output {
+        self.get_mut(index).unwrap()
     }
 }
 
@@ -183,7 +223,9 @@ where
 ///
 #[inline(always)]
 pub fn new_orderedhashmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaOrderedHashMap<K, V>
-where K: Clone, K: Eq, K: Hash, V: Clone
+where
+    K: Clone + Eq + Hash,
+    V: Clone + PartialEq
 {
     match len {
         Some(len) => ArenaOrderedHashMap::<K, V>::with_capacity(
@@ -201,7 +243,7 @@ where K: Clone, K: Eq, K: Hash, V: Clone
 pub fn new_orderedhashmap_from<K, V, const N: usize>(data: [(K, V); N], arena: &Arena) -> ArenaOrderedHashMap<K, V>
 where
     K: Sized + Clone + Eq + Hash,
-    V: Sized + Clone
+    V: Sized + Clone + PartialEq
 {
     let mut htable: ArenaOrderedHashMap<K, V> = new_orderedhashmap(arena, Some(data.len()));
     for (k, v) in data {
