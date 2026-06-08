@@ -1,12 +1,15 @@
 #![feature(allocator_api)]
 #![feature(slice_ptr_get)]
 #![feature(liballoc_internals)]
+#![feature(linked_list_retain)]
 extern crate alloc;
 
 pub mod arena;
 pub mod collections;
+pub mod dune;
 
 pub use arena::Arena;
+pub use dune::Dune;
 
 #[cfg(test)]
 mod tests {
