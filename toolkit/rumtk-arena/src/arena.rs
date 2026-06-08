@@ -20,8 +20,9 @@
 use memmap2::MmapMut;
 use std::alloc::{AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
-use std::cell::RefCell;
+use std::io::{Read, Write};
 use std::ptr::NonNull;
+use std::sync::{Arc, RwLock};
 
 pub const ONE_KB: usize = 1024;
 pub const ONE_MB: usize = 1024 * ONE_KB;
@@ -267,6 +268,8 @@ impl Default for ArenaAlloc {
     }
 }
 
+type ArenaRef = Arc<RwLock<ArenaAlloc>>;
+
 
 ///
 /// Arena Allocator wrapper with interior mutability that uses the crate `memmap2` to request
@@ -316,64 +319,64 @@ impl Default for ArenaAlloc {
 ///
 #[derive(Debug, Default)]
 pub struct Arena {
-    memory: RefCell<ArenaAlloc>
+    memory: ArenaRef
 }
 impl Arena {
     pub fn new() -> Self {
         Self {
-            memory: RefCell::new(ArenaAlloc::new())
+            memory: ArenaRef::new(RwLock::new(ArenaAlloc::new()))
         }
     }
 
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            memory: RefCell::new(ArenaAlloc::with_capacity(capacity))
+            memory: ArenaRef::new(RwLock::new(ArenaAlloc::with_capacity(capacity)))
         }
     }
 
     #[inline(always)]
     pub fn commit(&self, size: usize) -> ArenaResult<*mut [u8]> {
-        self.memory.borrow_mut().commit(size)
+        self.memory.write().unwrap().commit(size)
     }
 
     #[inline(always)]
     pub fn grow_block(&self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
-        self.memory.borrow_mut().grow(old_size, new_size)
+        self.memory.write().unwrap().grow(old_size, new_size)
     }
 
     #[inline(always)]
     pub fn write<T>(&self, data: T) -> ArenaResult<NonNull<T>> {
-        self.memory.borrow_mut().write(data)
+        self.memory.write().unwrap().write(data)
     }
 
     #[inline(always)]
     pub fn uncommit(&self, length: usize) {
-        self.memory.borrow_mut().uncommit(length)
+        self.memory.write().unwrap().uncommit(length)
     }
 
     #[inline(always)]
     pub fn reset(&self) {
-        self.memory.borrow_mut().reset()
+        self.memory.write().unwrap().reset()
     }
 
     #[inline(always)]
     pub fn remaining(&self) -> usize {
-        self.memory.borrow().remaining()
+        self.memory.read().unwrap().remaining()
     }
 
     #[inline(always)]
     pub fn capacity(&self) -> usize {
-        self.memory.borrow().capacity()
+        self.memory.read().unwrap().capacity()
     }
 
     #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
-        self.memory.borrow().address()
+        self.memory.read().unwrap().address()
     }
 
     #[inline(always)]
     pub fn is_empty(&self) -> bool {
-        self.memory.borrow().is_empty()
+        self.memory.read().unwrap().is_empty()
     }
 }
 
