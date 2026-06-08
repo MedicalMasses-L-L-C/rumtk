@@ -60,7 +60,7 @@ impl Dune {
         Self { arena }
     }
 
-    pub fn arena(&self) -> &Arena {
+    pub fn arena(&self) -> &'static Arena {
         self.arena
     }
 
@@ -114,7 +114,7 @@ unsafe impl Allocator for Dune {
 }
 
 #[macro_export]
-macro_rules! rumtk_arena_allocate {
+macro_rules! rumtk_dune_new {
     ( $capacity:expr ) => {{
         use $crate::Dune;
 
