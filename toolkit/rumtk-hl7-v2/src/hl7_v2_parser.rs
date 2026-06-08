@@ -34,33 +34,29 @@
 
 pub mod v2_parser {
     use pyo3::prelude::*;
-    use std::io::BufRead;
 
     pub use crate::hl7_v2_base_types::v2_primitives::{
         V2DateTime, V2ParserCharacters, V2PrimitiveCasting, V2Result, V2SearchIndex, V2String,
     };
+    use crate::hl7_v2_constants::V2_MSHEADER_PATTERN_STR;
     pub use crate::hl7_v2_constants::{
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR,
     };
-    use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
-    use pyo3::exceptions::PyValueError;
-    use rumtk_core::base::{clamp_index, RUMError};
-    use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_arena::collections::{ArenaOrderedHashMap, ArenaVec};
+    use rumtk_arena::{rumtk_dune_new, Arena, Dune};
+    use rumtk_core::base::clamp_index;
+    use rumtk_core::base::RUMResult;
+    use rumtk_core::buffers::{buffer_replace_in_place, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, DEFAULT_CPU_L1_CACHE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
-    use rumtk_core::scripting::python_utils::RUMPyResult;
-    use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     use rumtk_core::serde::RUMSerializableBuffer;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
-    use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap};
+    use rumtk_core::types::{RUMBuffer, RUMBufferMut};
     use std::ops::{Index, IndexMut};
-    use std::str::Chars;
-    use std::sync::Arc;
     /**************************** Globals ***************************************/
 
     static mut search_cache: LazyRUMCache<RUMString, V2SearchIndex> = new_cache();
@@ -100,7 +96,7 @@ pub mod v2_parser {
     /// a field for other purposes is prohibited.
     /// ```
     ///
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Component {
         component: RUMSerializableBuffer,
     }
@@ -217,7 +213,7 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
@@ -302,7 +298,7 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
+    #[derive(Default, Debug, PartialEq, Clone)]
     pub struct V2Segment {
         name: V2String,
         description: V2String,
@@ -411,20 +407,31 @@ pub mod v2_parser {
     /// inadvertently defined. This required first segment is known as the anchor segment.
     /// ```
     ///
-    pub type V2SegmentGroup = Vec<V2Segment>;
+    pub type V2SegmentGroup = ArenaVec<'static, V2Segment>;
 
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
-    pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
+    pub type SegmentMap = ArenaOrderedHashMap<'static, u8, V2SegmentGroup>;
 
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
+    #[derive(Debug, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
         segment_groups: SegmentMap,
+        data: Dune
     }
 
     impl V2Message {
+        pub fn new() -> Self {
+            let arena = rumtk_dune_new!(0);
+            let segment_groups = SegmentMap::new_in(&arena.arena());
+            Self {
+                data: arena,
+                separators: V2ParserCharacters::new(),
+                segment_groups
+            }
+        }
+
         ///
         /// Attempts to parse incoming raw HL7 v2 message into an instance of [V2Message](V2Message).
         ///
@@ -436,9 +443,12 @@ pub mod v2_parser {
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
-            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
+
+            let arena = Dune::new(sanitized.len() * 3);
+            let segments = V2Message::extract_segments(sanitized, &parse_characters, &arena.arena())?;
 
             Ok(V2Message {
+                data: arena,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -599,8 +609,9 @@ pub mod v2_parser {
         pub fn extract_segments(
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
+            arena: &'static Arena
         ) -> V2Result<SegmentMap> {
-            let mut segments: SegmentMap = SegmentMap::with_capacity(DEFAULT_CPU_CACHE_LINE_SIZE);
+            let mut segments: SegmentMap = SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_SIZE, &arena);
 
             for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
                 if segment.is_empty() {
@@ -622,13 +633,19 @@ pub mod v2_parser {
                 let key = V2_SEGMENT_IDS(&segment.name);
 
                 if !segments.contains_key(&key) {
-                    segments.insert(key, V2SegmentGroup::new());
+                    segments.insert(key, V2SegmentGroup::new_in(arena));
                 }
 
                 segments.get_mut(&key).unwrap().push(segment);
             }
 
             Ok(segments)
+        }
+    }
+
+    impl<'a> Default for V2Message {
+        fn default() -> Self {
+            Self::new()
         }
     }
 
