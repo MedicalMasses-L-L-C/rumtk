@@ -48,6 +48,7 @@ pub fn dune_deallocate(arena: &'static Arena) {
     }
 }
 
+#[derive(Debug, PartialEq, Clone)]
 pub struct Dune {
     arena: &'static Arena,
 }
