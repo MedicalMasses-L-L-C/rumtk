@@ -44,10 +44,10 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR,
     };
     use rumtk_arena::collections::{ArenaOrderedHashMap, ArenaVec};
-    use rumtk_arena::{rumtk_dune_new, Arena, Dune};
+    use rumtk_arena::{rumtk_arena_vec, rumtk_dune_new, Arena, Dune};
     use rumtk_core::base::clamp_index;
     use rumtk_core::base::RUMResult;
-    use rumtk_core::buffers::{buffer_replace_in_place, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, DEFAULT_CPU_L1_CACHE_SIZE};
+    use rumtk_core::buffers::{buffer_replace_in_place, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::serde::RUMSerializableBuffer;
@@ -195,7 +195,7 @@ pub mod v2_parser {
 
     impl V2PrimitiveCasting for V2Component {}
 
-    pub type ComponentList = Vec<V2Component>;
+    pub type ComponentList = ArenaVec<'static, V2Component>;
 
     ///
     /// A field is a collection of items separated by the field separation character.
@@ -213,20 +213,20 @@ pub mod v2_parser {
     /// comprehensive data dictionary of all HL7 fields is provided in Appendix A.
     ///```
     ///
-    #[derive(Default, Debug, PartialEq, Clone)]
+    #[derive(Debug, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
     }
 
     impl V2Field {
-        pub fn new() -> Self {
+        pub fn new(arena: &'static Arena) -> Self {
             Self {
-                components: vec![V2Component::new()]
+                components: rumtk_arena_vec![[V2Component::new()], arena]
             }
         }
 
-        pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::with_capacity(5);
+        pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters, arena: &'static Arena) -> Self {
+            let mut component_list: ComponentList = ComponentList::new_in(arena);
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
                 component_list.push(V2Component::from(c))
@@ -279,8 +279,8 @@ pub mod v2_parser {
         }
     }
 
-    pub type V2FieldGroup = Vec<V2Field>;
-    pub type V2FieldList = Vec<V2FieldGroup>;
+    pub type V2FieldGroup = ArenaVec<'static, V2Field>;
+    pub type V2FieldList = ArenaVec<'static, V2FieldGroup>;
 
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
@@ -298,7 +298,7 @@ pub mod v2_parser {
     /// Event Type (EVN), Patient ID (PID), and Patient Visit (PV1).
     /// ```
     ///
-    #[derive(Default, Debug, PartialEq, Clone)]
+    #[derive(Debug, PartialEq, Clone)]
     pub struct V2Segment {
         name: V2String,
         description: V2String,
@@ -306,11 +306,11 @@ pub mod v2_parser {
     }
 
     impl V2Segment {
-        pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
+        pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters, arena: &'static Arena) -> V2Result<Self> {
             let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
             let mut raw_fields = segment.split_fast(pattern);
-            let mut field_list = V2FieldList::new();
+            let mut field_list = V2FieldList::new_in(arena);
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
@@ -320,7 +320,7 @@ pub mod v2_parser {
             let segment_name = buffer_to_string(&raw_field[0..3])?;
 
             for raw_field in raw_fields {
-                field_list.push(Self::generate_subfields(raw_field, parser_chars));
+                field_list.push(Self::generate_subfields(raw_field, parser_chars, arena));
             }
 
             let field_description = V2_SEGMENT_DESC(&segment_name).to_string();
@@ -369,14 +369,14 @@ pub mod v2_parser {
             self.fields.len()
         }
 
-        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
+        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters, arena: &'static Arena) -> V2FieldGroup {
             if field.is_empty() {
-                return vec![V2Field::new()];
+                return rumtk_arena_vec![[V2Field::new(arena)], &arena];
             }
 
-            let mut field_group = V2FieldGroup::new();
+            let mut field_group = V2FieldGroup::new_in(arena);
             for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
-                field_group.push(V2Field::from(subfield, parser_chars))
+                field_group.push(V2Field::from(subfield, parser_chars, arena))
             }
 
             field_group
@@ -444,7 +444,7 @@ pub mod v2_parser {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
 
-            let arena = Dune::new(sanitized.len() * 3);
+            let arena = Dune::new(sanitized.len() * 10);
             let segments = V2Message::extract_segments(sanitized, &parse_characters, &arena.arena())?;
 
             Ok(V2Message {
@@ -611,22 +611,24 @@ pub mod v2_parser {
             parser_chars: &V2ParserCharacters,
             arena: &'static Arena
         ) -> V2Result<SegmentMap> {
-            let mut segments: SegmentMap = SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_SIZE, &arena);
+            let mut segments: SegmentMap = SegmentMap::new_in(&arena);
 
             for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
                 if segment.is_empty() {
                     continue;
                 }
 
-                let mut segment: V2Segment = V2Segment::from(segment, parser_chars)?;
+                let mut segment: V2Segment = V2Segment::from(segment, parser_chars, arena)?;
 
                 if segment.name == V2_MSHEADER_PATTERN_STR {
-                    segment.fields[0] = vec![
-                        V2Field {
-                            components: vec![
-                                V2Component::from(parser_chars.to_buffer())
+                    segment.fields[0] = rumtk_arena_vec![
+                        [V2Field {
+                            components: rumtk_arena_vec![
+                                [V2Component::from(parser_chars.to_buffer())],
+                                &arena
                             ]
-                        }
+                        }],
+                        &arena
                     ]
                 }
 
