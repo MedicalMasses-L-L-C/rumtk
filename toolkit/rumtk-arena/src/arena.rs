@@ -146,6 +146,11 @@ impl ArenaAlloc {
         self.capacity - self.used
     }
 
+    #[inline(always)]
+    pub fn capacity(&self) -> usize {
+        self.capacity
+    }
+
     ///
     /// Checks if it is possible to allocate the next object. This is an assertion guarded operation and will
     /// `panic`!!!!!!!
@@ -326,36 +331,55 @@ impl Arena {
         }
     }
 
+    #[inline(always)]
     pub fn commit(&self, size: usize) -> ArenaResult<*mut [u8]> {
         self.memory.borrow_mut().commit(size)
     }
 
+    #[inline(always)]
     pub fn grow_block(&self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
         self.memory.borrow_mut().grow(old_size, new_size)
     }
 
+    #[inline(always)]
     pub fn write<T>(&self, data: T) -> ArenaResult<NonNull<T>> {
         self.memory.borrow_mut().write(data)
     }
 
+    #[inline(always)]
     pub fn uncommit(&self, length: usize) {
         self.memory.borrow_mut().uncommit(length)
     }
 
+    #[inline(always)]
     pub fn reset(&self) {
         self.memory.borrow_mut().reset()
     }
 
+    #[inline(always)]
     pub fn remaining(&self) -> usize {
         self.memory.borrow().remaining()
     }
 
+    #[inline(always)]
+    pub fn capacity(&self) -> usize {
+        self.memory.borrow().capacity()
+    }
+
+    #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
         self.memory.borrow().address()
     }
 
+    #[inline(always)]
     pub fn is_empty(&self) -> bool {
         self.memory.borrow().is_empty()
+    }
+}
+
+impl PartialEq for Arena {
+    fn eq(&self, other: &Self) -> bool {
+        self.address() == other.address() && self.capacity() == other.capacity()
     }
 }
 
