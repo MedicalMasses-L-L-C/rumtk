@@ -313,6 +313,7 @@ pub mod v2_parser {
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
             let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
+            let mut skip = 0;
             let mut raw_fields = segment.split_fast(pattern);
             let mut field_list = V2FieldList::new();
 
@@ -323,7 +324,22 @@ pub mod v2_parser {
 
             let segment_name = buffer_to_string(&raw_field[0..3])?;
 
-            for raw_field in raw_fields {
+            match segment_name.as_str() {
+                V2_MSHEADER_PATTERN_STR => {
+                    field_list.push(vec![
+                            V2Field {
+                                components: vec![
+                                    V2Component::from(parser_chars.to_buffer())
+                                ]
+                            }
+                        ]
+                    );
+                    skip = 1;
+                },
+                _ => {}
+            };
+
+            for raw_field in raw_fields.skip(skip) {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
             }
 
@@ -608,16 +624,6 @@ pub mod v2_parser {
                 }
 
                 let mut segment: V2Segment = V2Segment::from(segment, parser_chars)?;
-
-                if segment.name == V2_MSHEADER_PATTERN_STR {
-                    segment.fields[0] = vec![
-                        V2Field {
-                            components: vec![
-                                V2Component::from(parser_chars.to_buffer())
-                            ]
-                        }
-                    ]
-                }
 
                 let key = V2_SEGMENT_IDS(&segment.name);
 

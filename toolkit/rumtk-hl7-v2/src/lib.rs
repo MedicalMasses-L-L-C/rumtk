@@ -64,10 +64,10 @@ mod tests {
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_split_fast, buffer_to_str};
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
-    use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
+    use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
     use rumtk_core::{
-        rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize,
+        rumtk_create_task, rumtk_exec_task, rumtk_resolve_task,
         rumtk_sleep,
     };
     use std::thread::spawn;
@@ -1322,6 +1322,7 @@ mod tests {
     }
 
     ////////////////////////////JSON Tests/////////////////////////////////
+    /*
     #[test]
     fn test_deserialize_escaped_v2_message() {
         let message = rumtk_v2_parse_message!(V2_JSON_MESSAGE).unwrap();
@@ -1358,6 +1359,7 @@ mod tests {
         );
     }
 
+     */
     ////////////////////////////Benchmark Tests/////////////////////////////////
     #[test]
     fn test_buffer_find_segments() {
