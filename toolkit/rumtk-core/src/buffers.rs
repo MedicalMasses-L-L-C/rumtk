@@ -332,13 +332,10 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 
 #[inline(always)]
 pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
-    for j in 0..chunk.len() {
-        if chunk[j] == byte {
-            return j;
-        }
+    match chunk.iter().position(|c| *c==byte) {
+        Some(pos) => pos,
+        None => chunk.len(),
     }
-
-    chunk.len()
 }
 
 #[inline(always)]
