@@ -43,14 +43,15 @@ pub mod v2_parser {
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR,
     };
-    use rumtk_arena::collections::{ArenaOrderedHashMap, ArenaVec};
-    use rumtk_arena::{rumtk_arena_vec, rumtk_dune_new, Arena, Dune};
-    use rumtk_core::base::clamp_index;
+    use rumtk_arena::arena::ONE_MB;
+    use rumtk_arena::collections::ArenaVec;
+    use rumtk_arena::{rumtk_arena_vec, rumtk_dune_new, Arena};
     use rumtk_core::base::RUMResult;
-    use rumtk_core::buffers::{buffer_replace_in_place, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt};
+    use rumtk_core::base::{clamp_index, RUMVec};
+    use rumtk_core::buffers::{buffer_replace_in_place, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, DEFAULT_BUFFER_ITEM_COUNT, DEFAULT_CPU_L1_CACHE_LINE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
-    use rumtk_core::serde::RUMSerializableBuffer;
+    use rumtk_core::serde::{RUMOrderedMap, RUMSerializableBuffer};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -279,8 +280,8 @@ pub mod v2_parser {
         }
     }
 
-    pub type V2FieldGroup = ArenaVec<'static, V2Field>;
-    pub type V2FieldList = ArenaVec<'static, V2FieldGroup>;
+    pub type V2FieldGroup = RUMVec<V2Field>;
+    pub type V2FieldList = RUMVec<V2FieldGroup>;
 
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
@@ -310,7 +311,8 @@ pub mod v2_parser {
             let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
             let mut raw_fields = segment.split_fast(pattern);
-            let mut field_list = V2FieldList::new_in(arena);
+            let mut skip = 0;
+            let mut field_list = V2FieldList::new();
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
@@ -319,7 +321,40 @@ pub mod v2_parser {
 
             let segment_name = buffer_to_string(&raw_field[0..3])?;
 
-            for raw_field in raw_fields {
+            /*match segment_name.as_str() {
+                V2_MSHEADER_PATTERN_STR => {
+                    field_list.push(rumtk_arena_vec![
+                            [V2Field {
+                                components: rumtk_arena_vec![
+                                    [V2Component::from(parser_chars.to_buffer())],
+                                    &arena
+                                ]
+                            }],
+                            &arena
+                        ]
+                    );
+                    skip = 1;
+                },
+                _ => {}
+            };*/
+
+            match segment_name.as_str() {
+                V2_MSHEADER_PATTERN_STR => {
+                    field_list.push(vec![
+                            V2Field {
+                                components: rumtk_arena_vec![
+                                    [V2Component::from(parser_chars.to_buffer())],
+                                    &arena
+                                ]
+                            }
+                        ]
+                    );
+                    skip = 1;
+                },
+                _ => {}
+            };
+
+            for raw_field in raw_fields.skip(skip) {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars, arena));
             }
 
@@ -371,12 +406,12 @@ pub mod v2_parser {
 
         fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters, arena: &'static Arena) -> V2FieldGroup {
             if field.is_empty() {
-                return rumtk_arena_vec![[V2Field::new(arena)], &arena];
+                return vec![V2Field::new(&arena)];
             }
 
-            let mut field_group = V2FieldGroup::new_in(arena);
+            let mut field_group = V2FieldGroup::new();
             for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
-                field_group.push(V2Field::from(subfield, parser_chars, arena))
+                field_group.push(V2Field::from(subfield, parser_chars, &arena))
             }
 
             field_group
@@ -407,26 +442,23 @@ pub mod v2_parser {
     /// inadvertently defined. This required first segment is known as the anchor segment.
     /// ```
     ///
-    pub type V2SegmentGroup = ArenaVec<'static, V2Segment>;
+    pub type V2SegmentGroup = RUMVec<V2Segment>;
 
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
-    pub type SegmentMap = ArenaOrderedHashMap<'static, u8, V2SegmentGroup>;
+    pub type SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
 
     #[derive(Debug, PartialEq, Clone)]
     pub struct V2Message {
         separators: V2ParserCharacters,
-        segment_groups: SegmentMap,
-        data: Dune
+        segment_groups: SegmentMap
     }
 
     impl V2Message {
         pub fn new() -> Self {
-            let arena = rumtk_dune_new!(0);
-            let segment_groups = SegmentMap::new_in(&arena.arena());
+            let segment_groups = SegmentMap::new();
             Self {
-                data: arena,
                 separators: V2ParserCharacters::new(),
                 segment_groups
             }
@@ -444,11 +476,10 @@ pub mod v2_parser {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
 
-            let arena = Dune::new(sanitized.len() * 10);
-            let segments = V2Message::extract_segments(sanitized, &parse_characters, &arena.arena())?;
+            let arena = rumtk_dune_new!(ONE_MB * 10);
+            let segments = V2Message::extract_segments(sanitized, &parse_characters, &arena)?;
 
             Ok(V2Message {
-                data: arena,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -611,7 +642,7 @@ pub mod v2_parser {
             parser_chars: &V2ParserCharacters,
             arena: &'static Arena
         ) -> V2Result<SegmentMap> {
-            let mut segments: SegmentMap = SegmentMap::new_in(&arena);
+            let mut segments: SegmentMap = SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
 
             for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
                 if segment.is_empty() {
@@ -620,22 +651,10 @@ pub mod v2_parser {
 
                 let mut segment: V2Segment = V2Segment::from(segment, parser_chars, arena)?;
 
-                if segment.name == V2_MSHEADER_PATTERN_STR {
-                    segment.fields[0] = rumtk_arena_vec![
-                        [V2Field {
-                            components: rumtk_arena_vec![
-                                [V2Component::from(parser_chars.to_buffer())],
-                                &arena
-                            ]
-                        }],
-                        &arena
-                    ]
-                }
-
                 let key = V2_SEGMENT_IDS(&segment.name);
 
                 if !segments.contains_key(&key) {
-                    segments.insert(key, V2SegmentGroup::new_in(arena));
+                    segments.insert(key, V2SegmentGroup::with_capacity(DEFAULT_BUFFER_ITEM_COUNT));
                 }
 
                 segments.get_mut(&key).unwrap().push(segment);
