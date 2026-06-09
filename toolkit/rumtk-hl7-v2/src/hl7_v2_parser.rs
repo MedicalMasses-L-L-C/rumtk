@@ -33,6 +33,7 @@
 ///
 
 pub mod v2_parser {
+    use crate::hl7_v2_constants::{V2_MSHEADER_ID, V2_SEGMENT_NAMES};
     use pyo3::prelude::*;
     use std::io::BufRead;
 
@@ -41,9 +42,8 @@ pub mod v2_parser {
     };
     pub use crate::hl7_v2_constants::{
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
-        V2_SEGMENT_TERMINATOR,
+        V2_SEGMENT_TERMINATOR, V2_SEGMENT_TERMINATORS
     };
-    use crate::hl7_v2_constants::{V2_MSHEADER_PATTERN_STR, V2_SEGMENT_TERMINATORS};
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
@@ -304,8 +304,7 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Segment {
-        name: V2String,
-        description: V2String,
+        id: u8,
         fields: V2FieldList,
     }
 
@@ -322,10 +321,9 @@ pub mod v2_parser {
                 None => return Err(rumtk_format!("Failed to get first field in segment! The segment is empty?")),
             };
 
-            let segment_name = buffer_to_string(&raw_field[0..3])?;
+            let segment_id = V2_SEGMENT_IDS(&raw_field[0..3]);
 
-            match segment_name.as_str() {
-                V2_MSHEADER_PATTERN_STR => {
+            if segment_id == V2_MSHEADER_ID {
                     field_list.push(vec![
                             V2Field {
                                 components: vec![
@@ -335,19 +333,14 @@ pub mod v2_parser {
                         ]
                     );
                     skip = 1;
-                },
-                _ => {}
-            };
+            }
 
             for raw_field in raw_fields.skip(skip) {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
             }
 
-            let field_description = V2_SEGMENT_DESC(&segment_name).to_string();
-
             Ok(V2Segment {
-                name: segment_name,
-                description: field_description,
+                id: segment_id,
                 fields: field_list,
             })
         }
@@ -363,7 +356,7 @@ pub mod v2_parser {
             }
             rumtk_format!(
                 "{}{}{}",
-                self.name,
+                buffer_to_str(V2_SEGMENT_NAMES(self.id)).unwrap_or_default(),
                 parser_chars.field_separator.as_string(),
                 segment.join(&parser_chars.field_separator.as_string())
             )
@@ -625,7 +618,7 @@ pub mod v2_parser {
 
                 let mut segment: V2Segment = V2Segment::from(segment, parser_chars)?;
 
-                let key = V2_SEGMENT_IDS(&segment.name);
+                let key = segment.id;
 
                 if !segments.contains_key(&key) {
                     segments.insert(key, V2SegmentGroup::new());
