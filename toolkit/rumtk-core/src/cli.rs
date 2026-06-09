@@ -43,7 +43,7 @@
 ///
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
-    use crate::strings::{rumtk_format, RUMStringConversions};
+    use crate::strings::rumtk_format;
     use crate::types::RUMBuffer;
     use std::io::{stdin, stdout, Read, Write};
 
@@ -134,13 +134,13 @@ pub mod cli_utils {
     /// writes [`stringview`] to `stdout`.
     ///
     pub fn write_string_stdout(data: &str) -> RUMResult<()> {
-        write_stdout(&data.to_buffer())
+        write_stdout(&data.as_bytes())
     }
 
     ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
-    pub fn write_stdout(data: &RUMBuffer) -> RUMResult<()> {
+    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
         match stdout().write_all(data) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
