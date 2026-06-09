@@ -312,7 +312,7 @@ pub mod v2_parser {
             let pattern = &[parser_chars.field_separator];
             let mut raw_fields = segment.split_fast(pattern);
             let mut skip = 0;
-            let mut field_list = V2FieldList::new();
+            let mut field_list = V2FieldList::with_capacity(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
