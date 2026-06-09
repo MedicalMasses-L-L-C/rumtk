@@ -18,8 +18,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::Arena;
+use core::fmt::{Debug, Formatter, Write};
 use std::collections::hash_map::Values;
 use std::collections::{HashMap, VecDeque};
+use std::fmt::Display;
 use std::hash::{Hash, RandomState};
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
@@ -28,7 +30,7 @@ pub type ArenaVec<'a, V> = Vec<V, &'a Arena>;
 pub type ArenaVecDeque<'a, V> = VecDeque<V, &'a Arena>;
 pub type ArenaHashMap<'a, K, V> = HashMap<K, V, RandomState, &'a Arena>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ArenaOrderedHashMap<'a, K, V> {
     order: ArenaVec<'a, K>,
     data: ArenaHashMap<'a, K, V>
@@ -136,6 +138,23 @@ where
 {
     fn index_mut(&mut self, index: &K) -> &mut Self::Output {
         self.get_mut(index).unwrap()
+    }
+}
+
+impl<'a, 'b, K, V> Debug for ArenaOrderedHashMap<'a, K, V>
+where
+    K: Debug + std::cmp::Eq + std::hash::Hash + std::fmt::Display,
+    V: Debug + std::fmt::Display,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result
+    {
+        f.write_str("{ ")?;
+        for k in self.order.iter() {
+            let v = &self.data[k];
+            f.write_str(&format!("{}: {}, ", k, v));
+        }
+        f.write_str("}")?;
+        Ok(())
     }
 }
 

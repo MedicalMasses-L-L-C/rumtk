@@ -3,6 +3,7 @@
 #![feature(liballoc_internals)]
 #![feature(linked_list_retain)]
 extern crate alloc;
+extern crate core;
 
 pub mod arena;
 pub mod collections;
@@ -14,7 +15,7 @@ pub use dune::Dune;
 #[cfg(test)]
 mod tests {
     use crate::collections::{ArenaHashMap, ArenaOrderedHashMap, ArenaVec, ArenaVecDeque};
-    use crate::{rumtk_arena_hashmap, rumtk_arena_orderedhashmap, rumtk_arena_vec, rumtk_arena_vecdeque, Arena};
+    use crate::{rumtk_arena_hashmap, rumtk_arena_orderedhashmap, rumtk_arena_vec, rumtk_arena_vecdeque, Arena, Dune};
     use std::alloc::Allocator;
     use std::alloc::Layout;
     use std::ptr::NonNull;
@@ -152,5 +153,81 @@ mod tests {
         println!("{:?}", order);
 
         assert_eq!(order.as_slice(), expected, "Failed to create hashmap with arena allocation enabled and item slice.");
+    }
+
+    #[test]
+    fn test_arena_complex_allocations() {
+        #[derive(Debug)]
+        struct MyType<'a> {
+            pub order: ArenaVec<'static, &'a str>,
+            pub data: ArenaOrderedHashMap<'static, usize, &'a str>
+        }
+        let arena = Dune::new(500);
+        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
+
+
+        let v: MyType = MyType {
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena()),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena()),
+        };
+
+        let mut order: Vec<(usize, &str)> = Vec::new();
+        for k in v.data.keys() {
+            order.push((k.clone(), v.data.get(&k).unwrap()));
+        }
+        println!("{:?}", order);
+
+        assert_eq!(order.as_slice(), expected, "Failed to create hashmap with arena allocation enabled and item slice.");
+    }
+
+    #[test]
+    fn test_arena_vec_debug_print() {
+        let arena = Dune::new(500);
+        let mut test_vec = ArenaVec::new_in(arena.arena());
+        let expected = ["Hello", "World", "!"];
+
+        for s in expected.iter() {
+            test_vec.push(s);
+        }
+
+        println!("{:?}", &test_vec);
+    }
+
+    #[test]
+    fn test_arena_map_debug_print() {
+        let arena = Dune::new(500);
+        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
+
+
+        let v = rumtk_arena_hashmap!(expected.clone(), &arena.arena());
+        println!("{:?}", &v);
+    }
+
+    #[test]
+    fn test_arena_orderedmap_debug_print() {
+        let arena = Dune::new(500);
+        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
+
+
+        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena());
+        println!("{:?}", &v);
+    }
+
+    #[test]
+    fn test_arena_complex_type_debug_print() {
+        #[derive(Debug)]
+        struct MyType<'a> {
+            pub order: ArenaVec<'static, &'a str>,
+            pub data: ArenaOrderedHashMap<'static, usize, &'a str>
+        }
+        let arena = Dune::new(500);
+        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
+
+
+        let v: MyType = MyType {
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena()),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena()),
+        };
+        println!("{:?}", &v);
     }
 }
