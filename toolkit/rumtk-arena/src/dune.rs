@@ -18,9 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::Arena;
-use std::alloc::{AllocError, Allocator, GlobalAlloc, Layout};
+use std::alloc::{Allocator, GlobalAlloc};
 use std::collections::LinkedList;
-use std::ptr::NonNull;
 use std::sync::{Arc, LazyLock, Mutex, RwLock};
 
 pub type SafeArena = Arc<RwLock<Arena>>;
@@ -48,76 +47,20 @@ pub fn dune_deallocate(arena: &'static Arena) {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Dune {
-    arena: &'static Arena,
-}
-
-impl Dune {
-    pub fn new(chunk_size: usize) -> Self {
-        let arena = dune_allocate(chunk_size);
-
-        Self { arena }
-    }
-
-    pub fn arena(&self) -> &'static Arena {
-        self.arena
-    }
-
-    pub fn drop(&mut self) {
-       dune_deallocate(self.arena);
-    }
-}
-
-unsafe impl Allocator for Dune {
-    // Required methods
-    fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
-        self.arena.allocate(layout)
-    }
-    unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
-        self.arena.deallocate(ptr, layout)
-    }
-
-    // Provided methods
-    fn allocate_zeroed(
-        &self,
-        layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        self.arena.allocate_zeroed(layout)
-    }
-    unsafe fn grow(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        self.arena.grow(ptr, old_layout, new_layout)
-    }
-    unsafe fn grow_zeroed(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        self.arena.grow_zeroed(ptr, old_layout, new_layout)
-    }
-    unsafe fn shrink(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        self.arena.shrink(ptr, old_layout, new_layout)
-    }
-    fn by_ref(&self) -> &Self
-    where Self: Sized { &self }
-}
-
 #[macro_export]
 macro_rules! rumtk_dune_new {
     ( $capacity:expr ) => {{
-        use $crate::Dune;
+        use $crate::dune::dune_allocate;
 
-        Dune::new($capacity)
+        dune_allocate($capacity)
+    }};
+}
+
+#[macro_export]
+macro_rules! rumtk_dune_free {
+    ( $arena:expr ) => {{
+        use $crate::dune::dune_deallocate;
+
+        dune_deallocate($arena)
     }};
 }

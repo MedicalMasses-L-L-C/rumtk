@@ -143,15 +143,15 @@ where
 
 impl<'a, 'b, K, V> Debug for ArenaOrderedHashMap<'a, K, V>
 where
-    K: Debug + std::cmp::Eq + std::hash::Hash + std::fmt::Display,
-    V: Debug + std::fmt::Display,
+    K: Debug + std::cmp::Eq + Hash,
+    V: Debug,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result
     {
         f.write_str("{ ")?;
         for k in self.order.iter() {
             let v = &self.data[k];
-            f.write_str(&format!("{}: {}, ", k, v));
+            f.write_str(&format!("{:?}: {:?}, ", k, v));
         }
         f.write_str("}")?;
         Ok(())
