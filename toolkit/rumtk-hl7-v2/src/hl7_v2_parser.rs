@@ -45,7 +45,7 @@ pub mod v2_parser {
         V2_SEGMENT_TERMINATOR, V2_SEGMENT_TERMINATORS
     };
     use pyo3::exceptions::PyValueError;
-    use rumtk_core::base::{clamp_index, RUMError};
+    use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
     use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
@@ -230,7 +230,7 @@ pub mod v2_parser {
         }
 
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::with_capacity(5);
+            let mut component_list: ComponentList = ComponentList::new();
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
                 component_list.push(V2Component::from(c))
@@ -346,9 +346,9 @@ pub mod v2_parser {
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
-            let mut segment: Vec<V2String> = Vec::with_capacity(self.fields.len());
+            let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.fields.len());
             for field_group in self.fields.iter() {
-                let mut fields: Vec<V2String> = Vec::with_capacity(field_group.len());
+                let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.len());
                 for field in field_group {
                     fields.push(field.to_string(parser_chars));
                 }
@@ -460,7 +460,7 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            let mut msg: Vec<V2String> = Vec::with_capacity(self.segment_groups.len());
+            let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.segment_groups.len());
             for segment_key in self.segment_groups.keys() {
                 let segment_group = &self.segment_groups[segment_key];
                 for segment in segment_group {
