@@ -10,7 +10,6 @@ pub mod collections;
 pub mod dune;
 
 pub use arena::Arena;
-pub use dune::Dune;
 
 #[cfg(test)]
 mod tests {
