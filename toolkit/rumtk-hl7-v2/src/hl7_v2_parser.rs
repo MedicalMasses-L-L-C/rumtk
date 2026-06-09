@@ -280,7 +280,7 @@ pub mod v2_parser {
         }
     }
 
-    pub type V2FieldGroup = RUMVec<V2Field>;
+    pub type V2FieldGroup = ArenaVec<'static, V2Field>;
     pub type V2FieldList = RUMVec<V2FieldGroup>;
 
     ///
@@ -321,7 +321,7 @@ pub mod v2_parser {
 
             let segment_name = buffer_to_string(&raw_field[0..3])?;
 
-            /*match segment_name.as_str() {
+            match segment_name.as_str() {
                 V2_MSHEADER_PATTERN_STR => {
                     field_list.push(rumtk_arena_vec![
                             [V2Field {
@@ -331,22 +331,6 @@ pub mod v2_parser {
                                 ]
                             }],
                             &arena
-                        ]
-                    );
-                    skip = 1;
-                },
-                _ => {}
-            };*/
-
-            match segment_name.as_str() {
-                V2_MSHEADER_PATTERN_STR => {
-                    field_list.push(vec![
-                            V2Field {
-                                components: rumtk_arena_vec![
-                                    [V2Component::from(parser_chars.to_buffer())],
-                                    &arena
-                                ]
-                            }
                         ]
                     );
                     skip = 1;
@@ -406,10 +390,10 @@ pub mod v2_parser {
 
         fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters, arena: &'static Arena) -> V2FieldGroup {
             if field.is_empty() {
-                return vec![V2Field::new(&arena)];
+                return rumtk_arena_vec![[V2Field::new(&arena)], &arena];
             }
 
-            let mut field_group = V2FieldGroup::new();
+            let mut field_group = rumtk_arena_vec!(&arena);
             for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
                 field_group.push(V2Field::from(subfield, parser_chars, &arena))
             }
