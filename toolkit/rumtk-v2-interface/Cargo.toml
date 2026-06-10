@@ -13,5 +13,5 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.16.0", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.10.0", path = "../rumtk-hl7-v2" }
+rumtk-core = { version = "0.16.1", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.10.2", path = "../rumtk-hl7-v2" }

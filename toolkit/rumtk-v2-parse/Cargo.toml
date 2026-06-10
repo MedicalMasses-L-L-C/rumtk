@@ -17,6 +17,6 @@ debug = true
 strip = false
 
 [dependencies]
-rumtk-core = { version = "0.16.0", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.10.0", path = "../rumtk-hl7-v2" }
+rumtk-core = { version = "0.16.1", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.10.2", path = "../rumtk-hl7-v2" }
 clap = { version = "4.5.38", features = ["derive"] }
