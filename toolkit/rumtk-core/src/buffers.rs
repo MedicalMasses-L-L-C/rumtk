@@ -24,6 +24,8 @@ use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
 use tokio::io::AsyncReadExt;
 
+use std::simd::prelude::*;
+
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
 pub const DEFAULT_CPU_L1_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
@@ -331,10 +333,53 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 }
 
 #[inline(always)]
+pub fn buffer_slice_to_array(chunk: &[u8]) -> &[u8; 256] {
+    chunk.try_into().expect("length mismatch")
+}
+
+#[inline(always)]
+pub fn buffer_chunk_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
+    chunk.iter().position(|c| *c==byte)
+}
+
+#[inline(always)]
+fn buffer_chunk_find_simd_avx2(window: &[u8; 256], byte: u8) -> Option<usize> {
+    let target_vec = u8x32::splat(byte);
+
+    for (i, chunk) in window.chunks_exact(32).enumerate() {
+        let data_vec = u8x32::from_slice(chunk);
+        let mask = data_vec.simd_eq(target_vec);
+
+        if mask.any() {
+            let bitmask = mask.to_bitmask();;
+            let lane_i = bitmask.trailing_zeros() as usize;
+            return Some((i * 32) + lane_i);
+        }
+    }
+
+    None
+}
+
+#[inline(always)]
+pub fn buffer_chunk_find_simd(window: &[u8; 256], byte: u8) -> Option<usize> {
+    unsafe {
+        if is_x86_feature_detected!("avx2") {
+            buffer_chunk_find_simd_avx2(window, byte)
+        } else {
+            buffer_chunk_find_fallback(window, byte)
+        }
+    }
+}
+
+#[inline(always)]
 pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
-    match chunk.iter().position(|c| *c==byte) {
-        Some(pos) => pos,
-        None => chunk.len(),
+    let length = chunk.len();
+
+    if length == 256 {
+        let chunk_window = buffer_slice_to_array(chunk);
+        buffer_chunk_find_simd(chunk_window, byte).unwrap_or(length)
+    } else {
+        buffer_chunk_find_fallback(chunk, byte).unwrap_or(length)
     }
 }
 
@@ -344,10 +389,10 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
         return buffer.len();
     }
 
-    let iter = buffer.chunks(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
+    let iter = buffer.chunks(256);
     for (i, chunk) in iter.enumerate() {
         if chunk.contains(&byte) {
-            return (i * DEFAULT_CPU_L1_CACHE_LINE_SIZE) + buffer_chunk_find(chunk, byte);
+            return (i * 256) + buffer_chunk_find(chunk, byte);
         }
     }
 

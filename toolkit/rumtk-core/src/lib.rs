@@ -29,6 +29,7 @@
 #![feature(const_cmp)]
 #![feature(macro_metavar_expr)]
 #![feature(const_default)]
+#![feature(portable_simd)]
 
 pub mod cache;
 pub mod cli;
