@@ -17,8 +17,8 @@ debug = true
 strip = false
 
 [dependencies]
-rumtk-core = { version = "0.16.0", path = "../rumtk-core" }
-rumtk-web = { version = "0.7.3", path = "../rumtk-web" }
+rumtk-core = { version = "0.16.1", path = "../rumtk-core" }
+rumtk-web = { version = "0.7.5", path = "../rumtk-web" }
 askama = "0.15.6"
 serde = { version = "1.0.228", features = ["derive", "std"] }
 serde_json = "1.0.149"
