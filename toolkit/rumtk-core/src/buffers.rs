@@ -31,6 +31,7 @@ pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
 pub const DEFAULT_CPU_L1_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
 pub const DEFAULT_CPU_L1_CACHE_SIZE: usize = 32 * 1024; // Number of bytes in a typical x86_64 CPU L1 cache per core.
 pub const DEFAULT_CPU_PAGE_SIZE: usize = 4 * 1024; // Typical CPU page size
+pub const DEFAULT_BYTE_WINDOW_SIZE: usize = 256;
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
@@ -333,7 +334,7 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 }
 
 #[inline(always)]
-pub fn buffer_slice_to_array(chunk: &[u8]) -> &[u8; 256] {
+pub fn buffer_slice_to_array(chunk: &[u8]) -> &[u8; DEFAULT_BYTE_WINDOW_SIZE] {
     chunk.try_into().expect("length mismatch")
 }
 
@@ -343,7 +344,7 @@ pub fn buffer_chunk_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
 }
 
 #[inline(always)]
-fn buffer_chunk_find_simd_avx2(window: &[u8; 256], byte: u8) -> Option<usize> {
+fn buffer_chunk_find_simd_avx2(window: &[u8; DEFAULT_BYTE_WINDOW_SIZE], byte: u8) -> Option<usize> {
     let target_vec = u8x32::splat(byte);
 
     for (i, chunk) in window.chunks_exact(32).enumerate() {
@@ -361,7 +362,7 @@ fn buffer_chunk_find_simd_avx2(window: &[u8; 256], byte: u8) -> Option<usize> {
 }
 
 #[inline(always)]
-pub fn buffer_chunk_find_simd(window: &[u8; 256], byte: u8) -> Option<usize> {
+pub fn buffer_chunk_find_simd(window: &[u8; DEFAULT_BYTE_WINDOW_SIZE], byte: u8) -> Option<usize> {
     unsafe {
         if is_x86_feature_detected!("avx2") {
             buffer_chunk_find_simd_avx2(window, byte)
@@ -375,7 +376,7 @@ pub fn buffer_chunk_find_simd(window: &[u8; 256], byte: u8) -> Option<usize> {
 pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
     let length = chunk.len();
 
-    if length == 256 {
+    if length == DEFAULT_BYTE_WINDOW_SIZE {
         let chunk_window = buffer_slice_to_array(chunk);
         buffer_chunk_find_simd(chunk_window, byte).unwrap_or(length)
     } else {
@@ -389,10 +390,10 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
         return buffer.len();
     }
 
-    let iter = buffer.chunks(256);
+    let iter = buffer.chunks(DEFAULT_BYTE_WINDOW_SIZE);
     for (i, chunk) in iter.enumerate() {
         if chunk.contains(&byte) {
-            return (i * 256) + buffer_chunk_find(chunk, byte);
+            return (i * DEFAULT_BYTE_WINDOW_SIZE) + buffer_chunk_find(chunk, byte);
         }
     }
 
