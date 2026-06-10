@@ -196,7 +196,7 @@ mod tests {
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
-            print!("{} ", V2_SEGMENT_NAMES(*k));
+            print!("{} ", buffer_to_str(V2_SEGMENT_NAMES(*k)).unwrap());
         }
         assert_eq!(
             parsed_segments.len(),
@@ -204,23 +204,23 @@ mod tests {
             "Number of segments mismatching what was expected!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("MSH")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("PID")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"PID")),
             "Missing PID segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("PV1")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"PV1")),
             "Missing PV1 segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("EVN")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"EVN")),
             "Missing EVN segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("NK1")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"NK1")),
             "Missing NK1 segment!"
         );
     }

@@ -14,7 +14,7 @@ pub use arena::Arena;
 #[cfg(test)]
 mod tests {
     use crate::collections::{ArenaHashMap, ArenaOrderedHashMap, ArenaVec, ArenaVecDeque};
-    use crate::{rumtk_arena_hashmap, rumtk_arena_orderedhashmap, rumtk_arena_vec, rumtk_arena_vecdeque, Arena, Dune};
+    use crate::{rumtk_arena_hashmap, rumtk_arena_orderedhashmap, rumtk_arena_vec, rumtk_arena_vecdeque, rumtk_dune_new, Arena};
     use std::alloc::Allocator;
     use std::alloc::Layout;
     use std::ptr::NonNull;
@@ -161,13 +161,13 @@ mod tests {
             pub order: ArenaVec<'static, &'a str>,
             pub data: ArenaOrderedHashMap<'static, usize, &'a str>
         }
-        let arena = Dune::new(500);
+        let arena = rumtk_dune_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
         let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena()),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena()),
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena),
         };
 
         let mut order: Vec<(usize, &str)> = Vec::new();
@@ -181,8 +181,8 @@ mod tests {
 
     #[test]
     fn test_arena_vec_debug_print() {
-        let arena = Dune::new(500);
-        let mut test_vec = ArenaVec::new_in(arena.arena());
+        let arena = rumtk_dune_new!(500);
+        let mut test_vec = ArenaVec::new_in(arena);
         let expected = ["Hello", "World", "!"];
 
         for s in expected.iter() {
@@ -194,21 +194,21 @@ mod tests {
 
     #[test]
     fn test_arena_map_debug_print() {
-        let arena = Dune::new(500);
+        let arena = rumtk_dune_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = rumtk_arena_hashmap!(expected.clone(), &arena.arena());
+        let v = rumtk_arena_hashmap!(expected.clone(), &arena);
         println!("{:?}", &v);
     }
 
     #[test]
     fn test_arena_orderedmap_debug_print() {
-        let arena = Dune::new(500);
+        let arena = rumtk_dune_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena());
+        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena);
         println!("{:?}", &v);
     }
 
@@ -219,13 +219,13 @@ mod tests {
             pub order: ArenaVec<'static, &'a str>,
             pub data: ArenaOrderedHashMap<'static, usize, &'a str>
         }
-        let arena = Dune::new(500);
+        let arena = rumtk_dune_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
         let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena()),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena()),
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena),
         };
         println!("{:?}", &v);
     }
