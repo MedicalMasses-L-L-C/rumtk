@@ -235,7 +235,7 @@ mod tests {
         let keys = parsed_segments.keys();
         print!("Keys: ");
         for k in keys {
-            print!("{} ", V2_SEGMENT_NAMES(*k));
+            print!("{:?} ", V2_SEGMENT_NAMES(*k));
         }
         assert_eq!(
             parsed_segments.len(),
@@ -243,19 +243,19 @@ mod tests {
             "Number of segments mismatching what was expected!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("MSH")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("PID")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"PID")),
             "Missing PID segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("PD1")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"PD1")),
             "Missing PV1 segment!"
         );
         assert!(
-            parsed_segments.contains_key(&V2_SEGMENT_IDS("RXA")),
+            parsed_segments.contains_key(&V2_SEGMENT_IDS(b"RXA")),
             "Missing EVN segment!"
         );
     }
@@ -264,23 +264,23 @@ mod tests {
     fn test_load_hl7_v2_message() {
         let message = V2Message::try_from(DEFAULT_HL7_V2_MESSAGE).unwrap();
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("MSH")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PID")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PID")),
             "Missing PID segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PV1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PV1")),
             "Missing PV1 segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("EVN")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"EVN")),
             "Missing EVN segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("NK1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"NK1")),
             "Missing NK1 segment!"
         );
     }
@@ -295,27 +295,27 @@ mod tests {
     fn test_load_hl7_v2_message_wir_iis() {
         let message = V2Message::try_from(HL7_V2_MESSAGE).unwrap();
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("MSH")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("FHS")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"FHS")),
             "Missing FHS segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("NK1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"NK1")),
             "Missing NK1 segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PV1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PV1")),
             "Missing PV1 segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("FTS")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"FTS")),
             "Missing FTS segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("BHS")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"BHS")),
             "Missing BHS segment!"
         );
     }
@@ -323,19 +323,19 @@ mod tests {
     fn test_load_hl7_v2_message_scrambled() {
         let message = V2Message::try_from(HL7_V2_SCRAMBLED).unwrap();
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("MSH")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PID")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PID")),
             "Missing PID segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PD1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PD1")),
             "Missing PV1 segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("RXA")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"RXA")),
             "Missing EVN segment!"
         );
     }
@@ -346,9 +346,9 @@ mod tests {
     #[test]
     fn test_load_hl7_v2_utf8_message() {
         let message = V2Message::try_from(HL7_V2_PDF_MESSAGE).unwrap();
-        let pid = message.get(&V2_SEGMENT_IDS("PID"), 1).unwrap();
-        let orc = message.get(&V2_SEGMENT_IDS("ORC"), 1).unwrap();
-        let obr = message.get(&V2_SEGMENT_IDS("OBR"), 1).unwrap();
+        let pid = message.get(&V2_SEGMENT_IDS(b"PID"), 1).unwrap();
+        let orc = message.get(&V2_SEGMENT_IDS(b"ORC"), 1).unwrap();
+        let obr = message.get(&V2_SEGMENT_IDS(b"OBR"), 1).unwrap();
         let name1 = pid
             .get(5)
             .unwrap()
@@ -393,7 +393,7 @@ mod tests {
     #[test]
     fn test_handle_hl7_v2_message_with_repeating_fields() {
         let message = V2Message::try_from(HL7_V2_REPEATING_FIELD_MESSAGE).unwrap();
-        let msh = message.get(&V2_SEGMENT_IDS("MSH"), 1).unwrap();
+        let msh = message.get(&V2_SEGMENT_IDS(b"MSH"), 1).unwrap();
         let field1 = msh
             .get(-1)
             .unwrap()
@@ -543,23 +543,23 @@ mod tests {
     fn test_load_hl7_v2_message_macro() {
         let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("MSH")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PID")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PID")),
             "Missing PID segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("PV1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"PV1")),
             "Missing PV1 segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("EVN")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"EVN")),
             "Missing EVN segment!"
         );
         assert!(
-            message.segment_exists(&V2_SEGMENT_IDS("NK1")),
+            message.segment_exists(&V2_SEGMENT_IDS(b"NK1")),
             "Missing NK1 segment!"
         );
     }
