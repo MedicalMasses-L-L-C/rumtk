@@ -48,6 +48,7 @@ pub mod strings;
 pub mod threading;
 pub mod types;
 pub mod buffers;
+mod instrumentation;
 
 #[cfg(test)]
 mod tests {
