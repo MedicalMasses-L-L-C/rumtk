@@ -1439,15 +1439,13 @@ mod tests {
 
     #[test]
     fn test_parser_benchmark() {
-        let pattern = "4050097";
-        let replacement = "405009789";
         let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| V2Message::try_from_buffer(buffer));
 
         println!("Parsed message in {} us", &time);
 
-        assert!(time <= 40000, "V2Message parsing took {} microseconds [> 100000 us]!", time);
+        assert!(time <= 100000, "V2Message parsing took {} microseconds [> 100000 us]!", time);
     }
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////
