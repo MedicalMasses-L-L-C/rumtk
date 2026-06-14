@@ -66,10 +66,7 @@ mod tests {
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
-    use rumtk_core::{
-        rumtk_create_task, rumtk_exec_task, rumtk_resolve_task,
-        rumtk_sleep,
-    };
+    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_sleep};
     use std::thread::spawn;
     use std::time::Instant;
     /**********************************Constants**************************************/
@@ -1365,13 +1362,9 @@ mod tests {
     fn test_buffer_find_segments() {
         let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
 
-        let start = Instant::now();
-        let r = buffer_find(buffer, &['\n' as u8]);
-        let end = Instant::now();
+        let (r, time) = rumtk_benchmark_snippet!(|| buffer_find(buffer, &['\n' as u8]));
 
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 1, "buffer find of segments in large message took {} milliseconds [> 1 ms]!", millis);
+        assert!(time <= 1000, "buffer find of segments in large message took {} microseconds [> 1000000 us]!", time);
         assert_eq!(r, 465, "buffer find return the wrong first index of \n!");
     }
 
@@ -1379,13 +1372,9 @@ mod tests {
     fn test_buffer_find_all_segments() {
         let buffer = V2_TEST_LARGE_MESSAGE.as_bytes();
 
-        let start = Instant::now();
-        let instances = buffer_find_instances(buffer, &['\n' as u8]);
-        let end = Instant::now();
+        let (r, time) = rumtk_benchmark_snippet!(|| buffer_find_instances(buffer, &['\n' as u8]));
 
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 20, "buffer find of segments in large message took {} milliseconds [> 10 ms]!", millis);
+        assert!(time <= 20000, "buffer find of segments in large message took {} microseconds [> 10000 us]!", time);
     }
 
     ///
@@ -1396,30 +1385,26 @@ mod tests {
     fn test_buffer_basic_split_segments() {
         let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
-        let start = Instant::now();
-        let split_count = buffer.len() / BUFFER_CHUNK_SIZE;
-        let mut splits = RUMVec::<RUMBuffer>::with_capacity(split_count);
-        for i in 0..splits.len() {
-            splits.push(buffer.split_to(BUFFER_CHUNK_SIZE));
-        }
-        let end = Instant::now();
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let split_count = buffer.len() / BUFFER_CHUNK_SIZE;
+            let mut splits = RUMVec::<RUMBuffer>::with_capacity(split_count);
+            for i in 0..splits.len() {
+                splits.push(buffer.split_to(BUFFER_CHUNK_SIZE));
+            }
 
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 1, "basic buffer splits of large message took {} milliseconds [> 1 ms]!", millis);
+            splits
+        });
+
+        assert!(time <= 1000, "basic buffer splits of large message took {} microseconds [> 1000 us]!", time);
     }
 
     #[test]
     fn test_buffer_split_fast_segments() {
         let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
-        let start = Instant::now();
-        buffer_split_fast(buffer, '\r' as u8);
-        let end = Instant::now();
-
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 15, "buffer split of segments in large message took {} milliseconds [> 5 ms]!", millis);
+        let (r, time) = rumtk_benchmark_snippet!(|| buffer_split_fast(buffer, '\r' as u8));
+        
+        assert!(time <= 15, "buffer split of segments in large message took {} microseconds [> 5000 us]!", time);
     }
 
     #[test]
@@ -1428,13 +1413,9 @@ mod tests {
         let replacement = "405009789";
         let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
-        let start = Instant::now();
-        buffer_replace(&buffer, pattern.as_bytes(), replacement.as_bytes());
-        let end = Instant::now();
+        let (r, time) = rumtk_benchmark_snippet!(|| buffer_replace(&buffer, pattern.as_bytes(), replacement.as_bytes()));
 
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 100, "buffer replace of segments in large message took {} milliseconds [> 60 ms]!", millis);
+        assert!(time <= 100000, "buffer replace of segments in large message took {} microseconds [> 100000 us]!", time);
     }
 
     #[test]
@@ -1443,19 +1424,17 @@ mod tests {
         let replacement = "4050098";
         let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
-        let start = Instant::now();
-        buffer = match buffer.try_into_mut() {
-            Ok(mut data) => {
-                buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
-                data.freeze()
-            },
-            Err(data) => data
-        };
-        let end = Instant::now();
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            match buffer.try_into_mut() {
+                Ok(mut data) => {
+                    buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
+                    data.freeze()
+                },
+                Err(data) => data
+            }
+        });
 
-        let time = end - start;
-        let millis = time.as_millis();
-        assert!(millis <= 1, "buffer replace of segments in large message took {} milliseconds [> 1 ms]!", millis);
+        assert!(time <= 1000, "buffer replace of segments in large message took {} microseconds [> 1000 us]!", time);
     }
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////
