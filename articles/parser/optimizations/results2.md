@@ -1,6 +1,9 @@
 # Project HIFLAMES: Building a Bridge to the Future (Part 4)
 
-<script src="https://opencollective.com/medicalmasses-llc/projects/rumtk-v2 /contribute/button.js" color="[white|blue]"></script>
+<img src="https://opencollective.com/medicalmasses-llc/contribute/button@2x.png?color=blue" width=300 />
+
+## Financial Contributors
+<object type="image/svg+xml" data="https://opencollective.com/medicalmasses-llc/tiers/backers.svg?avatarHeight=36&width=600"></object>
 
 ## Articles in Series
 * [Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
