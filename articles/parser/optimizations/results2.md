@@ -11,7 +11,7 @@
 * Website: https://www.medicalmasses.com/
 * GiHub Repository: https://github.com/MedicalMasses-L-L-C/rumtk
 
-# Introduction
+## Introduction
 
 Our naive attempt was pretty good and it is clear that Rust optimizes a large number of things via LLVM. For example, 
 Rust does an excellent job at introducing SIMD in a few key areas. A mean parsing time of 29.5 ms for a 2MB is incredibly
@@ -22,13 +22,13 @@ As a result, I looked at optimizing this further during the SIIM Hackathon. I lo
 to operate at the byte level and implementing SIMD intrinsics to quickly search for a terminator and tokenize the input 
 message.
 
-# The Report
-## Flamegraph
+## The Report
+### Flamegraph
 
 <img src="imgs/optimized_flamegraph.png" alt="Mean Time [ms] Processing a 2MB Message" width="700px">
 Mean Time [ms] Processing a 2MB Message
 
-## CPU Statistics
+### CPU Statistics
 ```
 # started on Tue Jun 16 13:46:53 2026
 
@@ -49,7 +49,7 @@ Mean Time [ms] Processing a 2MB Message
        0.008966000 seconds sys
 ```
 
-## CPU Info and Cache Budget Report
+### CPU Info and Cache Budget Report
 ```
 # ========
 # captured on    : Tue Jun 16 13:46:53 2026
@@ -361,7 +361,7 @@ Mean Time [ms] Processing a 2MB Message
 #
 ```
 
-# Results
+## Results
 The optimized parser showed a mean parsing time of 18.5 ms with a standard deviation of 0.7 ms. The minimum parsing time was 17.3 ms and the maximum time was 22 ms.
 
 The encoding to JSON step took at least about 21.5% of the execution time. 
@@ -370,7 +370,7 @@ The CPU experienced 83,806 cache misses, 44,525,432 cycles, 25,395,758 branches,
 
 The flamegraph shows almost equal time usage during the segment, field, and component tokenization times.
 
-# Discussion
+## Discussion
 To achieve this optimization, I used the **bytes** crate which provides a fast, low-level buffer management structure. 
 On paper, this structure is closer to a stringview in that it is a pointer with a known length. In practice, this 
 structure begins to show its underlying implementation of a vtable for pointer management (varies with benchmark run, data not shown here).

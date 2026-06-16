@@ -11,20 +11,20 @@
 * Website: https://www.medicalmasses.com/
 * GiHub Repository: https://github.com/MedicalMasses-L-L-C/rumtk
 
-# Introduction
+## Introduction
 Here we look at our semi-naive first attempt at parsing HL7 messages. The attempt is semi-naive because I focus on using stringviews as the primary data structure for iterating and splitting the incoming message. A StringView is essentially a container with a pointer to the string block but it itself does not own the underlying data. This structure tends to be lighter than the String object from which it is derived. Since it does not manages memory, it does not trigger allocation related events while enabling methods for acting and working with the underlying data. The downside is that each tokenized fragment we generate through parsing will then have to be copied to their own memory block so message components own the data slice.
 
 In addition, we have a few areas in which we must generate vectors and maps to track repeating segments and fields. All of these things add to the allocation and copy burden of the program.
 
 Remember, when we are dealing with millisecond and sub-millisecond time ranges, allocation operations become more costly. Part of the reason, as I soon noticed, is that it allows for kernel space to take control of execution. At that moment, it is not clear if the time is spent performing memory record keeping or other tasks such as scheduling other programs for execution. Keeping processing in user space as much as possible allows us to get a better idea of where the performance budget is getting spent.
 
-# The Report
-## Flamegraph
+## The Report
+### Flamegraph
 
 <img src="imgs/initial_flamegraph.png" alt="Mean Time [ms] Processing a 2MB Message" width="700px">
 Mean Time [ms] Processing a 2MB Message
 
-## CPU Statistics
+### CPU Statistics
 ```
 # started on Tue May  5 10:39:07 2026
 
@@ -45,7 +45,7 @@ Performance counter stats for '../target/release/rumtk-hl7-v2-parse':
        0.010978000 seconds sys
 ```
 
-## CPU Info and Cache Budget Report
+### CPU Info and Cache Budget Report
 ```
 # ========
 # captured on    : Tue May  5 10:39:08 2026
@@ -209,7 +209,7 @@ Performance counter stats for '../target/release/rumtk-hl7-v2-parse':
 #
 ```
 
-# Results
+## Results
 The parser tool has a simple workflow. It reads a message from standard input, performs a basic parsing pass in which it splits the input into segments, fileds, and components, cast the result to JSON, and writes the JSON back out through standard out.
 
 For our naive attempt, the parser takes about 29.5 ms on average to run with a standard deviation of 1.9 ms. Of note is that the worst time reported for parsing was 36.9 ms. This translates into 27 2MB messages per second in the worst case. The processing is divided into 17.8 ms (60.34%) in user space and 11.3 ms (38.31%) in kernel or system space.
@@ -220,7 +220,7 @@ The CPU statistics summary report shows that the program had 168,746 cache misse
 
 The last part of the report tells us that searching and memory moves generated most of the cache misses. Branching burden comes from searching and generating vectors of split strings.
 
-# Discussion
+## Discussion
 An average processing rate of 27 2MB messages per thread per second is not bad for a naive attempt and certainly beyond the capabilities of vendor implementations known to us. However, for engineers like those found in MedicalMasses L.L.C., it is not impressive. For starters, there is a large burden of memory allocations creating vectors which makes sense because segments should generate at least 2059 item insertions into the vector in addition to field and component splitting. This burden could be lessen with a pre-allocation strategy instead to minimize targeting the heap and creating heap fragmentation that then has to be managed. In addition, each allocation event is an opportunity for kernel space to claim control of execution further worsening the total time for processing.
 
 Another source of slowness is the encoding to JSON. In the Rust ecosystem, Serde is a well supported library for generating data encodings using an intermediate representation. Unfortunately, this library is so common that many other dependencies support it right out of the box limiting our ability to try other, more optimal approaches. Furthermore, the slowness here is mostly an issue when creating Unix pipelines and should be less of a concern for situations in which the framework is used as a library for parsing as part of a larger project.
