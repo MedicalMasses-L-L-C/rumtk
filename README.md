@@ -157,3 +157,7 @@ Any contributions are very appreciated.
 
 # Financial Contributors
 <object type="image/svg+xml" data="https://opencollective.com/medicalmasses-llc/tiers/backers.svg?avatarHeight=36&width=600"></object> 
+
+# Articles
+
+* [Parser Optimizations](./articles/parser/optimizations/intro.md)
