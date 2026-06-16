@@ -1,10 +1,10 @@
 # Project HIFLAMES: Building a Bridge to the Future (Part 3)
 
 ## Articles in Series
-[Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
-[Project HIFLAMES: Building a Bridge to the Future (Part 2)](./methods.md)
-[Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
-[Project HIFLAMES: Building a Bridge to the Future (Part 4)](./results2.md)
+* [Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
+* [Project HIFLAMES: Building a Bridge to the Future (Part 2)](./methods.md)
+* [Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
+* [Project HIFLAMES: Building a Bridge to the Future (Part 4)](./results2.md)
 
 ## Important Links
 * OpenCollective: https://opencollective.com/medicalmasses-llc/projects/rumtk-v2
