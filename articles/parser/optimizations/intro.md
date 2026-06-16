@@ -1,4 +1,11 @@
 # Project HIFLAMES: Building a Bridge to the Future (Part 1)
+
+## Articles in Series
+[Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 2)](./methods.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 4)](./results2.md)
+
 ## Introduction:
 Over the following days and as we approach to the #SIIM26 Conference, we plan to release a series of reports showcasing our hypothesis, methodology, and results on our effort to build a better set of interfaces. We want to show you why you should consider MedicalMasses for your next system integration or FHIR upgrade at your Hospital.
 

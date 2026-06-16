@@ -1,8 +1,12 @@
-## Articles in Series
-* [Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
-* [Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
+# Project HIFLAMES: Building a Bridge to the Future (Part 2)
 
-# Introduction:
+## Articles in Series
+[Project HIFLAMES: Building a Bridge to the Future (Part 1)](./intro.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 2)](./methods.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
+[Project HIFLAMES: Building a Bridge to the Future (Part 4)](./results2.md)
+
+## Introduction:
 Before going over the data on our HL7 parser, it is important we set the stage for our methodology and our architectural choices. The following article details how we structured our toolkit and how those decisions affect the speed of processing.
 
 If you enjoy our work, please, visit the following pages. Perhaps, consider financially supporting our effort at our OpenCollective page.
@@ -15,7 +19,7 @@ If you enjoy our work, please, visit the following pages. Perhaps, consider fina
 
 Without further adieu...
 
-# The Unix Philosophy:
+## The Unix Philosophy:
 
 Core to our work is the emphasis on structuring our tools into libraries, modules, and command-line interface programs (CLI). This structure follows the Unix Philosophy as developed by the giants at Bell Labs.
 
@@ -25,7 +29,7 @@ The downside of the Unix Philosophy is that it shifts a key portion of problem s
 
 Additionally, the Unix Philosophy enables composition at the core of problem solving processes. For example, in a pure monolithic project, the tool might have a Word format parser but the technical engineer cannot directly use it to address a short term request from clients. Under the Unix Philosophy, a capable engineer can quickly deliver a solution without writing a single line of new code. Think about it. In our modern era of AI, the measure of productivity is Lines of Code (LoC) and yet an engineer empowered with the proper tooling achieves infinite productivity without a single line of new code.
 
-# RUMTK:
+## RUMTK:
 
 Rust Universal Medical Toolkit (RUMTK) is a toolkit started and developed by Luis M. Santos, MD during his off hours since 2024. The goal of this framework is to rewrite the healthcare stack which started in the Windows era and thus took the wrong approach. This toolkit is inspired by the excellent work done by the OFFIS team on DCMTK. Luis noticed that we had proper tooling to work in the DICOM space but no analogue in the HL7 space. If we are to upgrade to FHIR, we need an equivalent set of tools.
 
@@ -33,7 +37,7 @@ RUMTK follows the Unix Philosophy to the teeth. So much so that even the output 
 
 RUMTK is broken down into a set of domain-specific libraries and CLI tools demonstrating the library usage. The CLI are strictly restricted to providing the recipe for applying the library tools with a very limited, tool-specific logic. That way, a bug can be quickly identified and problems are addressed with a systems architectures perspective.
 
-## Libraries
+### Libraries
 
 * **rumtk-core** => Core modules and functionality library. For example, you can find here the basic functions, types, structs, and macros for managing the multi-threading runtime.
 
@@ -41,13 +45,13 @@ RUMTK is broken down into a set of domain-specific libraries and CLI tools demon
 
 * **rumtk-web** => Modules meant for defining a fast and productive framework for building web applets in Rust. These applets contain facilities for pipelining and processing api calls as well as Server Side Rendering of websites. Our website was built using this framework. Applets created with the framework easily achieve low loading latency (as low as 10 ms on second load).
 
-## CLI
+### CLI
 
 rumtk-v2-interface => Tool for spinning an interface that can be chained with other tools to build a (quiet literal) pipeline. The idea is to organize customized solutions as if laying water pipes in a house.
 
 rumtk-v2-parse => Tool for parsing a raw HL7 message into a fully searchable and (eventually) validated message ready for consumption by other tools such as a Machine Learning algorithm.
 
-# The Message:
+## The Message:
 
 In these reports, we focus on **rumtk-hl7-v2** and **rumtk-v2-parse** as targets for optimization.
 
@@ -61,7 +65,7 @@ Overall, the message represents a worse case scenario and a challenge to softwar
 
 **The synthetic message** uses this template:
 
-## General Template
+### General Template
 ```
 MSH|^~\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO
 PID|1||PATID14567^^^NIST MPI&2.16.840.1.113883.3.72.5.30.2&ISO^MR||Hernandez^Maria^^^^^L||19880906|F||2054-5^Black or   African American^HL70005|3248 E  FlorenceAve^^Huntington Park^CA^90255^^H||^^PH^^^323^5825421|||||||||H^Hispanic or Latino^HL70189
@@ -75,11 +79,11 @@ SPM|2|S-2312987-2&NIST EHR&2.16.840.1.113883.3.72.5.24&ISO||119297000^Blood Spec
 OBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
 DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2
 ```
-## OBX Template
+### OBX Template
 ```
 OBX|{line_number}|ED|4050097^Surg Path Final Report^^4050097^Surg Path Final Report||^PDF^^base64^{line}||||||F|||20120309132541
 ```
-# The Benchmark Tools:
+## The Benchmark Tools:
 
 To benchmark and analyze the performance characteristics of our parser, we use a couple of common tools in Linux.
 
@@ -123,6 +127,6 @@ cat /tmp/.tmp7Eelux/.tmpCiaz8L | perf record -s -e cache-misses,branch-misses -o
 perf report --stdio --header -I -v --percent-limit 1 -i /tmp/.tmp7Eelux/.tmpAuTiMn
 ```
 
-# Conclusions:
+## Conclusions:
 
 Now that we have an understanding of how our software is architected, how we are challenging it, and how we are measuring it, we can focus on the first report analysis on the next article! Stay tune and help us out by going to the GitHub repository and liking it!
