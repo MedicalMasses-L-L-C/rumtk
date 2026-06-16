@@ -20,7 +20,7 @@
 
 Our naive attempt was pretty good and it is clear that Rust optimizes a large number of things via LLVM. For example, 
 Rust does an excellent job at introducing SIMD in a few key areas. A mean parsing time of 29.5 ms for a 2MB is incredibly
-fast relative to current implementations of V2 I have seen on the market. However, the maximum of 36.9 ms reminds us that 
+fast relative to other vendor implementations of V2 I have seen on the market. However, the maximum of 36.9 ms reminds us that 
 for any given 2MB (ORU) message we could be parsing at a rate of 27 messages per second per thread which is not great.
 
 As a result, I looked at optimizing this further during the SIIM Hackathon. I looked at using a lower level data structure 
