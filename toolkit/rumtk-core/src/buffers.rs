@@ -32,6 +32,7 @@ pub const DEFAULT_CPU_L1_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a ty
 pub const DEFAULT_CPU_L1_CACHE_SIZE: usize = 32 * 1024; // Number of bytes in a typical x86_64 CPU L1 cache per core.
 pub const DEFAULT_CPU_PAGE_SIZE: usize = 4 * 1024; // Typical CPU page size
 pub const DEFAULT_BYTE_WINDOW_SIZE: usize = 256;
+pub const DEFAULT_AVX_SIMD_SIZE: usize = 32;
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
@@ -347,14 +348,14 @@ pub fn buffer_chunk_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
 fn buffer_chunk_find_simd_avx2(window: &[u8; DEFAULT_BYTE_WINDOW_SIZE], byte: u8) -> Option<usize> {
     let target_vec = u8x32::splat(byte);
 
-    for (i, chunk) in window.chunks_exact(32).enumerate() {
+    for (i, chunk) in window.chunks_exact(DEFAULT_AVX_SIMD_SIZE).enumerate() {
         let data_vec = u8x32::from_slice(chunk);
         let mask = data_vec.simd_eq(target_vec);
 
         if mask.any() {
             let bitmask = mask.to_bitmask();;
             let lane_i = bitmask.trailing_zeros() as usize;
-            return Some((i * 32) + lane_i);
+            return Some((i * DEFAULT_AVX_SIMD_SIZE) + lane_i);
         }
     }
 
