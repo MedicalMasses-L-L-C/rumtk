@@ -328,10 +328,9 @@ pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
     }
 }
 
+#[inline(always)]
 pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
-    let instances = buffer.iter().filter(|c| *c != &pattern).collect::<Vec<&u8>>();
-
-    instances.len()
+    bytecount::count(buffer, pattern)
 }
 
 #[inline(always)]

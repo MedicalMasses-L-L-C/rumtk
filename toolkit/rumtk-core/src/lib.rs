@@ -54,7 +54,7 @@ mod instrumentation;
 mod tests {
     use super::*;
     use crate::base::{clamp_index, RUMResult};
-    use crate::buffers::{buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_string, buffer_trim};
+    use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_string, buffer_trim, new_random_buffer};
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
@@ -881,4 +881,26 @@ mod tests {
 
         assert_eq!(new, expected, "Bad buffer slice trim! Got {:?}", new);
     }
+
+    #[test]
+    fn test_buffer_count() {
+        let data = b"\n Hello|World \n";
+        let expected = 2;
+        let found = buffer_count(data, b'\n');
+
+        assert_eq!(found, expected, "Incorrect number of occurrences of newline found! Got {:?}", found);
+    }
+
+    #[test]
+    fn test_buffer_count_2mb() {
+        let data = new_random_buffer::<2048>();
+        let expected = 1000;
+        let (found, time) = rumtk_benchmark_snippet!(||{
+            buffer_count(&data, b'\n')
+        });
+
+        assert!(time <= expected, "Counting of instances in buffer was too slow! Took {:?} us", time);
+    }
+
+
 }
