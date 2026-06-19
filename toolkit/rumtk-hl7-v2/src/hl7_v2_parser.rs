@@ -616,18 +616,24 @@ pub mod v2_parser {
                     continue;
                 }
 
-                let mut segment: V2Segment = V2Segment::from(segment, parser_chars)?;
+                let segment: V2Segment = V2Segment::from(segment, parser_chars)?;
 
-                let key = segment.id;
-
-                if !segments.contains_key(&key) {
-                    segments.insert(key, V2SegmentGroup::new());
-                }
-
-                segments.get_mut(&key).unwrap().push(segment);
+                V2Message::push_to_group(&mut segments, segment)
             }
 
             Ok(segments)
+        }
+
+        pub fn push_to_group(group: &mut V2SegmentMap, segment: V2Segment) {
+            let key = segment.id;
+            match group.get_mut(&key){
+                Some(group) => group.push(segment),
+                None => {
+                    let mut segment_set = V2SegmentGroup::new();
+                    segment_set.push(segment);
+                    group.insert(key.into(), segment_set);
+                }
+            }
         }
     }
 
