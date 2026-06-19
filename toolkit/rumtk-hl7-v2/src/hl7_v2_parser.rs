@@ -618,7 +618,7 @@ pub mod v2_parser {
 
                 let segment: V2Segment = V2Segment::from(segment, parser_chars)?;
 
-                V2Message::push_to_group(&mut segments, segment)
+                V2Message::push_to_group(&mut segments, segment);
             }
 
             Ok(segments)
