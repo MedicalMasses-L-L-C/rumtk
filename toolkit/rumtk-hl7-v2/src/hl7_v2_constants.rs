@@ -236,7 +236,7 @@ pub const V2_SEGMENT_DESC: ElementDesc = |k | -> &'static str {
 };
 
 pub static V2_SEGMENT_IDS: ElementID = |k| -> u8 {
-    match k {
+    match k.trim_ascii() {
         b"ABS" => 1u8,
         b"ACC" => 2u8,
         b"ADD" => 3u8,
