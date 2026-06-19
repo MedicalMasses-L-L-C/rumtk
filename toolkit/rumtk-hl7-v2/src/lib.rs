@@ -1419,7 +1419,7 @@ mod tests {
 
         let (r, time) = rumtk_benchmark_snippet!(|| buffer_split_fast(buffer, '\r' as u8));
         
-        assert!(time <= 15, "buffer split of segments in large message took {} microseconds [> 5000 us]!", time);
+        assert!(time <= 5000, "buffer split of segments in large message took {} microseconds [> 5000 us]!", time);
     }
 
     #[test]
