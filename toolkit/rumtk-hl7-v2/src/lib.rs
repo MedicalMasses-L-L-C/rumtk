@@ -66,7 +66,7 @@ mod tests {
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
-    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_sleep};
+    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
     use std::thread::spawn;
     use std::time::Instant;
     /**********************************Constants**************************************/
@@ -258,8 +258,23 @@ mod tests {
     }
 
     #[test]
+    fn test_load_hl7_v2_two_segments() {
+        let message = V2Message::try_from(DEFAULT_HL7_V2_TWO_SEGMENTS).unwrap();
+        println!("{}", rumtk_serialize!(&message).unwrap_or_default());
+        assert!(
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
+            "Missing MSH segment!"
+        );
+        assert!(
+            message.segment_exists(&V2_SEGMENT_IDS(b"EVN")),
+            "Missing EVN segment!"
+        );
+    }
+
+    #[test]
     fn test_load_hl7_v2_message() {
         let message = V2Message::try_from(DEFAULT_HL7_V2_MESSAGE).unwrap();
+        println!("{}", rumtk_serialize!(&message).unwrap_or_default());
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
