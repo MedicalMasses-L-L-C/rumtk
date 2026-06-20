@@ -273,11 +273,13 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_two_segments_parsed_correctly() {
-        let message = V2Message::try_from(DEFAULT_HL7_V2_TWO_SEGMENTS).unwrap();
+        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_TWO_SEGMENTS.as_bytes());
+        let sanitized_message = V2Message::sanitize(message);
+        let message = V2Message::try_from(sanitized_message.clone()).unwrap();
         let generated = rumtk_v2_generate_message!(message);
         assert_eq!(
-            DEFAULT_HL7_V2_TWO_SEGMENTS,
             &generated,
+            EXPECTED_PARSED_TWO_SEGMENTS,
             "{}",
             rumtk_format!("Failed to parse properly or something broke! \nExpected: \n{}\nGot:\n{}", DEFAULT_HL7_V2_TWO_SEGMENTS, generated)
         );
