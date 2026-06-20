@@ -167,15 +167,15 @@ pub mod v2_parser {
         }
 
         pub fn is_empty(&self) -> bool {
-            self.component.0 == ""
+            self.as_str() == ""
         }
 
         pub fn is_delete(&self) -> bool {
-            self.component.0 == V2_DELETE_FIELD
+            self.as_str() == V2_DELETE_FIELD
         }
 
         pub fn as_datetime(&self) -> RUMResult<V2DateTime> {
-            Ok(V2DateTime::from_str(buffer_to_str(&self.component.0)?)?)
+            Ok(V2DateTime::from_str(self.as_str())?)
         }
 
         pub fn as_bool(&self) -> bool {
