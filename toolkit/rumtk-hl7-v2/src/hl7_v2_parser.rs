@@ -229,6 +229,7 @@ pub mod v2_parser {
             }
         }
 
+        #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             let mut component_list: ComponentList = ComponentList::new();
 
