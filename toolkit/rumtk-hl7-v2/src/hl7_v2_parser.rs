@@ -162,10 +162,6 @@ pub mod v2_parser {
             }
         }
 
-        pub fn to_string(&self) -> V2String {
-            buffer_to_string(&self.component.0).unwrap_or_default()
-        }
-
         pub fn is_empty(&self) -> bool {
             self.as_str() == ""
         }
@@ -199,7 +195,7 @@ pub mod v2_parser {
 
     impl V2PrimitiveCasting for V2Component {}
 
-    pub type ComponentList = Vec<V2Component>;
+    pub type ComponentList = RUMVec<V2Component>;
 
     ///
     /// A field is a collection of items separated by the field separation character.
@@ -243,7 +239,7 @@ pub mod v2_parser {
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
-            let mut components: Vec<&str> = Vec::with_capacity(self.components.len());
+            let mut components: RUMVec<&str> = RUMVec::with_capacity(self.components.len());
             for component in self.components.iter() {
                 components.push(component.as_str())
             }
@@ -284,8 +280,8 @@ pub mod v2_parser {
         }
     }
 
-    pub type V2FieldGroup = Vec<V2Field>;
-    pub type V2FieldList = Vec<V2FieldGroup>;
+    pub type V2FieldGroup = RUMVec<V2Field>;
+    pub type V2FieldList = RUMVec<V2FieldGroup>;
 
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
@@ -383,7 +379,7 @@ pub mod v2_parser {
             self.fields.len()
         }
 
-        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Vec<V2Field> {
+        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
             if field.is_empty() {
                 return vec![V2Field::new()];
             }
@@ -421,7 +417,7 @@ pub mod v2_parser {
     /// inadvertently defined. This required first segment is known as the anchor segment.
     /// ```
     ///
-    pub type V2SegmentGroup = Vec<V2Segment>;
+    pub type V2SegmentGroup = RUMVec<V2Segment>;
 
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
