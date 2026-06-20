@@ -47,7 +47,7 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_core::buffers::{buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
@@ -227,7 +227,7 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::new();
+            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field[..], parser_chars.component_separator));
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
                 component_list.push(V2Component::from(c))
@@ -306,12 +306,13 @@ pub mod v2_parser {
     }
 
     impl V2Segment {
+        #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
             let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
             let mut skip = 0;
             let mut raw_fields = segment.split_fast(pattern);
-            let mut field_list = V2FieldList::new();
+            let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment[..], parser_chars.field_separator));
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
@@ -590,6 +591,7 @@ pub mod v2_parser {
         /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
+        #[inline(always)]
         pub fn sanitize(raw_message: RUMBuffer) -> RUMBuffer {
             let mut raw_data = match raw_message.try_into_mut() {
                 Ok(mut raw_data) => raw_data,
@@ -621,12 +623,13 @@ pub mod v2_parser {
             Ok(segments)
         }
 
+        #[inline(always)]
         pub fn push_to_group(group: &mut V2SegmentMap, segment: V2Segment) {
             let key = segment.id;
             match group.get_mut(&key){
                 Some(group) => group.push(segment),
                 None => {
-                    let mut segment_set = V2SegmentGroup::new();
+                    let mut segment_set = V2SegmentGroup::with_capacity(5);
                     segment_set.push(segment);
                     group.insert(key.into(), segment_set);
                 }
