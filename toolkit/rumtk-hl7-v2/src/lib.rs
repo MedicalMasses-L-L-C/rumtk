@@ -272,6 +272,18 @@ mod tests {
     }
 
     #[test]
+    fn test_load_hl7_v2_two_segments_parsed_correctly() {
+        let message = V2Message::try_from(DEFAULT_HL7_V2_TWO_SEGMENTS).unwrap();
+        let generated = rumtk_v2_generate_message!(message);
+        assert_eq!(
+            DEFAULT_HL7_V2_TWO_SEGMENTS,
+            &generated,
+            "{}",
+            rumtk_format!("Failed to parse properly or something broke! \nExpected: \n{}\nGot:\n{}", DEFAULT_HL7_V2_TWO_SEGMENTS, generated)
+        );
+    }
+
+    #[test]
     fn test_load_hl7_v2_message() {
         let message = V2Message::try_from(DEFAULT_HL7_V2_MESSAGE).unwrap();
         println!("{}", rumtk_serialize!(&message).unwrap_or_default());

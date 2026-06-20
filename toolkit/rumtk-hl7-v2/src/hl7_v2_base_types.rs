@@ -196,8 +196,7 @@ pub mod v2_base_types {
                 self.component_separator,
                 self.repetition_separator,
                 self.escape_character,
-                self.subcomponent_separator,
-                self.truncation_character,
+                self.subcomponent_separator
             ])
         }
     }
