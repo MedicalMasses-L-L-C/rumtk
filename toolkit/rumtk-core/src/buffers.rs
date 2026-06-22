@@ -49,13 +49,6 @@ pub struct RUMSliceEnumerateIter<'a, 'b> {
     pub pattern_length: usize,
 }
 
-pub struct RUMBufferSplitIter<'a> {
-    pub remainder: RUMBuffer,
-    pub pattern: &'a [u8],
-    pub pattern_length: usize,
-    pub last: usize,
-}
-
 pub trait RUMByteSliceSplitIterTrait {
     type Item;
     fn next(&mut self) -> Option<Self::Item>;
@@ -66,18 +59,9 @@ pub trait RUMByteSliceEnumeratorIterTrait {
     fn next(&mut self) -> Option<(usize, Self::Item)>;
 }
 
-pub trait RUMBufferSplitIterTrait {
-    type Item;
-    fn next(&mut self) -> Option<Self::Item>;
-}
-
 pub trait RUMByteSliceIteratorExt<'a, 'b> {
     fn split_fast(&'a self, pattern: &'b [u8]) -> RUMSliceSplitIter<'a, 'b>;
     fn enumerate_fast(&'a self, pattern: &'b [u8]) -> RUMSliceEnumerateIter<'a, 'b>;
-}
-
-pub trait RUMBufferIteratorExt<'a> {
-    fn split_fast(self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a>;
 }
 
 impl<'a, 'b> Iterator for RUMSliceSplitIter<'a, 'b> {
@@ -116,6 +100,22 @@ impl<'a, 'b> Iterator for RUMSliceEnumerateIter<'a, 'b> {
             None
         }
     }
+}
+
+pub trait RUMBufferIteratorExt<'a> {
+    fn split_fast(&self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a>;
+}
+
+pub trait RUMBufferSplitIterTrait {
+    type Item;
+    fn next(&mut self) -> Option<Self::Item>;
+}
+
+pub struct RUMBufferSplitIter<'a> {
+    pub remainder: RUMBuffer,
+    pub pattern: &'a [u8],
+    pub pattern_length: usize,
+    pub last: usize,
 }
 
 impl<'a> Iterator for RUMBufferSplitIter<'a> {
@@ -158,10 +158,10 @@ impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
 }
 
 impl<'a> RUMBufferIteratorExt<'a> for RUMBuffer {
-    fn split_fast(self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a> {
+    fn split_fast(&self, pattern: &'a [u8]) -> RUMBufferSplitIter<'a> {
         RUMBufferSplitIter {
             pattern_length: pattern.len(),
-            remainder: self,
+            remainder: self.clone(),
             pattern: pattern.clone(),
             last: 0,
         }
