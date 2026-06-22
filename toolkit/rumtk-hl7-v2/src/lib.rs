@@ -280,8 +280,7 @@ mod tests {
         assert_eq!(
             &generated,
             EXPECTED_PARSED_TWO_SEGMENTS,
-            "{}",
-            rumtk_format!("Failed to parse properly or something broke! \nExpected: \n{}\nGot:\n{}", DEFAULT_HL7_V2_TWO_SEGMENTS, generated)
+            "Failed to parse properly or something broke!"
         );
     }
 
