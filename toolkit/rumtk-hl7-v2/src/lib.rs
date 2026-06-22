@@ -591,6 +591,20 @@ mod tests {
     }
 
     #[test]
+    fn test_load_msh() {
+        let message = rumtk_v2_parse_message!(EXPECTED_MSH_SEGMENT).unwrap();
+        let msg_string = rumtk_v2_generate_message!(&message);
+        assert!(
+            message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
+            "Missing MSH segment!"
+        );
+        assert_eq!(
+            EXPECTED_MSH_SEGMENT, msg_string,
+            "MSH misparsed!"
+        );
+    }
+
+    #[test]
     fn test_load_hl7_v2_message_macro_failure() {
         let input = "Hello World!";
         let err_msg = rumtk_format!(
@@ -643,7 +657,7 @@ mod tests {
         let pattern = "MSH1.1";
         let message = rumtk_v2_parse_message!(HL7_V2_MSH_ONLY).unwrap();
         let component = rumtk_v2_find_component!(message, pattern).unwrap();
-        let expected = "^~\\&#";
+        let expected = "^~\\&"; // We do not need to include the truncation character.
         assert_eq!(
             component.as_str(),
             expected,
