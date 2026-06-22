@@ -334,6 +334,11 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 }
 
 #[inline(always)]
+pub fn buffer_contains(buffer: &[u8], pattern: u8) -> bool {
+    buffer_find_byte(buffer, pattern) < buffer.len()
+}
+
+#[inline(always)]
 pub fn buffer_slice_to_array(chunk: &[u8]) -> &[u8; DEFAULT_BYTE_WINDOW_SIZE] {
     chunk.try_into().expect("length mismatch")
 }
