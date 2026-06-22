@@ -313,7 +313,8 @@ pub mod v2_parser {
         ///
         /// * Careful with how you change this area. Although it currently looks a tad sloppy, most changes here risk
         /// spiking the number of cache misses and thus parsing time simply because LLVM might fail to apply whatever optimization
-        /// checking if to push the `parser chars` field onto the field list.
+        /// checking if to push the `parser chars` field onto the field list. **My latest hypothesis is that we are not storing the
+        /// Field ID field onto the field list of the segment and instead we store its id which is effectively a compression operation.**
         ///
         #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
