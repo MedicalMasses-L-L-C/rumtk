@@ -305,11 +305,20 @@ pub mod v2_parser {
     }
 
     impl V2Segment {
+        /// Parses the segment using the identified segment delimiter. We then store the segment id and
+        /// a list of fields.
+        ///
+        ///
+        /// ## Notes
+        ///
+        /// * Careful with how you change this area. Although it currently looks a tad sloppy, most changes here risk
+        /// spiking the number of cache misses and thus parsing time simply because LLVM might fail to apply whatever optimization
+        /// checking if to push the `parser chars` field onto the field list.
+        ///
         #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
-            let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
-            let mut raw_fields = segment.split_fast(pattern);
+            let mut raw_fields = raw_segment.split_fast(pattern);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
@@ -320,7 +329,7 @@ pub mod v2_parser {
                 None => return Err(rumtk_format!("Failed to get first field in segment! The segment is empty?")),
             };
 
-            let segment_id = V2_SEGMENT_IDS(&raw_field[0..3]);
+            let segment_id = V2_SEGMENT_IDS(&raw_field);
 
             if segment_id == V2_MSHEADER_ID {
                 field_list.push(
