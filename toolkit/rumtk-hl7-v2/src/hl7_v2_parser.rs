@@ -225,9 +225,8 @@ pub mod v2_parser {
             }
         }
 
-        #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field[..], parser_chars.component_separator));
+            let mut component_list: ComponentList = ComponentList::new();
 
             for c in field.split_fast(&[parser_chars.component_separator]) {
                 component_list.push(V2Component::from(c))
@@ -310,8 +309,10 @@ pub mod v2_parser {
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
             let segment = buffer_trim(&raw_segment);
             let pattern = &[parser_chars.field_separator];
-            let mut skip = 0;
             let mut raw_fields = segment.split_fast(pattern);
+
+            // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
+            // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
             let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment[..], parser_chars.field_separator));
 
             let raw_field = match raw_fields.next() {
@@ -322,18 +323,20 @@ pub mod v2_parser {
             let segment_id = V2_SEGMENT_IDS(&raw_field[0..3]);
 
             if segment_id == V2_MSHEADER_ID {
-                    field_list.push(vec![
-                            V2Field {
-                                components: vec![
-                                    V2Component::from(parser_chars.to_buffer())
-                                ]
-                            }
-                        ]
-                    );
-                    skip = 1;
+                field_list.push(
+                    vec![
+                        V2Field {
+                            components: vec![
+                                V2Component::from(parser_chars.to_buffer())
+                            ]
+                        }
+                    ]
+                );
+
+                raw_fields.next();
             }
 
-            for raw_field in raw_fields.skip(skip) {
+            for raw_field in raw_fields {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
             }
 
