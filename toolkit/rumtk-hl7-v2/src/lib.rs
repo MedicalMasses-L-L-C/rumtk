@@ -374,29 +374,32 @@ mod tests {
         let pid = message.get(&V2_SEGMENT_IDS(b"PID"), 1).unwrap();
         let orc = message.get(&V2_SEGMENT_IDS(b"ORC"), 1).unwrap();
         let obr = message.get(&V2_SEGMENT_IDS(b"OBR"), 1).unwrap();
-        let name1 = pid
+        let binding = pid
             .get(5)
             .unwrap()
             .get(0)
             .unwrap()
             .get(1)
-            .unwrap()
+            .unwrap();
+        let name1 = binding
             .as_str();
-        let name2 = orc
+        let binding = orc
             .get(12)
             .unwrap()
             .get(0)
             .unwrap()
             .get(3)
-            .unwrap()
+            .unwrap();
+        let name2 = binding
             .as_str();
-        let name3 = obr
+        let binding = obr
             .get(16)
             .unwrap()
             .get(0)
             .unwrap()
             .get(3)
-            .unwrap()
+            .unwrap();
+        let name3 = binding
             .as_str();
         println!("{}", name1);
         println!("{}", name2);
@@ -419,29 +422,32 @@ mod tests {
     fn test_handle_hl7_v2_message_with_repeating_fields() {
         let message = V2Message::try_from(HL7_V2_REPEATING_FIELD_MESSAGE).unwrap();
         let msh = message.get(&V2_SEGMENT_IDS(b"MSH"), 1).unwrap();
-        let field1 = msh
+        let binding = msh
             .get(-1)
             .unwrap()
             .get(0)
             .unwrap()
             .get(4)
-            .unwrap()
+            .unwrap();
+        let field1 = binding
             .as_str();
-        let field2 = msh
+        let binding = msh
             .get(-1)
             .unwrap()
             .get(1)
             .unwrap()
             .get(1)
-            .unwrap()
+            .unwrap();
+        let field2 = binding
             .as_str();
-        let field3 = msh
+        let binding = msh
             .get(-1)
             .unwrap()
             .get(2)
             .unwrap()
             .get(1)
-            .unwrap()
+            .unwrap();
+        let field3 = binding
             .as_str();
         assert_eq!(
             msh.get(-1).unwrap().len(),
