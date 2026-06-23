@@ -423,7 +423,7 @@ pub mod v2_parser {
                     field_group
                 },
                 false => {
-                    vec![V2Field::from_single_field(field, parser_chars)]
+                    vec![V2Field::from(field, parser_chars)]
                 }
             }
         }
