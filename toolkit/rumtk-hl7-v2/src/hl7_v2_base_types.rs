@@ -173,13 +173,13 @@ pub mod v2_base_types {
             if msg_key_chars.len() < 4 {
                 return Err(rumtk_format!(
                     "Too few parser characters! Is MSH malformed? => {:?}",
-                    &msg_key_chars
+                    buffer_to_str(&msg_key_chars)?
                 ));
             }
             if msg_key_chars.len() > 6 {
                 return Err(rumtk_format!(
                     "Too many parser characters! Is MSH malformed? => {:?}",
-                    &msg_key_chars
+                    buffer_to_str(&msg_key_chars)?
                 ));
             }
             if is_unique_bytes(msg_key_chars) {
@@ -187,7 +187,7 @@ pub mod v2_base_types {
             }
             Err(rumtk_format!(
                 "Unknown malformed parser characters! Is MSH malformed? => {:?}",
-                &msg_key_chars
+                    buffer_to_str(&msg_key_chars)?
             ))
         }
 
