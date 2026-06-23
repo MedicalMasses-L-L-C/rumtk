@@ -47,7 +47,7 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
@@ -226,11 +226,18 @@ pub mod v2_parser {
         }
 
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::new();
+            let component_list = match buffer_contains(&field[..], parser_chars.component_separator) {
+                true => {
+                    let mut component_list: ComponentList = ComponentList::new();
 
-            for c in field.split_fast(&[parser_chars.component_separator]) {
-                component_list.push(V2Component::from(c))
-            }
+                    for c in field.split_fast(&[parser_chars.component_separator]) {
+                        component_list.push(V2Component::from(c))
+                    }
+
+                    component_list
+                },
+                false => vec![V2Component::from(field)]
+            };
 
             Self {
                 components: component_list,
