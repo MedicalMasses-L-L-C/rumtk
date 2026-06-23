@@ -216,15 +216,18 @@ pub mod v2_parser {
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
+        separator: u8,
     }
 
     impl V2Field {
         pub fn new() -> Self {
             Self {
-                components: vec![V2Component::new()]
+                components: vec![V2Component::new()],
+                separator: 0
             }
         }
 
+        #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             let component_list = match buffer_contains(&field[..], parser_chars.component_separator) {
                 true => {
@@ -241,6 +244,15 @@ pub mod v2_parser {
 
             Self {
                 components: component_list,
+                separator: parser_chars.component_separator
+            }
+        }
+
+        #[inline(always)]
+        pub fn from_single_field(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
+            Self {
+                components: vec![V2Component::from(field)],
+                separator: parser_chars.component_separator
             }
         }
 
@@ -342,11 +354,7 @@ pub mod v2_parser {
             if segment_id == V2_MSHEADER_ID {
                 field_list.push(
                     vec![
-                        V2Field {
-                            components: vec![
-                                V2Component::from(parser_chars.to_buffer())
-                            ]
-                        }
+                        V2Field::from_single_field(parser_chars.to_buffer(), parser_chars),
                     ]
                 );
 
