@@ -408,17 +408,24 @@ pub mod v2_parser {
             self.fields.len()
         }
 
+        #[inline(always)]
         fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
             if field.is_empty() {
                 return vec![V2Field::new()];
             }
 
-            let mut field_group = V2FieldGroup::new();
-            for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
-                field_group.push(V2Field::from(subfield, parser_chars))
+            match buffer_contains(&field[..], parser_chars.repetition_separator) {
+                true => {
+                    let mut field_group = V2FieldGroup::with_capacity(10);
+                    for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
+                        field_group.push(V2Field::from(subfield, parser_chars))
+                    }
+                    field_group
+                },
+                false => {
+                    vec![V2Field::from_single_field(field, parser_chars)]
+                }
             }
-
-            field_group
         }
     }
 
