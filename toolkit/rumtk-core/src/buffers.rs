@@ -104,6 +104,7 @@ impl<'a, 'b> Iterator for RUMSliceEnumerateIter<'a, 'b> {
 }
 
 pub trait RUMBufferIteratorExt {
+    #[inline(always)]
     fn split_fast(&self, byte: u8) -> RUMBufferSplitIter;
 }
 
@@ -127,9 +128,8 @@ impl<'a> Iterator for RUMBufferSplitIter {
             true => None,
             false => {
                 let indx = buffer_find_byte(&self.remainder, self.byte);
-                let remainder = self.remainder.len() - indx;
                 let v = self.remainder.split_to(indx);
-                if remainder > 1 {
+                if self.remainder.len() > 1 {
                     let _ = self.remainder.split_to(1);
                 }
                 Some(v)
