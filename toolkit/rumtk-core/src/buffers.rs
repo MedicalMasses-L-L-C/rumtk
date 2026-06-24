@@ -24,6 +24,7 @@ use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
 use tokio::io::AsyncReadExt;
 
+use crate::cpu::cpu_prefetch;
 use std::simd::prelude::*;
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
@@ -122,6 +123,7 @@ impl<'a> Iterator for RUMBufferSplitIter<'a> {
     type Item = RUMBuffer;
 
     fn next(&mut self) -> Option<Self::Item> {
+        cpu_prefetch(&self.remainder);
         self.last = buffer_find(&self.remainder, self.pattern);
 
         if self.remainder.len() > 0 {
@@ -518,6 +520,7 @@ pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMB
     }
 }
 
+#[inline]
 pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
     let trimmed = buffer.trim_ascii();
 
