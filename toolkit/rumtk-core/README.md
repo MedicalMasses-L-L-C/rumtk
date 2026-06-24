@@ -38,7 +38,7 @@ communication and automation in medicine.
 
 # Contributing
 
-In its initial stages, I will be pushing code directly to the main branch. Once basic functionality has been stablished,
+In its initial stages, I will be pushing code directly to the main branch. Once basic functionality has been established,
 everyone including myself is required to open an issue for discussions, fork the project, and open a PR under your own
 feature or main branch. I kindly ask you include a battery of unit tests with your PR to help protect the project
 against regressions. Any contributions are very appreciated.
