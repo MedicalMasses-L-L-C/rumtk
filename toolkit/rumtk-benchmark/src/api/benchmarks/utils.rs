@@ -234,13 +234,13 @@ pub async fn run_perf_stat(profile: &str, command: &str, template_profile: &str,
 
 pub async fn run_pipe(
     category: &str,
-    visualizer: &str,
+    command: &str,
     target: &str,
     perfdata: &NamedTempFile,
     state: &SharedAppState
 ) -> RUMResult<RUMBuffer>
 {
-    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline(category, visualizer);
+    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline(category, command);
 
     rumtk_pipeline_patch_args!(&mut report_pipeline, &[
         ("{target}", &target),
@@ -271,9 +271,9 @@ pub async fn run_cpu_info(profile: &str, template_profile: &str, state: &SharedA
     let (report, mut perfdata) = run_perf(command_cpu, &target, template_profile, &state, temp_data).await?;
     let cpu_info = run_perf_vis(command_cpu, "", &perfdata, &state).await?;
 
-    let report_metrics_hw = run_pipe("info", command_metrics_hw, &target, &perfdata, &state).await?;
+    let report_metrics_hw = run_pipe("info", command_metrics_hw, "", &perfdata, &state).await?;
 
-    let report_metrics_cache = run_pipe("info", command_metrics_cache, &target, &perfdata, &state).await?;
+    let report_metrics_cache = run_pipe("info", command_metrics_cache, "", &perfdata, &state).await?;
 
     Ok((cpu_info, report_metrics_hw, report_metrics_cache))
 }

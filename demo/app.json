@@ -147,23 +147,23 @@
             "env": {}
           }
         ]
+      },
+      "info": {
+        "cpu_hw_metrics": [
+          {
+            "path": "perf",
+            "args": ["list", "hw"],
+            "env": {}
+          }
+        ],
+        "cpu_cache_metrics": [
+          {
+            "path": "perf",
+            "args": ["list", "cache"],
+            "env": {}
+          }
+        ]
       }
-    },
-    "info": {
-      "cpu_hw_metrics": [
-        {
-          "path": "perf",
-          "args": ["list", "hw"],
-          "env": {}
-        }
-      ],
-      "cpu_cache_metrics": [
-        {
-          "path": "perf",
-          "args": ["list", "cache"],
-          "env": {}
-        }
-      ]
     }
   }
 }
