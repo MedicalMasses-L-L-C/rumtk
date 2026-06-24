@@ -116,7 +116,6 @@ pub struct RUMBufferSplitIter<'a> {
     pub remainder: RUMBuffer,
     pub pattern: &'a [u8],
     pub pattern_length: usize,
-    pub last: usize,
 }
 
 impl<'a> Iterator for RUMBufferSplitIter<'a> {
@@ -124,10 +123,10 @@ impl<'a> Iterator for RUMBufferSplitIter<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         cpu_prefetch(&self.remainder);
-        self.last = buffer_find(&self.remainder, self.pattern);
+        let indx = buffer_find(&self.remainder, self.pattern);
 
         if self.remainder.len() > 0 {
-            let v = self.remainder.split_to(self.last);
+            let v = self.remainder.split_to(indx);
             if self.remainder.len() > self.pattern_length {
                 let _ = self.remainder.split_to(self.pattern_length);
             }
@@ -165,7 +164,6 @@ impl<'a> RUMBufferIteratorExt<'a> for RUMBuffer {
             pattern_length: pattern.len(),
             remainder: self.clone(),
             pattern: pattern.clone(),
-            last: 0,
         }
     }
 }
