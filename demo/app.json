@@ -69,13 +69,13 @@
         ],
         "cpu_info": [
           {
-            "path": "echo",
+            "path": "cat",
             "args": ["{test_file}"],
             "env": {}
           },
           {
             "path": "perf",
-            "args": ["stat", "-B", "-e", "cache-references,cache-misses,cycles,instructions,branches,faults,migrations", "-o", "{perfdata}","{target}"],
+            "args": ["record", "-s", "-g", "-e", "cycles", "-o", "{perfdata}","{target}"],
             "env": {}
           }
         ],
@@ -148,6 +148,22 @@
           }
         ]
       }
+    },
+    "info": {
+      "cpu_hw_metrics": [
+        {
+          "path": "perf",
+          "args": ["list", "hw"],
+          "env": {}
+        }
+      ],
+      "cpu_cache_metrics": [
+        {
+          "path": "perf",
+          "args": ["list", "cache"],
+          "env": {}
+        }
+      ]
     }
   }
 }
