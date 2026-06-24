@@ -41,10 +41,11 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     let pipeline_result = run_hyperfine(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
     let visualization = run_flamegraph(choice.as_str(), template.as_str(), &state, &mut temp_data).await?;
     let cpu_summary = run_perf_stat(choice.as_str(), "cpu_summary", template.as_str(), &state, &mut temp_data).await?;
-    let cpu_cache = run_perf_report(choice.as_str(), "cpu_cache", template.as_str(), &state, &mut temp_data).await?;
+    let cpu_performance = run_perf_report(choice.as_str(), "cpu_performance", template.as_str(), &state, &mut temp_data).await?;
+    let cpu_cache_details = run_perf_report(choice.as_str(), "cpu_cache_details", template.as_str(), &state, &mut temp_data).await?;
 
     // Generate report
-    let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_cache))?;
+    let mut report = BenchmarkReport::try_from((&pipeline_result, &visualization, &cpu_summary, &cpu_performance, &cpu_cache_details))?;
     report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
     // Render the HTML result.

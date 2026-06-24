@@ -34,16 +34,21 @@ pub use basic_report::*;
 pub use flamegraph::*;
 pub use meta::*;
 
-type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
+type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
 
 #[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
+        <h1>META</h1>
         {{meta|safe}}
+        <h1>BASIC</h1>
         {{report|safe}}
         {{visualization|safe}}
+        <h1>CPU</h1>
         {{cpu_summary|safe}}
-        {{cpu_cache|safe}}
+        {{cpu_performance|safe}}
+        <h1>CACHE</h1>
+        {{cpu_cache_details|safe}}
     ",
     ext = "html"
 )]
@@ -52,24 +57,27 @@ pub struct BenchmarkReport {
     pub report: BasicBenchmarkReport,
     pub visualization: FlamegraphBenchmarkVisualizer,
     pub cpu_summary: CPUBenchmarkReport,
-    pub cpu_cache: CPUBenchmarkReport,
+    pub cpu_performance: CPUBenchmarkReport,
+    pub cpu_cache_details: CPUBenchmarkReport,
 }
 
 impl<'a> TryFrom<ReportRawResults<'a>> for BenchmarkReport {
     type Error = RUMString;
     fn try_from(data: ReportRawResults) -> Result<Self, Self::Error>
     {
-        let (raw_report, raw_visualization, cpu_summary, cpu_cache) = data;
+        let (raw_report, raw_visualization, cpu_summary, cpu_performance, cpu_cache_details) = data;
         let report = BasicBenchmarkReport::try_from(raw_report)?;
         let visualization = FlamegraphBenchmarkVisualizer::try_from(raw_visualization)?;
         let cpu_summary = CPUBenchmarkReport::try_from(cpu_summary)?;
-        let cpu_cache = CPUBenchmarkReport::try_from(cpu_cache)?;
+        let cpu_performance = CPUBenchmarkReport::try_from(cpu_performance)?;
+        let cpu_cache_details = CPUBenchmarkReport::try_from(cpu_cache_details)?;
         Ok(Self {
             meta: BenchmarkMeta::new()?,
             report,
             visualization,
             cpu_summary,
-            cpu_cache
+            cpu_performance,
+            cpu_cache_details
         })
     }
 }

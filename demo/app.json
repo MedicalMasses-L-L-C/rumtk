@@ -79,7 +79,7 @@
             "env": {}
           }
         ],
-        "cpu_cache": [
+        "cpu_performance": [
           {
             "path": "cat",
             "args": ["{test_file}"],
@@ -87,7 +87,19 @@
           },
           {
             "path": "perf",
-            "args": ["record", "-s", "-e", "cache-misses,branch-misses", "-o", "{perfdata}","{target}"],
+            "args": ["record", "-s", "-g", "-e", "cache-references,cache-misses,branches,branch-misses,cycles,idle-cycles-frontend", "-o", "{perfdata}","{target}"],
+            "env": {}
+          }
+        ],
+        "cpu_cache_details": [
+          {
+            "path": "cat",
+            "args": ["{test_file}"],
+            "env": {}
+          },
+          {
+            "path": "perf",
+            "args": ["record", "-s", "-g", "-e", "dtlb-loads,dtlb-load-misses,l1-dcache-prefetches,l1-dcache-loads,l1-dcache-load-misses,l1-icache-loads,l1-icache-load-misses", "-o", "{perfdata}","{target}"],
             "env": {}
           }
         ]
@@ -96,7 +108,7 @@
         "perf": [
           {
             "path": "perf",
-            "args": ["report", "--stdio", "--header", "-I", "-v", "--percent-limit", "1", "-i", "{perfdata}"],
+            "args": ["report", "--stdio", "-U", "--percent-limit", "5", "-i", "{perfdata}"],
             "env": {}
           }
         ],
