@@ -45,7 +45,7 @@ pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
     use crate::types::RUMBuffer;
-    use std::io::{stdin, stdout, Read, Write};
+    use std::io::{stdin, stdout, IoSlice, Read, Write};
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
@@ -141,7 +141,7 @@ pub mod cli_utils {
     /// Writes [RUMBuffer] to `stdout`.
     ///
     pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
-        match stdout().write_all(data) {
+        match stdout().write_all_vectored(&mut [IoSlice::new(data)]) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
