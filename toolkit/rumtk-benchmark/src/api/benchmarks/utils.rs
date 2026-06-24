@@ -232,14 +232,15 @@ pub async fn run_perf_stat(profile: &str, command: &str, template_profile: &str,
     read_temp_buffer(&mut perfdata)
 }
 
-pub async fn run_perf_vis(
+pub async fn run_pipe(
+    category: &str,
     visualizer: &str,
     target: &str,
     perfdata: &NamedTempFile,
     state: &SharedAppState
 ) -> RUMResult<RUMBuffer>
 {
-    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", visualizer);
+    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline(category, visualizer);
 
     rumtk_pipeline_patch_args!(&mut report_pipeline, &[
         ("{target}", &target),
@@ -251,11 +252,30 @@ pub async fn run_perf_vis(
     Ok(vis_data)
 }
 
-pub async fn run_cpu_info(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
-    let command = "cpu_info";
+pub async fn run_perf_vis(
+    visualizer: &str,
+    target: &str,
+    perfdata: &NamedTempFile,
+    state: &SharedAppState
+) -> RUMResult<RUMBuffer>
+{
+    run_pipe("visualizers", visualizer, target, perfdata, &state).await
+}
+
+pub async fn run_cpu_info(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<(RUMBuffer, RUMBuffer, RUMBuffer)> {
+    let command_cpu = "cpu_info";
+    let command_metrics_hw = "cpu_hw_metrics";
+    let command_metrics_cache = "cpu_cache_metrics";
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
-    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
-    run_perf_vis(command, "", &perfdata, &state).await
+
+    let (report, mut perfdata) = run_perf(command_cpu, &target, template_profile, &state, temp_data).await?;
+    let cpu_info = run_perf_vis(command_cpu, "", &perfdata, &state).await?;
+
+    let report_metrics_hw = run_pipe("info", command_metrics_hw, &target, &perfdata, &state).await?;
+
+    let report_metrics_cache = run_pipe("info", command_metrics_cache, &target, &perfdata, &state).await?;
+
+    Ok((cpu_info, report_metrics_hw, report_metrics_cache))
 }
 
 pub async fn run_perf_report(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {

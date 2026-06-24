@@ -120,7 +120,7 @@
         "cpu_info": [
           {
             "path": "perf",
-            "args": ["report", "--header-only", "-v", "-i", "{perfdata}"],
+            "args": ["report", "--header-only", "-v", "-I", "-i", "{perfdata}"],
             "env": {}
           }
         ],

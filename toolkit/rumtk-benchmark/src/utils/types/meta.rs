@@ -47,16 +47,38 @@ use std::convert::{From, TryFrom};
 use std::env::consts;
 use std::fmt::Debug;
 
+pub type MetaData = (RUMBuffer,RUMBuffer,RUMBuffer);
+
 #[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
         <table>
             <tbody>
+                <tr><td><h3>Architecture</h3></td></tr>
                 <tr>
                     <td>
                         <div class='f9'>
                             <pre>
-                                {{ data }}
+                                {{ cpu_info }}
+                            </pre>
+                        </div>
+                    </td>
+                </tr>
+                <tr><td><h3>Available Metrics</h3></td></tr>
+                <tr>
+                    <td>
+                        <div class='f9'>
+                            <pre>
+                                {{ cpu_hw_metrics }}
+                            </pre>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class='f9'>
+                            <pre>
+                                {{ cpu_cache_metrics }}
                             </pre>
                         </div>
                     </td>
@@ -79,25 +101,32 @@ use std::fmt::Debug;
     ext = "html"
 )]
 pub struct BenchmarkMeta {
-    pub data: RUMString,
+    pub cpu_info: RUMString,
+    pub cpu_hw_metrics: RUMString,
+    pub cpu_cache_metrics: RUMString,
     pub test_file_sizes: Vec<f32>,
 }
 
 impl BenchmarkMeta {
     pub fn new() -> RUMResult<Self> {
         Ok(Self {
-            data: RUMString::new(),
+            cpu_info: RUMString::new(),
+            cpu_hw_metrics: RUMString::new(),
+            cpu_cache_metrics: RUMString::new(),
             test_file_sizes: vec![],
         })
     }
 }
 
-impl<'a> TryFrom<&RUMBuffer> for BenchmarkMeta {
+impl<'a> TryFrom<MetaData> for BenchmarkMeta {
     type Error = RUMString;
-    fn try_from(data: &RUMBuffer) -> Result<Self, Self::Error>
+    fn try_from(data: MetaData) -> Result<Self, Self::Error>
     {
+        let (cpu_info, cpu_hw_metrics, cpu_cache_metrics) = data;
         Ok(Self {
-            data: buffer_to_string(&data[..])?,
+            cpu_info: buffer_to_string(&cpu_info[..])?,
+            cpu_hw_metrics: buffer_to_string(&cpu_hw_metrics[..])?,
+            cpu_cache_metrics: buffer_to_string(&cpu_cache_metrics[..])?,
             test_file_sizes: vec![],
         })
     }

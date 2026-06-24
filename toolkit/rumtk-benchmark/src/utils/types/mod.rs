@@ -34,7 +34,7 @@ pub use basic_report::*;
 pub use flamegraph::*;
 pub use meta::*;
 
-type ReportRawResults<'a> = (&'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
+type ReportRawResults<'a> = (MetaData, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuffer);
 
 #[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
