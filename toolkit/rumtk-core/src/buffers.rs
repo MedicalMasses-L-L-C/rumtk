@@ -122,13 +122,10 @@ impl<'a> Iterator for RUMBufferSplitIter {
     type Item = RUMBuffer;
 
     fn next(&mut self) -> Option<Self::Item> {
-        cpu_prefetch(&self.remainder[..]);
-
         match self.remainder.is_empty() {
             true => None,
             false => {
-                let indx = buffer_find_byte(&self.remainder, self.byte);
-                let v = self.remainder.split_to(indx);
+                let v = self.remainder.split_to(buffer_find_byte(&self.remainder, self.byte));
                 if self.remainder.len() > 1 {
                     let _ = self.remainder.split_to(1);
                 }
@@ -161,6 +158,7 @@ impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
 
 impl<'a> RUMBufferIteratorExt for RUMBuffer {
     fn split_fast(&self, byte: u8) -> RUMBufferSplitIter {
+        cpu_prefetch(&self[..]);
         RUMBufferSplitIter {
             remainder: self.clone(),
             byte,
@@ -520,7 +518,7 @@ pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMB
 
 #[inline]
 pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
-    let trimmed = buffer.trim_ascii();
+    let trimmed = buffer_slice_trim(&buffer[..]);
 
     if trimmed.len() < buffer.len() {
         RUMBuffer::copy_from_slice(trimmed)
@@ -529,6 +527,7 @@ pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
     }
 }
 
+#[inline(always)]
 pub fn buffer_slice_trim(buffer: &[u8]) -> &[u8] {
     buffer.trim_ascii()
 }
