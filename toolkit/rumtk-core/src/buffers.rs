@@ -104,7 +104,6 @@ impl<'a, 'b> Iterator for RUMSliceEnumerateIter<'a, 'b> {
 }
 
 pub trait RUMBufferIteratorExt {
-    #[inline(always)]
     fn split_fast(&self, byte: u8) -> RUMBufferSplitIter;
 }
 
@@ -120,7 +119,7 @@ pub struct RUMBufferSplitIter {
 
 impl<'a> Iterator for RUMBufferSplitIter {
     type Item = RUMBuffer;
-
+    #[inline(always)]
     fn next(&mut self) -> Option<Self::Item> {
         match self.remainder.is_empty() {
             true => None,
