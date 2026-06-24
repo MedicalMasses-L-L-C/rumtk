@@ -17,8 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::base::{RUMResult, RUMVec};
+use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE, DEFAULT_BUFFER_ITEM_COUNT};
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::strings::{rumtk_format, string_format, RUMString};
 use rumtk_core::types::RUMBuffer;
@@ -232,12 +232,17 @@ pub async fn run_perf_stat(profile: &str, command: &str, template_profile: &str,
     read_temp_buffer(&mut perfdata)
 }
 
-pub async fn run_perf_report(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
-    let target = rumtk_web_get_pipelines!(state).get_target(profile);
-    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
-    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "perf");
+pub async fn run_perf_vis(
+    visualizer: &str,
+    target: &str,
+    perfdata: &NamedTempFile,
+    state: &SharedAppState
+) -> RUMResult<RUMBuffer>
+{
+    let mut report_pipeline = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", visualizer);
 
     rumtk_pipeline_patch_args!(&mut report_pipeline, &[
+        ("{target}", &target),
         ("{perfdata}", &perfdata.path().to_str().unwrap_or_default())
     ]);
 
@@ -246,18 +251,21 @@ pub async fn run_perf_report(profile: &str, command: &str, template_profile: &st
     Ok(vis_data)
 }
 
+pub async fn run_cpu_info(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
+    run_perf_vis(&target, "", &perfdata, &state).await
+}
+
+pub async fn run_perf_report(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let target = rumtk_web_get_pipelines!(state).get_target(profile);
+    let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
+    run_perf_vis("perf", "", &perfdata, &state).await
+}
+
 pub async fn run_flamegraph(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
-    let mut flamegraph = rumtk_web_get_pipelines!(state).get_pipeline("visualizers", "flamegraph");
     let (report, mut perfdata) = run_perf("perf", &target, template_profile, &state, temp_data).await?;
-
-    rumtk_pipeline_patch_args!(&mut flamegraph, &[
-        ("{target}", &target),
-        ("{perfdata}", &perfdata.path().to_str().unwrap_or_default())
-    ]);
-
-    // Execute the pipeline
-    let vis_data = rumtk_pipeline_run_async!(&flamegraph).await?;
-    Ok(vis_data)
+    run_perf_vis("flamegraph", &target, &perfdata, &state).await
 }
 
