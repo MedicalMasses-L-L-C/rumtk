@@ -85,7 +85,7 @@ pub type MetaData = (RUMBuffer,RUMBuffer,RUMBuffer);
                 </tr>
                 <tr>
                     <td>
-                    <details>
+                    <details {% if test_file_sizes.len() < 5 %} open {% endif %}>
                         <summary><strong><u>Test File Sizes in MB </u></strong></summary>
                         <ul>
                             {% for s in test_file_sizes.iter() %}
