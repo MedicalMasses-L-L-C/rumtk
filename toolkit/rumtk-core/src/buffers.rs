@@ -122,17 +122,19 @@ impl<'a> Iterator for RUMBufferSplitIter<'a> {
     type Item = RUMBuffer;
 
     fn next(&mut self) -> Option<Self::Item> {
-        cpu_prefetch(&self.remainder);
-        let indx = buffer_find(&self.remainder, self.pattern);
+        cpu_prefetch(&self.remainder[..]);
 
-        if self.remainder.len() > 0 {
-            let v = self.remainder.split_to(indx);
-            if self.remainder.len() > self.pattern_length {
-                let _ = self.remainder.split_to(self.pattern_length);
+        match self.remainder.is_empty() {
+            true => None,
+            false => {
+                let indx = buffer_find(&self.remainder, self.pattern);
+                let remainder = self.remainder.len() - indx;
+                let v = self.remainder.split_to(indx);
+                if remainder > self.pattern_length {
+                    let _ = self.remainder.split_to(self.pattern_length);
+                }
+                Some(v)
             }
-            Some(v)
-        } else {
-            None
         }
     }
 }
