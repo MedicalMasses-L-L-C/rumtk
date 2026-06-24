@@ -409,7 +409,7 @@ pub mod v2_parser {
         }
 
         #[inline(always)]
-        fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
+        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
             if field.is_empty() {
                 return vec![V2Field::new()];
             }
@@ -639,6 +639,7 @@ pub mod v2_parser {
 
         ///
         ///
+        #[inline(always)]
         pub fn extract_segments(
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
