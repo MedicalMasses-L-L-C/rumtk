@@ -37,10 +37,12 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::RUMWebTemplate;
+use crate::utils::types::{RUMWebTemplate, ReportRawResults};
 use rumtk_core::base::RUMResult;
+use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+use rumtk_core::types::RUMBuffer;
 use std::convert::{From, TryFrom};
 use std::env::consts;
 use std::fmt::Debug;
@@ -51,12 +53,13 @@ use std::fmt::Debug;
         <table>
             <tbody>
                 <tr>
-                    <td><strong>Architecture: </strong></td>
-                    <td>{{arch}}</td>
-                </tr>
-                <tr>
-                    <td><strong>OS: </strong></td>
-                    <td>{{os}}</td>
+                    <td>
+                        <div class='f9'>
+                            <pre>
+                                {{ data }}
+                            </pre>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -76,16 +79,25 @@ use std::fmt::Debug;
     ext = "html"
 )]
 pub struct BenchmarkMeta {
-    pub arch: RUMString,
-    pub os: RUMString,
+    pub data: RUMString,
     pub test_file_sizes: Vec<f32>,
 }
 
 impl BenchmarkMeta {
     pub fn new() -> RUMResult<Self> {
         Ok(Self {
-            arch: RUMString::from(consts::ARCH),
-            os: RUMString::from(consts::OS),
+            data: RUMString::new(),
+            test_file_sizes: vec![],
+        })
+    }
+}
+
+impl<'a> TryFrom<&RUMBuffer> for BenchmarkMeta {
+    type Error = RUMString;
+    fn try_from(data: &RUMBuffer) -> Result<Self, Self::Error>
+    {
+        Ok(Self {
+            data: buffer_to_string(&data[..])?,
             test_file_sizes: vec![],
         })
     }

@@ -251,7 +251,8 @@ pub async fn run_perf_vis(
     Ok(vis_data)
 }
 
-pub async fn run_cpu_info(profile: &str, command: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+pub async fn run_cpu_info(profile: &str, template_profile: &str, state: &SharedAppState, temp_data: &mut TempData) -> RUMResult<RUMBuffer> {
+    let command = "cpu_info";
     let target = rumtk_web_get_pipelines!(state).get_target(profile);
     let (report, mut perfdata) = run_perf(command, &target, template_profile, &state, temp_data).await?;
     run_perf_vis(&target, "", &perfdata, &state).await
