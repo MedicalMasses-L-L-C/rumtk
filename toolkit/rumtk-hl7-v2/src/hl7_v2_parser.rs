@@ -233,7 +233,7 @@ pub mod v2_parser {
                 true => {
                     let mut component_list: ComponentList = ComponentList::new();
 
-                    for c in field.split_fast(&[parser_chars.component_separator]) {
+                    for c in field.split_fast(parser_chars.component_separator) {
                         component_list.push(V2Component::from(c))
                     }
 
@@ -337,8 +337,7 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
-            let pattern = &[parser_chars.field_separator];
-            let mut raw_fields = raw_segment.split_fast(pattern);
+            let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
@@ -417,7 +416,7 @@ pub mod v2_parser {
             match buffer_contains(&field[..], parser_chars.repetition_separator) {
                 true => {
                     let mut field_group = V2FieldGroup::with_capacity(10);
-                    for subfield in field.split_fast(&[parser_chars.repetition_separator]) {
+                    for subfield in field.split_fast(parser_chars.repetition_separator) {
                         field_group.push(V2Field::from(subfield, parser_chars))
                     }
                     field_group
@@ -646,7 +645,7 @@ pub mod v2_parser {
         ) -> V2Result<V2SegmentMap> {
             let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
 
-            for segment in msg.split_fast(&[parser_chars.segment_terminator]) {
+            for segment in msg.split_fast(parser_chars.segment_terminator) {
                 if segment.is_empty() {
                     continue;
                 }
