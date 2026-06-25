@@ -60,7 +60,7 @@ mod tests {
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_string, buffer_trim, new_random_buffer};
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
-    use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
+    use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson, RUMSerializableBuffer};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
     use crate::types::RUMBuffer;
     use std::process::Stdio;
@@ -685,6 +685,18 @@ mod tests {
         assert_eq!(
             new_hw, hw,
             "Deserialized JSON does not match the expected value!"
+        );
+    }
+
+    #[test]
+    fn test_deserialize_buffer_serde_json() {
+        let hw = RUMSerializableBuffer(RUMBuffer::from_static(b"Hello World!"));
+        let hw_str = to_json(&hw).unwrap();
+        let new_hw: RUMSerializableBuffer = from_json(&hw_str).unwrap();
+
+        assert_eq!(
+            new_hw, hw,
+            "Deserialized Buffer from JSON does not match the expected value!"
         );
     }
 
