@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::base::{RUMResult, RUMVec, RUMVecDeque};
+use crate::base::{RUMResult, RUMVec};
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
 pub use bytes::{BufMut, Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 use clap::builder::TypedValueParser;
@@ -116,7 +116,17 @@ impl<'a> Iterator for RUMBufferSplitIter {
     type Item = RUMBuffer;
     #[inline(always)]
     fn next(&mut self) -> Option<Self::Item> {
-        match self.remainder.is_empty() {
+        match buffer_find_byte(&self.remainder, self.byte) {
+            Some(i) => {
+                let v = self.remainder.split_to(i);
+                if self.remainder.len() > 1 {
+                    let _ = self.remainder.split_to(1);
+                }
+                Some(v)
+            },
+            None => None
+        }
+        /*match self.remainder.is_empty() {
             true => None,
             false => {
                 let v = self.remainder.split_to(buffer_find_byte(&self.remainder, self.byte));
@@ -125,7 +135,7 @@ impl<'a> Iterator for RUMBufferSplitIter {
                 }
                 Some(v)
             }
-        }
+        }*/
     }
 }
 
@@ -272,24 +282,6 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
     set
 }
 
-pub fn buffer_split_fast(mut input: RUMBuffer, pattern: u8) -> RUMVecDeque<RUMBuffer> {
-    if input.is_empty() {
-        return RUMVecDeque::new();
-    }
-
-    let mut item_list = RUMVecDeque::with_capacity(10);
-    let mut offset = buffer_find_byte(input.as_slice(), pattern);
-
-    while offset < input.len() {
-        item_list.push_back(input.split_to(offset));
-        input.split_to(1);
-        offset = buffer_find_byte(input.as_slice(), pattern);
-    }
-    item_list.push_back(input);
-
-    item_list
-}
-
 ///
 /// Convert buffer to string.
 ///
@@ -326,7 +318,7 @@ pub fn buffer_count(buffer: &[u8], pattern: u8) -> usize {
 
 #[inline(always)]
 pub fn buffer_contains(buffer: &[u8], pattern: u8) -> bool {
-    buffer_find_byte(buffer, pattern) < buffer.len()
+    buffer_find_byte(buffer, pattern).unwrap_or(buffer.len()) < buffer.len()
 }
 
 #[inline(always)]
@@ -352,22 +344,8 @@ pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
 }
 
 #[inline(always)]
-pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
-    if buffer.is_empty() {
-        return buffer.len();
-    }
-
-    /*
-    let iter = buffer.chunks(DEFAULT_BYTE_WINDOW_SIZE);
-    for (i, chunk) in iter.enumerate() {
-        if chunk.contains(&byte) {
-            return (i * DEFAULT_BYTE_WINDOW_SIZE) + buffer_chunk_find(chunk, byte);
-        }
-    }*/
-
-    cpu_find_simd(buffer, byte).unwrap_or(buffer.len())
-
-    //buffer.len()
+pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> Option<usize> {
+    cpu_find_simd(buffer, byte)
 }
 
 #[inline(always)]
@@ -392,7 +370,7 @@ pub fn buffer_find(buffer: &[u8], pattern: &[u8]) -> usize {
             cumulative += pattern_length;
         }
 
-        end = buffer_find_byte(&working_buffer, start_pattern_byte);
+        end = buffer_find_byte(&working_buffer, start_pattern_byte).unwrap_or(working_buffer.len());
         cumulative += end;
     }
 
