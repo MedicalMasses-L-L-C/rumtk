@@ -24,16 +24,12 @@ use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
 use tokio::io::AsyncReadExt;
 
-use crate::cpu::cpu_prefetch;
+use crate::cpu::*;
 use std::simd::prelude::*;
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
-pub const DEFAULT_CPU_L1_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
-pub const DEFAULT_CPU_L1_CACHE_SIZE: usize = 32 * 1024; // Number of bytes in a typical x86_64 CPU L1 cache per core.
-pub const DEFAULT_CPU_PAGE_SIZE: usize = 4 * 1024; // Typical CPU page size
 pub const DEFAULT_BYTE_WINDOW_SIZE: usize = 256;
-pub const DEFAULT_AVX_SIMD_SIZE: usize = 32;
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
@@ -157,7 +153,7 @@ impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
 
 impl<'a> RUMBufferIteratorExt for RUMBuffer {
     fn split_fast(&self, byte: u8) -> RUMBufferSplitIter {
-        cpu_prefetch(&self[..]);
+        cpu_l1_prefetch(self.as_ptr());
         RUMBufferSplitIter {
             remainder: self.clone(),
             byte,
