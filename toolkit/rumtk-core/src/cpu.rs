@@ -18,8 +18,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const fn cpu_prefetch(data: &[u8]) {
-    unsafe {
-        std::intrinsics::prefetch_read_data::<u8, 3>(data.as_ptr());
-    }
+use branches::prefetch_read_data;
+
+pub const CPU_L1_PREFETCH: i32 = 0;
+pub const CPU_L2_PREFETCH: i32 = 1;
+pub const CPU_L3_PREFETCH: i32 = 2;
+pub const CPU_NONTEMPORAL_PREFETCH: i32 = 3;
+pub const DEFAULT_CPU_L1_CACHE_LINE_SIZE: usize = 64; // Number of bytes in a typical x86_64 CPU L1 cache line.
+pub const DEFAULT_CPU_L1_CACHE_SIZE: usize = 32 * 1024; // Number of bytes in a typical x86_64 CPU L1 cache per core.
+pub const DEFAULT_CPU_PAGE_SIZE: usize = 4 * 1024; // Typical CPU page size
+pub const DEFAULT_AVX_SIMD_SIZE: usize = 32;
+
+#[inline]
+pub fn cpu_l3_prefetch(data: *const u8) {
+    prefetch_read_data::<u8, CPU_L3_PREFETCH>(data);
+}
+
+#[inline]
+pub fn cpu_l2_prefetch(data: *const u8) {
+    prefetch_read_data::<u8, CPU_L2_PREFETCH>(data);
+}
+
+#[inline]
+pub fn cpu_l1_prefetch(data: *const u8) {
+    prefetch_read_data::<u8, CPU_L1_PREFETCH>(data);
 }
