@@ -47,8 +47,9 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
+    use rumtk_core::cpu::{cpu_l3_prefetch, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
@@ -645,6 +646,7 @@ pub mod v2_parser {
         ) -> V2Result<V2SegmentMap> {
             let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
 
+            cpu_l3_prefetch(msg.as_ptr());
             for segment in msg.split_fast(parser_chars.segment_terminator) {
                 if segment.is_empty() {
                     continue;

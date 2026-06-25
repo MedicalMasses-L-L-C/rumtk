@@ -31,7 +31,6 @@
 #![feature(const_default)]
 #![feature(portable_simd)]
 #![feature(write_all_vectored)]
-#![feature(core_intrinsics)]
 
 pub mod cache;
 pub mod cli;
@@ -51,7 +50,7 @@ pub mod threading;
 pub mod types;
 pub mod buffers;
 mod instrumentation;
-mod cpu;
+pub mod cpu;
 
 #[cfg(test)]
 mod tests {
