@@ -230,20 +230,13 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let component_list = match buffer_contains(&field[..], parser_chars.component_separator) {
-                true => {
-                    let mut component_list: ComponentList = ComponentList::new();
-                    let mut splitter = field.split_fast(parser_chars.component_separator);
+            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field, parser_chars.component_separator));
+            let mut splitter = field.split_fast(parser_chars.component_separator);
 
-                    for c in &mut splitter {
-                        component_list.push(V2Component::from(c))
-                    }
-                    component_list.push(V2Component::from(splitter.remainder));
-
-                    component_list
-                },
-                false => vec![V2Component::from(field)]
-            };
+            for c in &mut splitter {
+                component_list.push(V2Component::from(c))
+            }
+            component_list.push(V2Component::from(splitter.remainder));
 
             Self {
                 components: component_list,
