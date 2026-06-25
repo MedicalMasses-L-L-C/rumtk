@@ -56,7 +56,7 @@ pub mod cpu;
 mod tests {
     use super::*;
     use crate::base::{clamp_index, RUMResult};
-    use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_string, buffer_trim, new_random_buffer};
+    use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson, RUMSerializableBuffer};
@@ -443,7 +443,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::cpu_find_simd;
+    use crate::cpu::{cpu_collect_simd, cpu_find_simd};
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
@@ -827,7 +827,9 @@ mod tests {
     #[test]
     fn test_buffer_split() {
         let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
-        let splits = buffer_split_fast(data, '|' as u8);
+        let mut splits = vec![];
+
+        for split in data.split_fast('|' as u8) { splits.push(split); };
 
         assert_eq!(splits.len(), 22, "Bad buffer split! Got {:?}", splits);
     }
@@ -954,6 +956,33 @@ mod tests {
         }
 
         assert!(all_time <= expected, "Counting of instances in buffer was too slow! Took {:?} us", all_time);
+    }
+
+    #[test]
+    fn test_cpu_collect_needle() {
+        let data = b"                                                         n                    ";
+        let expected = vec![57];
+        let indices = cpu_collect_simd(data, b'n');
+
+        assert_eq!(indices, expected, "Could not find the needle in the haystack");
+    }
+
+    #[test]
+    fn test_cpu_collect_needle_3() {
+        let data = b"                                                         nnn                    ";
+        let expected = vec![57, 58, 59];
+        let indices = cpu_collect_simd(data, b'n');
+
+        assert_eq!(indices, expected, "Could not find the needle in the haystack");
+    }
+
+    #[test]
+    fn test_cpu_collect_needle_6() {
+        let data = b"                 nnn                                        nnn                    ";
+        let expected = vec![17, 18, 19, 60, 61, 62];
+        let indices = cpu_collect_simd(data, b'n');
+
+        assert_eq!(indices, expected, "Could not find the needle in the haystack");
     }
 
 }

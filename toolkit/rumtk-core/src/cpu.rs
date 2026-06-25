@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+use crate::base::RUMVec;
 pub use branches::{likely as cpu_likely_branch, prefetch_read_data, unlikely as cpu_unlikely_branch};
 pub use std::simd::prelude::*;
 
@@ -41,6 +41,7 @@ pub const CPU_SEARCH_WINDOW_16_SIZE: usize = 16;
 
 pub type u8xN<const SEARCH_WINDOW_SIZE: usize> = Simd<u8, SEARCH_WINDOW_SIZE>;
 
+////////////////////////////////////////CPU CACHE HINTS///////////////////////////////
 #[inline]
 pub fn cpu_l3_prefetch(data: *const u8) {
     prefetch_read_data::<u8, CPU_L3_PREFETCH>(data);
@@ -60,6 +61,8 @@ pub fn cpu_l1_prefetch(data: *const u8) {
 pub fn cpu_slice_to_array<const SLICE_SIZE: usize>(chunk: &[u8]) -> &[u8; SLICE_SIZE] {
     chunk.try_into().expect("length mismatch")
 }
+
+////////////////////////////////////////SEARCH FOR NEEDLE IN HAYSTACK///////////////////////////////
 
 #[inline(always)]
 pub fn cpu_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
@@ -113,6 +116,69 @@ pub fn cpu_find_simd_n<const LANE_SIZE: usize>
 pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
     cpu_l3_prefetch(window.as_ptr());
     cpu_find_simd_n::<CPU_SIMD_64_SIZE>(
+        window,
+        byte,
+    )
+}
+
+/////////////////////////////GATHER ALL INDICES OF NEEDLE IN HAYSTACK///////////////////////////////
+#[inline(always)]
+pub fn cpu_collect_fallback(positions: &mut RUMVec<u16>, chunk: &[u8], byte: u8, offset: u16) {
+    for i in 0..chunk.len() {
+        if chunk[i]==byte {
+            positions.push(offset + i as u16);
+        }
+    }
+}
+
+#[inline]
+fn cpu_collect_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(data_vec: &u8xN<SEARCH_WINDOW_SIZE>, target: u8xN<SEARCH_WINDOW_SIZE>) -> Option<u64> {
+    let mask = data_vec.simd_eq(target);
+
+    if mask.any() {
+        return Some(mask.to_bitmask());
+    }
+
+    None
+}
+
+#[inline]
+pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
+(
+    chunk: &[u8],
+    byte: u8,
+) -> RUMVec<u16>
+{
+    let mask = u8xN::<LANE_SIZE>::splat(byte);
+    let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
+
+    let mut positions: RUMVec<u16> = RUMVec::<u16>::with_capacity(LANE_SIZE);
+    cpu_collect_fallback(&mut positions, prefix, byte, 0);
+    let mut cursor: u16 = prefix.len() as u16;
+
+    for (i, window) in middle.into_iter().enumerate() {
+        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask) {
+            Some(mut lanes) => {
+                while lanes != 0 {
+                    let p = lanes.trailing_zeros();
+                    positions.push(cursor + (p as u16));
+                    lanes = lanes >> (p + 1);
+                }
+            },
+            None => {},
+        };
+        cursor += (i * LANE_SIZE) as u16;
+    }
+
+    cpu_collect_fallback(&mut positions, postfix, byte, cursor);
+
+    positions
+}
+
+#[inline]
+pub fn cpu_collect_simd(window: &[u8], byte: u8) -> RUMVec<u16> {
+    cpu_l3_prefetch(window.as_ptr());
+    cpu_collect_simd_n::<CPU_SIMD_64_SIZE>(
         window,
         byte,
     )
