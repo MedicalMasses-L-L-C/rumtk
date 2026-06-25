@@ -25,7 +25,6 @@ use rand::{distr::Alphanumeric, RngExt};
 use tokio::io::AsyncReadExt;
 
 use crate::cpu::*;
-use std::simd::prelude::*;
 
 pub const DEFAULT_BUFFER_CHUNK_SIZE: usize = 1024;
 pub const DEFAULT_BUFFER_ITEM_COUNT: usize = 1024;
@@ -153,7 +152,6 @@ impl<'a, 'b> RUMByteSliceIteratorExt<'a, 'b> for &[u8] {
 
 impl<'a> RUMBufferIteratorExt for RUMBuffer {
     fn split_fast(&self, byte: u8) -> RUMBufferSplitIter {
-        cpu_l1_prefetch(self.as_ptr());
         RUMBufferSplitIter {
             remainder: self.clone(),
             byte,
@@ -342,41 +340,12 @@ pub fn buffer_chunk_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
 }
 
 #[inline(always)]
-fn buffer_chunk_find_simd_avx2(window: &[u8; DEFAULT_BYTE_WINDOW_SIZE], byte: u8) -> Option<usize> {
-    let target_vec = u8x32::splat(byte);
-
-    for (i, chunk) in window.chunks_exact(DEFAULT_AVX_SIMD_SIZE).enumerate() {
-        let data_vec = u8x32::from_slice(chunk);
-        let mask = data_vec.simd_eq(target_vec);
-
-        if mask.any() {
-            let bitmask = mask.to_bitmask();;
-            let lane_i = bitmask.trailing_zeros() as usize;
-            return Some((i * DEFAULT_AVX_SIMD_SIZE) + lane_i);
-        }
-    }
-
-    None
-}
-
-#[inline(always)]
-pub fn buffer_chunk_find_simd(window: &[u8; DEFAULT_BYTE_WINDOW_SIZE], byte: u8) -> Option<usize> {
-    unsafe {
-        if is_x86_feature_detected!("avx2") {
-            buffer_chunk_find_simd_avx2(window, byte)
-        } else {
-            buffer_chunk_find_fallback(window, byte)
-        }
-    }
-}
-
-#[inline(always)]
 pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
     let length = chunk.len();
 
     if length == DEFAULT_BYTE_WINDOW_SIZE {
         let chunk_window = buffer_slice_to_array(chunk);
-        buffer_chunk_find_simd(chunk_window, byte).unwrap_or(length)
+        cpu_find_simd(chunk_window, byte).unwrap_or(length)
     } else {
         buffer_chunk_find_fallback(chunk, byte).unwrap_or(length)
     }
@@ -388,14 +357,17 @@ pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> usize {
         return buffer.len();
     }
 
+    /*
     let iter = buffer.chunks(DEFAULT_BYTE_WINDOW_SIZE);
     for (i, chunk) in iter.enumerate() {
         if chunk.contains(&byte) {
             return (i * DEFAULT_BYTE_WINDOW_SIZE) + buffer_chunk_find(chunk, byte);
         }
-    }
+    }*/
 
-    buffer.len()
+    cpu_find_simd(buffer, byte).unwrap_or(buffer.len())
+
+    //buffer.len()
 }
 
 #[inline(always)]
