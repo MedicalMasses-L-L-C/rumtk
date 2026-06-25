@@ -47,9 +47,9 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_split_fast, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
+    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, DEFAULT_CPU_L1_CACHE_LINE_SIZE, DEFAULT_CPU_PAGE_SIZE};
+    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
@@ -233,10 +233,12 @@ pub mod v2_parser {
             let component_list = match buffer_contains(&field[..], parser_chars.component_separator) {
                 true => {
                     let mut component_list: ComponentList = ComponentList::new();
+                    let mut splitter = field.split_fast(parser_chars.component_separator);
 
-                    for c in field.split_fast(parser_chars.component_separator) {
+                    for c in &mut splitter {
                         component_list.push(V2Component::from(c))
                     }
+                    component_list.push(V2Component::from(splitter.remainder));
 
                     component_list
                 },
@@ -361,9 +363,10 @@ pub mod v2_parser {
                 raw_fields.next();
             }
 
-            for raw_field in raw_fields {
+            for raw_field in &mut raw_fields {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
             }
+            field_list.push(Self::generate_subfields(raw_fields.remainder, parser_chars));
 
             Ok(V2Segment {
                 id: segment_id,
@@ -414,18 +417,14 @@ pub mod v2_parser {
                 return vec![V2Field::new()];
             }
 
-            match buffer_contains(&field[..], parser_chars.repetition_separator) {
-                true => {
-                    let mut field_group = V2FieldGroup::with_capacity(10);
-                    for subfield in field.split_fast(parser_chars.repetition_separator) {
-                        field_group.push(V2Field::from(subfield, parser_chars))
-                    }
-                    field_group
-                },
-                false => {
-                    vec![V2Field::from(field, parser_chars)]
-                }
+            let mut field_group = V2FieldGroup::new();
+            let mut splitter = field.split_fast(parser_chars.repetition_separator);
+            for subfield in &mut splitter {
+                field_group.push(V2Field::from(subfield, parser_chars))
             }
+            field_group.push(V2Field::from(splitter.remainder, parser_chars));
+
+            field_group
         }
     }
 
@@ -644,10 +643,11 @@ pub mod v2_parser {
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<V2SegmentMap> {
-            let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(DEFAULT_CPU_L1_CACHE_LINE_SIZE);
+            let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(CPU_L1_CACHE_LINE_SIZE);
 
             cpu_l3_prefetch(msg.as_ptr());
-            for segment in msg.split_fast(parser_chars.segment_terminator) {
+            let mut splitter = msg.split_fast(parser_chars.segment_terminator);
+            for segment in &mut splitter {
                 if segment.is_empty() {
                     continue;
                 }
@@ -657,20 +657,24 @@ pub mod v2_parser {
                 V2Message::push_to_group(&mut segments, segment);
             }
 
+            let segment: V2Segment = V2Segment::from(splitter.remainder, parser_chars)?;
+            V2Message::push_to_group(&mut segments, segment);
+
             Ok(segments)
         }
 
         #[inline(always)]
         pub fn push_to_group(group: &mut V2SegmentMap, segment: V2Segment) {
             let key = segment.id;
-            match group.get_mut(&key){
-                Some(group) => group.push(segment),
-                None => {
-                    let mut segment_set = V2SegmentGroup::with_capacity(5);
-                    segment_set.push(segment);
-                    group.insert(key.into(), segment_set);
-                }
+
+            if cpu_likely_branch(group.contains_key(&key)) {
+                group.get_mut(&key).unwrap().push(segment);
+                return;
             }
+
+            let mut segment_set = V2SegmentGroup::new();
+            segment_set.push(segment);
+            group.insert(key.into(), segment_set);
         }
     }
 

@@ -61,7 +61,7 @@ mod tests {
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use rumtk_core::base::{RUMResult, RUMVec};
-    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_split_fast, buffer_to_str};
+    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
@@ -1450,7 +1450,7 @@ mod tests {
     fn test_buffer_split_fast_segments() {
         let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
 
-        let (r, time) = rumtk_benchmark_snippet!(|| buffer_split_fast(buffer, '\r' as u8));
+        let (r, time) = rumtk_benchmark_snippet!(|| for b in buffer.split_fast('\r' as u8) {});
         
         assert!(time <= 5000, "buffer split of segments in large message took {} microseconds [> 5000 us]!", time);
     }
