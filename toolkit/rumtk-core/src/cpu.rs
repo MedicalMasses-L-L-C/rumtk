@@ -123,20 +123,42 @@ pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
 
 /////////////////////////////GATHER ALL INDICES OF NEEDLE IN HAYSTACK///////////////////////////////
 #[inline(always)]
-pub fn cpu_collect_fallback(positions: &mut RUMVec<u16>, chunk: &[u8], byte: u8, offset: u16) {
+pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: usize, mut last: usize) -> (usize, [u16; LANE_SIZE], usize) {
+    let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
+    let mut length = 0;
+
     for i in 0..chunk.len() {
         if chunk[i]==byte {
-            positions.push(offset + i as u16);
+            let pos = (offset + i) as usize;
+            results[length] = (pos - last) as u16;
+            last = pos;
+            length += 1;
         }
     }
+
+    (length, results, last)
 }
 
 #[inline]
-fn cpu_collect_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(data_vec: &u8xN<SEARCH_WINDOW_SIZE>, target: u8xN<SEARCH_WINDOW_SIZE>) -> Option<u64> {
+fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: usize, mut last: usize) -> Option<(usize, [u16; LANE_SIZE], usize)> {
+    let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
+    let mut length = 0;
+
     let mask = data_vec.simd_eq(target);
 
-    if mask.any() {
-        return Some(mask.to_bitmask());
+    if cpu_unlikely_branch(mask.any()) {
+        let items = mask.to_array();
+
+        for i in 0..items.len() {
+            if cpu_unlikely_branch(items[i]) {
+                let pos = (offset + i) as usize;
+                results[length] = (pos - last) as u16;
+                last = pos;
+                length += 1;
+            }
+        }
+
+        return Some((length, results, last));
     }
 
     None
@@ -152,25 +174,24 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
     let mask = u8xN::<LANE_SIZE>::splat(byte);
     let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
 
-    let mut positions: RUMVec<u16> = RUMVec::<u16>::with_capacity(LANE_SIZE);
-    cpu_collect_fallback(&mut positions, prefix, byte, 0);
-    let mut cursor: u16 = prefix.len() as u16;
+    let mut cursor: usize = 0;
+    let (initial, data, mut last): (usize, [u16; LANE_SIZE], usize) = cpu_collect_fallback(prefix, byte, cursor, 0);
+    let mut positions: RUMVec<u16> = RUMVec::<u16>::from(&data[..initial]);
+    cursor = prefix.len();
 
-    for (i, window) in middle.into_iter().enumerate() {
-        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask) {
-            Some(mut lanes) => {
-                while lanes != 0 {
-                    let p = lanes.trailing_zeros();
-                    positions.push(cursor + (p as u16));
-                    lanes = lanes >> (p + 1);
-                }
+    for window in middle.into_iter() {
+        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask, cursor, last) {
+            Some((len, data, l)) => {
+                positions.extend_from_slice(&data[..len]);
+                last = l;
             },
             None => {},
         };
-        cursor += (i * LANE_SIZE) as u16;
+        cursor += LANE_SIZE;
     }
 
-    cpu_collect_fallback(&mut positions, postfix, byte, cursor);
+    let (len, data, last): (usize, [u16; LANE_SIZE], usize) = cpu_collect_fallback(postfix, byte, cursor, last);
+    positions.extend_from_slice(&data[..len]);
 
     positions
 }
