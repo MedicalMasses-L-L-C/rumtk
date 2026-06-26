@@ -47,9 +47,9 @@ pub mod v2_parser {
     use pyo3::exceptions::PyValueError;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
-    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMByteSliceIteratorExt};
+    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE};
+    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
@@ -72,6 +72,57 @@ pub mod v2_parser {
     }
 
     /**************************** Types *****************************************/
+    pub type V2Tokens = CPUTokenSetCollection;
+
+    pub struct V2Tokenizer {
+        pub remainder: RUMBuffer,
+        pub indices: V2Tokens,
+        pub cursor: usize,
+        pub end_token: u8,
+    }
+
+    impl V2Tokenizer {
+        pub fn new(buffer: &RUMBuffer, search_tokens: &[u8]) -> Self {
+            let indices = cpu_tokenize_simd_rev::<CPU_SEARCH_WINDOW_512_SIZE>(&buffer[..], search_tokens);
+            Self {
+                remainder: buffer.clone(),
+                indices,
+                cursor: 0,
+                end_token: search_tokens.first().unwrap_or_default(),
+            }
+        }
+
+        #[inline]
+        pub fn pop(&mut self) -> Option<RUMBuffer> {
+            if self.cursor == self.indices.len() {
+                return None;
+            }
+
+            let (tok, indx) = self.indices[self.cursor];
+            if tok == self.end_token {
+                self.cursor += 1;
+                return None;
+            }
+
+            let mut v = self.remainder.split_to((indx + 1).into());
+            v.truncate(indx.into());
+            Some(v)
+        }
+
+        #[inline]
+        pub fn set_end_token(&mut self, tok: u8) {
+            self.end_token = tok;
+        }
+    }
+
+    impl Iterator for V2Tokenizer {
+        type Item = RUMBuffer;
+        #[inline(always)]
+        fn next(&mut self) -> Option<Self::Item> {
+            self.pop()
+        }
+    }
+
     ///
     /// V2Component.
     /// All V2Components contain the field's component data as a UTF-8 string.
