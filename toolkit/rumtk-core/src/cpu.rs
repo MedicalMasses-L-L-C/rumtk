@@ -32,6 +32,7 @@ pub const CPU_SIMD_64_SIZE: usize = 64;
 pub const CPU_SIMD_32_SIZE: usize = 32;
 pub const CPU_SIMD_16_SIZE: usize = 16;
 pub const CPU_SIMD_8_SIZE: usize = 8;
+pub const CPU_SEARCH_WINDOW_512_SIZE: usize = 512;
 pub const CPU_SEARCH_WINDOW_256_SIZE: usize = 256;
 pub const CPU_SEARCH_WINDOW_128_SIZE: usize = 128;
 pub const CPU_SEARCH_WINDOW_64_SIZE: usize = 64;
@@ -126,7 +127,8 @@ pub type CPUTokenRelativeStackIndex<const LANE_SIZE: usize> = [u16; LANE_SIZE];
 pub type CPUTokenRelativeStackInfo<const LANE_SIZE: usize> = (usize, CPUTokenRelativeStackIndex<LANE_SIZE>, usize);
 pub type CPUTokenRelativeIndex = RUMVec<u16>;
 pub type CPUTokenRelativeIndexSet = (u8, RUMVec<u16>);
-pub type CPUTokenRelativeIndexSetCollection = RUMVec<CPUTokenRelativeIndexSet>;
+pub type CPUTokenSet = (u8, u16);
+pub type CPUTokenSetCollection = RUMVec<CPUTokenSet>;
 
 #[inline(always)]
 pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: &mut usize, mut last: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
@@ -215,9 +217,9 @@ pub fn cpu_collect_simd(window: &[u8], byte: u8, mut offset: &mut usize) -> CPUT
 }
 
 #[inline]
-pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenRelativeIndexSetCollection
+pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
 {
-    let mut results = CPUTokenRelativeIndexSetCollection::with_capacity(1024 * size_of::<CPUTokenRelativeIndexSet>());
+    let mut results = CPUTokenSetCollection::with_capacity(1024 * size_of::<CPUTokenSet>());
     let mut offset = 0;
 
     for window in haystack.chunks(WINDOW_SIZE) {
@@ -225,7 +227,9 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
             let (b, indx) = cpu_collect_simd(window, *byte, &mut offset);
 
             if !indx.is_empty() {
-                results.push((b, indx));
+                for tok_indx in indx {
+                    results.push((b, tok_indx));
+                }
             }
         }
     }
@@ -234,7 +238,7 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
 }
 
 #[inline]
-pub fn cpu_tokenize_simd_rev<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenRelativeIndexSetCollection
+pub fn cpu_tokenize_simd_rev<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
 {
     let reversed: Vec<u8> = bytes.iter().rev().cloned().collect();
     cpu_tokenize_simd::<WINDOW_SIZE>(haystack, &reversed)
