@@ -1526,6 +1526,19 @@ mod tests {
     }
 
     #[test]
+    fn test_scan_msh_segment2() {
+        let input = EXPECTED_MSH_SEGMENT;
+        let segment_indices = cpu_collect_simd(input.as_bytes(), b'|');
+
+        println!("{}", input);
+
+        assert_eq!(
+            segment_indices.len(), 13,
+            "MSH Segment lookahead result length mismatch!"
+        );
+    }
+
+    #[test]
     fn test_scan_large_message() {
         let input = V2_TEST_LARGE_MESSAGE;
         let segment_indices = cpu_collect_simd(input.as_bytes(), b'|');
