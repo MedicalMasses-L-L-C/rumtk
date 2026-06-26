@@ -64,7 +64,7 @@ mod tests {
     use crate::types::RUMBuffer;
     use std::process::Stdio;
     use std::sync::Arc;
-    use tokio::io::AsyncBufReadExt;
+    use tokio::io::{split, AsyncBufReadExt};
     use tokio::sync::RwLock;
 
     #[test]
@@ -829,7 +829,11 @@ mod tests {
         let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
         let mut splits = vec![];
 
-        for split in data.split_fast('|' as u8) { splits.push(split); };
+        let mut splitter = data.split_fast('|' as u8);
+        for split in &mut splitter {
+            splits.push(split);
+        }
+        splits.push(splitter.remainder);
 
         assert_eq!(splits.len(), 22, "Bad buffer split! Got {:?}", splits);
     }
