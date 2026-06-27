@@ -123,33 +123,32 @@ pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
 }
 
 /////////////////////////////GATHER ALL INDICES OF NEEDLE IN HAYSTACK///////////////////////////////
-pub type CPUTokenRelativeStackIndex<const LANE_SIZE: usize> = [u16; LANE_SIZE];
-pub type CPUTokenRelativeStackInfo<const LANE_SIZE: usize> = (usize, CPUTokenRelativeStackIndex<LANE_SIZE>, usize);
-pub type CPUTokenRelativeIndex = RUMVec<u16>;
-pub type CPUTokenRelativeIndexSet = (u8, RUMVec<u16>);
-pub type CPUTokenSet = (u8, u16);
+pub type CPUTokenStackIndex<const LANE_SIZE: usize> = [u32; LANE_SIZE];
+pub type CPUTokenRelativeStackInfo<const LANE_SIZE: usize> = (usize, CPUTokenStackIndex<LANE_SIZE>);
+pub type CPUTokenIndexCollection = RUMVec<u32>;
+pub type CPUTokenIndexSet = (u8, RUMVec<u32>);
+pub type CPUTokenSet = (u8, u32);
 pub type CPUTokenSetCollection = RUMVec<CPUTokenSet>;
 
 #[inline(always)]
-pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: usize, mut last: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
-    let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
+pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
+    let mut results: CPUTokenStackIndex<LANE_SIZE> = [0; LANE_SIZE];
     let mut length = 0;
 
     for i in 0..chunk.len() {
         if chunk[i]==byte {
             let pos = (offset + i) as usize;
-            results[length] = (pos - last) as u16;
-            last = pos;
+            results[length] = pos as u32;
             length += 1;
         }
     }
 
-    (length, results, last)
+    (length, results)
 }
 
 #[inline]
-fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: usize, mut last: usize) -> Option<CPUTokenRelativeStackInfo<LANE_SIZE>> {
-    let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
+fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: usize) -> Option<CPUTokenRelativeStackInfo<LANE_SIZE>> {
+    let mut results: CPUTokenStackIndex<LANE_SIZE> = [0; LANE_SIZE];
     let mut length = 0;
 
     let mask = data_vec.simd_eq(target);
@@ -160,13 +159,12 @@ fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, t
         for i in 0..items.len() {
             if cpu_unlikely_branch(items[i]) {
                 let pos = (offset + i) as usize;
-                results[length] = (pos - last) as u16;
-                last = pos;
+                results[length] = pos as u32;
                 length += 1;
             }
         }
 
-        return Some((length, results, last));
+        return Some((length, results));
     }
 
     None
@@ -178,35 +176,34 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
     chunk: &[u8],
     byte: u8,
     offset: usize
-) -> CPUTokenRelativeIndex
+) -> CPUTokenIndexCollection
 {
     let mask = u8xN::<LANE_SIZE>::splat(byte);
     let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
 
     let mut local_offset: usize = offset;
-    let (initial, data, mut last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(prefix, byte, local_offset, 0);
-    let mut positions: RUMVec<u16> = RUMVec::<u16>::from(&data[..initial]);
+    let (initial, data): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(prefix, byte, local_offset);
+    let mut positions: CPUTokenIndexCollection = CPUTokenIndexCollection::from(&data[..initial]);
     local_offset += prefix.len();
 
     for window in middle.into_iter() {
-        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask, local_offset, last) {
-            Some((len, data, l)) => {
+        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask, local_offset) {
+            Some((len, data)) => {
                 positions.extend_from_slice(&data[..len]);
-                last = l;
             },
             None => {},
         };
         local_offset += LANE_SIZE;
     }
 
-    let (len, data, last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(postfix, byte, local_offset, last);
+    let (len, data): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(postfix, byte, local_offset);
     positions.extend_from_slice(&data[..len]);
 
     positions
 }
 
 #[inline]
-pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenRelativeIndexSet {
+pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndexSet {
     cpu_l3_prefetch(window.as_ptr());
     let indx = cpu_collect_simd_n::<CPU_SIMD_64_SIZE>(
         window,
@@ -234,6 +231,8 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
         }
         offset += window.len();
     }
+
+    results.sort_by(|a,b| a.1.cmp(&b.1));
 
     results
 }
