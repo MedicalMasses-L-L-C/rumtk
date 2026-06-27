@@ -78,7 +78,7 @@ pub mod v2_parser {
         pub remainder: RUMBuffer,
         pub indices: V2Tokens,
         pub cursor: usize,
-        pub end_token: u8,
+        pub end_tokens: RUMVec<u8>,
     }
 
     impl V2Tokenizer {
@@ -88,7 +88,7 @@ pub mod v2_parser {
                 remainder: buffer.clone(),
                 indices,
                 cursor: 0,
-                end_token: search_tokens.first().unwrap_or_default(),
+                end_tokens: RUMVec::with_capacity(search_tokens.len()),
             }
         }
 
@@ -98,20 +98,31 @@ pub mod v2_parser {
                 return None;
             }
 
+            let end_token = match self.end_tokens.last() {
+                Some(end_token) => *end_token,
+                None => return None,
+            };
             let (tok, indx) = self.indices[self.cursor];
-            if tok == self.end_token {
+            if tok == end_token {
                 self.cursor += 1;
                 return None;
             }
 
             let mut v = self.remainder.split_to((indx + 1).into());
+            println!("{}", buffer_to_str(&v).unwrap());
             v.truncate(indx.into());
+            self.cursor += 1;
             Some(v)
         }
 
         #[inline]
-        pub fn set_end_token(&mut self, tok: u8) {
-            self.end_token = tok;
+        pub fn push_end_token(&mut self, tok: u8) {
+            self.end_tokens.push(tok);
+        }
+
+        #[inline]
+        pub fn pop_end_token(&mut self) {
+            self.end_tokens.pop();
         }
     }
 
