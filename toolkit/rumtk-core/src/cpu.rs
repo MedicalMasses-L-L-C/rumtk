@@ -131,13 +131,13 @@ pub type CPUTokenSet = (u8, u16);
 pub type CPUTokenSetCollection = RUMVec<CPUTokenSet>;
 
 #[inline(always)]
-pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: &mut usize, mut last: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
+pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: usize, mut last: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
     let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
     let mut length = 0;
 
     for i in 0..chunk.len() {
         if chunk[i]==byte {
-            let pos = (*offset + i) as usize;
+            let pos = (offset + i) as usize;
             results[length] = (pos - last) as u16;
             last = pos;
             length += 1;
@@ -148,7 +148,7 @@ pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offs
 }
 
 #[inline]
-fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: &mut usize, mut last: usize) -> Option<CPUTokenRelativeStackInfo<LANE_SIZE>> {
+fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: usize, mut last: usize) -> Option<CPUTokenRelativeStackInfo<LANE_SIZE>> {
     let mut results: [u16; LANE_SIZE] = [0; LANE_SIZE];
     let mut length = 0;
 
@@ -159,7 +159,7 @@ fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, t
 
         for i in 0..items.len() {
             if cpu_unlikely_branch(items[i]) {
-                let pos = (*offset + i) as usize;
+                let pos = (offset + i) as usize;
                 results[length] = (pos - last) as u16;
                 last = pos;
                 length += 1;
@@ -177,36 +177,36 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
 (
     chunk: &[u8],
     byte: u8,
-    offset: &mut usize
+    offset: usize
 ) -> CPUTokenRelativeIndex
 {
     let mask = u8xN::<LANE_SIZE>::splat(byte);
     let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
 
-    let (initial, data, mut last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(prefix, byte, offset, 0);
+    let mut local_offset: usize = offset;
+    let (initial, data, mut last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(prefix, byte, local_offset, 0);
     let mut positions: RUMVec<u16> = RUMVec::<u16>::from(&data[..initial]);
-    *offset += prefix.len();
+    local_offset += prefix.len();
 
     for window in middle.into_iter() {
-        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask, offset, last) {
+        match cpu_collect_simd_avx2_n::<LANE_SIZE>(window, mask, local_offset, last) {
             Some((len, data, l)) => {
                 positions.extend_from_slice(&data[..len]);
                 last = l;
             },
             None => {},
         };
-        *offset += LANE_SIZE;
+        local_offset += LANE_SIZE;
     }
 
-    let (len, data, last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(postfix, byte, offset, last);
+    let (len, data, last): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(postfix, byte, local_offset, last);
     positions.extend_from_slice(&data[..len]);
-    *offset += postfix.len();
 
     positions
 }
 
 #[inline]
-pub fn cpu_collect_simd(window: &[u8], byte: u8, mut offset: &mut usize) -> CPUTokenRelativeIndexSet {
+pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenRelativeIndexSet {
     cpu_l3_prefetch(window.as_ptr());
     let indx = cpu_collect_simd_n::<CPU_SIMD_64_SIZE>(
         window,
@@ -224,7 +224,7 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
 
     for window in haystack.chunks(WINDOW_SIZE) {
         for byte in bytes {
-            let (b, indx) = cpu_collect_simd(window, *byte, &mut offset);
+            let (b, indx) = cpu_collect_simd(window, *byte, offset);
 
             if !indx.is_empty() {
                 for tok_indx in indx {
@@ -232,14 +232,8 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
                 }
             }
         }
+        offset += window.len();
     }
-
-    assert!(
-        cpu_unlikely_branch(offset <= haystack.len()),
-        "There's a bug with the splitting of input into discrete chunks we can operate on or with tracking the global offset during input scan! Input had size: {} but last offset was {}",
-        haystack.len(),
-        offset
-    );
 
     results
 }
