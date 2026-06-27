@@ -443,7 +443,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::{cpu_collect_simd, cpu_find_simd};
+    use crate::cpu::{cpu_collect_simd, cpu_find_simd, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
@@ -966,27 +966,49 @@ mod tests {
     fn test_cpu_collect_needle() {
         let data = b"                                                         n                    ";
         let expected = vec![57];
-        let indices = cpu_collect_simd(data, b'n');
+        let indices = cpu_collect_simd(data, b'n', &mut 0);
 
-        assert_eq!(indices, expected, "Could not find the needle in the haystack");
+        assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
 
     #[test]
     fn test_cpu_collect_needle_3() {
         let data = b"                                                         nnn                    ";
         let expected = vec![57, 1, 1];
-        let indices = cpu_collect_simd(data, b'n');
+        let indices = cpu_collect_simd(data, b'n', &mut 0);
 
-        assert_eq!(indices, expected, "Could not find the needle in the haystack");
+        assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
 
     #[test]
     fn test_cpu_collect_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
         let expected = vec![17, 1, 1, 41, 1, 1];
-        let indices = cpu_collect_simd(data, b'n');
+        let indices = cpu_collect_simd(data, b'n', &mut 0);
+
+        assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
+    }
+
+    #[test]
+    fn test_cpu_tokenize_needle_6() {
+        let data = b"                 nnn                                        nnn                    ";
+        let expected = vec![(110, 17), (110, 1), (110, 1), (110, 60), (110, 1), (110, 1)];
+        let indices = cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n");
 
         assert_eq!(indices, expected, "Could not find the needle in the haystack");
+    }
+
+    #[test]
+    fn test_cpu_tokenize_needle_6_benchmark() {
+        let data = b"                 nnn                                        nnn                    ";
+        let expected = vec![(110, 17), (110, 1), (110, 1), (110, 60), (110, 1), (110, 1)];
+        let (indices, time) = rumtk_benchmark_snippet!(||{
+            cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n")
+        });
+
+        println!("Tokenized message in {} us", &time);
+
+        assert!(time <= 10000, "Buffer tokenization took {} microseconds [> 10000 us]!", time);
     }
 
 }
