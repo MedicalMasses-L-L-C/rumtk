@@ -1566,13 +1566,29 @@ mod tests {
         let data = RUMBuffer::from_static(input.as_bytes());
         let mut tokens = V2Tokenizer::new(&data, b"|\r");
         let mut results: RUMVec<RUMBuffer> = vec![];
-        let expected: RUMVec<RUMBuffer> = vec![];
+        let expected: RUMVec<RUMBuffer> = vec![
+            RUMBuffer::from_static(b"MSH"),
+            RUMBuffer::from_static(b"^~\\&"),
+            RUMBuffer::from_static(b"ADT1"),
+            RUMBuffer::from_static(b"GOOD HEALTH HOSPITAL"),
+            RUMBuffer::from_static(b"GHH LAB, INC."),
+            RUMBuffer::from_static(b"GOOD HEALTH HOSPITAL"),
+            RUMBuffer::from_static(b"198808181126"),
+            RUMBuffer::from_static(b"SECURITY"),
+            RUMBuffer::from_static(b"ADT^A01^ADT_A01"),
+            RUMBuffer::from_static(b"MSG00001"),
+            RUMBuffer::from_static(b"P"),
+            RUMBuffer::from_static(b"2.8"),
+            RUMBuffer::from_static(b""),
+            RUMBuffer::from_static(b"")
+        ];
 
         tokens.push_end_token(b'\r');
 
-        for tok in tokens {
+        for tok in &mut tokens {
             results.push(tok);
         }
+        results.push(tokens.remainder());
 
         assert_eq!(
             results, expected,
@@ -1581,23 +1597,49 @@ mod tests {
     }
 
     #[test]
-    fn test_tokenize_large_message() {
+    fn test_tokenize_msh_segment_benchmark() {
+        let input = EXPECTED_MSH_SEGMENT;
+        let data = RUMBuffer::from_static(input.as_bytes());
+        let mut results: RUMVec<RUMBuffer> = vec![];
+
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let mut tokens = V2Tokenizer::new(&data, b"|\r");
+
+            tokens.push_end_token(b'\r');
+
+            for tok in &mut tokens {
+                results.push(tok);
+            }
+            results.push(tokens.remainder());
+            results
+        });
+
+        println!("Parsed message in {} us", &time);
+
+        assert!(time <= 300, "MSH tokenization took {} microseconds [> 300 us]!", time);
+    }
+
+    #[test]
+    fn test_tokenize_large_message_benchmark() {
         let input = V2_TEST_LARGE_MESSAGE;
         let data = RUMBuffer::from_static(input.as_bytes());
-        let mut tokens = V2Tokenizer::new(&data, b"|\r");
         let mut results: RUMVec<RUMBuffer> = vec![];
-        let expected: RUMVec<RUMBuffer> = vec![];
 
-        tokens.push_end_token(b'\r');
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let mut tokens = V2Tokenizer::new(&data, b"|\r");
 
-        for tok in tokens {
-            results.push(tok);
-        }
+            tokens.push_end_token(b'\r');
 
-        assert_eq!(
-            results, expected,
-            "Failed to tokenize large message!"
-        );
+            for tok in &mut tokens {
+                results.push(tok);
+            }
+            results.push(tokens.remainder());
+            results
+        });
+
+        println!("Parsed message in {} us", &time);
+
+        assert!(time <= 30000, "MSH tokenization took {} microseconds [> 30000 us]!", time);
     }
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////
