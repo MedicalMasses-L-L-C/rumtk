@@ -234,7 +234,12 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
         }
     }
 
-    assert!(cpu_unlikely_branch(offset <= haystack.len()), "There's a bug with the splitting of input into discrete chunks we can operate on or with tracking the global offset during input scan!");
+    assert!(
+        cpu_unlikely_branch(offset <= haystack.len()),
+        "There's a bug with the splitting of input into discrete chunks we can operate on or with tracking the global offset during input scan! Input had size: {} but last offset was {}",
+        haystack.len(),
+        offset
+    );
 
     results
 }
