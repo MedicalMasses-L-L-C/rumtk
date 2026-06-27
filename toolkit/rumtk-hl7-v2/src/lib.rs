@@ -1564,12 +1564,11 @@ mod tests {
     fn test_tokenize_msh_segment() {
         let input = EXPECTED_MSH_SEGMENT;
         let data = RUMBuffer::from_static(input.as_bytes());
-        let search_tokens: V2ParserCharacters = V2ParserCharacters::default();
-        let mut tokens = V2Tokenizer::new(&data, &search_tokens.to_buffer());
+        let mut tokens = V2Tokenizer::new(&data, b"|\r");
         let mut results: RUMVec<RUMBuffer> = vec![];
         let expected: RUMVec<RUMBuffer> = vec![];
 
-        tokens.push_end_token(search_tokens.segment_terminator);
+        tokens.push_end_token(b'\r');
 
         for tok in tokens {
             results.push(tok);
@@ -1585,12 +1584,11 @@ mod tests {
     fn test_tokenize_large_message() {
         let input = V2_TEST_LARGE_MESSAGE;
         let data = RUMBuffer::from_static(input.as_bytes());
-        let search_tokens: V2ParserCharacters = V2ParserCharacters::default();
-        let mut tokens = V2Tokenizer::new(&data, &search_tokens.to_buffer());
+        let mut tokens = V2Tokenizer::new(&data, b"|\r");
         let mut results: RUMVec<RUMBuffer> = vec![];
         let expected: RUMVec<RUMBuffer> = vec![];
 
-        tokens.push_end_token(search_tokens.segment_terminator);
+        tokens.push_end_token(b'\r');
 
         for tok in tokens {
             results.push(tok);
