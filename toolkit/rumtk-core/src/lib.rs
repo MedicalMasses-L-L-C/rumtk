@@ -966,7 +966,7 @@ mod tests {
     fn test_cpu_collect_needle() {
         let data = b"                                                         n                    ";
         let expected = vec![57];
-        let indices = cpu_collect_simd(data, b'n', &mut 0);
+        let indices = cpu_collect_simd(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
@@ -975,7 +975,7 @@ mod tests {
     fn test_cpu_collect_needle_3() {
         let data = b"                                                         nnn                    ";
         let expected = vec![57, 1, 1];
-        let indices = cpu_collect_simd(data, b'n', &mut 0);
+        let indices = cpu_collect_simd(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
@@ -984,7 +984,7 @@ mod tests {
     fn test_cpu_collect_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
         let expected = vec![17, 1, 1, 41, 1, 1];
-        let indices = cpu_collect_simd(data, b'n', &mut 0);
+        let indices = cpu_collect_simd(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
