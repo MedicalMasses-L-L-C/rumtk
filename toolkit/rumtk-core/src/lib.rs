@@ -974,7 +974,7 @@ mod tests {
     #[test]
     fn test_cpu_collect_needle_3() {
         let data = b"                                                         nnn                    ";
-        let expected = vec![57, 1, 1];
+        let expected = vec![57, 58, 59];
         let indices = cpu_collect_simd(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
@@ -983,7 +983,7 @@ mod tests {
     #[test]
     fn test_cpu_collect_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
-        let expected = vec![17, 1, 1, 41, 1, 1];
+        let expected = vec![17, 18, 19, 60, 61, 62];
         let indices = cpu_collect_simd(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
@@ -992,7 +992,7 @@ mod tests {
     #[test]
     fn test_cpu_tokenize_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
-        let expected = vec![(110, 17), (110, 1), (110, 1), (110, 60), (110, 1), (110, 1)];
+        let expected = vec![(110, 17), (110, 18), (110, 19), (110, 60), (110, 61), (110, 62)];
         let indices = cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n");
 
         assert_eq!(indices, expected, "Could not find the needle in the haystack");
@@ -1001,7 +1001,6 @@ mod tests {
     #[test]
     fn test_cpu_tokenize_needle_6_benchmark() {
         let data = b"                 nnn                                        nnn                    ";
-        let expected = vec![(110, 17), (110, 1), (110, 1), (110, 60), (110, 1), (110, 1)];
         let (indices, time) = rumtk_benchmark_snippet!(||{
             cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n")
         });
