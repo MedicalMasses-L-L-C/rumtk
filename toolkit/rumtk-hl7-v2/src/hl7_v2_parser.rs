@@ -75,9 +75,10 @@ pub mod v2_parser {
     pub type V2Tokens = CPUTokenSetCollection;
 
     pub struct V2Tokenizer {
-        pub remainder: RUMBuffer,
+        pub buffer: RUMBuffer,
         pub indices: V2Tokens,
         pub cursor: usize,
+        pub last: u32,
         pub end_tokens: RUMVec<u8>,
     }
 
@@ -85,9 +86,10 @@ pub mod v2_parser {
         pub fn new(buffer: &RUMBuffer, search_tokens: &[u8]) -> Self {
             let indices = cpu_tokenize_simd_rev::<CPU_SEARCH_WINDOW_512_SIZE>(&buffer[..], search_tokens);
             Self {
-                remainder: buffer.clone(),
+                buffer: buffer.clone(),
                 indices,
                 cursor: 0,
+                last: 0,
                 end_tokens: RUMVec::with_capacity(search_tokens.len()),
             }
         }
@@ -104,15 +106,36 @@ pub mod v2_parser {
             };
             let (tok, indx) = self.indices[self.cursor];
             if tok == end_token {
-                self.cursor += 1;
                 return None;
             }
 
-            let mut v = self.remainder.split_to((indx + 1).into());
-            println!("{}", buffer_to_str(&v).unwrap());
-            v.truncate(indx.into());
+            let v = self.pop_next(indx, self.cursor);
             self.cursor += 1;
+            self.last = indx;
             Some(v)
+        }
+
+        #[inline]
+        pub fn pop_next(&mut self, indx: u32, cursor: usize) -> RUMBuffer {
+            let i = (indx - self.last) as usize;
+            let mut v = self.buffer.split_to(i + (cursor == 0) as usize);
+            v.truncate(i - (cursor != 0) as usize);
+            v
+        }
+
+        #[inline]
+        pub fn remainder(&mut self) -> RUMBuffer {
+            let cursor = self.cursor;
+
+            if self.buffer.is_empty() || cursor == self.indices.len() {
+                return self.buffer.clone();
+            }
+
+            let (tok, indx) = self.indices[cursor];
+            let v = self.buffer.split_to((indx - self.last) as usize);
+            self.cursor += 1;
+            self.last = indx;
+            v
         }
 
         #[inline]
