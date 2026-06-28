@@ -32,6 +32,7 @@ pub const CPU_SIMD_64_SIZE: usize = 64;
 pub const CPU_SIMD_32_SIZE: usize = 32;
 pub const CPU_SIMD_16_SIZE: usize = 16;
 pub const CPU_SIMD_8_SIZE: usize = 8;
+pub const CPU_SEARCH_WINDOW_1024_SIZE: usize = 1024;
 pub const CPU_SEARCH_WINDOW_512_SIZE: usize = 512;
 pub const CPU_SEARCH_WINDOW_256_SIZE: usize = 256;
 pub const CPU_SEARCH_WINDOW_128_SIZE: usize = 128;
@@ -232,7 +233,7 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
         offset += window.len();
     }
 
-    results.sort_by(|a,b| a.1.cmp(&b.1));
+    results.sort_unstable_by(|a,b| a.1.cmp(&b.1));
 
     results
 }
