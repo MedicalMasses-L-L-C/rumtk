@@ -230,7 +230,7 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field, parser_chars.component_separator));
+            let mut component_list: ComponentList = ComponentList::new();
             let mut splitter = field.split_fast(parser_chars.component_separator);
 
             for c in &mut splitter {
@@ -337,7 +337,7 @@ pub mod v2_parser {
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
-            let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment[..], parser_chars.field_separator));
+            let mut field_list = V2FieldList::with_capacity(20);
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
