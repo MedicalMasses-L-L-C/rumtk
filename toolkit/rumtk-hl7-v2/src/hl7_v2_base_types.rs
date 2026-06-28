@@ -199,6 +199,18 @@ pub mod v2_base_types {
                 self.subcomponent_separator
             ])
         }
+
+        pub fn to_full_slice(&self) -> [u8; 7] {
+            [
+                self.segment_terminator,
+                self.field_separator,
+                self.component_separator,
+                self.repetition_separator,
+                self.escape_character,
+                self.subcomponent_separator,
+                self.truncation_character,
+            ]
+        }
     }
     ///
     /// Object representing the exact indices needed to search for a field or component.
