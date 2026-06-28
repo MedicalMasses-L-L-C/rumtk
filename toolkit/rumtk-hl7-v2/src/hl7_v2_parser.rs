@@ -49,7 +49,7 @@ pub mod v2_parser {
     use rumtk_core::base::{RUMResult, RUMVecDeque};
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_1024_SIZE};
+    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
@@ -72,147 +72,6 @@ pub mod v2_parser {
     }
 
     /**************************** Types *****************************************/
-    pub type V2Tokens = CPUTokenSetCollection;
-
-    #[derive(Clone)]
-    pub struct V2Tokenizer {
-        pub buffer: RUMBuffer,
-        pub indices: V2Tokens,
-        pub cursor: usize,
-        pub last: u32,
-        pub delimiters: V2ParserCharacters,
-    }
-
-    impl V2Tokenizer {
-        pub fn new(buffer: &RUMBuffer, delimiters: V2ParserCharacters) -> Self {
-            let indices = cpu_tokenize_simd_rev::<{ 32 * CPU_SEARCH_WINDOW_1024_SIZE }>(&buffer[..], &delimiters.to_full_slice());
-            Self {
-                buffer: buffer.clone(),
-                indices,
-                cursor: 0,
-                last: 0,
-                delimiters,
-            }
-        }
-
-        #[inline]
-        pub fn pop(&mut self) -> Option<(u8, u32)> {
-            if self.cursor == self.indices.len() {
-                return None;
-            }
-
-            let (tok, indx) = self.indices[self.cursor];
-            Some((tok, indx))
-        }
-
-        #[inline]
-        pub fn split(&mut self, indx: u32) -> RUMBuffer {
-            let i = (indx - self.last) as usize;
-            let mut v = self.buffer.split_to(i + (self.cursor == 0) as usize);
-            v.truncate(i - (self.cursor != 0 && i > 0) as usize);
-            self.last = indx;
-            self.cursor += 1;
-            v
-        }
-
-        #[inline]
-        pub fn pop_segment(&mut self) -> (u8, V2Segment) {
-            let mut fields = RUMVec::<V2FieldGroup>::new();
-            let mut field_group = V2FieldGroup::new();
-            let mut field = RUMVec::<V2Component>::new();
-
-            let (first_tok, first_indx) = self.indices[self.cursor];
-            let component = self.split(first_indx);
-            let segment_id = V2_SEGMENT_IDS(&component);
-
-            if segment_id == V2_MSHEADER_ID {
-                let component = V2Component::from(component);
-                field.push(component);
-                field_group.push(V2Field {
-                    components: field
-                });
-                fields.push(field_group);
-                field = RUMVec::<V2Component>::new();
-                field_group = RUMVec::<V2Field>::new();
-
-                self.cursor = self.token_next_index(self.delimiters.field_separator);
-            }
-
-            for _ in self.cursor..self.indices.len() {
-                let (tok, tok_indx) = self.indices[self.cursor];
-                let component = V2Component::from(self.split(tok_indx));
-                field.push(component);
-
-                if tok == self.delimiters.repetition_separator {
-                    field_group.push(V2Field {
-                        components: field
-                    });
-                    field = RUMVec::<V2Component>::new();
-                    continue;
-                }
-
-                if tok == self.delimiters.field_separator {
-                    field_group.push(V2Field {
-                        components: field
-                    });
-                    fields.push(field_group);
-                    field = RUMVec::<V2Component>::new();
-                    field_group = RUMVec::<V2Field>::new();
-                    continue;
-                }
-
-                if tok == self.delimiters.segment_terminator {
-                    break;
-                }
-            }
-
-            if self.cursor == self.indices.len() {
-                let component = V2Component::from(self.remainder());
-                field.push(component);
-                field_group.push(V2Field {
-                    components: field
-                });
-                fields.push(field_group);
-            }
-
-            (segment_id, V2Segment {
-                fields,
-            })
-        }
-
-        #[inline]
-        pub fn remainder(&mut self) -> RUMBuffer {
-            self.buffer.split_to(self.buffer.len())
-        }
-
-        #[inline]
-        pub fn is_empty(&self) -> bool {
-            self.buffer.is_empty()
-        }
-
-        #[inline]
-        pub fn token_next_index(&self, tok: u8) -> usize {
-            for i in self.cursor..self.indices.len() {
-                if tok == self.indices[i].0 {
-                    return i;
-                }
-            }
-            self.indices.len()
-        }
-
-        pub fn len(&self) -> usize {
-            todo!()
-        }
-    }
-
-    impl Iterator for V2Tokenizer {
-        type Item = (u8, u32);
-        #[inline(always)]
-        fn next(&mut self) -> Option<Self::Item> {
-            self.pop()
-        }
-    }
-
     ///
     /// V2Component.
     /// All V2Components contain the field's component data as a UTF-8 string.
@@ -357,13 +216,15 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
-        components: ComponentList
+        components: ComponentList,
+        separator: u8,
     }
 
     impl V2Field {
         pub fn new() -> Self {
             Self {
-                components: vec![V2Component::new()]
+                components: vec![V2Component::new()],
+                separator: 0
             }
         }
 
@@ -378,14 +239,16 @@ pub mod v2_parser {
             component_list.push(V2Component::from(splitter.remainder));
 
             Self {
-                components: component_list
+                components: component_list,
+                separator: parser_chars.component_separator
             }
         }
 
         #[inline(always)]
         pub fn from_single_field(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             Self {
-                components: vec![V2Component::from(field)]
+                components: vec![V2Component::from(field)],
+                separator: parser_chars.component_separator
             }
         }
 
@@ -452,6 +315,7 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Segment {
+        id: u8,
         fields: V2FieldList,
     }
 
@@ -498,6 +362,7 @@ pub mod v2_parser {
             field_list.push(Self::generate_subfields(raw_fields.remainder, parser_chars));
 
             Ok(V2Segment {
+                id: segment_id,
                 fields: field_list,
             })
         }
@@ -512,7 +377,9 @@ pub mod v2_parser {
                 segment.push(fields.join(&parser_chars.repetition_separator.as_string()));
             }
             rumtk_format!(
-                "{}",
+                "{}{}{}",
+                buffer_to_str(V2_SEGMENT_NAMES(self.id)).unwrap_or_default(),
+                parser_chars.field_separator.as_string(),
                 segment.join(&parser_chars.field_separator.as_string())
             )
         }
@@ -603,8 +470,7 @@ pub mod v2_parser {
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
-            let mut tokenizer = V2Tokenizer::new(&sanitized, parse_characters.clone());
-            let segments = V2Message::extract_segments_fast(&mut tokenizer, &parse_characters)?;
+            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
 
             Ok(V2Message {
                 separators: parse_characters,
@@ -790,39 +656,9 @@ pub mod v2_parser {
             Ok(segments)
         }
 
-        ///
-        ///
-        #[inline(always)]
-        pub fn extract_segments_fast(
-            tokens: &mut V2Tokenizer,
-            parser_chars: &V2ParserCharacters,
-        ) -> V2Result<V2SegmentMap> {
-            let mut segments: V2SegmentMap = V2SegmentMap::new();
-
-            while !tokens.is_empty() {
-                V2Message::push_group(&mut segments, tokens.pop_segment());
-            }
-
-            Ok(segments)
-        }
-
-        #[inline(always)]
-        pub fn push_group(group: &mut V2SegmentMap, segment: (u8, V2Segment)) {
-            let key = segment.0;
-
-            if cpu_likely_branch(group.contains_key(&key)) {
-                group.get_mut(&key).unwrap().push(segment.1);
-                return;
-            }
-
-            let mut segment_set = V2SegmentGroup::new();
-            segment_set.push(segment.1);
-            group.insert(key.into(), segment_set);
-        }
-
         #[inline(always)]
         pub fn push_to_group(group: &mut V2SegmentMap, segment: V2Segment) {
-            let key = 0;
+            let key = segment.id;
 
             if cpu_likely_branch(group.contains_key(&key)) {
                 group.get_mut(&key).unwrap().push(segment);

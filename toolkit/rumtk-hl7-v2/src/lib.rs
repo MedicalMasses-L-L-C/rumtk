@@ -53,7 +53,7 @@ mod tests {
         mllp_decode, mllp_encode, MLLPClientMessages, CR, EB, MLLP_FILTER_POLICY, SB,
     };
     use crate::hl7_v2_optionality_rules::Optionality;
-    use crate::hl7_v2_parser::v2_parser::{V2Field, V2Message, V2SegmentGroup, V2Tokenizer};
+    use crate::hl7_v2_parser::v2_parser::{V2Field, V2Message};
     use crate::hl7_v2_search::REGEX_V2_SEARCH_DEFAULT;
     use crate::{
         rumtk_v2_find_component, rumtk_v2_generate_message, rumtk_v2_mllp_connect,
@@ -67,7 +67,7 @@ mod tests {
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::types::RUMBuffer;
-    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
+    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
     use std::thread::spawn;
     use std::time::Instant;
     /**********************************Constants**************************************/
@@ -1559,74 +1559,6 @@ mod tests {
 
         assert!(time <= 10000, "V2Message scanning took {} microseconds [> 10000 us]!", time);
     }
-
-    #[test]
-    fn test_tokenize_msh_segment() {
-        let input = EXPECTED_MSH_SEGMENT;
-        let data = RUMBuffer::from_static(input.as_bytes());
-        let mut tokens = V2Tokenizer::new(&data, V2ParserCharacters::default());
-        let mut segments: V2SegmentGroup = vec![];
-        let expected: V2SegmentGroup = rumtk_deserialize!(
-            &RUMString::from("[{\"fields\":[[{\"components\":[{\"component\":\"MSH\"}]}],[{\"components\":[{\"component\":\"^~\\\\&\"}]}],[{\"components\":[{\"component\":\"ADT1\"}]}],[{\"components\":[{\"component\":\"GOOD HEALTH HOSPITAL\"}]}],[{\"components\":[{\"component\":\"GHH LAB, INC.\"}]}],[{\"components\":[{\"component\":\"GOOD HEALTH HOSPITAL\"}]}],[{\"components\":[{\"component\":\"198808181126\"}]}],[{\"components\":[{\"component\":\"SECURITY\"}]}],[{\"components\":[{\"component\":\"ADT\"},{\"component\":\"A01\"},{\"component\":\"ADT_A01\"}]}],[{\"components\":[{\"component\":\"MSG00001\"}]}],[{\"components\":[{\"component\":\"P\"}]}],[{\"components\":[{\"component\":\"2.8\"}]}],[{\"components\":[{\"component\":\"\"}]}],[{\"components\":[{\"component\":\"\"}]}]]}]")
-        ).unwrap();
-
-        while !tokens.is_empty() {
-            let (seg_id, segment) = tokens.pop_segment();
-            segments.push(segment);
-        }
-
-        assert_eq!(
-            segments, expected,
-            "Failed to tokenize large message!"
-        );
-    }
-
-    #[test]
-    fn test_tokenize_msh_segment_benchmark() {
-        let input = EXPECTED_MSH_SEGMENT;
-        let data = RUMBuffer::from_static(input.as_bytes());
-        let mut segments: V2SegmentGroup = vec![];
-
-        let (r, time) = rumtk_benchmark_snippet!(|| {
-            let mut tokens = V2Tokenizer::new(&data, V2ParserCharacters::default());
-
-            while !tokens.is_empty() {
-                let (seg_id, segment) = tokens.pop_segment();
-                segments.push(segment);
-            }
-
-            segments
-        });
-
-        println!("Parsed message in {} us", &time);
-
-        assert!(time <= 300, "MSH tokenization took {} microseconds [> 300 us]!", time);
-    }
-
-    /*
-    #[test]
-    fn test_tokenize_large_message_benchmark() {
-        let input = V2_TEST_LARGE_MESSAGE;
-        let data = RUMBuffer::from_static(input.as_bytes());
-        let mut results: RUMVec<RUMBuffer> = vec![];
-
-        let (r, time) = rumtk_benchmark_snippet!(|| {
-            let mut tokens = V2Tokenizer::new(&data, b"|\r");
-
-            tokens.push_end_token(b'\r');
-
-            for tok in &mut tokens {
-                results.push(tok);
-            }
-            results.push(tokens.remainder());
-            results
-        });
-
-        println!("Parsed message in {} us", &time);
-
-        assert!(time <= 30000, "MSH tokenization took {} microseconds [> 30000 us]!", time);
-    }
-    */
 
     ////////////////////////////Fuzzed Tests/////////////////////////////////
 
