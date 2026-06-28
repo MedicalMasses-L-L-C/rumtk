@@ -45,7 +45,8 @@ pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
     use crate::strings::rumtk_format;
     use crate::types::RUMBuffer;
-    use std::io::{stdin, stdout, IoSlice, Read, Write};
+    use std::io::{stdin, stdout, BufWriter, Read, Write};
+    use std::os::fd::FromRawFd;
 
     pub const BUFFER_SIZE: usize = 1024 * 4;
     pub const BUFFER_CHUNK_SIZE: usize = 512;
@@ -140,13 +141,30 @@ pub mod cli_utils {
     ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
+    #[cfg(target_os = "windows")]
     pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
-        match stdout().write_all_vectored(&mut [IoSlice::new(data)]) {
+        match stdout().write_all(data) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
         flush_stdout()?;
         Ok(())
+    }
+
+    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
+    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
+        // Create an unbuffered File handle from file descriptor 1 (stdout)
+        let mut file = BufWriter::new(unsafe { std::fs::File::from_raw_fd(1) });
+
+        // Write bytes directly
+        match file.write_all(data) {
+            Ok(_) => {
+                file.flush().unwrap_or_default();
+                std::mem::forget(file);
+                Ok(())
+            },
+            Err(e) => Err(rumtk_format!("Error writing to stdout because {}", e)),
+        }
     }
 
     fn flush_stdout() -> RUMResult<()> {
