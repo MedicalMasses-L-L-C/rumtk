@@ -33,10 +33,6 @@
 ///
 
 pub mod v2_parser {
-    use crate::hl7_v2_constants::{V2_MSHEADER_ID, V2_SEGMENT_NAMES};
-    use pyo3::prelude::*;
-    use std::io::BufRead;
-
     pub use crate::hl7_v2_base_types::v2_primitives::{
         V2DateTime, V2ParserCharacters, V2PrimitiveCasting, V2Result, V2SearchIndex, V2String,
     };
@@ -44,7 +40,9 @@ pub mod v2_parser {
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR, V2_SEGMENT_TERMINATORS
     };
+    use crate::hl7_v2_constants::{V2_MSHEADER_ID, V2_SEGMENT_NAMES};
     use pyo3::exceptions::PyValueError;
+    use pyo3::prelude::*;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
@@ -53,12 +51,14 @@ pub mod v2_parser {
     use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
-    use rumtk_core::serde::RUMSerializableBuffer;
+    use rumtk_core::serde::{RUMSerializableBuffer, RUMSerializableManualDrop};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
     use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap};
+    use std::io::BufRead;
+    use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
     use std::str::Chars;
     use std::sync::Arc;
@@ -295,7 +295,7 @@ pub mod v2_parser {
     }
 
     pub type V2FieldGroup = RUMVec<V2Field>;
-    pub type V2FieldList = RUMVec<V2FieldGroup>;
+    pub type V2FieldList = RUMVec<RUMSerializableManualDrop<V2FieldGroup>>;
 
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
@@ -315,7 +315,6 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Segment {
-        id: u8,
         fields: V2FieldList,
     }
 
@@ -332,7 +331,7 @@ pub mod v2_parser {
         /// Field ID field onto the field list of the segment and instead we store its id which is effectively a compression operation.**
         ///
         #[inline(always)]
-        pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<Self> {
+        pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<(u8, Self)> {
             let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
@@ -348,9 +347,9 @@ pub mod v2_parser {
 
             if segment_id == V2_MSHEADER_ID {
                 field_list.push(
-                    vec![
+                    RUMSerializableManualDrop::new(vec![
                         V2Field::from_single_field(parser_chars.to_buffer(), parser_chars),
-                    ]
+                    ])
                 );
 
                 raw_fields.next();
@@ -361,25 +360,22 @@ pub mod v2_parser {
             }
             field_list.push(Self::generate_subfields(raw_fields.remainder, parser_chars));
 
-            Ok(V2Segment {
-                id: segment_id,
+            Ok((segment_id, V2Segment {
                 fields: field_list,
-            })
+            }))
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
             let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.fields.len());
             for field_group in self.fields.iter() {
-                let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.len());
-                for field in field_group {
+                let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.0.len());
+                for field in field_group.0.iter() {
                     fields.push(field.to_string(parser_chars));
                 }
                 segment.push(fields.join(&parser_chars.repetition_separator.as_string()));
             }
             rumtk_format!(
-                "{}{}{}",
-                buffer_to_str(V2_SEGMENT_NAMES(self.id)).unwrap_or_default(),
-                parser_chars.field_separator.as_string(),
+                "{}",
                 segment.join(&parser_chars.field_separator.as_string())
             )
         }
@@ -387,7 +383,7 @@ pub mod v2_parser {
         pub fn get(&self, indx: isize) -> V2Result<&V2FieldGroup> {
             let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
             match self.fields.get(field_indx) {
-                Some(field) => Ok(field),
+                Some(field) => Ok(field.inner()),
                 None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
@@ -395,7 +391,7 @@ pub mod v2_parser {
         pub fn get_mut(&mut self, indx: isize) -> V2Result<&mut V2FieldGroup> {
             let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
             match self.fields.get_mut(field_indx) {
-                Some(field) => Ok(field),
+                Some(field) => Ok(field.inner_mut()),
                 None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
@@ -405,9 +401,9 @@ pub mod v2_parser {
         }
 
         #[inline(always)]
-        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
+        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMSerializableManualDrop<RUMVec<V2Field>> {
             if field.is_empty() {
-                return vec![V2Field::new()];
+                return RUMSerializableManualDrop::new(vec![V2Field::new()]);
             }
 
             let mut field_group = V2FieldGroup::new();
@@ -417,7 +413,7 @@ pub mod v2_parser {
             }
             field_group.push(V2Field::from(splitter.remainder, parser_chars));
 
-            field_group
+            RUMSerializableManualDrop::new(field_group)
         }
     }
 
@@ -645,28 +641,25 @@ pub mod v2_parser {
                     continue;
                 }
 
-                let segment: V2Segment = V2Segment::from(segment, parser_chars)?;
-
-                V2Message::push_to_group(&mut segments, segment);
+                V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
             }
 
-            let segment: V2Segment = V2Segment::from(splitter.remainder, parser_chars)?;
-            V2Message::push_to_group(&mut segments, segment);
+            V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
 
             Ok(segments)
         }
 
         #[inline(always)]
-        pub fn push_to_group(group: &mut V2SegmentMap, segment: V2Segment) {
-            let key = segment.id;
+        pub fn push_to_group(group: &mut V2SegmentMap, segment: (u8, V2Segment)) {
+            let key = segment.0;
 
             if cpu_likely_branch(group.contains_key(&key)) {
-                group.get_mut(&key).unwrap().push(segment);
+                group.get_mut(&key).unwrap().push(segment.1);
                 return;
             }
 
             let mut segment_set = V2SegmentGroup::new();
-            segment_set.push(segment);
+            segment_set.push(segment.1);
             group.insert(key.into(), segment_set);
         }
     }
