@@ -485,7 +485,10 @@ pub mod v2_parser {
             for segment_key in self.segment_groups.keys() {
                 let segment_group = &self.segment_groups[segment_key];
                 for segment in segment_group {
-                    msg.push(segment.to_string(&self.separators));
+                    msg.push(rumtk_format!("{}{}{}",
+                        buffer_to_str(V2_SEGMENT_NAMES(*segment_key)).unwrap_or_default(),
+                        buffer_to_str(&[self.separators.field_separator]).unwrap_or_default(),
+                        segment.to_string(&self.separators)));
                 }
             }
 
