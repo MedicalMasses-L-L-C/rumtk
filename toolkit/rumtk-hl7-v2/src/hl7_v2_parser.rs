@@ -217,14 +217,12 @@ pub mod v2_parser {
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
         components: ComponentList,
-        separator: u8,
     }
 
     impl V2Field {
         pub fn new() -> Self {
             Self {
-                components: vec![V2Component::new()],
-                separator: 0
+                components: vec![V2Component::new()]
             }
         }
 
@@ -239,16 +237,14 @@ pub mod v2_parser {
             component_list.push(V2Component::from(splitter.remainder));
 
             Self {
-                components: component_list,
-                separator: parser_chars.component_separator
+                components: component_list
             }
         }
 
         #[inline(always)]
         pub fn from_single_field(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             Self {
-                components: vec![V2Component::from(field)],
-                separator: parser_chars.component_separator
+                components: vec![V2Component::from(field)]
             }
         }
 
