@@ -19,18 +19,29 @@
  */
 use crate::Arena;
 use std::alloc::{Allocator, GlobalAlloc};
+use std::borrow::Borrow;
 use std::collections::LinkedList;
 use std::sync::{Arc, LazyLock, Mutex, RwLock};
 
 pub type SafeArena = Arc<RwLock<Arena>>;
 type Sand = LinkedList<Arena>;
 type DuneLock = Arc<Mutex<u8>>;
+type NullDune = LazyLock<Arena>;
 type ArrakisDunes = LazyLock<Sand>;
 type ArrakisLock = LazyLock<DuneLock>;
 
+static mut NULL: NullDune = NullDune::new(|| Arena::new());
 static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
+#[inline]
+pub fn dune_nullptr<T>() -> &'static T {
+    unsafe {
+        *(NULL.nullptr().unwrap().as_ptr())
+    }
+}
+
+#[inline]
 pub fn dune_allocate(chunk_size: usize) -> &'static Arena {
     unsafe {
         let _unused = LOCK.lock().unwrap();
@@ -38,6 +49,7 @@ pub fn dune_allocate(chunk_size: usize) -> &'static Arena {
     }
 }
 
+#[inline]
 pub fn dune_deallocate(arena: &'static Arena) {
     let address = arena.address();
     unsafe {
@@ -45,6 +57,15 @@ pub fn dune_deallocate(arena: &'static Arena) {
 
         ARRAKIS.retain(|e| e.address() != address);
     }
+}
+
+#[macro_export]
+macro_rules! rumtk_dune_nullptr {
+    ( ) => {{
+        use $crate::dune::dune_nullptr;
+
+        dune_nullptr()
+    }};
 }
 
 #[macro_export]
