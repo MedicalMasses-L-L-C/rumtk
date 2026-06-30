@@ -17,6 +17,7 @@ debug = true
 strip = false
 
 [dependencies]
+rumtk-arena = { version = "0.2.3", path = "../rumtk-arena" }
 unicode-segmentation = "1.13.2"
 encoding_rs = "0.8.35"
 chardetng = "1.0.0"
