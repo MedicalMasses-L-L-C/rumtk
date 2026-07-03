@@ -43,7 +43,7 @@ use tokio::io::AsyncReadExt;
 /// ```
 ///
 pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
-    RUMBuffer::copy_from_slice(buffer)
+    RUMBuffer::from(buffer)
 }
 
 ///

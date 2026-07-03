@@ -704,7 +704,7 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 /// ```
 ///
 pub fn string_to_buffer(data: &str) -> RUMBuffer {
-    RUMBuffer::copy_from_slice(data.as_bytes())
+    RUMBuffer::from(data)
 }
 
 ///

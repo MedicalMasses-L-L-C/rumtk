@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::buffers::buffer_to_str;
-use crate::buffers::RUMBuffer;
+use crate::buffers::*;
 pub use crate::serde::json::*;
 use crate::strings::{string_to_buffer, AsStr};
 pub use crate::types::RUMOrderedMap;
@@ -101,7 +101,7 @@ impl AsRef<RUMBuffer> for RUMSerializableManualBuffer {
 
 impl AsStr for RUMSerializableManualBuffer {
     fn as_str(&self) -> &str {
-        buffer_to_str(&self.0).unwrap_or_default()
+        buffer_to_str(self.0.as_slice()).unwrap_or_default()
     }
 }
 

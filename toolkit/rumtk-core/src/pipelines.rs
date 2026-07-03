@@ -20,7 +20,7 @@
 
 pub mod pipeline_types {
     use crate::base::{RUMResult, RUMVec};
-    use crate::buffers::RUMBuffer;
+    use crate::buffers::*;
     use crate::serde::json::{RUMDeJson, RUMSerJson};
     use crate::strings::{RUMString, RUMStringConversions};
     use crate::types::RUMHashMap;
@@ -69,7 +69,7 @@ pub mod pipeline_functions {
     use std::io::{Read, Write};
     use std::os::unix::ffi::OsStrExt;
 
-    use crate::buffers::RUMBuffer;
+    use crate::buffers::*;
     use crate::rumtk_resolve_sync_task;
     use std::process::{Command, Stdio};
 
