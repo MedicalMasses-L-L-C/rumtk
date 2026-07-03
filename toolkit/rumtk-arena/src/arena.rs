@@ -232,14 +232,6 @@ impl ArenaAlloc {
         Ok(mem.cast())
     }
 
-    #[inline(always)]
-    pub fn nullptr<T>(&mut self) -> ArenaResult<NonNull<T>> {
-        let src = std::ptr::null();
-
-        let mem = cast_to_nonnull(self.write_bytes(src, 0)?);
-        Ok(mem.cast())
-    }
-
     ///
     /// We do not truly drop objects. Instead, we move the cursor back by the requested number of bytes.
     ///
@@ -340,11 +332,6 @@ impl Arena {
         Self {
             memory: ArenaRef::new(RwLock::new(ArenaAlloc::with_capacity(capacity)))
         }
-    }
-
-    #[inline(always)]
-    pub fn nullptr<T>(&mut self) -> ArenaResult<NonNull<T>> {
-        self.memory.write().unwrap().nullptr()
     }
 
     #[inline(always)]

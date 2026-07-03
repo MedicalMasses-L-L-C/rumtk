@@ -8,6 +8,7 @@ extern crate core;
 pub mod arena;
 pub mod collections;
 pub mod dune;
+pub mod constants;
 
 pub use arena::Arena;
 

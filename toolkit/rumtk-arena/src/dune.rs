@@ -17,6 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::constants::NULL_U8_PTR;
 use crate::Arena;
 use std::alloc::{Allocator, GlobalAlloc};
 use std::borrow::Borrow;
@@ -35,10 +36,8 @@ static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
 #[inline]
-pub fn dune_nullptr<T>() -> &'static T {
-    unsafe {
-        *(NULL.nullptr().unwrap().as_ptr())
-    }
+pub const fn dune_nullptr() -> &'static [u8] {
+    &NULL_U8_PTR
 }
 
 #[inline]
