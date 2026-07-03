@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub use crate::buffers::{RUMBuffer, RUMBufferMut};
 pub use clap::Parser as RUMCLIParser;
 pub use indexmap::IndexMap as RUMOrderedMap;
 use std::any::TypeId;

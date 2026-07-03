@@ -20,9 +20,9 @@
 
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::constants::DEFAULT_BYTE_WINDOW_SIZE;
+use crate::buffers::RUMBuffer;
 use crate::cpu::*;
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
-pub use bytes::{BufMut, Bytes as RUMBuffer, BytesMut as RUMBufferMut};
 use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
 use tokio::io::AsyncReadExt;

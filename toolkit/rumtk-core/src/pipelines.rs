@@ -20,9 +20,10 @@
 
 pub mod pipeline_types {
     use crate::base::{RUMResult, RUMVec};
+    use crate::buffers::RUMBuffer;
     use crate::serde::json::{RUMDeJson, RUMSerJson};
     use crate::strings::{RUMString, RUMStringConversions};
-    use crate::types::{RUMBuffer, RUMHashMap};
+    use crate::types::RUMHashMap;
     use std::process::{Child, Command};
 
     pub static EMPTY_COMMAND_LINE: RUMCommandLine = RUMCommandLine::new();
@@ -68,8 +69,8 @@ pub mod pipeline_functions {
     use std::io::{Read, Write};
     use std::os::unix::ffi::OsStrExt;
 
+    use crate::buffers::RUMBuffer;
     use crate::rumtk_resolve_sync_task;
-    use crate::types::RUMBuffer;
     use std::process::{Command, Stdio};
 
     const DEFAULT_PROCESS_ASYNC_WAIT: f32 = 0.001;

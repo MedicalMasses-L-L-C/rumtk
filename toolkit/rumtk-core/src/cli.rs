@@ -43,8 +43,8 @@
 ///
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
+    use crate::buffers::RUMBuffer;
     use crate::strings::rumtk_format;
-    use crate::types::RUMBuffer;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     use std::os::fd::FromRawFd;
 

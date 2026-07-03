@@ -17,12 +17,49 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use rumtk_arena::rumtk_dune_nullptr;
+use std::sync::{Arc, RwLock};
 
-pub mod constants;
-pub mod helpers;
-pub mod types;
-pub mod rumbuffer;
+type RUMBufferInner = Arc<RwLock<Vec<u8>>>;
 
-pub use helpers::*;
-pub use rumbuffer::*;
-pub use types::*;
+
+#[derive(Debug, PartialEq)]
+pub struct RUMBuffer {
+    data: RUMBufferInner,
+    drop: bool,
+}
+
+impl RUMBuffer {
+    pub const fn new() -> Self {
+        Self {
+            data: rumtk_dune_nullptr!(),
+            drop: false,
+        }
+    }
+
+    pub fn split_to(&self, index: usize) -> Self {
+        Self {
+            data: &self.data[..index],
+            drop: false
+        }
+    }
+}
+
+trait AsSlice {
+    type Item;
+    fn as_slice(&self) -> &[Self::Item];
+}
+
+impl AsSlice for RUMBuffer {
+    type Item = u8;
+
+    fn as_slice(&self) -> &[Self::Item] {
+        self.data
+    }
+}
+
+impl AsRef<[u8]> for RUMBuffer {
+    fn as_ref(&self) -> &[u8] {
+        self.data
+    }
+}

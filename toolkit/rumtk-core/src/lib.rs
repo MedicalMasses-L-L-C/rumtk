@@ -51,17 +51,18 @@ pub mod types;
 pub mod buffers;
 mod instrumentation;
 pub mod cpu;
+mod mem;
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::base::{clamp_index, RUMResult};
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
+    use crate::buffers::RUMBuffer;
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson, RUMSerializableBuffer};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
-    use crate::types::RUMBuffer;
     use std::process::Stdio;
     use std::sync::Arc;
     use tokio::io::{split, AsyncBufReadExt};

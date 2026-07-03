@@ -17,48 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::buffers::RUMBuffer;
 use crate::buffers::{buffer_find, buffer_find_byte};
-use rumtk_arena::rumtk_dune_nullptr;
-
-pub struct RUMBuffer {
-    data: &'static [u8],
-    drop: bool,
-}
-
-impl RUMBuffer {
-    pub const fn new() -> Self {
-        Self {
-            data: rumtk_dune_nullptr!(),
-            drop: false,
-        }
-    }
-
-    pub fn split_to(&self, index: usize) -> Self {
-        Self {
-            data: &self.data[..index],
-            drop: false
-        }
-    }
-}
-
-trait AsSlice {
-    type Item;
-    fn as_slice(&self) -> &[Self::Item];
-}
-
-impl AsSlice for RUMBuffer {
-    type Item = u8;
-
-    fn as_slice(&self) -> &[Self::Item] {
-        self.data
-    }
-}
-
-impl AsRef<[u8]> for RUMBuffer {
-    fn as_ref(&self) -> &[u8] {
-        self.data
-    }
-}
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],

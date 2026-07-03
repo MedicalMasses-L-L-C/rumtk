@@ -18,9 +18,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::buffers::buffer_to_str;
+use crate::buffers::RUMBuffer;
 pub use crate::serde::json::*;
 use crate::strings::{string_to_buffer, AsStr};
-use crate::types::RUMBuffer;
 pub use crate::types::RUMOrderedMap;
 use std::hash::Hash;
 use std::mem::ManuallyDrop;

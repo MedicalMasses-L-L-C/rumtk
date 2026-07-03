@@ -18,7 +18,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::{is_unique, RUMResult, RUMVec};
-use crate::types::RUMBuffer;
+use crate::buffers::RUMBuffer;
 use base64::prelude::*;
 use chardetng::{EncodingDetector, Iso2022JpDetection, Utf8Detection};
 use encoding_rs::Encoding;
