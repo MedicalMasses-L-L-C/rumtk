@@ -608,7 +608,7 @@ pub mod v2_parser {
         /// OBR|2|ORD231-2^NIST EHR^2.16.840.1.113883.3.72.5.24^ISO||21482-5^Protein [Mass/volume] in 24 hour Urine^LN^^^^^^24 hour Urine Protein|||201301151130-0800|201301160912-0800||||||||134569827^Feller^Hans^^^^^^NPI&2.16.840.1.113883.4.6&ISO^L^^^NPI
         /// DG1|1||I10^Essential (primary) hypertension^I10C^^^^^^Hypertension, NOS|||F|||||||||2";
         ///
-        /// let data = RUMBuffer::from_static(RAW_MSG.as_bytes());
+        /// let data = RUMBuffer::from(RAW_MSG.as_bytes());
         /// let sanitized = V2Message::sanitize(data);
         ///
         /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());

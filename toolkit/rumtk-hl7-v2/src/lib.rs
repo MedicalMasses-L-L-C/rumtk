@@ -75,7 +75,7 @@ mod tests {
     /*********************************Test Cases**************************************/
     #[test]
     fn test_hl7_v2_field_parsing() {
-        let field_str = RUMBuffer::from_static(DEFAULT_HL7_V2_FIELD_STRING.as_bytes());
+        let field_str = RUMBuffer::from(DEFAULT_HL7_V2_FIELD_STRING.as_bytes());
         let encode_chars = V2ParserCharacters::new();
         let field = V2Field::from(field_str, &encode_chars);
         println!("{}", DEFAULT_HL7_V2_FIELD_STRING);
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_sanitize_hl7_v2_message() {
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message.clone());
         println!("{:?}", buffer_to_str(message.as_slice()).unwrap());
         println!("{:?}", buffer_to_str(sanitized_message.as_slice()).unwrap());
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_tokenize_hl7_v2_message() {
         let encode_chars = V2ParserCharacters::new();
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         println!("Input => {:?}", &sanitized_message);
         println!("Parse chars => {:#?}", &encode_chars);
@@ -151,7 +151,7 @@ mod tests {
     #[test]
     fn test_load_hl7_v2_encoding_characters() {
         let encode_chars = V2ParserCharacters::new();
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{:#?}", encode_chars);
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_segments() {
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         let parsed_segments = V2Message::extract_segments(sanitized_message, &encode_chars).unwrap();
@@ -225,7 +225,7 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_scrambled_segments() {
-        let message = RUMBuffer::from_static(HL7_V2_SCRAMBLED.as_bytes());
+        let message = RUMBuffer::from(HL7_V2_SCRAMBLED.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{}", buffer_to_str(&sanitized_message.as_slice()).unwrap());
@@ -274,7 +274,7 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_two_segments_parsed_correctly() {
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_TWO_SEGMENTS.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_TWO_SEGMENTS.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let message = V2Message::try_from(sanitized_message.clone()).unwrap();
         let generated = rumtk_v2_generate_message!(message);
@@ -983,7 +983,7 @@ mod tests {
 
     #[test]
     fn test_validated_cast_component_to_type() {
-        let message = RUMBuffer::from_static(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
         let sanitized_message = V2Message::sanitize(message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         let v2_component = V2ComponentTypeDescriptor::new(
@@ -1432,7 +1432,7 @@ mod tests {
     ///
     #[test]
     fn test_buffer_basic_split_segments() {
-        let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+        let mut buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| {
             let split_count = buffer.len() / BUFFER_CHUNK_SIZE;
@@ -1449,7 +1449,7 @@ mod tests {
 
     #[test]
     fn test_buffer_split_fast_segments() {
-        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+        let buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| for b in buffer.split_fast('\r' as u8) {});
         
@@ -1460,7 +1460,7 @@ mod tests {
     fn test_buffer_replace_fragment() {
         let pattern = "4050097";
         let replacement = "405009789";
-        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+        let buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| buffer_replace(&buffer, pattern.as_bytes(), replacement.as_bytes()));
 
@@ -1471,7 +1471,7 @@ mod tests {
     fn test_buffer_replace_in_place() {
         let pattern = "4050097";
         let replacement = "4050098";
-        let mut buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+        let mut buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| {
             match buffer.try_into_mut() {
@@ -1488,7 +1488,7 @@ mod tests {
 
     #[test]
     fn test_parser_benchmark() {
-        let buffer = RUMBuffer::from_static(V2_TEST_LARGE_MESSAGE.as_bytes());
+        let buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| V2Message::try_from_buffer(buffer));
 
