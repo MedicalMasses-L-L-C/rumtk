@@ -20,8 +20,8 @@
 use crate::hl7_v2_base_types::v2_base_types::V2Result;
 use crate::hl7_v2_parser::v2_parser::V2Message;
 use pyo3::pyclass;
+use rumtk_core::buffers::*;
 use rumtk_core::strings::RUMString;
-use rumtk_core::types::RUMBuffer;
 use std::sync::Arc;
 
 #[derive(Default, Debug, PartialEq, Clone)]

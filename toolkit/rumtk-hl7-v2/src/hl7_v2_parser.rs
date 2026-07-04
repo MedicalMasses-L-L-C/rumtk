@@ -45,6 +45,7 @@ pub mod v2_parser {
     use pyo3::prelude::*;
     use rumtk_core::base::{clamp_index, RUMError, RUMVec};
     use rumtk_core::base::{RUMResult, RUMVecDeque};
+    use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
@@ -56,7 +57,7 @@ pub mod v2_parser {
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
-    use rumtk_core::types::{RUMBuffer, RUMBufferMut, RUMOrderedMap};
+    use rumtk_core::types::RUMOrderedMap;
     use std::io::BufRead;
     use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
@@ -614,14 +615,11 @@ pub mod v2_parser {
         /// ```
         ///
         #[inline(always)]
-        pub fn sanitize(raw_message: RUMBuffer) -> RUMBuffer {
-            let mut raw_data = match raw_message.try_into_mut() {
-                Ok(mut raw_data) => raw_data,
-                Err(mut raw_data) => RUMBufferMut::from_iter(raw_data),
-            };
+        pub fn sanitize(mut raw_message: RUMBuffer) -> RUMBuffer {
+            let mut raw_data = raw_message.mutate();
             buffer_replace_in_place(&mut raw_data, &['\n'  as u8], &['\r' as u8]);
             buffer_replace_in_place(&mut raw_data, &['\r' as u8, '\r' as u8], &['\r' as u8, ' ' as u8]);
-            buffer_trim(&raw_data.freeze())
+            buffer_trim(&raw_message)
         }
 
         ///
@@ -693,7 +691,7 @@ pub mod v2_parser {
     impl<'a> TryFrom<&[u8]> for V2Message {
         type Error = RUMString;
         fn try_from(input: &[u8]) -> V2Result<V2Message> {
-            V2Message::try_from_buffer(RUMBuffer::copy_from_slice(input))
+            V2Message::try_from_buffer(RUMBuffer::from(input))
         }
     }
 
