@@ -591,7 +591,7 @@ pub mod v2_parser {
         ///
         /// ```
         /// use rumtk_core::buffers::buffer_to_string;
-        /// use rumtk_core::types::RUMBuffer;
+        /// use rumtk_core::buffers::*;
         /// use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
         ///
         /// const RAW_MSG: &str = r"MSH|^~\\&#|NIST EHR^2.16.840.1.113883.3.72.5.22^ISO|NIST EHR Facility^2.16.840.1.113883.3.72.5.23^ISO|NIST Test Lab APP^2.16.840.1.113883.3.72.5.20^ISO|NIST Lab Facility^2.16.840.1.113883.3.72.5.21^ISO|20130211184101-0500||OML^O21^OML_O21|NIST-LOI_9.0_1.1-GU_PRU|T|2.5.1|||AL|AL|||||LOI_Common_Component^LOI BaseProfile^2.16.840.1.113883.9.66^ISO~LOI_GU_Component^LOI GU Profile^2.16.840.1.113883.9.78^ISO~LAB_PRU_Component^LOI PRU Profile^2.16.840.1.113883.9.82^ISO

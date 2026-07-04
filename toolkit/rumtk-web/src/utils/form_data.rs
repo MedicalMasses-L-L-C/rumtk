@@ -18,12 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::base::RUMResult;
+use rumtk_core::buffers::buffer_to_string;
+use rumtk_core::buffers::*;
 use rumtk_core::strings::{
     rumtk_format, RUMString,
 };
-use rumtk_core::types::{RUMBuffer, RUMHashMap, RUMID};
+use rumtk_core::types::{RUMHashMap, RUMID};
 
 use crate::utils::defaults::*;
 use crate::{RUMWebData, RouterForm};
@@ -71,7 +72,7 @@ pub async fn get_type(content_type: &str) -> &'static str {
 /// use rumtk_web::FormData;
 /// use axum::extract::{Request, FromRequest};
 /// use rumtk_core::base::RUMResult;
-/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_core::buffers::*;
 /// use rumtk_web::form_data::FormResult;
 ///
 /// let expected_form = FormData::default();
@@ -126,7 +127,7 @@ pub async fn compile_form_data(form: &mut RouterForm) -> FormResult {
                         form_data.form.insert(name, buffer_to_string(data.as_slice())?);
                     } else {
                         let file_id = RUMID::new_v4().to_string();
-                        &form_data.files.insert(file_id.clone(), data);
+                        &form_data.files.insert(file_id.clone(), FormBuffer::from(data.as_slice()));
                         &form_data.form.insert(name, file_id);
                     }
                 }

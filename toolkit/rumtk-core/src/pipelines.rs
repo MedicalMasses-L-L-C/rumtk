@@ -256,7 +256,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_pipe_into_process, pipeline_spawn_process};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -288,7 +288,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand, RUMPipelineCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_create_command, pipeline_pipe_into_process, pipeline_spawn_process};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -331,7 +331,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::strings::{RUMStringConversions, RUMString};
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_generate_command, pipeline_get_stdout, pipeline_wait_pipeline};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -364,7 +364,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::rumtk_pipeline_run;
     /// use rumtk_core::strings::{RUMString};
     /// use rumtk_core::buffers::{buffer_to_string};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let data = RUMBuffer::from(b"Hello World");
     /// let wc_name = "wc";
@@ -431,7 +431,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::rumtk_pipeline_run;
     /// use rumtk_core::strings::{RUMString};
     /// use rumtk_core::buffers::{buffer_to_string};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -465,7 +465,7 @@ pub mod pipeline_functions {
     ///
     /// ```
     /// use rumtk_core::strings::RUMString;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_await_pipeline};
     /// use rumtk_core::{rumtk_resolve_task};
@@ -506,7 +506,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::strings::RUMString;
     /// use rumtk_core::pipelines::pipeline_types::{RUMCommand};
     /// use rumtk_core::pipelines::pipeline_functions::{pipeline_wait_pipeline};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let ls_name = "ls";
     /// let mut ls_command = RUMCommand::default();
@@ -566,7 +566,7 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::rumtk_pipeline_command;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::strings::RUMStringConversions;
     ///
     /// let command = rumtk_pipeline_command!("ls", RUMBuffer::default());
@@ -576,7 +576,7 @@ pub mod pipeline_macros {
     ///
     /// ```
     /// use rumtk_core::rumtk_pipeline_command;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::strings::RUMStringConversions;
     ///
     /// let command = rumtk_pipeline_command!("ls", RUMBuffer::default(), &vec![
@@ -635,7 +635,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::base::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_quick_run!(
@@ -680,7 +680,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_quick_run_async, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::base::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let f = async || -> RUMResult<()> {
     ///     let result = rumtk_pipeline_quick_run_async!(
@@ -719,7 +719,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::base::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let f = || -> RUMResult<RUMBuffer> {
     ///     let pipeline = vec![
@@ -738,7 +738,7 @@ pub mod pipeline_macros {
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::base::RUMResult;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::strings::{string_to_buffer};
     /// use rumtk_core::buffers::{buffer_to_string};
     ///
@@ -765,7 +765,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::strings::{string_to_buffer};
     /// use rumtk_core::buffers::{buffer_to_string};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// const data: &str = "Hello World!";
     /// const expected: &str = "      0       2      12\n";
@@ -808,7 +808,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_init_threads};
     /// use rumtk_core::base::{RUMResult};
     /// use rumtk_core::strings::RUMStringConversions;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// let f = async || -> RUMResult<RUMBuffer> {
     ///     let pipeline = vec![
@@ -827,7 +827,7 @@ pub mod pipeline_macros {
     /// ```
     /// use rumtk_core::{rumtk_pipeline_command, rumtk_pipeline_run_async, rumtk_resolve_task, rumtk_spawn_task};
     /// use rumtk_core::base::RUMResult;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::strings::{string_to_buffer};
     ///
@@ -856,7 +856,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::strings::{string_to_buffer};
     /// use rumtk_core::buffers::{buffer_to_string};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     ///
     /// const data: &str = "Hello World!";
     /// const expected: &str = "      0       2      12\n";
@@ -898,7 +898,7 @@ pub mod pipeline_macros {
     /// use rumtk_core::{rumtk_pipeline_patch_args, rumtk_pipeline_command, rumtk_pipeline_run};
     /// use rumtk_core::base::RUMResult;
     /// use rumtk_core::buffers::{buffer_to_string};
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::strings::string_to_buffer;
     ///
     ///

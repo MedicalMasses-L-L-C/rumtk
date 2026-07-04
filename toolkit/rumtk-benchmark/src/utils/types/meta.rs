@@ -40,9 +40,9 @@
 use crate::utils::types::{RUMWebTemplate, ReportRawResults};
 use rumtk_core::base::RUMResult;
 use rumtk_core::buffers::buffer_to_string;
+use rumtk_core::buffers::*;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
-use rumtk_core::types::RUMBuffer;
 use std::convert::{From, TryFrom};
 use std::env::consts;
 use std::fmt::Debug;

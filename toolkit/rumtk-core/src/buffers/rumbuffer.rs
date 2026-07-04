@@ -70,12 +70,14 @@ impl RUMBuffer {
         }
     }
 
-    pub fn split_to(&self, offset: usize) -> Self {
-        Self {
+    pub fn split_to(&mut self, offset: usize) -> Self {
+        let copy = Self {
             data: self.data.clone(),
-            offset: self.end,
+            offset: self.offset,
             end: self.offset + offset,
-        }
+        };
+        self.offset += offset;
+        copy
     }
 
     #[inline]

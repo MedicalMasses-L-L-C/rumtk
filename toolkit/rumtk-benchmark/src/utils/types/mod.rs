@@ -18,9 +18,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::cpu_report::CPUBenchmarkReport;
+use rumtk_core::buffers::*;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::strings::RUMString;
-use rumtk_core::types::RUMBuffer;
 use rumtk_web::RUMWebTemplate;
 use std::convert::{From, TryFrom};
 use std::fmt::Debug;

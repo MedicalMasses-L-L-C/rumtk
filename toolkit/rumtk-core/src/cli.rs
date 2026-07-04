@@ -194,7 +194,7 @@ pub mod macros {
     /// # Example
     /// ```
     /// use rumtk_core::base::RUMResult;
-    /// use rumtk_core::types::RUMBuffer;
+    /// use rumtk_core::buffers::*;
     /// use rumtk_core::rumtk_read_stdin;
     ///
     /// fn test_read_stdin() -> RUMResult<RUMBuffer> {

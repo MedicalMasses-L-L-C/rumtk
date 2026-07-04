@@ -694,7 +694,7 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 /// ```
 /// use rumtk_core::buffers::{buffer_to_string};
 /// use rumtk_core::strings::{string_to_buffer};
-/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_core::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from(expected.as_bytes());
@@ -713,7 +713,7 @@ pub fn string_to_buffer(data: &str) -> RUMBuffer {
 /// ## Example
 /// ```
 /// use rumtk_core::strings::string_format;
-/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_core::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// const template: &str = "Hello {}!";

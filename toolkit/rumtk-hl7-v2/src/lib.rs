@@ -61,12 +61,12 @@ mod tests {
         rumtk_v2_mllp_listen, rumtk_v2_mllp_receive, rumtk_v2_mllp_send, rumtk_v2_parse_message,
     };
     use rumtk_core::base::{RUMResult, RUMVec};
+    use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
     use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
-    use rumtk_core::types::RUMBuffer;
     use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
     use std::thread::spawn;
     use std::time::Instant;

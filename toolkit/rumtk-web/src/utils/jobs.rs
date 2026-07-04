@@ -20,10 +20,10 @@
  */
 use crate::HTMLResult;
 use rumtk_core::base::RUMResult;
+use rumtk_core::buffers::*;
 use rumtk_core::id::id_to_uuid;
 use rumtk_core::strings::rumtk_format;
 use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
-use rumtk_core::types::RUMBuffer;
 
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;

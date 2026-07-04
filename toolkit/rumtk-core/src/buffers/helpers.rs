@@ -33,7 +33,7 @@ use tokio::io::AsyncReadExt;
 /// ## Example
 /// ```
 /// use rumtk_core::buffers::slice_to_buffer;
-/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_core::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from(expected.as_bytes());
@@ -146,7 +146,7 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 /// ## Example
 /// ```
 /// use rumtk_core::buffers::buffer_to_string;
-/// use rumtk_core::types::RUMBuffer;
+/// use rumtk_core::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from(expected.as_bytes());
