@@ -24,7 +24,35 @@ use std::sync::Arc;
 
 type RUMBufferInner = Arc<RUMVec<u8>>;
 
-
+///
+/// The [RUMBuffer] type is meant to be a very lightweight owned buffer pointer. The impetus for building
+/// this type is that benchmarking showed a potential vector getting allocated by the **bytes** crate.
+/// I was using the bytes crate before because it is a very solid crate. However, the vector allocations worried me.
+/// It was likely part of that crates interior mutability strategy with vtables but it was one of a few
+/// areas consuming a lot of time and most importantly consuming kernel time by invoking malloc.
+///
+/// ## Example
+/// ### Creation
+/// ```
+/// use rumtk_core::buffers::*;
+///
+/// let buffer = RUMBuffer::from("Hello World!");
+/// let expected = b"Hello World!";
+///
+/// assert_eq!(&buffer[..], expected, "Could not create RUMBuffer!");
+/// ```
+///
+/// ### Split Buffer
+/// ```
+/// use rumtk_core::buffers::*;
+///
+/// let buffer = RUMBuffer::from("Hello World!");
+/// let section = buffer.split_to(5);
+/// let expected = b"Hello";
+///
+/// assert_eq!(&section[..], expected, "Could not create RUMBuffer!");
+/// ```
+///
 #[derive(Default, Debug, PartialEq, Clone)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
