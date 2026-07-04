@@ -43,3 +43,4 @@ rand = "0.10.1"
 base64 = "0.22.1"
 bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
 branches = "0.4.4"
+mimalloc = "0.1.52"

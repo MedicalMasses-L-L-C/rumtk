@@ -70,6 +70,7 @@ impl RUMBuffer {
         }
     }
 
+    #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
         let copy = Self {
             data: self.data.clone(),
@@ -104,12 +105,14 @@ pub trait AsSlice {
 impl AsSlice for RUMBuffer {
     type Item = u8;
 
+    #[inline]
     fn as_slice(&self) -> &[Self::Item] {
         &self.data[self.offset..self.end]
     }
 }
 
 impl AsRef<[u8]> for RUMBuffer {
+    #[inline]
     fn as_ref(&self) -> &[u8] {
         &self.data[self.offset..self.end]
     }
@@ -117,6 +120,7 @@ impl AsRef<[u8]> for RUMBuffer {
 
 impl Deref for RUMBuffer {
     type Target = [u8];
+    #[inline]
     fn deref(&self) -> &Self::Target {
         &self.data[self.offset..self.end]
     }
@@ -129,10 +133,22 @@ impl PartialEq for RUMBuffer {
     }
 }
 
+impl Drop for RUMBuffer {
+    fn drop(&mut self) {
+        match Arc::<Vec<u8>>::into_inner(self.data.clone()) {
+            Some(data) => {
+                drop(data)
+            },
+            None => {},
+        }
+    }
+}
+
 ///////////////////// Indexing ////////////////////////////////////
 
 impl Index<usize> for RUMBuffer {
     type Output = u8;
+    #[inline]
     fn index(&self, i: usize) -> &Self::Output {
         &self.data[self.offset + i]
     }
@@ -140,6 +156,7 @@ impl Index<usize> for RUMBuffer {
 
 impl Index<Range<usize>> for RUMBuffer {
     type Output = [u8];
+    #[inline]
     fn index(&self, i: Range<usize>) -> &Self::Output {
         &self.data[self.offset + i.start.. self.offset + i.end]
     }
@@ -147,6 +164,7 @@ impl Index<Range<usize>> for RUMBuffer {
 
 impl Index<RangeFull> for RUMBuffer {
     type Output = [u8];
+    #[inline]
     fn index(&self, i: RangeFull) -> &Self::Output {
         &self.data[self.offset.. self.end]
     }

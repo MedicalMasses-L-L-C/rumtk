@@ -17,12 +17,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::arena::ArenaResult;
+use crate::constants::NULL_U8_PTR;
 use crate::Arena;
-use std::alloc::{Allocator, GlobalAlloc, Layout};
+use std::alloc::{Allocator, GlobalAlloc};
 use std::borrow::Borrow;
 use std::collections::LinkedList;
-use std::ptr::NonNull;
 use std::sync::{Arc, LazyLock, Mutex, RwLock};
 
 pub type SafeArena = Arc<RwLock<Arena>>;
@@ -37,8 +36,8 @@ static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
 #[inline]
-pub fn dune_nullptr() -> ArenaResult<NonNull<[u8]>> {
-    unsafe { (*NULL).allocate(Layout::new::<u8>()) }
+pub const fn dune_nullptr() -> &'static [u8] {
+    &NULL_U8_PTR
 }
 
 #[inline]
