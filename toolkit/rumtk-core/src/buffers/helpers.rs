@@ -269,15 +269,15 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     let buffer_length = buffer.len();
     let pad_length = target_length - buffer_length;
     let s = buffer_length + pad_length;
-    let mut slice = RUMBufferMut::with_capacity(s);
+    let mut slice = RUMVec::with_capacity(s);
 
-    slice.put(buffer);
+    slice.extend_from_slice(buffer);
 
     for _ in buffer_length..s {
-        slice.put_u8(pad);
+        slice.push(pad);
     }
 
-    slice.freeze()
+    RUMBuffer::from(slice)
 }
 
 #[inline(always)]
@@ -298,33 +298,32 @@ pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replace
 
 #[inline(always)]
 pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMBuffer {
-    let pattern_length = pattern.len();
-    let replacement_length = replacement.len();
-    let instances = buffer_find_instances(&buffer, pattern);
-    let mut new_buffer =  RUMBufferMut::with_capacity(buffer.len() + (instances.len() * (replacement_length)));
-    let mut last = 0;
-
-    for (indx, chunk) in instances {
-        new_buffer.put(chunk);
-        new_buffer.put(replacement);
-        last = indx + pattern_length;
-    }
-
-    match new_buffer.is_empty() {
-        true => RUMBuffer::copy_from_slice(buffer),
+    match buffer.is_empty() {
+        true => RUMBuffer::from(buffer),
         false => {
-            new_buffer.put(&buffer[last..]);
-            new_buffer.freeze()
+            let pattern_length = pattern.len();
+            let replacement_length = replacement.len();
+            let instances = buffer_find_instances(&buffer, pattern);
+            let mut new_buffer =  RUMVec::with_capacity(buffer.len() + (instances.len() * (replacement_length)));
+            let mut last = 0;
+
+            for (indx, chunk) in instances {
+                new_buffer.extend_from_slice(chunk);
+                new_buffer.extend_from_slice(replacement);
+                last = indx + pattern_length;
+            }
+
+            new_buffer.extend_from_slice(&buffer[last..]);
+            RUMBuffer::from(new_buffer)
         }
     }
 }
 
 #[inline]
 pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
-    let trimmed = buffer_slice_trim(&buffer[..]);
-
-    if trimmed.len() < buffer.len() {
-        RUMBuffer::copy_from_slice(trimmed)
+    if !buffer.is_empty() && buffer[0] == b' ' {
+        let trimmed = buffer_slice_trim(&buffer[..]);
+        RUMBuffer::from(trimmed)
     } else {
         buffer.clone()
     }

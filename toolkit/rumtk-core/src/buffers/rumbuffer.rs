@@ -18,6 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
+use std::ops::Deref;
+use std::ops::{Index, Range, RangeFull};
 use std::sync::Arc;
 
 type RUMBufferInner = Arc<RUMVec<u8>>;
@@ -46,6 +48,21 @@ impl RUMBuffer {
             end: self.offset + offset,
         }
     }
+
+    #[inline]
+    pub fn mutate(&mut self) -> RUMVec<u8> {
+        self.data[self.offset..self.end].to_vec()
+    }
+
+    #[inline]
+    pub fn truncate(&mut self, len: usize) {
+        self.end = self.offset + len;
+    }
+
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.data.is_empty()
+    }
 }
 
 pub trait AsSlice {
@@ -67,6 +84,35 @@ impl AsRef<[u8]> for RUMBuffer {
     }
 }
 
+impl Deref for RUMBuffer {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        &self.data[self.offset..self.end]
+    }
+}
+
+///////////////////// Indexing ////////////////////////////////////
+
+impl Index<usize> for RUMBuffer {
+    type Output = u8;
+    fn index(&self, i: usize) -> &Self::Output {
+        &self.data[self.offset + i]
+    }
+}
+
+impl Index<Range<usize>> for RUMBuffer {
+    type Output = [u8];
+    fn index(&self, i: Range<usize>) -> &Self::Output {
+        &self.data[self.offset + i.start.. self.offset + i.end]
+    }
+}
+
+impl Index<RangeFull> for RUMBuffer {
+    type Output = [u8];
+    fn index(&self, i: RangeFull) -> &Self::Output {
+        &self.data[self.offset.. self.end]
+    }
+}
 
 /////////////////////// Conversions ////////////////////////////////
 impl From<RUMVec<u8>> for RUMBuffer {
@@ -89,6 +135,12 @@ impl From<&[u8]> for RUMBuffer {
             offset: 0,
             end: data_length,
         }
+    }
+}
+
+impl<const N: usize> From<&[u8; N]> for RUMBuffer {
+    fn from(data: &[u8; N]) -> Self {
+        Self::from(data.as_slice())
     }
 }
 
