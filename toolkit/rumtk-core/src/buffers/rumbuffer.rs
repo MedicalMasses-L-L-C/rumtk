@@ -18,6 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
+use std::cmp::PartialEq;
 use std::ops::Deref;
 use std::ops::{Index, Range, RangeFull};
 use std::sync::Arc;
@@ -53,7 +54,7 @@ type RUMBufferInner = Arc<RUMVec<u8>>;
 /// assert_eq!(&section[..], expected, "Could not create RUMBuffer!");
 /// ```
 ///
-#[derive(Default, Debug, PartialEq, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
     offset: usize,
@@ -116,6 +117,13 @@ impl Deref for RUMBuffer {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
         &self.data[self.offset..self.end]
+    }
+}
+
+impl PartialEq for RUMBuffer {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.data[self.offset..self.end] == other.data[other.offset..other.end]
     }
 }
 
