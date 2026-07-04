@@ -89,7 +89,7 @@ pub fn read_temp_buffer(temp_file: &mut NamedTempFile) -> RUMResult<RUMBuffer> {
         Err(e) => return Err(rumtk_format!("Failed to read temp file contents => {}", e)),
     };
 
-    Ok(RUMBuffer::copy_from_slice(data.as_slice()))
+    Ok(RUMBuffer::from(data.as_slice()))
 }
 
 pub fn generate_data(template: &str, buffer: &RUMVec<RUMString>, item_pattern: &str) -> RUMString {

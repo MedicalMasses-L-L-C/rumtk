@@ -36,7 +36,7 @@ use tokio::io::AsyncReadExt;
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";
-/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let buffer = RUMBuffer::from(expected.as_bytes());
 /// let result = slice_to_buffer(expected.as_bytes());
 ///
 /// assert_eq!(result, buffer, "Slice to RUMBuffer conversion failed!");
@@ -149,7 +149,7 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";
-/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let buffer = RUMBuffer::from(expected.as_bytes());
 /// let result = buffer_to_string(&buffer).unwrap();
 ///
 /// assert_eq!(result, expected, "Buffer to RUMString conversion failed!");

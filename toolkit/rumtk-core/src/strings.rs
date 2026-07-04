@@ -697,7 +697,7 @@ pub fn filter_non_printable_ascii(unescaped_str: &str) -> RUMString {
 /// use rumtk_core::types::RUMBuffer;
 ///
 /// const expected: &str = "Hello World!";
-/// let buffer = RUMBuffer::from_static(expected.as_bytes());
+/// let buffer = RUMBuffer::from(expected.as_bytes());
 /// let result = string_to_buffer(expected);
 ///
 /// assert_eq!(result, expected, "str to RUMBuffer conversion failed!");

@@ -366,7 +366,7 @@ pub mod pipeline_functions {
     /// use rumtk_core::buffers::{buffer_to_string};
     /// use rumtk_core::types::RUMBuffer;
     ///
-    /// let data = RUMBuffer::from_static(b"Hello World");
+    /// let data = RUMBuffer::from(b"Hello World");
     /// let wc_name = "wc";
     /// let mut wc_command = RUMCommand::default();
     /// wc_command.path = RUMString::from(wc_name);
@@ -608,7 +608,7 @@ pub mod pipeline_macros {
         }};
         ( $path:expr ) => {{
             use $crate::pipelines::pipeline_types::{RUMCommand, RUMCommandArgs, RUMCommandEnv};
-            use $crate::types::RUMBuffer;
+            use $crate::buffers::*;
 
             RUMCommand::new(
                 $path,
@@ -653,7 +653,7 @@ pub mod pipeline_macros {
     #[macro_export]
     macro_rules! rumtk_pipeline_quick_run {
         ( $($command:expr),+ ) => {{
-            use $crate::types::RUMBuffer;
+            use $crate::buffers::*;
             use $crate::pipelines::pipeline_functions::{pipeline_wait_pipeline};
 
             let pipeline = vec![$($command),+];
@@ -698,7 +698,7 @@ pub mod pipeline_macros {
     #[macro_export]
     macro_rules! rumtk_pipeline_quick_run_async {
         ( $($command:expr),+ ) => {{
-            use $crate::types::RUMBuffer;
+            use $crate::buffers::*;
             use $crate::pipelines::pipeline_functions::{pipeline_await_pipeline};
 
             let pipeline = vec![$($command),+];
@@ -786,7 +786,7 @@ pub mod pipeline_macros {
     #[macro_export]
     macro_rules! rumtk_pipeline_run {
         ( $pipeline:expr ) => {{
-            use $crate::types::RUMBuffer;
+            use $crate::buffers::*;
 
             rumtk_pipeline_run!($pipeline, &RUMBuffer::default())
         }};
@@ -879,7 +879,7 @@ pub mod pipeline_macros {
     #[macro_export]
     macro_rules! rumtk_pipeline_run_async {
         ( $pipeline:expr ) => {{
-            use $crate::types::RUMBuffer;
+            use $crate::buffers::*;
 
             rumtk_pipeline_run_async!($pipeline, &RUMBuffer::default())
         }};

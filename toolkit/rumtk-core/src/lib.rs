@@ -57,8 +57,8 @@ mod mem;
 mod tests {
     use super::*;
     use crate::base::{clamp_index, RUMResult};
+    use crate::buffers::*;
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
-    use crate::buffers::RUMBuffer;
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson, RUMSerializableBuffer};
@@ -691,7 +691,7 @@ mod tests {
 
     #[test]
     fn test_deserialize_buffer_serde_json() {
-        let hw = RUMSerializableBuffer(RUMBuffer::from_static(b"Hello World!"));
+        let hw = RUMSerializableBuffer(RUMBuffer::from(b"Hello World!"));
         let hw_str = to_json(&hw).unwrap();
         let new_hw: RUMSerializableBuffer = from_json(&hw_str).unwrap();
 
@@ -786,7 +786,7 @@ mod tests {
     }
 
     #[test]
-    fn test_quick_pipe() {let data = RUMBuffer::from_static(b"Hello World");
+    fn test_quick_pipe() {let data = RUMBuffer::from(b"Hello World");
         let wc_name = "wc";
         let mut wc_command = RUMCommand::default();
         wc_command.path = RUMString::from(wc_name);
@@ -804,7 +804,7 @@ mod tests {
     }
 
     #[test]
-    fn test_patch_pipeline_arguments() {let data = RUMBuffer::from_static(b"Hello World");
+    fn test_patch_pipeline_arguments() {let data = RUMBuffer::from(b"Hello World");
         let ls_name = "ls";
         let mut ls_command = RUMCommand::default();
         ls_command.path = RUMString::from(ls_name);
@@ -827,7 +827,7 @@ mod tests {
     ////////////////////////////Buffer Tests/////////////////////////////////
     #[test]
     fn test_buffer_split() {
-        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
         let mut splits = vec![];
 
         let mut splitter = data.split_fast('|' as u8);
@@ -841,7 +841,7 @@ mod tests {
 
     #[test]
     fn test_buffer_find() {
-        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
         let indx = buffer_find(data.as_slice(), &['|' as u8]);
 
         assert_eq!(indx, 5, "Bad buffer find! Got {:?}", indx);
@@ -850,7 +850,7 @@ mod tests {
     #[test]
     fn test_buffer_find_long() {
         let pattern = "|Test";
-        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
+        let data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
         let indx = buffer_find(data.as_slice(), pattern.as_bytes());
 
         assert_eq!(indx, 11, "Bad buffer find! Got {:?}", indx);
@@ -860,8 +860,8 @@ mod tests {
     fn test_buffer_replace() {
         let pattern = "|Test";
         let replacement = "|Test123";
-        let data = RUMBuffer::from_static(b"Hello|World|Test|||||||||||||||||||");
-        let expected = RUMBuffer::from_static(b"Hello|World|Test123|||||||||||||||||||");
+        let data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
+        let expected = RUMBuffer::from(b"Hello|World|Test123|||||||||||||||||||");
         let new = buffer_replace(data.as_slice(), pattern.as_bytes(), replacement.as_bytes());
 
         assert_eq!(new, expected, "Bad buffer replace! Got {:?}", new);
@@ -871,25 +871,21 @@ mod tests {
     fn test_buffer_replace_in_place() {
         let pattern = "|Test";
         let replacement = "|Tes1";
-        let mut data = RUMBuffer::copy_from_slice(b"Hello|World|Test|||||||||||||||||||");
-        let expected = RUMBuffer::from_static(b"Hello|World|Tes1|||||||||||||||||||");
+        let mut data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
+        let expected = RUMBuffer::from(b"Hello|World|Tes1|||||||||||||||||||");
 
-        data = match data.try_into_mut() {
-            Ok(mut data) => {
-                buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
-                data.freeze()
-            },
-            Err(data) => data
-        };
+        let mut temp = data.mutate();
+        buffer_replace_in_place(&mut temp, pattern.as_bytes(), replacement.as_bytes());
+        let modified = RUMBuffer::from(temp);
 
 
-        assert_eq!(data, expected, "Bad buffer replace! Got {:?}", data);
+        assert_eq!(modified, expected, "Bad buffer replace! Got {:?}", data);
     }
 
     #[test]
     fn test_buffer_trim() {
-        let data = RUMBuffer::from_static(b"\n Hello|World \n");
-        let expected = RUMBuffer::from_static(b"Hello|World");
+        let data = RUMBuffer::from(b"\n Hello|World \n");
+        let expected = RUMBuffer::from(b"Hello|World");
         let new = buffer_trim(&data);
 
         assert_eq!(new, expected, "Bad buffer trim! Got {:?}", new);
@@ -922,6 +918,14 @@ mod tests {
         });
 
         assert!(time <= expected, "Counting of instances in buffer was too slow! Took {:?} us", time);
+    }
+
+    #[test]
+    fn test_buffer_split_simple() {
+        let data = RUMBuffer::from(b"Hello|World").split_to(5);
+        let expected = RUMBuffer::from(b"Hello");
+
+        assert_eq!(data, expected, "Bad buffer trim! Got {:?}", data);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
