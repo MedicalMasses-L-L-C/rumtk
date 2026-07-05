@@ -17,8 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::buffers::RUMBuffer;
 use crate::buffers::{buffer_find, buffer_find_byte};
+use crate::buffers::RUMBuffer;
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],

@@ -18,7 +18,6 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
-use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice, as_slice_mut, copy_from_slice, AsSlice};
 use rumtk_arena::dune::Dune;
 use rumtk_arena::rumtk_dune_new;
@@ -68,13 +67,16 @@ pub struct RUMBuffer {
 impl RUMBuffer {
     #[inline]
     pub fn new() -> Self {
-        Self::from_owned(Vec::new())
+        Self::from_slice(&[])
     }
 
     #[inline]
-    fn from_owned(data: RUMVec<u8>) -> Self {
+    fn from_slice(data: &[u8]) -> Self {
         let data_length = data.len();
-        let mut mem = rumtk_dune_new!(data_length);
+        let mut mem = match data.is_empty() {
+            true => rumtk_dune_new!(),
+            false => rumtk_dune_new!(data_length)
+        };
         let mut ptr = mem.allocate_raw(data_length).unwrap();
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
@@ -92,7 +94,6 @@ impl RUMBuffer {
             ptr: self.ptr.clone(),
             size: offset,
         };
-        println!("{:?}", buffer_to_str(copy.as_slice()).unwrap_or_default());
         self.ptr = unsafe { self.ptr.add(offset) };
         self.size -= offset;
         copy
@@ -105,7 +106,7 @@ impl RUMBuffer {
 
     #[inline]
     pub fn truncate(&mut self, len: usize) {
-        self.size -= len;
+        self.size = len;
     }
 
     #[inline]
@@ -183,15 +184,14 @@ impl Index<RangeFull> for RUMBuffer {
 impl From<RUMVec<u8>> for RUMBuffer {
     #[inline]
     fn from(data: RUMVec<u8>) -> Self {
-        Self::from_owned(data)
+        Self::from_slice(data.as_slice())
     }
 }
 
 impl From<&[u8]> for RUMBuffer {
     #[inline]
     fn from(data: &[u8]) -> Self {
-        let owned_data: Vec<u8> = data.to_vec();
-        Self::from_owned(owned_data)
+        Self::from_slice(data)
     }
 }
 
