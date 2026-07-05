@@ -104,13 +104,13 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Component {
-        component: RUMSerializableManualBuffer,
+        component: RUMBuffer,
     }
 
     impl V2Component {
         pub fn new() -> Self {
             Self {
-                component: RUMSerializableManualBuffer::new(RUMBuffer::new()),
+                component: RUMBuffer::new(),
             }
         }
 
@@ -160,7 +160,7 @@ pub mod v2_parser {
         ///
         fn from(component: RUMBuffer) -> Self {
             Self {
-                component: RUMSerializableManualBuffer::new(component)
+                component
             }
         }
 
@@ -191,7 +191,7 @@ pub mod v2_parser {
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            buffer_to_str(&self.component.0).unwrap_or_default()
+            buffer_to_str(&self.component).unwrap_or_default()
         }
     }
 
