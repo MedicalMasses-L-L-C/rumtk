@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::constants::NULL_U8_PTR;
+use crate::arena::ArenaResult;
 use crate::Arena;
 use std::alloc::{Allocator, GlobalAlloc};
 use std::borrow::Borrow;
@@ -36,12 +36,7 @@ static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
 #[inline]
-pub const fn dune_nullptr() -> &'static [u8] {
-    &NULL_U8_PTR
-}
-
-#[inline]
-pub fn dune_allocate(chunk_size: usize) -> &'static Arena {
+fn dune_allocate(chunk_size: usize) -> &'static Arena {
     unsafe {
         let _unused = LOCK.lock().unwrap();
         ARRAKIS.push_back_mut(Arena::with_capacity(chunk_size))
@@ -49,7 +44,7 @@ pub fn dune_allocate(chunk_size: usize) -> &'static Arena {
 }
 
 #[inline]
-pub fn dune_deallocate(arena: &'static Arena) {
+fn dune_deallocate(arena: &'static Arena) {
     let address = arena.address();
     unsafe {
         let _unused = LOCK.lock().unwrap();
@@ -58,29 +53,59 @@ pub fn dune_deallocate(arena: &'static Arena) {
     }
 }
 
-#[macro_export]
-macro_rules! rumtk_dune_nullptr {
-    ( ) => {{
-        use $crate::dune::dune_nullptr;
+#[derive(Debug, Clone)]
+pub struct Dune {
+    pub arena: &'static Arena,
+}
 
-        dune_nullptr()
+impl Dune {
+    pub fn new() -> Self {
+        Self {
+            arena: unsafe { &*NULL },
+        }
+    }
+
+    pub fn with_capacity(chunk_size: usize) -> Self {
+        Self {
+            arena: dune_allocate(chunk_size),
+        }
+    }
+
+    pub fn allocate_raw(&mut self, size: usize) -> ArenaResult<*mut u8> {
+        Ok(self.arena.commit(size)? as *mut u8)
+    }
+
+    pub fn allocate_const_raw(&mut self, size: usize) -> ArenaResult<*const u8> {
+        Ok(self.arena.commit(size)? as *const u8)
+    }
+}
+
+impl Default for Dune {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Drop for Dune {
+    fn drop(&mut self) {
+        dune_deallocate(self.arena);
+    }
+}
+
+#[macro_export]
+macro_rules! rumtk_dune_null_new {
+    ( $capacity:expr ) => {{
+        use $crate::dune::Dune;
+
+        Dune::default()
     }};
 }
 
 #[macro_export]
 macro_rules! rumtk_dune_new {
     ( $capacity:expr ) => {{
-        use $crate::dune::dune_allocate;
+        use $crate::dune::Dune;
 
-        dune_allocate($capacity)
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_dune_free {
-    ( $arena:expr ) => {{
-        use $crate::dune::dune_deallocate;
-
-        dune_deallocate($arena)
+        Dune::with_capacity($capacity)
     }};
 }
