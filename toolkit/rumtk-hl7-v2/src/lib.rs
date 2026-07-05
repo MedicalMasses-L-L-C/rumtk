@@ -600,6 +600,7 @@ mod tests {
     fn test_load_msh() {
         let message = rumtk_v2_parse_message!(EXPECTED_MSH_SEGMENT).unwrap();
         let msg_string = rumtk_v2_generate_message!(&message);
+
         assert!(
             message.segment_exists(&V2_SEGMENT_IDS(b"MSH")),
             "Missing MSH segment!"
@@ -1487,6 +1488,20 @@ mod tests {
         let buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| V2Message::try_from_buffer(buffer));
+
+        println!("Parsed message in {} us", &time);
+
+        assert!(time <= 100000, "V2Message parsing took {} microseconds [> 100000 us]!", time);
+    }
+
+    #[test]
+    fn test_parser_including_message_drop_benchmark() {
+        let buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
+
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let message = V2Message::try_from_buffer(buffer).unwrap();
+            drop(message);
+        });
 
         println!("Parsed message in {} us", &time);
 
