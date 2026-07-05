@@ -18,6 +18,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
+use crate::buffers::buffer_to_str;
+use crate::mem::{as_slice, as_slice_mut, copy_from_slice, AsSlice};
 use rumtk_arena::dune::Dune;
 use rumtk_arena::rumtk_dune_new;
 use std::cmp::PartialEq;
@@ -72,10 +74,12 @@ impl RUMBuffer {
     #[inline]
     fn from_owned(data: RUMVec<u8>) -> Self {
         let data_length = data.len();
-        let mut data = rumtk_dune_new!(data_length);
-        let ptr = data.allocate_const_raw(data_length).unwrap();
+        let mut mem = rumtk_dune_new!(data_length);
+        let mut ptr = mem.allocate_raw(data_length).unwrap();
+        let dst = as_slice_mut(ptr, data_length);
+        copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferInner::new(data),
+            data: RUMBufferInner::new(mem),
             ptr,
             size: data_length,
         }
@@ -88,7 +92,8 @@ impl RUMBuffer {
             ptr: self.ptr.clone(),
             size: offset,
         };
-        unsafe { let _ = self.ptr.add(offset); }
+        println!("{:?}", buffer_to_str(copy.as_slice()).unwrap_or_default());
+        self.ptr = unsafe { self.ptr.add(offset) };
         self.size -= offset;
         copy
     }
@@ -109,18 +114,12 @@ impl RUMBuffer {
     }
 }
 
-pub trait AsSlice {
-    type Item;
-    fn as_slice(&self) -> &[Self::Item];
-}
-
 impl AsSlice for RUMBuffer {
     type Item = u8;
 
     #[inline]
     fn as_slice(&self) -> &[Self::Item] {
-        let slice: &[u8] = unsafe { std::slice::from_raw_parts(self.ptr, self.size) };
-        slice
+        as_slice(self.ptr,  self.size)
     }
 }
 
