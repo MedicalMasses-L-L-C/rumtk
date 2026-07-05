@@ -22,3 +22,25 @@
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 */
+
+pub trait AsSlice {
+    type Item;
+    fn as_slice(&self) -> &[Self::Item];
+}
+
+#[inline]
+pub fn as_slice<'a>(src: *const u8, size: usize) -> &'a [u8] {
+    unsafe { std::slice::from_raw_parts(src, size) }
+}
+
+#[inline]
+pub fn as_slice_mut<'a>(src: *mut u8, size: usize) -> &'a mut [u8] {
+    unsafe { std::slice::from_raw_parts_mut(src, size) }
+}
+
+#[inline]
+pub fn copy_from_slice<'a>(src: &[u8], dst: &'a mut [u8]) -> &'a mut [u8] {
+    assert!(src.len() <= dst.len(), "Destination memory slice is smaller than source! This is a bug near the call site of copy_from_slice!");
+    dst.copy_from_slice(src);
+    dst
+}
