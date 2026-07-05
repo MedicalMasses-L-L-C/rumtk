@@ -253,10 +253,12 @@ impl ArenaAlloc {
         self.used = 0;
     }
 
+    #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
         self.memory.as_ptr()
     }
 
+    #[inline(always)]
     pub fn is_empty(&self) -> bool {
         self.used == 0
     }
