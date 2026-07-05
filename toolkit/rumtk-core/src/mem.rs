@@ -18,10 +18,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*
+/////////////////If using MiMalloc//////////////////////////////
+#[cfg(target_feature = "mimalloc")]
+use mimalloc::MiMalloc;
+
+#[cfg(target_feature = "mimalloc")]
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
-*/
+
+////////////////////////Traits//////////////////////////////////
 
 pub trait AsSlice {
     type Item;
