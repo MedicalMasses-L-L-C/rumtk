@@ -18,12 +18,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
+use rumtk_arena::dune::Dune;
+use rumtk_arena::rumtk_dune_new;
 use std::cmp::PartialEq;
 use std::ops::Deref;
 use std::ops::{Index, Range, RangeFull};
 use std::sync::Arc;
 
-type RUMBufferInner = Arc<RUMVec<u8>>;
+pub type RUMBufferInner = Arc<Dune>;
 
 ///
 /// The [RUMBuffer] type is meant to be a very lightweight owned buffer pointer. The impetus for building
@@ -57,16 +59,25 @@ type RUMBufferInner = Arc<RUMVec<u8>>;
 #[derive(Default, Debug, Clone)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
-    offset: usize,
-    end: usize,
+    ptr: *const u8,
+    size: usize,
 }
 
 impl RUMBuffer {
+    #[inline]
     pub fn new() -> Self {
+        Self::from_owned(Vec::new())
+    }
+
+    #[inline]
+    fn from_owned(data: RUMVec<u8>) -> Self {
+        let data_length = data.len();
+        let mut data = rumtk_dune_new!(data_length);
+        let ptr = data.allocate_const_raw(data_length).unwrap();
         Self {
-            data: Arc::new(Vec::new()),
-            offset: 0,
-            end: 0,
+            data: RUMBufferInner::new(data),
+            ptr,
+            size: data_length,
         }
     }
 
@@ -74,26 +85,27 @@ impl RUMBuffer {
     pub fn split_to(&mut self, offset: usize) -> Self {
         let copy = Self {
             data: self.data.clone(),
-            offset: self.offset,
-            end: self.offset + offset,
+            ptr: self.ptr.clone(),
+            size: offset,
         };
-        self.offset += offset;
+        unsafe { let _ = self.ptr.add(offset); }
+        self.size -= offset;
         copy
     }
 
     #[inline]
     pub fn mutate(&mut self) -> RUMVec<u8> {
-        self.data[self.offset..self.end].to_vec()
+        self.as_slice().to_vec()
     }
 
     #[inline]
     pub fn truncate(&mut self, len: usize) {
-        self.end = self.offset + len;
+        self.size -= len;
     }
 
     #[inline]
     pub fn is_empty(&self) -> bool {
-        self.data.is_empty()
+        self.size == 0
     }
 }
 
@@ -107,14 +119,15 @@ impl AsSlice for RUMBuffer {
 
     #[inline]
     fn as_slice(&self) -> &[Self::Item] {
-        &self.data[self.offset..self.end]
+        let slice: &[u8] = unsafe { std::slice::from_raw_parts(self.ptr, self.size) };
+        slice
     }
 }
 
 impl AsRef<[u8]> for RUMBuffer {
     #[inline]
     fn as_ref(&self) -> &[u8] {
-        &self.data[self.offset..self.end]
+        self.as_slice()
     }
 }
 
@@ -122,27 +135,19 @@ impl Deref for RUMBuffer {
     type Target = [u8];
     #[inline]
     fn deref(&self) -> &Self::Target {
-        &self.data[self.offset..self.end]
+        self.as_slice()
     }
 }
 
 impl PartialEq for RUMBuffer {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        self.data[self.offset..self.end] == other.data[other.offset..other.end]
+        self.as_slice() == other.as_slice()
     }
 }
 
-impl Drop for RUMBuffer {
-    fn drop(&mut self) {
-        match Arc::<Vec<u8>>::into_inner(self.data.clone()) {
-            Some(data) => {
-                drop(data)
-            },
-            None => {},
-        }
-    }
-}
+unsafe impl Send for RUMBuffer {}
+unsafe impl Sync for RUMBuffer {}
 
 ///////////////////// Indexing ////////////////////////////////////
 
@@ -150,7 +155,7 @@ impl Index<usize> for RUMBuffer {
     type Output = u8;
     #[inline]
     fn index(&self, i: usize) -> &Self::Output {
-        &self.data[self.offset + i]
+        &self.as_slice()[i]
     }
 }
 
@@ -158,7 +163,7 @@ impl Index<Range<usize>> for RUMBuffer {
     type Output = [u8];
     #[inline]
     fn index(&self, i: Range<usize>) -> &Self::Output {
-        &self.data[self.offset + i.start.. self.offset + i.end]
+        &self.as_slice()[i.start..i.end]
     }
 }
 
@@ -166,41 +171,35 @@ impl Index<RangeFull> for RUMBuffer {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeFull) -> &Self::Output {
-        &self.data[self.offset.. self.end]
+        self.as_slice()
     }
 }
 
 /////////////////////// Conversions ////////////////////////////////
 impl From<RUMVec<u8>> for RUMBuffer {
+    #[inline]
     fn from(data: RUMVec<u8>) -> Self {
-        let data_length = data.len();
-        Self {
-            data: Arc::new(data),
-            offset: 0,
-            end: data_length,
-        }
+        Self::from_owned(data)
     }
 }
 
 impl From<&[u8]> for RUMBuffer {
+    #[inline]
     fn from(data: &[u8]) -> Self {
         let owned_data: Vec<u8> = data.to_vec();
-        let data_length = owned_data.len();
-        Self {
-            data: Arc::new(owned_data),
-            offset: 0,
-            end: data_length,
-        }
+        Self::from_owned(owned_data)
     }
 }
 
 impl<const N: usize> From<&[u8; N]> for RUMBuffer {
+    #[inline]
     fn from(data: &[u8; N]) -> Self {
         Self::from(data.as_slice())
     }
 }
 
 impl From<&str> for RUMBuffer {
+    #[inline]
     fn from(data: &str) -> Self {
         Self::from(data.as_bytes())
     }
