@@ -25,6 +25,29 @@ pub use crate::types::RUMOrderedMap;
 use std::hash::Hash;
 use std::mem::ManuallyDrop;
 
+impl RUMSerJson for RUMBuffer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: RUMJsonSerializer,
+    {
+        // Convert external type to a serializable format
+        let string = match buffer_to_str(&self.as_slice()) {
+            Ok(string) => string,
+            Err(err) => return Err(serde::ser::Error::custom(err)),
+        };
+        serializer.serialize_str(string)
+    }
+}
+
+impl<'a> RUMDeJson<'a> for RUMBuffer {
+    fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
+    where
+        D: RUMJsonDeserializer<'a>,
+    {
+        let escaped_val = String::deserialize(deserializer)?;
+        Ok(string_to_buffer(&escaped_val))
+    }
+}
 
 #[derive(Default, Debug, PartialEq, Clone)]
 pub struct RUMSerializableBuffer(pub RUMBuffer);
