@@ -93,16 +93,12 @@ impl Drop for Dune {
 }
 
 #[macro_export]
-macro_rules! rumtk_dune_null_new {
-    ( $capacity:expr ) => {{
+macro_rules! rumtk_dune_new {
+    (  ) => {{
         use $crate::dune::Dune;
 
         Dune::default()
     }};
-}
-
-#[macro_export]
-macro_rules! rumtk_dune_new {
     ( $capacity:expr ) => {{
         use $crate::dune::Dune;
 
