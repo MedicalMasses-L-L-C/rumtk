@@ -26,6 +26,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 pub trait AsSlice {
     type Item;
     fn as_slice(&self) -> &[Self::Item];
+    fn as_slice_mut(&self) -> &mut [Self::Item];
 }
 
 #[inline]

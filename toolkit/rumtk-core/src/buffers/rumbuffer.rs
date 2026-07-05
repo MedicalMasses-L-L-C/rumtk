@@ -121,6 +121,11 @@ impl AsSlice for RUMBuffer {
     fn as_slice(&self) -> &[Self::Item] {
         as_slice(self.ptr,  self.size)
     }
+
+    #[inline]
+    fn as_slice_mut(&self) -> &mut [Self::Item] {
+        as_slice_mut(self.ptr as *mut u8,  self.size)
+    }
 }
 
 impl AsRef<[u8]> for RUMBuffer {
