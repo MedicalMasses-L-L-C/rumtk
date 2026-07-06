@@ -24,9 +24,8 @@ use rumtk_arena::rumtk_dune_new;
 use std::cmp::PartialEq;
 use std::ops::Deref;
 use std::ops::{Index, Range, RangeFull};
-use std::sync::Arc;
 
-pub type RUMBufferInner = Arc<Dune>;
+pub type RUMBufferInner = Option<Dune>;
 
 ///
 /// The [RUMBuffer] type is meant to be a very lightweight owned buffer pointer. The impetus for building
@@ -81,7 +80,7 @@ impl RUMBuffer {
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferInner::new(mem),
+            data: RUMBufferInner::Some(mem),
             ptr,
             size: data_length,
         }
@@ -90,7 +89,7 @@ impl RUMBuffer {
     #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
         let copy = Self {
-            data: self.data.clone(),
+            data: RUMBufferInner::None,
             ptr: self.ptr.clone(),
             size: offset,
         };
@@ -100,7 +99,21 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn mutate(&mut self) -> RUMVec<u8> {
+    pub fn freeze(&self) -> Self {
+        Self {
+            data: RUMBufferInner::None,
+            ptr: self.ptr.clone(),
+            size: self.size.clone(),
+        }
+    }
+
+    #[inline]
+    pub fn mutate(&mut self) -> RUMBuffer {
+        self.freeze()
+    }
+
+    #[inline]
+    pub fn to_vec(&mut self) -> RUMVec<u8> {
         self.as_slice().to_vec()
     }
 
