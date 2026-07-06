@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::arena::ArenaResult;
+use crate::arena::{ArenaBaseAddress, ArenaResult};
 use crate::Arena;
 use std::alloc::{Allocator, GlobalAlloc};
 use std::borrow::Borrow;
@@ -44,30 +44,36 @@ fn dune_allocate(chunk_size: usize) -> &'static Arena {
 }
 
 #[inline]
-fn dune_deallocate(arena: &'static Arena) {
-    let address = arena.address();
+fn dune_deallocate(address: &ArenaBaseAddress) {
     unsafe {
         let _unused = LOCK.lock().unwrap();
 
-        ARRAKIS.retain(|e| e.address() != address);
+        ARRAKIS.retain(|e| e.address() != address.clone());
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct Dune {
+    pub address: ArenaBaseAddress,
     pub arena: &'static Arena,
 }
 
 impl Dune {
     pub fn new() -> Self {
+        let arena: &Arena = unsafe { &*NULL };
+        let address = arena.address();
         Self {
+            address,
             arena: unsafe { &*NULL },
         }
     }
 
     pub fn with_capacity(chunk_size: usize) -> Self {
+        let arena: &Arena = dune_allocate(chunk_size);
+        let address = arena.address();
         Self {
-            arena: dune_allocate(chunk_size),
+            address,
+            arena,
         }
     }
 
@@ -88,7 +94,7 @@ impl Default for Dune {
 
 impl Drop for Dune {
     fn drop(&mut self) {
-        dune_deallocate(self.arena);
+        dune_deallocate(&self.address);
     }
 }
 
