@@ -23,6 +23,7 @@ use rumtk_arena::dune::Dune;
 use rumtk_arena::rumtk_dune_new;
 use std::cmp::PartialEq;
 use std::ops::Deref;
+use std::ops::DerefMut;
 use std::ops::{Index, Range, RangeFull};
 
 pub type RUMBufferInner = Option<Dune>;
@@ -154,6 +155,13 @@ impl Deref for RUMBuffer {
     #[inline]
     fn deref(&self) -> &Self::Target {
         self.as_slice()
+    }
+}
+
+impl DerefMut for RUMBuffer {
+    #[inline]
+    fn deref_mut(&mut self) -> &mut [u8] {
+        self.as_slice_mut()
     }
 }
 
