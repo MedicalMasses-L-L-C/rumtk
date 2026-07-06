@@ -321,12 +321,8 @@ pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMB
 
 #[inline]
 pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
-    if !buffer.is_empty() && buffer[0] == b' ' {
-        let trimmed = buffer_slice_trim(&buffer[..]);
-        RUMBuffer::from(trimmed)
-    } else {
-        buffer.clone()
-    }
+    let trimmed = buffer_slice_trim(&buffer[..]);
+    RUMBuffer::from(trimmed)
 }
 
 #[inline(always)]
