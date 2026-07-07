@@ -61,7 +61,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_st
 /// assert_eq!(&section[..], expected, "Could not create RUMBuffer!");
 /// ```
 ///
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
     ptr: *const u8,
@@ -191,6 +191,13 @@ impl PartialEq for RUMBuffer {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.as_slice() == other.as_slice()
+    }
+}
+
+impl Default for RUMBuffer {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
     }
 }
 /*
