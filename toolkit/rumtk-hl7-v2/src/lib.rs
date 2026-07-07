@@ -1387,8 +1387,6 @@ mod tests {
     fn test_deserialize_v2_message() {
         let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let message_str = rumtk_serialize!(&message).unwrap();
-        println!("Serialized => {}", message_str);
-
         let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
 
         assert_eq!(
@@ -1401,8 +1399,6 @@ mod tests {
     fn test_deserialize_large_v2_message() {
         let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
         let message_str = rumtk_serialize!(&message).unwrap();
-        println!("Serialized => {}", message_str);
-
         let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
 
         assert_eq!(
