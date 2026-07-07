@@ -29,7 +29,7 @@ use std::sync::LazyLock;
 
 pub type RUMBufferInner = Option<Dune>;
 
-static EMPTY_BUFFER_DATA: [u8;1] = [0;1];
+static EMPTY_BUFFER_DATA: [u8;0] = [0;0];
 static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_static());
 
 ///
