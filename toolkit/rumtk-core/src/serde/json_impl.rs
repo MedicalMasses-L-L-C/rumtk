@@ -19,6 +19,7 @@
  */
 use crate::buffers::buffer_to_str;
 use crate::buffers::*;
+use crate::mem::AsSlice;
 pub use crate::serde::json::*;
 use crate::strings::{string_to_buffer, AsStr};
 pub use crate::types::RUMOrderedMap;
