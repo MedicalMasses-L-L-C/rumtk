@@ -67,21 +67,25 @@ pub struct RUMBuffer {
 impl RUMBuffer {
     #[inline]
     pub fn new() -> Self {
-        Self::from_slice(&[])
+        let data_length = 0;
+        let mut mem = rumtk_dune_new!();
+        let ptr = mem.allocate_raw(data_length).unwrap();
+        Self {
+            data: Some(mem),
+            ptr,
+            size: data_length,
+        }
     }
 
     #[inline]
     fn from_slice(data: &[u8]) -> Self {
         let data_length = data.len();
-        let mut mem = match data.is_empty() {
-            true => rumtk_dune_new!(),
-            false => rumtk_dune_new!(data_length)
-        };
+        let mut mem = rumtk_dune_new!(data_length);
         let mut ptr = mem.allocate_raw(data_length).unwrap();
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferInner::Some(mem),
+            data: Some(mem),
             ptr,
             size: data_length,
         }
@@ -89,8 +93,9 @@ impl RUMBuffer {
 
     #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
+        assert!(offset <= self.size, "offset too large");
         let copy = Self {
-            data: RUMBufferInner::None,
+            data: None,
             ptr: self.ptr.clone(),
             size: offset,
         };
@@ -102,14 +107,14 @@ impl RUMBuffer {
     #[inline]
     pub fn freeze(&self) -> Self {
         Self {
-            data: RUMBufferInner::None,
+            data: None,
             ptr: self.ptr.clone(),
             size: self.size.clone(),
         }
     }
 
     #[inline]
-    pub fn mutate(&mut self) -> RUMBuffer {
+    pub fn mutate(&mut self) -> Self {
         self.freeze()
     }
 
@@ -126,6 +131,16 @@ impl RUMBuffer {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.size == 0
+    }
+
+    #[inline]
+    pub fn is_buffer(&self) -> bool {
+        self.data.is_some()
+    }
+
+    #[inline]
+    pub fn is_view(&self) -> bool {
+        self.data.is_none()
     }
 }
 
@@ -171,7 +186,18 @@ impl PartialEq for RUMBuffer {
         self.as_slice() == other.as_slice()
     }
 }
-
+/*
+impl Drop for RUMBuffer {
+    fn drop(&mut self) {
+        match self.data.clone() {
+            Some(mem) => {
+                drop(mem)
+            },
+            None => {}
+        }
+    }
+}
+*/
 unsafe impl Send for RUMBuffer {}
 unsafe impl Sync for RUMBuffer {}
 
