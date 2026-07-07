@@ -66,8 +66,8 @@ mod tests {
     use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
     use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
-    use rumtk_core::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
-    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
+    use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
+    use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
     use std::thread::spawn;
     use std::time::Instant;
     /**********************************Constants**************************************/
@@ -1369,7 +1369,7 @@ mod tests {
     }
 
     ////////////////////////////JSON Tests/////////////////////////////////
-    /*
+
     #[test]
     fn test_deserialize_escaped_v2_message() {
         let message = rumtk_v2_parse_message!(V2_JSON_MESSAGE).unwrap();
@@ -1387,6 +1387,8 @@ mod tests {
     fn test_deserialize_v2_message() {
         let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
         let message_str = rumtk_serialize!(&message).unwrap();
+        println!("Serialized => {}", message_str);
+
         let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
 
         assert_eq!(
@@ -1406,7 +1408,7 @@ mod tests {
         );
     }
 
-     */
+
     ////////////////////////////Benchmark Tests/////////////////////////////////
     #[test]
     fn test_buffer_find_segments() {
@@ -1506,6 +1508,20 @@ mod tests {
         println!("Parsed message in {} us", &time);
 
         assert!(time <= 100000, "V2Message parsing took {} microseconds [> 100000 us]!", time);
+    }
+
+    #[test]
+    fn test_parser_including_small_message_drop_benchmark() {
+        let buffer = RUMBuffer::from(HL7_V2_REPEATING_FIELD_MESSAGE.as_bytes());
+
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let message = V2Message::try_from_buffer(buffer).unwrap();
+            drop(message);
+        });
+
+        println!("Parsed message in {} us", &time);
+
+        assert!(time <= 1000, "V2Message parsing took {} microseconds [> 500 us]!", time);
     }
 
     ////////////////////////////Message Parse Speed Tests/////////////////////////////////
