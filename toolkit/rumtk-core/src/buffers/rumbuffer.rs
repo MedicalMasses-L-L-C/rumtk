@@ -69,7 +69,7 @@ impl RUMBuffer {
     pub fn new() -> Self {
         let data_length = 0;
         let mut mem = rumtk_dune_new!();
-        let ptr = mem.allocate_raw(data_length).unwrap();
+        let ptr = mem.address;
         Self {
             data: Some(mem),
             ptr,
@@ -149,6 +149,7 @@ impl AsSlice for RUMBuffer {
 
     #[inline]
     fn as_slice(&self) -> &[Self::Item] {
+        if self.size == 0 { return &[]; }
         as_slice(self.ptr,  self.size)
     }
 
