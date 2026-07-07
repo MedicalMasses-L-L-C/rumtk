@@ -449,7 +449,7 @@ pub mod v2_parser {
     ///
     pub type V2SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
 
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
+    #[derive(Default, Debug, RUMSerJson, RUMDeJson, Clone)]
     pub struct V2Message {
         #[serde(skip)]
         data: RUMBuffer,
@@ -667,6 +667,12 @@ pub mod v2_parser {
             let mut segment_set = V2SegmentGroup::new();
             segment_set.push(segment.1);
             group.insert(key.into(), segment_set);
+        }
+    }
+
+    impl PartialEq for V2Message {
+        fn eq(&self, other: &V2Message) -> bool {
+            self.separators == other.separators && self.segment_groups == other.segment_groups
         }
     }
 
