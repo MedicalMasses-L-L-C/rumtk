@@ -31,7 +31,7 @@ type NullDune = LazyLock<Arena>;
 type ArrakisDunes = LazyLock<Sand>;
 type ArrakisLock = LazyLock<DuneLock>;
 
-static mut NULL: NullDune = NullDune::new(|| Arena::new());
+static NULL: NullDune = NullDune::new(|| Arena::new());
 static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
@@ -60,11 +60,9 @@ pub struct Dune {
 
 impl Dune {
     pub fn new() -> Self {
-        let arena: &Arena = unsafe { &*NULL };
-        let address = arena.address();
         Self {
-            address,
-            arena: unsafe { &*NULL },
+            address: unsafe{ (*NULL).address() },
+            arena: unsafe{ &(*NULL) },
         }
     }
 

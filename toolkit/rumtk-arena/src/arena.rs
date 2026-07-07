@@ -118,7 +118,16 @@ impl ArenaAlloc {
     /// Allocates a new Arena using the [DEFAULT_ARENA_MEMORY_ALLOCATION] allocation size.
     ///
     pub fn new() -> Self {
-        Self::with_capacity(DEFAULT_ARENA_MEMORY_ALLOCATION)
+        let memory = match MmapMut::map_anon(0) {
+            Ok(m) => m,
+            Err(_) => panic!("Failed to map memory"),
+        };
+
+        Self {
+            memory,
+            capacity: 0,
+            used: 0,
+        }
     }
 
     ///
@@ -259,7 +268,7 @@ impl ArenaAlloc {
     }
 
     #[inline(always)]
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.used == 0
     }
 }
