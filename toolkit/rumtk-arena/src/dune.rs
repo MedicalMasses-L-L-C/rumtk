@@ -27,12 +27,11 @@ use std::sync::{Arc, LazyLock, Mutex, RwLock};
 pub type SafeArena = Arc<RwLock<Arena>>;
 type Sand = LinkedList<Arena>;
 type DuneLock = Arc<Mutex<u8>>;
+type NullDune = LazyLock<Arena>;
 type ArrakisDunes = LazyLock<Sand>;
 type ArrakisLock = LazyLock<DuneLock>;
 
-static NULL_ARENA_DATA: [usize; 8] = [0; 8];
-static NULL_ARENA_ADDRESS: [u8; 0] = [0; 0];
-static NULL_ARENA: &'static Arena = unsafe { &*(NULL_ARENA_DATA.as_ptr() as *const Arena) };
+static NULL: NullDune = NullDune::new(|| Arena::new());
 static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
 static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
 
@@ -62,8 +61,8 @@ pub struct Dune {
 impl Dune {
     pub fn new() -> Self {
         Self {
-            address: NULL_ARENA_ADDRESS.as_ptr(),
-            arena: NULL_ARENA,
+            address: unsafe{ (*NULL).address() },
+            arena: unsafe{ &(*NULL) },
         }
     }
 

@@ -149,7 +149,6 @@ impl AsSlice for RUMBuffer {
 
     #[inline]
     fn as_slice(&self) -> &[Self::Item] {
-        if self.size == 0 { return &[]; }
         as_slice(self.ptr,  self.size)
     }
 
