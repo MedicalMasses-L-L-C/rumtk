@@ -25,8 +25,12 @@ use std::cmp::PartialEq;
 use std::ops::Deref;
 use std::ops::DerefMut;
 use std::ops::{Index, Range, RangeFull};
+use std::sync::LazyLock;
 
 pub type RUMBufferInner = Option<Dune>;
+
+static EMPTY_BUFFER_DATA: [u8;0] = [0;0];
+static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_static());
 
 ///
 /// The [RUMBuffer] type is meant to be a very lightweight owned buffer pointer. The impetus for building
@@ -66,15 +70,17 @@ pub struct RUMBuffer {
 
 impl RUMBuffer {
     #[inline]
-    pub fn new() -> Self {
+    pub fn new_static() -> Self {
         let data_length = 0;
-        let mut mem = rumtk_dune_new!();
-        let ptr = mem.address;
         Self {
-            data: Some(mem),
-            ptr,
+            data: None,
+            ptr: EMPTY_BUFFER_DATA.as_ptr(),
             size: data_length,
         }
+    }
+    #[inline]
+    pub fn new() -> Self {
+        unsafe { (*EMPTY_RUMBUFFER).clone() }
     }
 
     #[inline]
