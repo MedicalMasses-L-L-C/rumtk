@@ -49,7 +49,6 @@ pub mod v2_parser {
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
     use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
-    use rumtk_core::rumtk_cache_fetch;
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     use rumtk_core::serde::{RUMSerializableBuffer, RUMSerializableManualBuffer, RUMSerializableManualDrop};
@@ -58,6 +57,7 @@ pub mod v2_parser {
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
     use rumtk_core::types::RUMOrderedMap;
+    use rumtk_core::{rumtk_cache_fetch, rumtk_serialize};
     use std::io::BufRead;
     use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
@@ -229,6 +229,7 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
+            assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut component_list: ComponentList = ComponentList::new();
             let mut splitter = field.split_fast(parser_chars.component_separator);
 
@@ -329,6 +330,7 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<(u8, Self)> {
+            assert!(raw_segment.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
@@ -357,9 +359,11 @@ pub mod v2_parser {
             }
             field_list.push(Self::generate_subfields(raw_fields.remainder, parser_chars));
 
-            Ok((segment_id, V2Segment {
+            let segment = V2Segment {
                 fields: field_list,
-            }))
+            };
+
+            Ok((segment_id, segment))
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
@@ -447,6 +451,8 @@ pub mod v2_parser {
 
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Message {
+        #[serde(skip)]
+        data: RUMBuffer,
         separators: V2ParserCharacters,
         segment_groups: V2SegmentMap,
     }
@@ -463,9 +469,11 @@ pub mod v2_parser {
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
             let sanitized = V2Message::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
-            let segments = V2Message::extract_segments(sanitized, &parse_characters)?;
+            let sanitized_view = sanitized.freeze();
+            let segments = V2Message::extract_segments(sanitized_view, &parse_characters)?;
 
             Ok(V2Message {
+                data: sanitized,
                 separators: parse_characters,
                 segment_groups: segments,
             })
@@ -616,10 +624,10 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn sanitize(mut raw_message: RUMBuffer) -> RUMBuffer {
-            let mut raw_data = raw_message.mutate();
-            buffer_replace_in_place(&mut raw_data, &['\n'  as u8], &['\r' as u8]);
-            buffer_replace_in_place(&mut raw_data, &['\r' as u8, '\r' as u8], &['\r' as u8, ' ' as u8]);
-            buffer_trim(&raw_message)
+            buffer_replace_in_place(&mut raw_message, &['\n'  as u8], &['\r' as u8]);
+            buffer_replace_in_place(&mut raw_message, &['\r' as u8, '\r' as u8], &['\r' as u8, ' ' as u8]);
+            let trimmed = buffer_trim(&raw_message);
+            trimmed
         }
 
         ///
@@ -629,6 +637,7 @@ pub mod v2_parser {
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<V2SegmentMap> {
+            assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(CPU_L1_CACHE_LINE_SIZE);
 
             cpu_l3_prefetch(msg.as_ptr());
