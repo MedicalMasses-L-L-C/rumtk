@@ -62,7 +62,7 @@ pub mod v2_parser {
     use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
     use std::str::Chars;
-    use std::sync::Arc;
+    use std::sync::{Arc, LazyLock};
     /**************************** Globals ***************************************/
 
     static mut search_cache: LazyRUMCache<RUMString, V2SearchIndex> = new_cache();
@@ -108,6 +108,7 @@ pub mod v2_parser {
     }
 
     impl V2Component {
+        #[inline]
         pub fn new() -> Self {
             Self {
                 component: RUMBuffer::new(),
@@ -158,6 +159,7 @@ pub mod v2_parser {
         ///
         /// Will not support 2.7.8 Local encodings (\Zxxyy) until needed in the wild.
         ///
+        #[inline]
         fn from(component: RUMBuffer) -> Self {
             Self {
                 component
@@ -199,6 +201,8 @@ pub mod v2_parser {
 
     pub type ComponentList = RUMVec<V2Component>;
 
+    static EMPTY_FIELD: LazyLock<V2Field> = LazyLock::new(|| V2Field::new_static());
+
     ///
     /// A field is a collection of items separated by the field separation character.
     ///
@@ -221,7 +225,13 @@ pub mod v2_parser {
     }
 
     impl V2Field {
+        #[inline]
         pub fn new() -> Self {
+            EMPTY_FIELD.clone()
+        }
+
+        #[inline]
+        pub fn new_static() -> Self {
             Self {
                 components: vec![V2Component::new()]
             }
@@ -250,6 +260,7 @@ pub mod v2_parser {
             }
         }
 
+        #[inline]
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
             let mut components: RUMVec<&str> = RUMVec::with_capacity(self.components.len());
             for component in self.components.iter() {
@@ -295,6 +306,7 @@ pub mod v2_parser {
     pub type V2FieldGroup = RUMVec<V2Field>;
     pub type V2FieldList = RUMVec<V2FieldGroup>;
 
+    static EMPTY_SEGMENT: LazyLock<V2FieldGroup> = LazyLock::new(|| vec![V2Field::new()]);
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
     /// A segment is one line.
@@ -404,7 +416,7 @@ pub mod v2_parser {
         #[inline(always)]
         pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
             if field.is_empty() {
-                return vec![V2Field::new()];
+                return EMPTY_SEGMENT.clone();
             }
 
             let mut field_group = V2FieldGroup::new();
