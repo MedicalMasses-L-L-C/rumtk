@@ -1398,6 +1398,20 @@ mod tests {
     }
 
     #[test]
+    fn test_deserialize_large_v2_message() {
+        let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
+        let message_str = rumtk_serialize!(&message).unwrap();
+        println!("Serialized => {}", message_str);
+
+        let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
+
+        assert_eq!(
+            message, deserialized,
+            "Deserialized JSON does not match the expected value!"
+        );
+    }
+
+    #[test]
     fn test_deserialize_stdin_v2_message_basic() {
         let expected_message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
         let deserialized = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
