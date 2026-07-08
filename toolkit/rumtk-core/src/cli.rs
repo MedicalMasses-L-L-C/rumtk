@@ -43,15 +43,13 @@
 ///
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
+    use crate::cpu::CPU_SIMD_64_SIZE;
     use crate::strings::rumtk_format;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     use std::os::fd::FromRawFd;
 
-    pub const BUFFER_SIZE: usize = 1024 * 4;
-    pub const BUFFER_CHUNK_SIZE: usize = 512;
-
     pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; BUFFER_CHUNK_SIZE];
+    pub type BufferChunk = [u8; CPU_SIMD_64_SIZE];
 
     ///
     /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size
@@ -83,7 +81,7 @@ pub mod cli_utils {
             // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
             // 0 and simply let us naturally break, but a read < than requested buffer appears to be
             // an equally canonical way to handle terminal and piped data.
-            if s < BUFFER_CHUNK_SIZE {
+            if s < CPU_SIMD_64_SIZE {
                 break;
             }
         }
@@ -92,7 +90,7 @@ pub mod cli_utils {
     }
 
     ///
-    /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size.
+    /// Consumes the incoming buffer in chunks of [CPU_SIMD_64_SIZE](crate::cpu::CPU_SIMD_64_SIZE) bytes size.
     ///
     /// ## Example
     ///
@@ -100,10 +98,11 @@ pub mod cli_utils {
     /// use std::io::stdin;
     /// use std::io::prelude::*;
     /// use std::process::{Command, Stdio};
-    /// use rumtk_core::cli::cli_utils::{read_some_stdin, BUFFER_SIZE, BUFFER_CHUNK_SIZE};
+    /// use rumtk_core::cli::cli_utils::{read_some_stdin};
+    /// use rumtk_core::cpu::CPU_PAGE_SIZE;
     /// use rumtk_core::base::RUMVec;
     ///
-    /// let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
+    /// let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
     /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
     /// let mut totas_s = s;
     /// while s > 0 {
@@ -115,13 +114,11 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
-        let mut chunk: BufferChunk = [0; BUFFER_CHUNK_SIZE];
+        let mut chunk: BufferChunk = [0; CPU_SIMD_64_SIZE];
         match stdin().read(&mut chunk) {
             Ok(s) => {
-                let slice = &chunk[0..s];
-
                 if s > 0 {
-                    buf.extend_from_slice(slice);
+                    buf.extend_from_slice(chunk.as_slice());
                 }
 
                 Ok(s)
