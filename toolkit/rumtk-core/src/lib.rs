@@ -922,10 +922,11 @@ mod tests {
 
     #[test]
     fn test_buffer_split_simple() {
-        let data = RUMBuffer::from(b"Hello|World").split_to(5);
+        let mut data = RUMBuffer::from(b"Hello|World");
+        let split = data.split_to(5);
         let expected = RUMBuffer::from(b"Hello");
 
-        assert_eq!(data, expected, "Bad buffer trim! Got {:?}", data);
+        assert_eq!(split, expected, "Bad buffer trim! Got {:?}", split);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

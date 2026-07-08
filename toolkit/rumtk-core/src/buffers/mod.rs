@@ -23,6 +23,7 @@ pub mod helpers;
 pub mod types;
 pub mod rumbuffer;
 
+pub use constants::*;
 pub use helpers::*;
 pub use rumbuffer::*;
 pub use types::*;

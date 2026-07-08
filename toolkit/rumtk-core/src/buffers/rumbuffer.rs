@@ -54,7 +54,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_st
 /// ```
 /// use rumtk_core::buffers::*;
 ///
-/// let buffer = RUMBuffer::from("Hello World!");
+/// let mut buffer = RUMBuffer::from("Hello World!");
 /// let section = buffer.split_to(5);
 /// let expected = b"Hello";
 ///
@@ -126,7 +126,7 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn to_vec(&mut self) -> RUMVec<u8> {
+    pub fn to_vec(&self) -> RUMVec<u8> {
         self.as_slice().to_vec()
     }
 

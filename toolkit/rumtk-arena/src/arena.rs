@@ -90,7 +90,7 @@ pub type ArenaBaseAddress = *const u8;
 /// ```
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::new();
+/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 1);
 /// let result_ptr = arena.write(5);
 ///
 /// ```
@@ -100,7 +100,7 @@ pub type ArenaBaseAddress = *const u8;
 /// #![feature(allocator_api)]
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::new();
+/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 5);
 /// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
 /// v.push(5);
 ///
@@ -312,7 +312,7 @@ type ArenaRef = Arc<RwLock<ArenaAlloc>>;
 /// ```
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::new();
+/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 1);
 /// let result_ptr = arena.write(5);
 ///
 /// ```
@@ -322,7 +322,7 @@ type ArenaRef = Arc<RwLock<ArenaAlloc>>;
 /// #![feature(allocator_api)]
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::new();
+/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 5);
 /// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
 /// v.push(5);
 ///

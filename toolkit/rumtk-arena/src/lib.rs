@@ -167,8 +167,8 @@ mod tests {
 
 
         let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena),
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena),
         };
 
         let mut order: Vec<(usize, &str)> = Vec::new();
@@ -183,7 +183,7 @@ mod tests {
     #[test]
     fn test_arena_vec_debug_print() {
         let arena = rumtk_dune_new!(500);
-        let mut test_vec = ArenaVec::new_in(arena);
+        let mut test_vec = ArenaVec::new_in(arena.arena);
         let expected = ["Hello", "World", "!"];
 
         for s in expected.iter() {
@@ -199,7 +199,7 @@ mod tests {
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = rumtk_arena_hashmap!(expected.clone(), &arena);
+        let v = rumtk_arena_hashmap!(expected.clone(), &arena.arena);
         println!("{:?}", &v);
     }
 
@@ -209,7 +209,7 @@ mod tests {
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena);
+        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena);
         println!("{:?}", &v);
     }
 
@@ -225,8 +225,8 @@ mod tests {
 
 
         let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena),
+            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena),
+            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena),
         };
         println!("{:?}", &v);
     }
