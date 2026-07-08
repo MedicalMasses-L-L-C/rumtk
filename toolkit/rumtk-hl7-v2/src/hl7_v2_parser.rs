@@ -239,7 +239,7 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
-            assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
+            debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut component_list: ComponentList = ComponentList::new();
             let mut splitter = field.split_fast(parser_chars.component_separator);
 
@@ -342,7 +342,7 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<(u8, Self)> {
-            assert!(raw_segment.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
+            debug_assert!(raw_segment.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
@@ -649,8 +649,8 @@ pub mod v2_parser {
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<V2SegmentMap> {
-            assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
-            let mut segments: V2SegmentMap = V2SegmentMap::with_capacity(CPU_L1_CACHE_LINE_SIZE);
+            debug_assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
+            let mut segments: V2SegmentMap = V2SegmentMap::new();
 
             cpu_l3_prefetch(msg.as_ptr());
             let mut splitter = msg.split_fast(parser_chars.segment_terminator);

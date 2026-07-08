@@ -100,7 +100,7 @@ impl RUMBuffer {
 
     #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
-        assert!(offset <= self.size, "offset too large");
+        debug_assert!(offset <= self.size, "offset too large");
         let copy = Self {
             data: None,
             ptr: self.ptr.clone(),
