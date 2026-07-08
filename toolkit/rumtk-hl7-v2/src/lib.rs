@@ -63,8 +63,7 @@ mod tests {
     use rumtk_core::base::{RUMResult, RUMVec};
     use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
-    use rumtk_core::cli::cli_utils::BUFFER_CHUNK_SIZE;
-    use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection};
+    use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection, CPU_SEARCH_WINDOW_256_SIZE};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
@@ -1448,10 +1447,10 @@ mod tests {
         let mut buffer = RUMBuffer::from(V2_TEST_LARGE_MESSAGE.as_bytes());
 
         let (r, time) = rumtk_benchmark_snippet!(|| {
-            let split_count = buffer.len() / BUFFER_CHUNK_SIZE;
+            let split_count = buffer.len() / CPU_SEARCH_WINDOW_256_SIZE;
             let mut splits = RUMVec::<RUMBuffer>::with_capacity(split_count);
             for i in 0..splits.len() {
-                splits.push(buffer.split_to(BUFFER_CHUNK_SIZE));
+                splits.push(buffer.split_to(CPU_SEARCH_WINDOW_256_SIZE));
             }
 
             splits
