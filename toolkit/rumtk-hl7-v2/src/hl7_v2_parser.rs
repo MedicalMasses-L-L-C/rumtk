@@ -104,14 +104,14 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Component {
-        component: RUMBuffer,
+        c: RUMBuffer,
     }
 
     impl V2Component {
         #[inline]
         pub fn new() -> Self {
             Self {
-                component: RUMBuffer::new(),
+                c: RUMBuffer::new(),
             }
         }
 
@@ -162,7 +162,7 @@ pub mod v2_parser {
         #[inline]
         fn from(component: RUMBuffer) -> Self {
             Self {
-                component
+                c: component
             }
         }
 
@@ -193,7 +193,7 @@ pub mod v2_parser {
 
     impl AsStr for V2Component {
         fn as_str(&self) -> &str {
-            buffer_to_str(&self.component).unwrap_or_default()
+            buffer_to_str(&self.c).unwrap_or_default()
         }
     }
 
@@ -221,7 +221,7 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
-        components: ComponentList,
+        cs: ComponentList,
     }
 
     impl V2Field {
@@ -233,7 +233,7 @@ pub mod v2_parser {
         #[inline]
         pub fn new_static() -> Self {
             Self {
-                components: vec![V2Component::new()]
+                cs: vec![V2Component::new()]
             }
         }
 
@@ -249,41 +249,41 @@ pub mod v2_parser {
             component_list.push(V2Component::from(splitter.remainder));
 
             Self {
-                components: component_list
+                cs: component_list
             }
         }
 
         #[inline(always)]
         pub fn from_single_field(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             Self {
-                components: vec![V2Component::from(field)]
+                cs: vec![V2Component::from(field)]
             }
         }
 
         #[inline]
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
-            let mut components: RUMVec<&str> = RUMVec::with_capacity(self.components.len());
-            for component in self.components.iter() {
+            let mut components: RUMVec<&str> = RUMVec::with_capacity(self.cs.len());
+            for component in self.cs.iter() {
                 components.push(component.as_str())
             }
             components.join(&parser_chars.component_separator.as_string())
         }
 
         pub fn len(&self) -> usize {
-            self.components.len()
+            self.cs.len()
         }
 
         pub fn get(&self, indx: isize) -> V2Result<&V2Component> {
-            let component_indx = clamp_index(&indx, &(self.components.len() as isize))? - 1;
-            match self.components.get(component_indx) {
+            let component_indx = clamp_index(&indx, &(self.cs.len() as isize))? - 1;
+            match self.cs.get(component_indx) {
                 Some(component) => Ok(component),
                 None => Err(rumtk_format!("Component at index {} not found!", indx)),
             }
         }
 
         pub fn get_mut(&mut self, indx: isize) -> V2Result<&mut V2Component> {
-            let component_indx = clamp_index(&indx, &(self.components.len() as isize))? - 1;
-            match self.components.get_mut(component_indx) {
+            let component_indx = clamp_index(&indx, &(self.cs.len() as isize))? - 1;
+            match self.cs.get_mut(component_indx) {
                 Some(component) => Ok(component),
                 None => Err(rumtk_format!("Component at index {} not found!", indx)),
             }
@@ -325,7 +325,7 @@ pub mod v2_parser {
     ///
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Segment {
-        fields: V2FieldList,
+        f: V2FieldList,
     }
 
     impl V2Segment {
@@ -372,15 +372,15 @@ pub mod v2_parser {
             field_list.push(Self::generate_subfields(raw_fields.remainder, parser_chars));
 
             let segment = V2Segment {
-                fields: field_list,
+                f: field_list,
             };
 
             Ok((segment_id, segment))
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
-            let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.fields.len());
-            for field_group in self.fields.iter() {
+            let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.f.len());
+            for field_group in self.f.iter() {
                 let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.len());
                 for field in field_group.iter() {
                     fields.push(field.to_string(parser_chars));
@@ -394,23 +394,23 @@ pub mod v2_parser {
         }
 
         pub fn get(&self, indx: isize) -> V2Result<&V2FieldGroup> {
-            let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
-            match self.fields.get(field_indx) {
+            let field_indx = clamp_index(&indx, &(self.f.len() as isize))? - 1;
+            match self.f.get(field_indx) {
                 Some(field) => Ok(field),
                 None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
 
         pub fn get_mut(&mut self, indx: isize) -> V2Result<&mut V2FieldGroup> {
-            let field_indx = clamp_index(&indx, &(self.fields.len() as isize))? - 1;
-            match self.fields.get_mut(field_indx) {
+            let field_indx = clamp_index(&indx, &(self.f.len() as isize))? - 1;
+            match self.f.get_mut(field_indx) {
                 Some(field) => Ok(field),
                 None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
 
         pub fn len(&self) -> usize {
-            self.fields.len()
+            self.f.len()
         }
 
         #[inline(always)]
@@ -465,8 +465,8 @@ pub mod v2_parser {
     pub struct V2Message {
         #[serde(skip)]
         data: RUMBuffer,
-        separators: V2ParserCharacters,
-        segment_groups: V2SegmentMap,
+        sep: V2ParserCharacters,
+        sg: V2SegmentMap,
     }
 
     impl V2Message {
@@ -486,8 +486,8 @@ pub mod v2_parser {
 
             Ok(V2Message {
                 data: sanitized,
-                separators: parse_characters,
-                segment_groups: segments,
+                sep: parse_characters,
+                sg: segments,
             })
         }
 
@@ -498,26 +498,26 @@ pub mod v2_parser {
         /// carriage return characters as terminator.
         ///
         pub fn to_string(&self) -> V2String {
-            let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.segment_groups.len());
-            for segment_key in self.segment_groups.keys() {
-                let segment_group = &self.segment_groups[segment_key];
+            let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.sg.len());
+            for segment_key in self.sg.keys() {
+                let segment_group = &self.sg[segment_key];
                 for segment in segment_group {
                     msg.push(rumtk_format!("{}{}{}",
                         buffer_to_str(V2_SEGMENT_NAMES(*segment_key)).unwrap_or_default(),
-                        buffer_to_str(&[self.separators.field_separator]).unwrap_or_default(),
-                        segment.to_string(&self.separators)));
+                        buffer_to_str(&[self.sep.field_separator]).unwrap_or_default(),
+                        segment.to_string(&self.sep)));
                 }
             }
 
-            msg.join(&self.separators.segment_terminator.as_string())
+            msg.join(&self.sep.segment_terminator.as_string())
         }
 
         pub fn len(&self) -> usize {
-            self.segment_groups.len()
+            self.sg.len()
         }
 
         pub fn is_empty(&self) -> bool {
-            self.segment_groups.is_empty()
+            self.sg.is_empty()
         }
 
         pub fn get(&self, segment_index: &u8, sub_segment: usize) -> V2Result<&V2Segment> {
@@ -551,7 +551,7 @@ pub mod v2_parser {
         }
 
         pub fn get_group(&self, segment_index: &u8) -> V2Result<&V2SegmentGroup> {
-            match self.segment_groups.get(segment_index) {
+            match self.sg.get(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -561,7 +561,7 @@ pub mod v2_parser {
         }
 
         pub fn get_mut_group(&mut self, segment_index: &u8) -> V2Result<&mut V2SegmentGroup> {
-            match self.segment_groups.get_mut(segment_index) {
+            match self.sg.get_mut(segment_index) {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
@@ -599,7 +599,7 @@ pub mod v2_parser {
         }
 
         pub fn segment_exists(&self, segment_index: &u8) -> bool {
-            self.segment_groups.contains_key(segment_index)
+            self.sg.contains_key(segment_index)
         }
 
         ///
@@ -684,7 +684,7 @@ pub mod v2_parser {
 
     impl PartialEq for V2Message {
         fn eq(&self, other: &V2Message) -> bool {
-            self.separators == other.separators && self.segment_groups == other.segment_groups
+            self.sep == other.sep && self.sg == other.sg
         }
     }
 
