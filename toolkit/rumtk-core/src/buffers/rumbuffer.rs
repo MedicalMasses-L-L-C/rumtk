@@ -249,6 +249,13 @@ impl From<RUMVec<u8>> for RUMBuffer {
     }
 }
 
+impl From<&RUMVec<u8>> for RUMBuffer {
+    #[inline]
+    fn from(data: &RUMVec<u8>) -> Self {
+        Self::from_slice(data.as_slice())
+    }
+}
+
 impl From<&[u8]> for RUMBuffer {
     #[inline]
     fn from(data: &[u8]) -> Self {

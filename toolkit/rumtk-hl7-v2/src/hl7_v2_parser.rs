@@ -715,6 +715,20 @@ pub mod v2_parser {
         }
     }
 
+    impl<'a> TryFrom<RUMVec<u8>> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: RUMVec<u8>) -> V2Result<V2Message> {
+            V2Message::try_from_buffer(RUMBuffer::from(input))
+        }
+    }
+
+    impl<'a> TryFrom<&RUMVec<u8>> for V2Message {
+        type Error = RUMString;
+        fn try_from(input: &RUMVec<u8>) -> V2Result<V2Message> {
+            V2Message::try_from_buffer(RUMBuffer::from(input))
+        }
+    }
+
     impl<'a> TryFrom<&[u8]> for V2Message {
         type Error = RUMString;
         fn try_from(input: &[u8]) -> V2Result<V2Message> {

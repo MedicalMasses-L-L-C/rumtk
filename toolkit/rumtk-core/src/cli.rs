@@ -43,7 +43,6 @@
 ///
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
-    use crate::buffers::RUMBuffer;
     use crate::strings::rumtk_format;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     use std::os::fd::FromRawFd;
@@ -71,8 +70,8 @@ pub mod cli_utils {
     /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
     /// ```
     ///
-    pub fn read_stdin() -> RUMResult<RUMBuffer> {
-        let mut stdin_buffer = RUMVec::with_capacity(BUFFER_SIZE);
+    pub fn read_stdin() -> RUMResult<RUMVec<u8>> {
+        let mut stdin_buffer = RUMVec::new();
         let mut s = read_some_stdin(&mut stdin_buffer)?;
 
         while s > 0 {
@@ -89,7 +88,7 @@ pub mod cli_utils {
             }
         }
 
-        Ok(RUMBuffer::from(stdin_buffer))
+        Ok(stdin_buffer)
     }
 
     ///
