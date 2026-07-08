@@ -88,6 +88,10 @@ impl<T> RUMSerializableManualDrop<T> {
     pub fn new(v: T) -> Self {
         RUMSerializableManualDrop(ManuallyDrop::new(v))
     }
+
+    pub fn inner(&self) -> &T {
+        &self.0
+    }
 }
 
 impl<T> RUMSerJson for RUMSerializableManualDrop<T>
@@ -98,7 +102,7 @@ where
     where
         S: RUMJsonSerializer,
     {
-        ManuallyDrop::<T>::into_inner(self.0.clone()).serialize(serializer)
+        self.inner().serialize(serializer)
     }
 }
 
