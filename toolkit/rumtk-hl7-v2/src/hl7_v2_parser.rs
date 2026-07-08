@@ -739,7 +739,7 @@ pub mod v2_parser {
     impl<'a> TryFrom<&str> for V2Message {
         type Error = RUMString;
         fn try_from(input: &str) -> V2Result<V2Message> {
-            V2Message::try_from(string_to_buffer(input))
+            V2Message::try_from(input.as_bytes())
         }
     }
 
