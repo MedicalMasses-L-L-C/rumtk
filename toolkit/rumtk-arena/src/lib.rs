@@ -22,7 +22,7 @@ mod tests {
 
     #[test]
     fn test_arena_simple_allocation() {
-        let arena = Arena::new();
+        let arena = Arena::with_capacity(1024);
         let v: &str = unsafe { arena.write("hello world").unwrap().as_ref() };
 
         assert_eq!(v, "hello world", "Failed to allocate and fill a small vector!");
@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn test_arena_simple_reallocation_address() {
-        let arena = Arena::new();
+        let arena = Arena::with_capacity(1024);
         let old_layout = Layout::from_size_align(4, 1).unwrap();
         let new_layout = Layout::from_size_align(8, 1).unwrap();
         let v = unsafe { arena.allocate(old_layout).unwrap() };
@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn test_arena_simple_reallocation() {
-        let arena = Arena::new();
+        let arena = Arena::with_capacity(1024);
         let old_layout = Layout::from_size_align(4, 4).unwrap();
         let new_layout = Layout::from_size_align(8, 4).unwrap();
         let v: NonNull<[u8]> = unsafe { arena.allocate(old_layout).unwrap() };
@@ -53,7 +53,7 @@ mod tests {
 
     #[test]
     fn test_arena_simple_vec_allocation() {
-        let arena = Arena::new();
+        let arena = Arena::with_capacity(1024);
         let mut v = Vec::<usize, &Arena>::with_capacity_in(10, &arena);
 
         v.push(10);
@@ -64,7 +64,7 @@ mod tests {
 
     #[test]
     fn test_arena_simple_vec_reallocation() {
-        let arena = Arena::new();
+        let arena = Arena::with_capacity(1024);
         let mut v = Vec::<usize, &Arena>::with_capacity_in(1, &arena);
 
         v.push(10);
