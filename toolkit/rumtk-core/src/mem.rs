@@ -19,10 +19,10 @@
  */
 
 /////////////////If using MiMalloc//////////////////////////////
-#[cfg(target_feature = "mimalloc")]
+#[cfg(all(feature = "mimalloc", feature = "default"))]
 use mimalloc::MiMalloc;
 
-#[cfg(target_feature = "mimalloc")]
+#[cfg(all(feature = "mimalloc", feature = "default"))]
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 

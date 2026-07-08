@@ -16,6 +16,9 @@ rust-version = "1.81.0"
 debug = true
 strip = false
 
+[features]
+default = ["mimalloc"]
+
 [dependencies]
 rumtk-arena = { version = "0.2.3", path = "../rumtk-arena" }
 unicode-segmentation = "1.13.2"
@@ -37,12 +40,9 @@ uuid = { version = "1.19.0", features = [
     "macro-diagnostics",
 ] }
 pyo3-ffi = "0.28.3"
-bytes = "1.11.0"
 nanoid = "0.4.0"
 rand = "0.10.1"
 base64 = "0.22.1"
 bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
 branches = "0.4.4"
-
-[target.'cfg(target_feature = "mimalloc")'.dependencies]
-mimalloc = "0.1.52"
+mimalloc = { version = "0.1.52", optional = true }

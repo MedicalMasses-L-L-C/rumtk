@@ -21,6 +21,5 @@ pub mod json;
 pub mod json_impl;
 
 pub use crate::types::RUMOrderedMap;
-use bytes::BufMut;
 pub use json::*;
 pub use json_impl::*;
