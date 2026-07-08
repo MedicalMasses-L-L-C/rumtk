@@ -474,3 +474,16 @@ macro_rules! rumtk_arena_new {
         Arena::with_capacity($capacity)
     }};
 }
+
+#[macro_export]
+macro_rules! rumtk_arena_raw_new {
+    (  ) => {{
+        use $crate::arena::ArenaAlloc;
+        ArenaAlloc::new()
+    }};
+    ( $capacity:expr ) => {{
+        use $crate::arena::ArenaAlloc;
+
+        ArenaAlloc::with_capacity($capacity)
+    }};
+}
