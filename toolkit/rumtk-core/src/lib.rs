@@ -61,7 +61,7 @@ mod tests {
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
     use crate::cache::RUMCache;
     use crate::search::rumtk_search::*;
-    use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson, RUMSerializableBuffer};
+    use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
     use std::process::Stdio;
     use std::sync::Arc;
@@ -691,9 +691,9 @@ mod tests {
 
     #[test]
     fn test_deserialize_buffer_serde_json() {
-        let hw = RUMSerializableBuffer(RUMBuffer::from(b"Hello World!"));
+        let hw = RUMBuffer::from(b"Hello World!");
         let hw_str = to_json(&hw).unwrap();
-        let new_hw: RUMSerializableBuffer = from_json(&hw_str).unwrap();
+        let new_hw: RUMBuffer = from_json(&hw_str).unwrap();
 
         assert_eq!(
             new_hw, hw,
@@ -927,6 +927,14 @@ mod tests {
         let expected = RUMBuffer::from(b"Hello");
 
         assert_eq!(split, expected, "Bad buffer trim! Got {:?}", split);
+    }
+
+    #[test]
+    fn test_buffer_struct_size() {
+        let data = RUMBuffer::new();
+        let struct_size = size_of::<RUMBuffer>();
+
+        assert!(struct_size <= 8, "Empty RUMBuffer structure size is too large! Length is {}", struct_size);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
