@@ -664,7 +664,6 @@ pub mod v2_parser {
             debug_assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut segments: V2SegmentMap = V2SegmentMap::new();
 
-            cpu_l3_prefetch(msg.as_ptr());
             let mut splitter = msg.split_fast(parser_chars.segment_terminator);
             for segment in &mut splitter {
                 if segment.is_empty() {

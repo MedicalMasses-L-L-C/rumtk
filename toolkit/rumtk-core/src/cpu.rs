@@ -116,7 +116,6 @@ pub fn cpu_find_simd_n<const LANE_SIZE: usize>
 
 #[inline]
 pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
-    cpu_l3_prefetch(window.as_ptr());
     cpu_find_simd_n::<CPU_SIMD_64_SIZE>(
         window,
         byte,
@@ -205,7 +204,6 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
 
 #[inline]
 pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndexSet {
-    cpu_l3_prefetch(window.as_ptr());
     let indx = cpu_collect_simd_n::<CPU_SIMD_64_SIZE>(
         window,
         byte,
