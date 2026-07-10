@@ -18,19 +18,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
-use crate::mem::{as_slice, as_slice_mut, copy_from_slice, AsSlice};
-use rumtk_arena::dune::Dune;
-use rumtk_arena::rumtk_dune_new;
+use crate::mem::{as_slice, as_slice_mut, AsSlice};
 use std::cmp::PartialEq;
 use std::ops::Deref;
 use std::ops::DerefMut;
 use std::ops::{Index, Range, RangeFull};
 use std::sync::LazyLock;
 
-pub type RUMBufferInner = Option<Dune>;
-
 static EMPTY_BUFFER_DATA: [u8;0] = [0;0];
 static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_static());
+
+pub type RUMBuffer = RUMVec<u8>;
 
 ///
 /// The [RUMBuffer] type is meant to be a very lightweight owned buffer pointer. The impetus for building
@@ -62,8 +60,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new_st
 /// ```
 ///
 #[derive(Debug, Clone)]
-pub struct RUMBuffer {
-    data: RUMBufferInner,
+pub struct RUMBufferView {
     ptr: *const u8,
     size: usize,
 }
@@ -71,12 +68,9 @@ pub struct RUMBuffer {
 impl RUMBuffer {
     #[inline]
     pub fn new_static() -> Self {
-        let data_length = 0;
-        let ptr = EMPTY_BUFFER_DATA.as_ptr();
         Self {
-            data: None,
-            ptr,
-            size: data_length,
+            ptr: EMPTY_BUFFER_DATA.as_ptr(),
+            size: 0,
         }
     }
     #[inline]
@@ -87,13 +81,8 @@ impl RUMBuffer {
     #[inline]
     fn from_slice(data: &[u8]) -> Self {
         let data_length = data.len();
-        let mut mem = rumtk_dune_new!(data_length);
-        let mut ptr = mem.allocate_raw(data_length).unwrap();
-        let dst = as_slice_mut(ptr, data_length);
-        copy_from_slice(&data[..], dst);
         Self {
-            data: Some(mem),
-            ptr,
+            ptr: data.as_ptr(),
             size: data_length,
         }
     }
@@ -112,20 +101,6 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn freeze(&self) -> Self {
-        Self {
-            data: None,
-            ptr: self.ptr.clone(),
-            size: self.size.clone(),
-        }
-    }
-
-    #[inline]
-    pub fn mutate(&mut self) -> Self {
-        self.freeze()
-    }
-
-    #[inline]
     pub fn to_vec(&self) -> RUMVec<u8> {
         self.as_slice().to_vec()
     }
@@ -138,16 +113,6 @@ impl RUMBuffer {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.size == 0
-    }
-
-    #[inline]
-    pub fn is_buffer(&self) -> bool {
-        self.data.is_some()
-    }
-
-    #[inline]
-    pub fn is_view(&self) -> bool {
-        self.data.is_none()
     }
 }
 
@@ -200,18 +165,7 @@ impl Default for RUMBuffer {
         Self::new()
     }
 }
-/*
-impl Drop for RUMBuffer {
-    fn drop(&mut self) {
-        match self.data.clone() {
-            Some(mem) => {
-                drop(mem)
-            },
-            None => {}
-        }
-    }
-}
-*/
+
 unsafe impl Send for RUMBuffer {}
 unsafe impl Sync for RUMBuffer {}
 
