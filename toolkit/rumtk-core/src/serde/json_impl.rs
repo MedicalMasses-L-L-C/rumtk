@@ -21,12 +21,12 @@ use crate::buffers::buffer_to_str;
 use crate::buffers::*;
 use crate::mem::AsSlice;
 pub use crate::serde::json::*;
-use crate::strings::{string_to_buffer, AsStr};
+use crate::strings::string_to_buffer;
 pub use crate::types::RUMOrderedMap;
 use std::hash::Hash;
 use std::mem::ManuallyDrop;
 
-impl RUMSerJson for RUMBuffer {
+impl RUMSerJson for RUMBufferView {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: RUMJsonSerializer,
@@ -40,7 +40,7 @@ impl RUMSerJson for RUMBuffer {
     }
 }
 
-impl<'a> RUMDeJson<'a> for RUMBuffer {
+impl<'a> RUMDeJson<'a> for RUMBufferView {
     fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
     where
         D: RUMJsonDeserializer<'a>,
@@ -51,33 +51,6 @@ impl<'a> RUMDeJson<'a> for RUMBuffer {
         } else {
             Ok(RUMBuffer::default())
         }
-    }
-}
-
-#[derive(Default, Debug, PartialEq, Clone)]
-pub struct RUMSerializableBuffer(pub RUMBuffer);
-
-impl RUMSerJson for RUMSerializableBuffer {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: RUMJsonSerializer,
-    {
-        // Convert external type to a serializable format
-        let string = match buffer_to_str(&self.0.as_slice()) {
-            Ok(string) => string,
-            Err(err) => return Err(serde::ser::Error::custom(err)),
-        };
-        serializer.serialize_str(string)
-    }
-}
-
-impl<'a> RUMDeJson<'a> for RUMSerializableBuffer {
-    fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
-    where
-        D: RUMJsonDeserializer<'a>,
-    {
-        let escaped_val = String::deserialize(deserializer)?;
-        Ok(RUMSerializableBuffer(string_to_buffer(&escaped_val)))
     }
 }
 
@@ -113,51 +86,5 @@ impl<'a, T: RUMDeJson<'a>> RUMDeJson<'a> for RUMSerializableManualDrop<T> {
     {
         let escaped_val = T::deserialize(deserializer)?;
         Ok(RUMSerializableManualDrop(ManuallyDrop::new(escaped_val)))
-    }
-}
-
-#[derive(Default, Debug, PartialEq, Clone)]
-pub struct RUMSerializableManualBuffer(pub ManuallyDrop<RUMBuffer>);
-
-impl RUMSerializableManualBuffer {
-    pub fn new(v: RUMBuffer) -> Self {
-        RUMSerializableManualBuffer(ManuallyDrop::new(v))
-    }
-}
-
-impl AsRef<RUMBuffer> for RUMSerializableManualBuffer {
-    fn as_ref(&self) -> &RUMBuffer {
-        &self.0
-    }
-}
-
-impl AsStr for RUMSerializableManualBuffer {
-    fn as_str(&self) -> &str {
-        buffer_to_str(self.0.as_slice()).unwrap_or_default()
-    }
-}
-
-impl RUMSerJson for RUMSerializableManualBuffer
-{
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: RUMJsonSerializer,
-    {
-        // Convert external type to a serializable format
-        let string = match buffer_to_str((&self.0).as_slice()) {
-            Ok(string) => string,
-            Err(err) => return Err(serde::ser::Error::custom(err)),
-        };
-        serializer.serialize_str(string)
-    }
-}
-
-impl<'a> RUMDeJson<'a> for RUMSerializableManualBuffer {
-    fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
-    where
-        D: RUMJsonDeserializer<'a>,
-    {
-        let escaped_val = String::deserialize(deserializer)?;
-        Ok(RUMSerializableManualBuffer(ManuallyDrop::new(string_to_buffer(&escaped_val))))
     }
 }
