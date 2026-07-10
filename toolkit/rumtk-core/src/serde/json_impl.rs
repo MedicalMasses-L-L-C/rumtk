@@ -26,7 +26,7 @@ pub use crate::types::RUMOrderedMap;
 use std::hash::Hash;
 use std::mem::ManuallyDrop;
 
-impl RUMSerJson for RUMBufferView {
+impl RUMSerJson for RUMBuffer {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: RUMJsonSerializer,
@@ -40,7 +40,7 @@ impl RUMSerJson for RUMBufferView {
     }
 }
 
-impl<'a> RUMDeJson<'a> for RUMBufferView {
+impl<'a> RUMDeJson<'a> for RUMBuffer {
     fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
     where
         D: RUMJsonDeserializer<'a>,

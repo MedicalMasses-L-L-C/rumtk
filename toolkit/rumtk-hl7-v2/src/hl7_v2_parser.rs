@@ -51,7 +51,7 @@ pub mod v2_parser {
     use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
-    use rumtk_core::serde::{RUMSerializableBuffer, RUMSerializableManualBuffer, RUMSerializableManualDrop};
+    use rumtk_core::serde::RUMSerializableManualDrop;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
