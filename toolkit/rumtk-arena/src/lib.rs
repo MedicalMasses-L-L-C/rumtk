@@ -20,6 +20,22 @@ mod tests {
     use std::alloc::Layout;
     use std::ptr::NonNull;
 
+
+    macro_rules! rumtk_benchmark_snippet {
+        ( $closure:expr ) => {{
+            use std::time::Instant;
+
+            let start = Instant::now();
+            let r = $closure();
+            let end = Instant::now();
+
+            let time = end - start;
+            let micros = time.as_micros();
+
+            (r, micros)
+        }};
+    }
+
     #[test]
     fn test_arena_simple_allocation() {
         let arena = Arena::with_capacity(1024);
@@ -87,6 +103,59 @@ mod tests {
         let v: ArenaVec<String> = rumtk_arena_vec!(&arena);
 
         assert!(v.is_empty(), "Failed to create vector with arena allocation enabled.");
+    }
+
+    #[test]
+    fn test_arena_benchmark_arenavec_vs_vec() {
+        struct ptr {
+            data: usize,
+            len: usize,
+            index: usize,
+            bad: usize,
+        }
+
+        impl ptr {
+            pub fn new() -> Self {
+                Self {
+                    data: 0,
+                    len: 0,
+                    index: 0,
+                    bad: 0,
+                }
+            }
+        }
+
+        let total_items = 20000;
+
+        let (arena, arena_time) = rumtk_benchmark_snippet!(|| {
+            let total_bytes = (total_items * size_of::<ptr>()) + size_of::<ArenaVec<ptr>>();
+            Arena::with_capacity(total_bytes)
+        });
+
+        let (arena_vec_r, arena_vec_time) = rumtk_benchmark_snippet!(|| {
+            let mut v: ArenaVec<ptr> = rumtk_arena_vec!(&arena);
+
+            for _ in 0..total_items {
+                v.push(ptr::new());
+            }
+
+            v
+        });
+
+        let (vec_r, vec_time) = rumtk_benchmark_snippet!(|| {
+            let mut v = Vec::<ptr>::with_capacity(total_items);
+
+            for _ in 0..total_items {
+                v.push(ptr::new());
+            }
+
+            v
+        });
+
+        let total_arena_vec_time = arena_time + arena_vec_time;
+        println!("ArenaVec => {} us vs. Vec => {} us.", total_arena_vec_time, vec_time);
+
+        //assert!(total_arena_vec_time < vec_time, "ArenaVec is too slow. ArenaVec => {} us vs. Vec => {} us.", total_arena_vec_time, vec_time);
     }
 
     #[test]

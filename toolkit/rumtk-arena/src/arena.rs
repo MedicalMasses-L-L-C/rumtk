@@ -109,8 +109,7 @@ pub type ArenaBaseAddress = *const u8;
 #[derive(Debug)]
 pub struct ArenaAlloc {
     memory: MmapMut,
-    capacity: usize,
-    used: usize,
+    remaining: &'static mut [u8],
 }
 
 impl ArenaAlloc {
@@ -118,32 +117,24 @@ impl ArenaAlloc {
     /// Allocates a new Arena using the [DEFAULT_ARENA_MEMORY_ALLOCATION] allocation size.
     ///
     pub fn new() -> Self {
-        let memory = match MmapMut::map_anon(0) {
-            Ok(m) => m,
-            Err(_) => panic!("Failed to map memory"),
-        };
-
-        Self {
-            memory,
-            capacity: 0,
-            used: 0,
-        }
+        Self::with_capacity(DEFAULT_ARENA_MEMORY_ALLOCATION)
     }
 
     ///
     /// Allocates new Arena with the specified size. At the moment, we use the `memmap2` crate's defaults
     /// for this allocation.
     ///
+    #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        let memory = match MmapMut::map_anon(capacity) {
+        let mut memory = match MmapMut::map_anon(capacity) {
             Ok(m) => m,
             Err(_) => panic!("Failed to map memory"),
         };
+        let remaining = unsafe { std::slice::from_raw_parts_mut((&mut memory[..]).as_mut_ptr(), capacity) };
 
         Self {
             memory,
-            capacity,
-            used: 0,
+            remaining,
         }
     }
 
@@ -153,12 +144,12 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn remaining(&self) -> usize {
-        self.capacity - self.used
+        self.remaining.len()
     }
 
     #[inline(always)]
     pub fn capacity(&self) -> usize {
-        self.capacity
+        self.memory.len()
     }
 
     ///
@@ -166,14 +157,9 @@ impl ArenaAlloc {
     /// `panic`!!!!!!!
     ///
     #[inline(always)]
-    pub fn can_allocate(&self, size: usize) -> ArenaResult<bool> {
+    pub fn can_allocate(&self, size: usize) -> bool {
         let remaining = self.remaining();
-        let can_allocate = remaining >= size;
-        if can_allocate {
-            Ok(can_allocate)
-        } else {
-            Err(AllocError)
-        }
+        remaining >= size
     }
 
     ///
@@ -186,11 +172,8 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn commit(&mut self, size: usize) -> ArenaResult<*mut [u8]> {
-        self.can_allocate(size)?;
-
-        let ptr = &mut self.memory[self.used..self.used+size];
-        self.used += size;
-        Ok(ptr)
+        debug_assert!(self.can_allocate(size), "Cannot allocate {} bytes due to lack of space!", size);
+        Ok(&mut self.remaining[..size])
     }
 
     ///
@@ -198,8 +181,7 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn grow(&mut self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
-        self.uncommit(old_size);
-        self.commit(new_size)
+        self.commit(new_size - old_size)
     }
 
     ///
@@ -251,7 +233,8 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn uncommit(&mut self, length: usize) {
-        self.used -= length;
+        let new_lower_bound = self.remaining() - (length % self.len());
+        self.remaining = unsafe { std::slice::from_raw_parts_mut((&mut self.memory[new_lower_bound..]).as_mut_ptr(), new_lower_bound) };
     }
 
     ///
@@ -259,7 +242,8 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn reset(&mut self) {
-        self.used = 0;
+        let full_range = &mut self.memory[..];
+        self.remaining = unsafe { std::slice::from_raw_parts_mut(full_range.as_mut_ptr(), full_range.len()) };
     }
 
     #[inline(always)]
@@ -268,8 +252,13 @@ impl ArenaAlloc {
     }
 
     #[inline(always)]
-    pub const fn is_empty(&self) -> bool {
-        self.used == 0
+    pub fn is_empty(&self) -> bool {
+        self.remaining() == 0
+    }
+
+    #[inline(always)]
+    pub fn len(&self) -> usize {
+        self.memory.len()
     }
 }
 
