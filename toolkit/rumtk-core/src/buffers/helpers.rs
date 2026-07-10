@@ -42,6 +42,7 @@ use tokio::io::AsyncReadExt;
 /// assert_eq!(result, buffer, "Slice to RUMBuffer conversion failed!");
 /// ```
 ///
+#[inline(always)]
 pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
     RUMBuffer::from(buffer)
 }
@@ -62,6 +63,7 @@ pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
 /// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
 /// ```
 ///
+#[inline(always)]
 pub fn new_random_buffer<const N: usize>() -> [u8; N] {
     let mut buffer = [0u8; N];
     rand::fill(&mut buffer);
@@ -84,6 +86,7 @@ pub fn new_random_buffer<const N: usize>() -> [u8; N] {
 /// assert_eq!(buffer.len(), DEFAULT_BUFFER_CHUNK_SIZE, "The new random buffer does not have the expected size!");
 /// ```
 ///
+#[inline(always)]
 pub fn new_random_rumbuffer<const N: usize>() -> RUMBuffer {
     slice_to_buffer(&new_random_buffer::<N>())
 }
@@ -155,6 +158,7 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 /// assert_eq!(result, expected, "Buffer to RUMString conversion failed!");
 /// ```
 ///
+#[inline(always)]
 pub fn buffer_to_string(buffer: &[u8]) -> RUMResult<RUMString> {
     match buffer.to_string() {
         Ok(string) => Ok(string),
@@ -162,6 +166,7 @@ pub fn buffer_to_string(buffer: &[u8]) -> RUMResult<RUMString> {
     }
 }
 
+#[inline(always)]
 pub fn buffer_to_str(buffer: &[u8]) -> RUMResult<&str> {
     match std::str::from_utf8(buffer) {
         Ok(string) => Ok(string),
