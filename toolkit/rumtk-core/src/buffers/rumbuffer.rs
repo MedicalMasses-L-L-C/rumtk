@@ -103,7 +103,7 @@ impl RUMBuffer {
         debug_assert!(offset <= self.size, "offset too large");
         let copy = Self {
             data: None,
-            ptr: self.ptr.clone(),
+            ptr: self.ptr,
             size: offset,
         };
         self.ptr = unsafe { self.ptr.add(offset) };
@@ -115,8 +115,8 @@ impl RUMBuffer {
     pub fn freeze(&self) -> Self {
         Self {
             data: None,
-            ptr: self.ptr.clone(),
-            size: self.size.clone(),
+            ptr: self.ptr,
+            size: self.size,
         }
     }
 
