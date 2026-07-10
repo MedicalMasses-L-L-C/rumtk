@@ -1488,7 +1488,7 @@ mod tests {
         let (r, time) = rumtk_benchmark_snippet!(|| {
             let mut data = buffer.mutate();
             buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
-            RUMBuffer::from(data)
+            data
         });
 
         assert!(time <= 1000, "buffer replace of segments in large message took {} microseconds [> 1000 us]!", time);
