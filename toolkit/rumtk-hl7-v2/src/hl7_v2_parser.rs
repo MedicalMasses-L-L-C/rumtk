@@ -201,7 +201,7 @@ pub mod v2_parser {
 
     pub type ComponentList = RUMVec<V2Component>;
 
-    static mut EMPTY_FIELD: LazyLock<V2Field> = LazyLock::new(|| V2Field::new_static());
+    static mut EMPTY_FIELD: LazyLock<V2Field> = LazyLock::new(|| V2Field::new());
 
     ///
     /// A field is a collection of items separated by the field separation character.
@@ -227,13 +227,6 @@ pub mod v2_parser {
     impl V2Field {
         #[inline]
         pub fn new() -> Self {
-            unsafe {
-                V2Field { cs: RUMVec::from_raw_parts(EMPTY_FIELD.as_mut_ptr(), 0, 0) }
-            }
-        }
-
-        #[inline]
-        pub fn new_static() -> Self {
             Self {
                 cs: vec![V2Component::new()]
             }
