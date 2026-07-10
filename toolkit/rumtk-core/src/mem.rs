@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+use crate::cpu::CPU_SIMD_64_SIZE;
 /////////////////If using MiMalloc//////////////////////////////
 #[cfg(all(feature = "mimalloc", feature = "default"))]
 use mimalloc::MiMalloc;
@@ -44,9 +44,31 @@ pub fn as_slice_mut<'a>(src: *mut u8, size: usize) -> &'a mut [u8] {
     unsafe { std::slice::from_raw_parts_mut(src, size) }
 }
 
+
+/////////////////////////////Copy///////////////////////////////////
+#[inline]
+pub fn copy_simd_slice<'a, const LANE_SIZE: usize>(src: &[u8], mut dst: &'a mut [u8]) -> &'a mut [u8] {
+    let (prefix, middle, postfix) = src.as_simd::<LANE_SIZE>();
+    let prefix_len = prefix.len();
+    let postfix_len = postfix.len();
+
+    dst[..prefix_len].copy_from_slice(prefix);
+    dst = &mut dst[prefix_len..];
+
+    for chunk in middle.into_iter() {
+        chunk.copy_to_slice(&mut dst[..LANE_SIZE]);
+        dst = &mut dst[LANE_SIZE..];
+    }
+
+    dst[..postfix_len].copy_from_slice(postfix);
+    dst
+}
+
 #[inline]
 pub fn copy_from_slice<'a>(src: &[u8], dst: &'a mut [u8]) -> &'a mut [u8] {
-    assert!(src.len() <= dst.len(), "Destination memory slice is smaller than source! This is a bug near the call site of copy_from_slice!");
-    dst.copy_from_slice(src);
-    dst
+    debug_assert!(src.len() <= dst.len(), "Destination memory slice is smaller than source! This is a bug near the call site of copy_from_slice!");
+    copy_simd_slice::<CPU_SIMD_64_SIZE>(
+        src,
+        dst,
+    )
 }
