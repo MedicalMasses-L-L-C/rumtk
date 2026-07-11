@@ -641,10 +641,8 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn sanitize(mut raw_message: RUMBuffer) -> RUMBuffer {
-            buffer_replace_in_place(&mut raw_message, &['\n'  as u8], &['\r' as u8]);
-            buffer_replace_in_place(&mut raw_message, &['\r' as u8, '\r' as u8], &['\r' as u8, ' ' as u8]);
-            let trimmed = buffer_trim(&raw_message);
-            trimmed
+            buffer_replace_in_place(&mut raw_message, &['\n'  as u8], &[' ' as u8]);
+            raw_message
         }
 
         ///
