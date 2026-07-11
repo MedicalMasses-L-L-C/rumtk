@@ -51,7 +51,7 @@ pub mod types;
 pub mod buffers;
 mod instrumentation;
 pub mod cpu;
-mod mem;
+pub mod mem;
 
 #[cfg(test)]
 mod tests {
@@ -60,6 +60,7 @@ mod tests {
     use crate::buffers::*;
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
     use crate::cache::RUMCache;
+    use crate::cpu::{cpu_replace_simd, u8xN, CPU_SIMD_64_SIZE};
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
@@ -444,7 +445,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::{cpu_collect_simd, cpu_find_simd, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
+    use crate::cpu::{cpu_collect_simd, cpu_find_replace_simd_n, cpu_find_simd, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
@@ -1022,6 +1023,26 @@ mod tests {
         println!("Tokenized message in {} us", &time);
 
         assert!(time <= 10000, "Buffer tokenization took {} microseconds [> 10000 us]!", time);
+    }
+
+    #[test]
+    fn test_cpu_replace_simd() {
+        let mut data = b"                                                         n                    ".to_vec();
+        let expected = b"                                                                              ".to_vec();
+
+        cpu_replace_simd(data.as_mut_slice(), b'n', b' ');
+
+        assert_eq!(data, expected, "Failed to replace in SIMD!");
+    }
+
+    #[test]
+    fn test_cpu_replace_simd_multi() {
+        let mut data = b"              nnnnnnnn                  nnnn                         n    nn                ".to_vec();
+        let expected = b"                                                                                            ".to_vec();
+
+        cpu_replace_simd(data.as_mut_slice(), b'n', b' ');
+
+        assert_eq!(data, expected, "Failed to replace in SIMD!");
     }
 
 }

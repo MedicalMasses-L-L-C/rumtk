@@ -64,6 +64,64 @@ pub fn cpu_slice_to_array<const SLICE_SIZE: usize>(chunk: &[u8]) -> &[u8; SLICE_
     chunk.try_into().expect("length mismatch")
 }
 
+#[inline(always)]
+pub fn cpu_slice_to_array_padded<const SLICE_SIZE: usize, const PAD: u8>(chunk: &[u8]) -> [u8; SLICE_SIZE] {
+    let mut result = [0u8; SLICE_SIZE];
+    let input_len = chunk.len();
+    let left = SLICE_SIZE - input_len;
+    let processed = SLICE_SIZE - left;
+
+    for i in 0..input_len {
+        result[i] = chunk[i];
+    }
+
+    for i in 0..left {
+        result[processed + i] = PAD;
+    }
+
+    result
+}
+
+#[inline(always)]
+pub fn cpu_slice_splat<const SLICE_SIZE: usize>(input: &[u8]) -> [u8; SLICE_SIZE] {
+    let mut result = [0u8; SLICE_SIZE];
+
+    for chunk in result.chunks_mut(input.len()) {
+        if chunk.len() == input.len() {
+            for i in 0..input.len() {
+                chunk[i] = input[i]
+            }
+        } else {
+            for i in 0..chunk.len() {
+                chunk[i] = input[i];
+            }
+        }
+    }
+
+    result
+}
+
+////////////////////////////////////////SIMD MASKS//////////////////////////////////////////
+#[inline(always)]
+pub fn cpu_simd_shift_right_n<const LANE_SIZE: usize, const SHIFT: usize, const PAD: u8>(item: &u8xN<LANE_SIZE>) -> u8xN<LANE_SIZE> {
+    item.shift_elements_right::<SHIFT>(PAD)
+}
+
+#[inline(always)]
+pub fn cpu_simd_masks<const LANE_SIZE: usize>(pattern: &[u8]) -> RUMVec<u8xN<LANE_SIZE>> {
+    let mask = u8xN::<LANE_SIZE>::from_array(cpu_slice_splat(pattern));
+    let mut masks = RUMVec::<u8xN<LANE_SIZE>>::with_capacity(pattern.len());
+
+    masks.push(mask);
+
+    for i in 1..pattern.len() {
+        let shifted = cpu_simd_shift_right_n::<LANE_SIZE, 1, 0>(&mask);
+        masks.push(shifted);
+    }
+
+    masks
+}
+
 ////////////////////////////////////////SEARCH FOR NEEDLE IN HAYSTACK///////////////////////////////
 
 #[inline(always)]
@@ -120,6 +178,33 @@ pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
         window,
         byte,
     )
+}
+
+/////////////////////////////Replacement Helpers///////////////////////////////
+
+#[inline(always)]
+pub fn cpu_find_replace_simd_n<const LANE_SIZE: usize>(chunk: &mut [u8], pattern: u8xN<LANE_SIZE>, replacement: u8xN<LANE_SIZE>) {
+    let simd_chunk = u8xN::<LANE_SIZE>::from_array(cpu_slice_to_array_padded::<LANE_SIZE, 0>(chunk));
+    let bitmask = simd_chunk.simd_eq(pattern);
+
+    if bitmask.any() {
+        replacement.store_select(chunk, bitmask);
+    }
+}
+
+#[inline(always)]
+pub fn cpu_replace_simd_n<const LANE_SIZE: usize>(data: &mut [u8], pattern: u8, replacement: u8) {
+    let mask = u8xN::<LANE_SIZE>::splat(pattern);
+    let simd_replacement = u8xN::<LANE_SIZE>::splat(replacement);
+
+    for mut chunk in data.chunks_mut(LANE_SIZE) {
+        cpu_find_replace_simd_n::<LANE_SIZE>(&mut chunk[..], mask, simd_replacement);
+    }
+}
+
+#[inline(always)]
+pub fn cpu_replace_simd(data: &mut [u8], pattern: u8, replacement: u8) {
+    cpu_replace_simd_n::<CPU_SIMD_64_SIZE>(data, pattern, replacement)
 }
 
 /////////////////////////////GATHER ALL INDICES OF NEEDLE IN HAYSTACK///////////////////////////////

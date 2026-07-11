@@ -285,8 +285,21 @@ pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
     RUMBuffer::from(slice)
 }
 
+pub fn buffer_replace_in_place_simd(chunk: &mut [u8], pattern: &[u8], replacement: &[u8]) {
+
+}
+
 #[inline(always)]
 pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replacement: &[u8]) {
+    if buffer.is_empty() || pattern.is_empty() || replacement.is_empty() {
+        return;
+    }
+
+    if pattern.len() == 1  {
+        cpu_replace_simd(buffer, pattern[0], replacement[0]);
+        return;
+    }
+
     let replacement_length = replacement.len();
     let mut cursor = buffer_find(&buffer, pattern);
     let mut remainder = buffer;
