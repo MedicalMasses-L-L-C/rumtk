@@ -270,31 +270,13 @@ pub fn buffer_find_instances<'a>(buffer: &'a [u8], pattern: &[u8]) -> RUMVec<(us
 }
 
 #[inline(always)]
-pub fn buffer_pad(buffer: &[u8], pad: u8, target_length: usize) -> RUMBuffer {
-    let buffer_length = buffer.len();
-    let pad_length = target_length - buffer_length;
-    let s = buffer_length + pad_length;
-    let mut slice = RUMVec::with_capacity(s);
-
-    slice.extend_from_slice(buffer);
-
-    for _ in buffer_length..s {
-        slice.push(pad);
-    }
-
-    RUMBuffer::from(slice)
-}
-
-pub fn buffer_replace_in_place_simd(chunk: &mut [u8], pattern: &[u8], replacement: &[u8]) {
-
-}
-
-#[inline(always)]
 pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replacement: &[u8]) {
+    // Optimize the nothing passed to us case.
     if buffer.is_empty() || pattern.is_empty() || replacement.is_empty() {
         return;
     }
 
+    // Optimize the single byte replace using SIMD
     if pattern.len() == 1  {
         cpu_replace_simd(buffer, pattern[0], replacement[0]);
         return;

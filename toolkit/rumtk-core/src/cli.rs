@@ -43,16 +43,16 @@
 ///
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
-    use crate::cpu::CPU_SIMD_64_SIZE;
+    use crate::cpu::CPU_PAGE_SIZE;
     use crate::strings::rumtk_format;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     use std::os::fd::FromRawFd;
 
     pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; CPU_SIMD_64_SIZE];
+    pub type BufferChunk = [u8; CPU_PAGE_SIZE];
 
     ///
-    /// Consumes the incoming buffer in chunks of [BUFFER_CHUNK_SIZE](BUFFER_CHUNK_SIZE) bytes size
+    /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
     /// until no more bytes are present.
     ///
     /// To avoid calling a blocking read, we check if the read yielded an amount of bytes fewer than
@@ -69,7 +69,7 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_stdin() -> RUMResult<RUMVec<u8>> {
-        let mut stdin_buffer = RUMVec::new();
+        let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
         let mut s = read_some_stdin(&mut stdin_buffer)?;
 
         while s > 0 {
@@ -81,7 +81,7 @@ pub mod cli_utils {
             // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
             // 0 and simply let us naturally break, but a read < than requested buffer appears to be
             // an equally canonical way to handle terminal and piped data.
-            if s < CPU_SIMD_64_SIZE {
+            if s < CPU_PAGE_SIZE {
                 break;
             }
         }
@@ -114,7 +114,7 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
-        let mut chunk: BufferChunk = [0; CPU_SIMD_64_SIZE];
+        let mut chunk: BufferChunk = [0; CPU_PAGE_SIZE];
         match stdin().read(&mut chunk) {
             Ok(s) => {
                 if s > 0 {
