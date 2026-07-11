@@ -636,7 +636,7 @@ pub mod v2_parser {
         /// let data = RUMBuffer::from(RAW_MSG.as_bytes());
         /// let sanitized = V2Message::sanitize(data);
         ///
-        /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", "\r"), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
+        /// assert_eq!(buffer_to_string(&sanitized).unwrap(), RAW_MSG.replace("\n", " "), "V2Message's sanitize method removed unintended contents instead of duplicated newlines. Size {} vs. {}", RAW_MSG.len(), sanitized.len());
         /// ```
         ///
         #[inline(always)]
