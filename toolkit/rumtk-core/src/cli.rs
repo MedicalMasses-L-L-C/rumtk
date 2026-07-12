@@ -49,7 +49,6 @@ pub mod cli_utils {
     use std::os::fd::FromRawFd;
 
     pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; CPU_PAGE_SIZE * 15];
 
     ///
     /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
@@ -68,12 +67,12 @@ pub mod cli_utils {
     /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
     /// ```
     ///
-    pub fn read_stdin() -> RUMResult<RUMVec<u8>> {
-        let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE * CPU_PAGE_SIZE);
-        let mut s = read_some_stdin(&mut stdin_buffer)?;
+    pub fn read_stdin(minimum_size: usize) -> RUMResult<RUMVec<u8>> {
+        let mut stdin_buffer = RUMVec::with_capacity(minimum_size);
+        let mut s = 0;
 
-        while s > 0 {
-            s = read_some_stdin(&mut stdin_buffer)?;
+        loop {
+            s = read_some_stdin(&mut stdin_buffer, minimum_size)?;
 
             // If we attempt the next read, it is likely to be a 0 byte read. Why does this matter?
             // Well, if the other end of the pipe is still open, the read call will stall in Rust's
@@ -81,7 +80,7 @@ pub mod cli_utils {
             // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
             // 0 and simply let us naturally break, but a read < than requested buffer appears to be
             // an equally canonical way to handle terminal and piped data.
-            if s < CPU_PAGE_SIZE {
+            if s < minimum_size {
                 break;
             }
         }
@@ -103,24 +102,23 @@ pub mod cli_utils {
     /// use rumtk_core::base::RUMVec;
     ///
     /// let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
-    /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
+    /// let mut s = read_some_stdin(&mut stdin_buffer, CPU_PAGE_SIZE).unwrap();
     /// let mut totas_s = s;
     /// while s > 0 {
-    ///    s = read_some_stdin(&mut stdin_buffer).unwrap();
+    ///    s = read_some_stdin(&mut stdin_buffer, CPU_PAGE_SIZE).unwrap();
     ///    totas_s += s;
     /// }
     ///
     /// assert_eq!(totas_s, 0, "Returned data with {} size even though we expected 0 bytes!", totas_s)
     /// ```
     ///
-    pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
-        let mut chunk: BufferChunk = [0; CPU_PAGE_SIZE * 15];
-        match stdin().read(&mut chunk) {
+    #[inline]
+    pub fn read_some_stdin(buf: &mut BufferSlice, chunk_size: usize) -> RUMResult<usize> {
+        let mut chunk = RUMVec::with_capacity(chunk_size);
+        unsafe { chunk.set_len(chunk_size) };
+        match stdin().read(&mut chunk[..]) {
             Ok(s) => {
-                if s > 0 {
-                    buf.extend_from_slice(&chunk[..s]);
-                }
-
+                buf.extend_from_slice(&chunk[..s]);
                 Ok(s)
             }
             Err(e) => Err(rumtk_format!("Error reading stdin chunk because {}!", e)),
@@ -188,6 +186,8 @@ pub mod macros {
     /// Return this unescaped message.
     ///
     /// # Example
+    ///
+    /// ## Without specifying the minimum read size.
     /// ```
     /// use rumtk_core::base::{RUMResult, RUMVec};
     /// use rumtk_core::buffers::*;
@@ -203,11 +203,32 @@ pub mod macros {
     /// }
     /// ```
     ///
+    /// ## With specifying the minimum read size.
+    /// ```
+    /// use rumtk_core::base::{RUMResult, RUMVec};
+    /// use rumtk_core::buffers::*;
+    /// use rumtk_core::rumtk_read_stdin;
+    ///
+    /// fn test_read_stdin() -> RUMResult<RUMVec<u8>> {
+    ///     rumtk_read_stdin!(1024)
+    /// }
+    ///
+    /// match test_read_stdin() {
+    ///     Ok(s) => (),
+    ///     Err(e) => panic!("Error reading stdin because => {}", e)
+    /// }
+    /// ```
+    ///
     #[macro_export]
     macro_rules! rumtk_read_stdin {
         (  ) => {{
-            use $crate::cli::cli_utils::read_stdin;
-            read_stdin()
+            use $crate::cpu::CPU_PAGE_SIZE;
+            use $crate::cli::cli_utils::{read_stdin};
+            read_stdin(CPU_PAGE_SIZE * CPU_PAGE_SIZE)
+        }};
+        ( $min_expected_size:expr ) => {{
+            use $crate::cli::cli_utils::{read_stdin};
+            read_stdin($min_expected_size)
         }};
     }
 
