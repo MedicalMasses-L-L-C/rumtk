@@ -49,7 +49,7 @@ pub mod cli_utils {
     use std::os::fd::FromRawFd;
 
     pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; CPU_PAGE_SIZE];
+    pub type BufferChunk = [u8; CPU_PAGE_SIZE * 15];
 
     ///
     /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
@@ -69,7 +69,7 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_stdin() -> RUMResult<RUMVec<u8>> {
-        let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
+        let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE * CPU_PAGE_SIZE);
         let mut s = read_some_stdin(&mut stdin_buffer)?;
 
         while s > 0 {
@@ -114,11 +114,11 @@ pub mod cli_utils {
     /// ```
     ///
     pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
-        let mut chunk: BufferChunk = [0; CPU_PAGE_SIZE];
+        let mut chunk: BufferChunk = [0; CPU_PAGE_SIZE * 15];
         match stdin().read(&mut chunk) {
             Ok(s) => {
                 if s > 0 {
-                    buf.extend_from_slice(chunk.as_slice());
+                    buf.extend_from_slice(&chunk[..s]);
                 }
 
                 Ok(s)
