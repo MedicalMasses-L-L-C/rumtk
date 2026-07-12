@@ -23,5 +23,11 @@ pyo3 = { version = "0.28.3", features = ["default", "auto-initialize", "serde"] 
 rumtk-core = { version = "0.16.1", path = "../rumtk-core" }
 
 [profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+
+[profile.test]
+opt-level = 3
 lto = "fat"
 codegen-units = 1

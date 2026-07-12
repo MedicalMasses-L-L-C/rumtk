@@ -309,9 +309,11 @@ pub mod v2_parser {
     }
 
     pub type V2FieldGroup = RUMVec<V2Field>;
-    pub type V2FieldList = RUMVec<V2FieldGroup>;
+    pub type V2OptionalFieldGroup = Option<RUMVec<V2Field>>;
+    pub type V2FieldList = RUMVec<V2OptionalFieldGroup>;
 
-    static EMPTY_SEGMENT: LazyLock<V2FieldGroup> = LazyLock::new(|| vec![V2Field::new()]);
+    static mut EMPTY_SEGMENT: LazyLock<V2Segment> = LazyLock::new(|| V2Segment::new());
+    static mut EMPTY_FIELDGROUP: LazyLock<V2FieldGroup> = LazyLock::new(|| vec![V2Field::new()]);
     ///
     /// A segment comprises of a collection of items separated by the segment separator character.
     /// A segment is one line.
@@ -334,6 +336,12 @@ pub mod v2_parser {
     }
 
     impl V2Segment {
+        pub fn new() -> Self {
+            Self {
+                f: vec![]
+            }
+        }
+
         /// Parses the segment using the identified segment delimiter. We then store the segment id and
         /// a list of fields.
         ///
@@ -365,7 +373,7 @@ pub mod v2_parser {
                 field_list.push(
                     vec![
                         V2Field::from_single_field(parser_chars.to_buffer(), parser_chars),
-                    ]
+                    ].into()
                 );
 
                 raw_fields.next();
@@ -386,11 +394,18 @@ pub mod v2_parser {
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
             let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.f.len());
             for field_group in self.f.iter() {
-                let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.len());
-                for field in field_group.iter() {
-                    fields.push(field.to_string(parser_chars));
+                match field_group {
+                    Some(field_group) => {
+                        let mut fields: RUMVec<V2String> = RUMVec::with_capacity(field_group.len());
+                        for field in field_group.iter() {
+                            fields.push(field.to_string(parser_chars));
+                        }
+                        segment.push(fields.join(&parser_chars.repetition_separator.as_string()));
+                    },
+                    None => {
+                        segment.push(V2String::default());
+                    }
                 }
-                segment.push(fields.join(&parser_chars.repetition_separator.as_string()));
             }
             rumtk_format!(
                 "{}",
@@ -401,17 +416,30 @@ pub mod v2_parser {
         pub fn get(&self, indx: isize) -> V2Result<&V2FieldGroup> {
             let field_indx = clamp_index(&indx, &(self.f.len() as isize))? - 1;
             match self.f.get(field_indx) {
-                Some(field) => Ok(field),
+                Some(field) => match field {
+                    Some(field) => Ok(field),
+                    None => unsafe { Ok(&*EMPTY_FIELDGROUP) }
+                },
                 None => Err(rumtk_format!("Field number {} not found!", indx)),
             }
         }
 
         pub fn get_mut(&mut self, indx: isize) -> V2Result<&mut V2FieldGroup> {
             let field_indx = clamp_index(&indx, &(self.f.len() as isize))? - 1;
-            match self.f.get_mut(field_indx) {
-                Some(field) => Ok(field),
-                None => Err(rumtk_format!("Field number {} not found!", indx)),
+            let field = match self.f.get_mut(field_indx) {
+                Some(field) => field,
+                None => return Err(rumtk_format!("Field number {} not found!", indx)),
+            };
+            match field {
+                Some(ref mut field) => Ok(self.f[field_indx].as_mut().unwrap()),
+                None => Ok(self.init_deffered_slot(field_indx)),
             }
+        }
+
+        pub fn init_deffered_slot(&mut self, indx: usize) -> &mut V2FieldGroup {
+            let new_field = vec![V2Field::new()];
+            self.f[indx] = Some(new_field);
+            self.f[indx].as_mut().unwrap()
         }
 
         pub fn len(&self) -> usize {
@@ -419,9 +447,9 @@ pub mod v2_parser {
         }
 
         #[inline(always)]
-        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> RUMVec<V2Field> {
+        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2OptionalFieldGroup {
             if field.is_empty() {
-                return EMPTY_SEGMENT.clone();
+                return None;
             }
 
             let mut field_group = V2FieldGroup::new();
@@ -431,7 +459,7 @@ pub mod v2_parser {
             }
             field_group.push(V2Field::from(splitter.remainder, parser_chars));
 
-            field_group
+            Some(field_group)
         }
     }
 
@@ -447,6 +475,8 @@ pub mod v2_parser {
             self.get_mut(indx).unwrap()
         }
     }
+
+
 
     ///
     /// Segments can be repeating. As such we contain them in groups.
