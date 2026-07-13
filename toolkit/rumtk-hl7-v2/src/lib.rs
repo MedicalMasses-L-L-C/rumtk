@@ -21,6 +21,7 @@
 #![feature(rustc_private)]
 #![feature(str_as_str)]
 #![feature(allocator_api)]
+
 extern crate rumtk_core;
 pub mod hl7_v2_base_types;
 pub mod hl7_v2_complex_types;
@@ -65,6 +66,7 @@ mod tests {
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
     use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection, CPU_SEARCH_WINDOW_256_SIZE};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
+    use rumtk_core::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
     use rumtk_core::{rumtk_benchmark_snippet, rumtk_create_task, rumtk_deserialize, rumtk_exec_task, rumtk_resolve_task, rumtk_serialize, rumtk_sleep};
     use std::thread::spawn;
@@ -1492,6 +1494,38 @@ mod tests {
         });
 
         assert!(time <= 1000, "buffer replace of segments in large message took {} microseconds [> 1000 us]!", time);
+    }
+
+    #[test]
+    fn test_vec_serialization() {
+        #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug)]
+        struct Points {
+            x: usize,
+            y: usize,
+        }
+
+        impl Points{
+            pub fn new() -> Self {
+                Self {
+                    x: 0,
+                    y: 0
+                }
+            }
+
+            pub fn from(x: usize) -> Self {
+                Self {
+                    x: x.clone(),
+                    y: x
+                }
+            }
+        }
+        let data = vec![Some(Points::from(1)), None, Some(Points::from(2)), Some(Points::from(3))];
+        let expected = vec![Some(Points::from(1)), None, Some(Points::from(2)), Some(Points::from(3))];
+
+        let serialized = to_json(&data).unwrap();
+        let deserialized: RUMVec<Option<Points>> = from_json(&serialized).unwrap();
+
+        assert_eq!(expected, deserialized);
     }
 
     #[test]
