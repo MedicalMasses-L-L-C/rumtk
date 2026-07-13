@@ -98,6 +98,10 @@ impl RUMBuffer {
 
     #[inline]
     pub fn from_slice(data: &[u8]) -> Self {
+        if data.is_empty() {
+            return Self::new();
+        }
+
         let data_length = data.len();
         let mut mem = rumtk_dune_new!(data_length);
         let mut ptr = mem.allocate_raw(data_length).unwrap();
