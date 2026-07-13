@@ -48,7 +48,10 @@ pub mod cli_utils {
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     use std::os::fd::FromRawFd;
 
+    const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
+
     pub type BufferSlice = Vec<u8>;
+    pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
 
     ///
     /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
@@ -69,18 +72,17 @@ pub mod cli_utils {
     ///
     pub fn read_stdin(minimum_size: usize) -> RUMResult<RUMVec<u8>> {
         let mut stdin_buffer = RUMVec::with_capacity(minimum_size);
-        let mut s = 0;
 
         loop {
-            s = read_some_stdin(&mut stdin_buffer, minimum_size)?;
+            let s = read_some_stdin(&mut stdin_buffer)?;
 
             // If we attempt the next read, it is likely to be a 0 byte read. Why does this matter?
             // Well, if the other end of the pipe is still open, the read call will stall in Rust's
-            // std and I am not sure why.
+            // std and it is because it expects EOF but that never comes.
             // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
             // 0 and simply let us naturally break, but a read < than requested buffer appears to be
-            // an equally canonical way to handle terminal and piped data.
-            if s < minimum_size {
+            // an equally valid way to handle terminal and piped data.
+            if s < STD_IN_STEP_SIZE {
                 break;
             }
         }
@@ -102,10 +104,10 @@ pub mod cli_utils {
     /// use rumtk_core::base::RUMVec;
     ///
     /// let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
-    /// let mut s = read_some_stdin(&mut stdin_buffer, CPU_PAGE_SIZE).unwrap();
+    /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
     /// let mut totas_s = s;
     /// while s > 0 {
-    ///    s = read_some_stdin(&mut stdin_buffer, CPU_PAGE_SIZE).unwrap();
+    ///    s = read_some_stdin(&mut stdin_buffer).unwrap();
     ///    totas_s += s;
     /// }
     ///
@@ -113,9 +115,9 @@ pub mod cli_utils {
     /// ```
     ///
     #[inline]
-    pub fn read_some_stdin(buf: &mut BufferSlice, chunk_size: usize) -> RUMResult<usize> {
-        let mut chunk = RUMVec::with_capacity(chunk_size);
-        unsafe { chunk.set_len(chunk_size) };
+    pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
+        let mut chunk: BufferChunk = [0; STD_IN_STEP_SIZE];
+
         match stdin().read(&mut chunk[..]) {
             Ok(s) => {
                 buf.extend_from_slice(&chunk[..s]);
