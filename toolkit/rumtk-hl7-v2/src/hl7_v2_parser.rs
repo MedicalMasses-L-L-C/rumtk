@@ -699,7 +699,7 @@ pub mod v2_parser {
         #[inline(always)]
         pub fn sanitize(mut raw_message: RUMBuffer) -> RUMBuffer {
             buffer_replace_in_place(&mut raw_message, &['\n'  as u8], &['\r' as u8]);
-            raw_message
+            buffer_trim(&raw_message)
         }
 
         ///
@@ -719,9 +719,6 @@ pub mod v2_parser {
                 }
 
                 V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
-            }
-            if splitter.remainder.len() == 4 {
-                println!("Empty[{}] => {:?}", &splitter.remainder.is_empty(), buffer_to_str(&splitter.remainder).unwrap());
             }
 
             V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
