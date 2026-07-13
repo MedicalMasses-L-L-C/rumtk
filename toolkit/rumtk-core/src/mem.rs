@@ -17,7 +17,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::base::RUMVec;
 use crate::cpu::CPU_SIMD_64_SIZE;
+use crate::strings::RUMString;
 /////////////////If using MiMalloc//////////////////////////////
 #[cfg(all(feature = "mimalloc", feature = "default"))]
 use mimalloc::MiMalloc;
@@ -27,12 +29,46 @@ use mimalloc::MiMalloc;
 static GLOBAL: MiMalloc = MiMalloc;
 
 ////////////////////////Traits//////////////////////////////////
-
-pub trait AsSlice {
-    type Item;
-    fn as_slice(&self) -> &[Self::Item];
-    fn as_slice_mut(&self) -> &mut [Self::Item];
+pub trait AsPtr {
+    #[inline(always)]
+    fn as_ptr(&self) -> *const u8 {
+        self as *const _ as *const u8
+    }
+    #[inline(always)]
+    fn as_mut_ptr(&mut self) -> *mut u8 {
+        self as *mut _ as *mut u8
+    }
 }
+
+impl AsPtr for [u8] { }
+impl AsPtr for &[u8] { }
+impl AsPtr for RUMVec<u8> { }
+impl AsPtr for &RUMVec<u8> { }
+impl AsPtr for RUMString { }
+
+pub trait SizedType {
+    #[inline(always)]
+    fn size(&self) -> usize;
+}
+
+impl SizedType for [u8] { fn size(&self) -> usize { self.len() } }
+impl SizedType for &[u8] { fn size(&self) -> usize { self.len() } }
+impl SizedType for RUMVec<u8> { fn size(&self) -> usize { self.len() } }
+impl SizedType for &RUMVec<u8> { fn size(&self) -> usize { self.len() } }
+impl SizedType for RUMString { fn size(&self) -> usize { self.len() } }
+
+pub trait AsSlice: AsPtr + SizedType {
+    #[inline(always)]
+    fn as_slice(&self) -> &[u8] { as_slice(self.as_ptr(),  self.size()) }
+    #[inline(always)]
+    fn as_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+}
+
+impl AsSlice for [u8] { }
+impl AsSlice for &[u8] { }
+impl AsSlice for RUMVec<u8> { }
+impl AsSlice for &RUMVec<u8> { }
+impl AsSlice for RUMString { }
 
 #[inline]
 pub fn as_slice<'a>(src: *const u8, size: usize) -> &'a [u8] {
@@ -43,7 +79,6 @@ pub fn as_slice<'a>(src: *const u8, size: usize) -> &'a [u8] {
 pub fn as_slice_mut<'a>(src: *mut u8, size: usize) -> &'a mut [u8] {
     unsafe { std::slice::from_raw_parts_mut(src, size) }
 }
-
 
 /////////////////////////////Copy///////////////////////////////////
 #[inline]

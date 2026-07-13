@@ -18,26 +18,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::base::RUMVec;
-use crate::mem::{as_slice, as_slice_mut, copy_from_slice, AsSlice};
+use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
 use rumtk_arena::dune::Dune;
 use rumtk_arena::rumtk_dune_new;
 use std::cmp::PartialEq;
-use std::ops::Deref;
+use std::mem;
 use std::ops::DerefMut;
+use std::ops::{Deref, RangeTo, RangeToInclusive};
 use std::ops::{Index, Range, RangeFull};
 use std::sync::LazyLock;
 
 #[derive(Default, Debug, Clone)]
 enum RUMBufferDataPtr {
+    String(String),
     Vec(RUMVec<u8>),
-    Allocated(Dune),
+    Arena(Dune),
     #[default]
     None
 }
 
 impl PartialEq for RUMBufferDataPtr {
     fn eq(&self, other: &Self) -> bool {
-        self == other
+        mem::discriminant(self) == mem::discriminant(other)
     }
 }
 
@@ -102,18 +104,29 @@ impl RUMBuffer {
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferDataPtr::Allocated(mem),
+            data: RUMBufferDataPtr::Arena(mem),
             ptr,
             size: data_length,
         }
     }
 
     #[inline]
-    pub fn from_owned(mut data: RUMVec<u8>) -> Self {
+    pub fn from_vec(mut data: Vec<u8>) -> Self {
         let mut ptr = data.as_mut_ptr();
         let size = data.len();
         Self {
             data: RUMBufferDataPtr::Vec(data),
+            ptr,
+            size,
+        }
+    }
+
+    #[inline]
+    pub fn from_string(mut data: String) -> Self {
+        let mut ptr = data.as_mut_ptr();
+        let size = data.len();
+        Self {
+            data: RUMBufferDataPtr::String(data),
             ptr,
             size,
         }
@@ -172,19 +185,37 @@ impl RUMBuffer {
     }
 }
 
-impl AsSlice for RUMBuffer {
+impl Iterator for RUMBuffer {
     type Item = u8;
 
     #[inline]
-    fn as_slice(&self) -> &[Self::Item] {
-        as_slice(self.ptr,  self.size)
-    }
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.size == 0 { return None };
 
-    #[inline]
-    fn as_slice_mut(&self) -> &mut [Self::Item] {
-        as_slice_mut(self.ptr as *mut u8,  self.size)
+        let v = self[0];
+        self.ptr = unsafe { self.ptr.add(1) };
+        Some(v)
     }
 }
+
+impl SizedType for RUMBuffer {
+    fn size(&self) -> usize {
+        self.size
+    }
+}
+
+impl AsPtr for RUMBuffer {
+    #[inline(always)]
+    fn as_ptr(&self) -> *const u8 {
+        self.ptr
+    }
+    #[inline(always)]
+    fn as_mut_ptr(&mut self) -> *mut u8 {
+        self.ptr as *mut u8
+    }
+}
+
+impl AsSlice for RUMBuffer {  }
 
 impl AsRef<[u8]> for RUMBuffer {
     #[inline]
@@ -254,6 +285,22 @@ impl Index<Range<usize>> for RUMBuffer {
     }
 }
 
+impl Index<RangeTo<usize>> for RUMBuffer {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeTo<usize>) -> &Self::Output {
+        &self.as_slice()[..i.end]
+    }
+}
+
+impl Index<RangeToInclusive<usize>> for RUMBuffer {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeToInclusive<usize>) -> &Self::Output {
+        &self.as_slice()[..=i.end]
+    }
+}
+
 impl Index<RangeFull> for RUMBuffer {
     type Output = [u8];
     #[inline]
@@ -263,10 +310,16 @@ impl Index<RangeFull> for RUMBuffer {
 }
 
 /////////////////////// Conversions ////////////////////////////////
-impl From<RUMVec<u8>> for RUMBuffer {
+impl From<String> for RUMBuffer {
     #[inline]
-    fn from(data: RUMVec<u8>) -> Self {
-        Self::from_owned(data)
+    fn from(data: String) -> Self {
+        Self::from_string(data)
+    }
+}
+impl From<Vec<u8>> for RUMBuffer {
+    #[inline]
+    fn from(data: Vec<u8>) -> Self {
+        Self::from_vec(data)
     }
 }
 
