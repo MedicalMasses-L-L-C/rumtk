@@ -82,7 +82,58 @@ pub mod cli_utils {
             // If you look at https://man7.org/linux/man-pages/man2/read.2.html, read should return
             // 0 and simply let us naturally break, but a read < than requested buffer appears to be
             // an equally valid way to handle terminal and piped data.
-            if s < STD_IN_STEP_SIZE {
+            // We have to check against 0 because the more optimal the buffer size we ask for (e.g.
+            // larger reads for minimum syscall time) the less likely the kernel is ready with the
+            // requested data.
+
+            // Example reads at u16::Max
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 8192 bytes
+            // Read 65535 bytes
+            // Read 61441 bytes
+            // Read 65535 bytes
+            // Read 41974 bytes
+            // Read 0 bytes
+            // Total: 2331637 => 2.2MB
+            if s == 0 {
                 break;
             }
         }
