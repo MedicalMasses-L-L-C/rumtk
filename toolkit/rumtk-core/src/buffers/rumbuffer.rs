@@ -266,7 +266,7 @@ impl Index<RangeFull> for RUMBuffer {
 impl From<RUMVec<u8>> for RUMBuffer {
     #[inline]
     fn from(data: RUMVec<u8>) -> Self {
-        Self::from_slice(data.as_slice())
+        Self::from_owned(data)
     }
 }
 
