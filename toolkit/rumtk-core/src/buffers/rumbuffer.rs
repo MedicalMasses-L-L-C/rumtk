@@ -27,7 +27,21 @@ use std::ops::DerefMut;
 use std::ops::{Index, Range, RangeFull};
 use std::sync::LazyLock;
 
-pub type RUMBufferInner = Option<Dune>;
+#[derive(Default, Debug, Clone)]
+enum RUMBufferDataPtr {
+    Vec(RUMVec<u8>),
+    Allocated(Dune),
+    #[default]
+    None
+}
+
+impl PartialEq for RUMBufferDataPtr {
+    fn eq(&self, other: &Self) -> bool {
+        self == other
+    }
+}
+
+pub type RUMBufferInner = RUMBufferDataPtr;
 
 const EMPTY_BUFFER_DATA: [u8;0] = [0;0];
 static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new());
@@ -74,23 +88,34 @@ impl RUMBuffer {
         let data_length = 0;
         let ptr = EMPTY_BUFFER_DATA.as_ptr();
         Self {
-            data: None,
+            data: RUMBufferDataPtr::None,
             ptr,
             size: data_length,
         }
     }
 
     #[inline]
-    fn from_slice(data: &[u8]) -> Self {
+    pub fn from_slice(data: &[u8]) -> Self {
         let data_length = data.len();
         let mut mem = rumtk_dune_new!(data_length);
         let mut ptr = mem.allocate_raw(data_length).unwrap();
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: Some(mem),
+            data: RUMBufferDataPtr::Allocated(mem),
             ptr,
             size: data_length,
+        }
+    }
+
+    #[inline]
+    pub fn from_owned(mut data: RUMVec<u8>) -> Self {
+        let mut ptr = data.as_mut_ptr();
+        let size = data.len();
+        Self {
+            data: RUMBufferDataPtr::Vec(data),
+            ptr,
+            size,
         }
     }
 
@@ -98,7 +123,7 @@ impl RUMBuffer {
     pub fn split_to(&mut self, offset: usize) -> Self {
         debug_assert!(offset <= self.size, "offset too large");
         let copy = Self {
-            data: None,
+            data: RUMBufferDataPtr::None,
             ptr: self.ptr,
             size: offset,
         };
@@ -110,7 +135,7 @@ impl RUMBuffer {
     #[inline]
     pub fn freeze(&self) -> Self {
         Self {
-            data: None,
+            data: RUMBufferDataPtr::None,
             ptr: self.ptr,
             size: self.size,
         }
@@ -138,12 +163,12 @@ impl RUMBuffer {
 
     #[inline]
     pub fn is_buffer(&self) -> bool {
-        self.data.is_some()
+        !self.is_view()
     }
 
     #[inline]
     pub fn is_view(&self) -> bool {
-        self.data.is_none()
+        self.data == RUMBufferDataPtr::None
     }
 }
 
