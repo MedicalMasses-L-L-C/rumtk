@@ -308,6 +308,13 @@ pub mod v2_parser {
         }
     }
 
+    impl Drop for V2Field {
+        #[inline]
+        fn drop(&mut self) {
+            unsafe { self.cs.set_len(0) }
+        }
+    }
+
     pub type V2FieldGroup = RUMVec<V2Field>;
     pub type V2OptionalFieldGroup = Option<RUMVec<V2Field>>;
     pub type V2FieldList = RUMVec<V2OptionalFieldGroup>;
@@ -476,7 +483,27 @@ pub mod v2_parser {
         }
     }
 
-
+    ///
+    /// We manually trigger the dropping of a field if available. [V2Field] itself has [Drop](std::ops::drop) optimized
+    /// to zero its internal component list. Why? [RUMBuffer] is optimized as both an owned object and
+    /// a slice view. Meaning, outside of its usage in [V2Message], we are only dealing with the
+    /// view pointers for which we can try to skip the inefficient and stack deep drop_glue
+    /// implemented by default and simply let the lists deallocate the memory slice they allocated.
+    ///
+    impl Drop for V2Segment {
+        #[inline]
+        fn drop(&mut self) {
+            for v in self.f.iter() {
+                match v {
+                    Some(field) => {
+                        drop(field);
+                    },
+                    None => (),
+                }
+            }
+            unsafe { self.f.set_len(0); }
+        }
+    }
 
     ///
     /// Segments can be repeating. As such we contain them in groups.
