@@ -51,7 +51,6 @@ pub mod v2_parser {
     use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
-    use rumtk_core::serde::RUMSerializableManualDrop;
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
@@ -235,7 +234,7 @@ pub mod v2_parser {
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
-            let mut component_list: ComponentList = ComponentList::new();
+            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field, parser_chars.component_separator));
             let mut splitter = field.split_fast(parser_chars.component_separator);
 
             for c in &mut splitter {
@@ -367,7 +366,7 @@ pub mod v2_parser {
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
-            let mut field_list = V2FieldList::with_capacity(20);
+            let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment, parser_chars.field_separator));
 
             let raw_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
@@ -664,6 +663,10 @@ pub mod v2_parser {
             self.sg.contains_key(segment_index)
         }
 
+        pub fn segment_group_count(&self, segment_index: &u8) -> usize {
+            self.sg[segment_index].len()
+        }
+
         ///
         /// Sanitizes incoming raw HL7 V2 message. In particular, this method ensures that the message
         /// only contains [V2_SEGMENT_TERMINATOR](V2_SEGMENT_TERMINATOR) as the newline terminator
@@ -720,7 +723,6 @@ pub mod v2_parser {
 
                 V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
             }
-
             V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
 
             Ok(segments)

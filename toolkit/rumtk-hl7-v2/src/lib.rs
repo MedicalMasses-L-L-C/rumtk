@@ -613,6 +613,34 @@ mod tests {
     }
 
     #[test]
+    fn test_load_large_message_check_all_segments_present() {
+        let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
+        let all_segments = vec![b"MSH",b"PID",b"ORC",b"OBR",b"DG1",b"OBX",b"SPM"];
+
+        for segment_k in all_segments {
+            assert!(
+                message.segment_exists(&V2_SEGMENT_IDS(segment_k)),
+                "Missing {} segment!", buffer_to_str(segment_k).unwrap()
+            );
+        }
+    }
+
+    #[test]
+    fn test_load_large_message_check_correct_count_of_duplicate_dg1_segment() {
+        let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
+        let all_segments = vec![(b"MSH",1),(b"PID",1),(b"ORC",1),(b"OBR",2),(b"DG1",2),(b"OBX",2048),(b"SPM",2)];
+
+        for (segment_k, expected_count) in all_segments {
+            let count = message.segment_group_count(&V2_SEGMENT_IDS(segment_k));
+            assert!(
+                count == expected_count,
+                "Segment {} has wrong count! Expected: {} Got: {}",
+                buffer_to_str(segment_k).unwrap(), expected_count, count
+            );
+        }
+    }
+
+    #[test]
     fn test_load_hl7_v2_message_macro_failure() {
         let input = "Hello World!";
         let err_msg = rumtk_format!(
