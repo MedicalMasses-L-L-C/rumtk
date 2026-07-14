@@ -1442,6 +1442,10 @@ mod tests {
         let expected_message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
         let deserialized = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
 
+        println!("{:?}", V2_JSON_MESSAGE_BASIC);
+        println!("{:?}", expected_message.to_string());
+        println!("{:?}", rumtk_serialize!(&expected_message).unwrap());
+
         assert_eq!(
             expected_message, deserialized,
             "Deserialized Escaped JSON does not match the expected value!"
