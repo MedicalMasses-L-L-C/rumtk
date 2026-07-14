@@ -56,8 +56,9 @@ pub mod v2_parser {
     };
     use rumtk_core::strings::{string_to_buffer, AsString};
     use rumtk_core::types::RUMOrderedMap;
-    use rumtk_core::{rumtk_cache_fetch, rumtk_serialize};
+    use rumtk_core::{rumtk_cache_fetch, rumtk_mem_quick_array_init, rumtk_serialize};
     use std::io::BufRead;
+    use std::mem;
     use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
     use std::str::Chars;
@@ -231,20 +232,24 @@ pub mod v2_parser {
             }
         }
 
-        #[inline(always)]
+        #[inline]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
-            let mut component_list: ComponentList = ComponentList::with_capacity(buffer_count(&field, parser_chars.component_separator));
+            let mut component_list = rumtk_mem_quick_array_init!(V2Component, 20);
             let mut splitter = field.split_fast(parser_chars.component_separator);
+            let mut len = 0;
 
             for c in &mut splitter {
-                component_list.push(V2Component::from(c))
+                component_list[len] = V2Component::from(c);
+                len += 1;
             }
-            component_list.push(V2Component::from(splitter.remainder));
+            component_list[len] = V2Component::from(splitter.remainder);
+            len += 1;
 
             Self {
-                cs: component_list
+                cs: RUMVec::from(&component_list[..len])
             }
+
         }
 
         #[inline(always)]
@@ -359,14 +364,15 @@ pub mod v2_parser {
         /// checking if to push the `parser chars` field onto the field list. **My latest hypothesis is that we are not storing the
         /// Field ID field onto the field list of the segment and instead we store its id which is effectively a compression operation.**
         ///
-        #[inline(always)]
+        #[inline]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<(u8, Self)> {
             debug_assert!(raw_segment.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
+
             let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
 
             // Fun thing, profiling shows that precounting the number of fields to allocate is faster than paying the malloc/realloc tax.
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
-            let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment, parser_chars.field_separator));
+            let mut field_list = V2FieldList::with_capacity(32);
 
             let segment_id_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
@@ -382,6 +388,29 @@ pub mod v2_parser {
             let segment = V2Segment {
                 f: field_list,
             };
+
+            /*
+            let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
+            let mut field_list = rumtk_mem_quick_array_init!(V2OptionalFieldGroup, 55);
+            let mut len = 0;
+
+            let segment_id_field = match raw_fields.next() {
+                Some(raw_field) => raw_field,
+                None => return Err(rumtk_format!("Failed to get first field in segment! The segment is empty? => {:?}", &raw_segment)),
+            };
+            let segment_id = V2_SEGMENT_IDS(&segment_id_field);
+
+            for raw_field in &mut raw_fields {
+                field_list[len] = Self::generate_subfields(raw_field, parser_chars);
+                len += 1;
+            }
+            field_list[len] = Self::generate_subfields(raw_fields.remainder, parser_chars);
+            len += 1;
+
+            let segment = V2Segment {
+                f: RUMVec::from(&field_list[..len]),
+            };
+             */
 
             Ok((segment_id, segment))
         }
