@@ -31,3 +31,12 @@ codegen-units = 1
 opt-level = 3
 lto = "fat"
 codegen-units = 1
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-Clink-arg=/STACK:8000000"]
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-Clink-arg=-Wl,-z,stack-size=8388608"]
+
+[target.x86_64-apple-darwin]
+rustflags = ["-Clink-arg=-Wl,-stack_size,8388608"]
