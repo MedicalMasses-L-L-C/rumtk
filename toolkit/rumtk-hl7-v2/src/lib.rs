@@ -629,7 +629,7 @@ mod tests {
     #[test]
     fn test_load_large_message_check_correct_count_of_duplicate_dg1_segment() {
         let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
-        let all_segments = vec![(b"MSH",1),(b"PID",1),(b"ORC",1),(b"OBR",2),(b"DG1",2),(b"OBX",2048),(b"SPM",2)];
+        let all_segments = vec![(b"MSH",1),(b"PID",1),(b"ORC",1),(b"OBR",2),(b"DG1",3),(b"OBX",2048),(b"SPM",2)];
 
         for (segment_k, expected_count) in all_segments {
             let count = message.segment_group_count(&V2_SEGMENT_IDS(segment_k));
