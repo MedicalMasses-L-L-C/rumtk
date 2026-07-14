@@ -64,8 +64,9 @@ pub mod cli_utils {
     ///
     /// ```
     /// use rumtk_core::cli::cli_utils::{read_stdin};
+    /// use rumtk_core::cpu::CPU_PAGE_SIZE;
     ///
-    /// let stdin_data = read_stdin().unwrap();
+    /// let stdin_data = read_stdin(CPU_PAGE_SIZE).unwrap();
     ///
     /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
     /// ```
