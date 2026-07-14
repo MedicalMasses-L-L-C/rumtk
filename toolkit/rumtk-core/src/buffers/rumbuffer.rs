@@ -17,7 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::base::RUMVec;
+use crate::base::{RUMResult, RUMVec};
+use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
 use rumtk_arena::dune::Dune;
 use rumtk_arena::rumtk_dune_new;
@@ -166,6 +167,11 @@ impl RUMBuffer {
     #[inline]
     pub fn to_vec(&self) -> RUMVec<u8> {
         self.as_slice().to_vec()
+    }
+
+    #[inline]
+    pub fn as_str(&self) -> RUMResult<&str> {
+        buffer_to_str(self)
     }
 
     #[inline]
