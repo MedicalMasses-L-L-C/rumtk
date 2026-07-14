@@ -876,10 +876,8 @@ mod tests {
         let expected = RUMBuffer::from(b"Hello|World|Tes1|||||||||||||||||||");
 
         buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
-        let modified = RUMBuffer::from(temp);
 
-
-        assert_eq!(modified, expected, "Bad buffer replace! Got {:?}", data);
+        assert_eq!(data, expected, "Bad buffer replace! Got {:?}", data);
     }
 
     #[test]
