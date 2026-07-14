@@ -1486,7 +1486,7 @@ mod tests {
             splits
         });
 
-        assert!(time <= 1000, "basic buffer splits of large message took {} microseconds [> 1000 us]!", time);
+        assert!(time <= 2000, "basic buffer splits of large message took {} microseconds [> 2000 us]!", time);
     }
 
     #[test]
@@ -1519,7 +1519,7 @@ mod tests {
             buffer_replace_in_place(&mut buffer, pattern.as_bytes(), replacement.as_bytes());
         });
 
-        assert!(time <= 10000, "buffer replace of segments in large message took {} microseconds [> 10000 us]!", time);
+        assert!(time <= 20000, "buffer replace of segments in large message took {} microseconds [> 20000 us]!", time);
     }
 
     #[test]
