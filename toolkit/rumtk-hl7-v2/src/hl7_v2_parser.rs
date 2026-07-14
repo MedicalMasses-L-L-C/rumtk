@@ -466,6 +466,7 @@ pub mod v2_parser {
             }
         }
 
+        #[inline]
         pub fn init_deffered_slot(&mut self, indx: usize) -> &mut V2FieldGroup {
             let new_field = vec![V2Field::new()];
             self.f[indx] = Some(new_field);
@@ -548,16 +549,19 @@ pub mod v2_parser {
         /// ```
         ///
         pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
-            let sanitized = V2Message::sanitize(raw_msg);
+            let sanitized = Self::sanitize(raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
             let sanitized_view = sanitized.freeze();
-            let segments = V2Message::extract_segments(sanitized_view, &parse_characters)?;
-
-            Ok(V2Message {
+            let segments = Self::extract_segments(sanitized_view, &parse_characters)?;
+            let mut message = Self {
                 data: sanitized,
-                sep: parse_characters,
+                sep: parse_characters.clone(),
                 sg: segments,
-            })
+            };
+
+            Self::patch_msh_pattern(&mut message, &parse_characters);
+
+            Ok(message)
         }
 
         ///
@@ -581,12 +585,27 @@ pub mod v2_parser {
             msg.join(&self.sep.segment_terminator.as_string())
         }
 
+        #[inline]
         pub fn len(&self) -> usize {
             self.sg.len()
         }
 
+        #[inline]
         pub fn is_empty(&self) -> bool {
             self.sg.is_empty()
+        }
+
+        ///
+        /// Needed because otherwise we have to incur a couple hundred microseconds of performance penalty
+        /// for checking if the segment being built is the MSH.
+        ///
+        /// The problem is that the first field in MSH has all of the separators and of course that
+        /// interferes with different splitting events to the point that what should remain as a single field
+        /// with a single component becomes a field with multiple components.
+        ///
+        #[inline]
+        fn patch_msh_pattern(message: &mut V2Message, parser_chars: &V2ParserCharacters) {
+            message.sg[&V2_MSHEADER_ID][0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
         }
 
         pub fn get(&self, segment_index: &u8, sub_segment: usize) -> V2Result<&V2Segment> {
