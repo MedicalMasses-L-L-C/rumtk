@@ -31,6 +31,7 @@ use std::sync::LazyLock;
 
 #[derive(Default, Debug, Clone)]
 enum RUMBufferDataPtr {
+    StaticBuffer(&'static [u8]),
     String(String),
     Vec(RUMVec<u8>),
     Arena(Dune),
@@ -132,6 +133,17 @@ impl RUMBuffer {
         let size = data.len();
         Self {
             data: RUMBufferDataPtr::String(data),
+            ptr,
+            size,
+        }
+    }
+
+    #[inline]
+    pub fn from_static(mut data: &'static [u8]) -> Self {
+        let mut ptr = data.as_mut_ptr();
+        let size = data.len();
+        Self {
+            data: RUMBufferDataPtr::StaticBuffer(data),
             ptr,
             size,
         }
