@@ -160,11 +160,6 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn mutate(&mut self) -> Self {
-        self.freeze()
-    }
-
-    #[inline]
     pub fn to_vec(&self) -> RUMVec<u8> {
         self.as_slice().to_vec()
     }

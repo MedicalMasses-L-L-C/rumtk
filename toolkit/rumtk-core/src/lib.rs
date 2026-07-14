@@ -875,8 +875,7 @@ mod tests {
         let mut data = RUMBuffer::from(b"Hello|World|Test|||||||||||||||||||");
         let expected = RUMBuffer::from(b"Hello|World|Tes1|||||||||||||||||||");
 
-        let mut temp = data.mutate();
-        buffer_replace_in_place(&mut temp, pattern.as_bytes(), replacement.as_bytes());
+        buffer_replace_in_place(&mut data, pattern.as_bytes(), replacement.as_bytes());
         let modified = RUMBuffer::from(temp);
 
 
