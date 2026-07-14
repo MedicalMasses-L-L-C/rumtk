@@ -235,19 +235,25 @@ pub mod v2_parser {
         #[inline]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
-            let mut component_list = rumtk_mem_quick_array_init!(V2Component, 20);
-            let mut splitter = field.split_fast(parser_chars.component_separator);
-            let mut len = 0;
+            if buffer_contains(&field, parser_chars.component_separator) {
+                let mut component_list = rumtk_mem_quick_array_init!(V2Component, 20);
+                let mut splitter = field.split_fast(parser_chars.component_separator);
+                let mut len = 0;
 
-            for c in &mut splitter {
-                component_list[len] = V2Component::from(c);
+                for c in &mut splitter {
+                    component_list[len] = V2Component::from(c);
+                    len += 1;
+                }
+                component_list[len] = V2Component::from(splitter.remainder);
                 len += 1;
-            }
-            component_list[len] = V2Component::from(splitter.remainder);
-            len += 1;
 
-            Self {
-                cs: RUMVec::from(&component_list[..len])
+                Self {
+                    cs: RUMVec::from(&component_list[..len])
+                }
+            } else {
+                Self {
+                    cs: vec![V2Component::from(field)]
+                }
             }
 
         }
@@ -388,29 +394,6 @@ pub mod v2_parser {
             let segment = V2Segment {
                 f: field_list,
             };
-
-            /*
-            let mut raw_fields = raw_segment.split_fast(parser_chars.field_separator);
-            let mut field_list = rumtk_mem_quick_array_init!(V2OptionalFieldGroup, 55);
-            let mut len = 0;
-
-            let segment_id_field = match raw_fields.next() {
-                Some(raw_field) => raw_field,
-                None => return Err(rumtk_format!("Failed to get first field in segment! The segment is empty? => {:?}", &raw_segment)),
-            };
-            let segment_id = V2_SEGMENT_IDS(&segment_id_field);
-
-            for raw_field in &mut raw_fields {
-                field_list[len] = Self::generate_subfields(raw_field, parser_chars);
-                len += 1;
-            }
-            field_list[len] = Self::generate_subfields(raw_fields.remainder, parser_chars);
-            len += 1;
-
-            let segment = V2Segment {
-                f: RUMVec::from(&field_list[..len]),
-            };
-             */
 
             Ok((segment_id, segment))
         }
@@ -659,11 +642,13 @@ pub mod v2_parser {
         pub fn find_component(&self, search_pattern: &str) -> V2Result<&V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, &search_pattern.to_string(), || {compile_search_index(search_pattern)})?;
             let segment = self.get(&index.segment, index.segment_group as usize)?;
-            let field = match segment.get(index.field as isize)?.get((index.field_group - 1) as usize) {
+            let field_group = segment.get(index.field as isize)?;
+            let field = match field_group.get((index.field_group - 1) as usize) {
                 Some(field) => field,
                 None => return Err(rumtk_format!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
             };
-            field.get(index.component as isize)
+            let component = field.get(index.component as isize);
+            component
         }
 
         pub fn find_component_mut(
