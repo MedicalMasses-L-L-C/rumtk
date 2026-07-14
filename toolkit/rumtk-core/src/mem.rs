@@ -62,6 +62,11 @@ pub trait AsSlice: AsPtr + SizedType {
     fn as_slice(&self) -> &[u8] { as_slice(self.as_ptr(),  self.size()) }
     #[inline(always)]
     fn as_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+
+    #[inline(always)]
+    fn contains(&self, x: &u8) -> bool {
+        self.as_slice().contains(x)
+    }
 }
 
 impl AsSlice for [u8] { }
