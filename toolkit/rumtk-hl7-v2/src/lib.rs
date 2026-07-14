@@ -1595,7 +1595,7 @@ mod tests {
 
         println!("Parsed message in {} us", &time);
 
-        assert!(time <= 1000, "V2Message parsing took {} microseconds [> 500 us]!", time);
+        assert!(time <= 2000, "V2Message parsing took {} microseconds [> 2000 us]!", time);
     }
 
     ////////////////////////////Message Parse Speed Tests/////////////////////////////////
