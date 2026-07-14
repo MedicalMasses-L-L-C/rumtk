@@ -80,6 +80,15 @@ pub fn as_slice_mut<'a>(src: *mut u8, size: usize) -> &'a mut [u8] {
     unsafe { std::slice::from_raw_parts_mut(src, size) }
 }
 
+#[macro_export]
+macro_rules! rumtk_mem_quick_array_init {
+    ( $typ:ty, $size:expr ) => {{
+        const DATA_SLICE_LEN: usize = $size * size_of::<$typ>();
+        let arr: [$typ; $size] = unsafe { mem::transmute([0u8; DATA_SLICE_LEN]) };
+        arr
+    }}
+}
+
 /////////////////////////////Copy///////////////////////////////////
 #[inline]
 pub fn copy_simd_slice<'a, const LANE_SIZE: usize>(src: &[u8], mut dst: &'a mut [u8]) -> &'a mut [u8] {
