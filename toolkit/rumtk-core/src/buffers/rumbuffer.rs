@@ -78,7 +78,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 /// assert_eq!(&section[..], expected, "Could not create RUMBuffer!");
 /// ```
 ///
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
     ptr: *const u8,
@@ -262,6 +262,14 @@ impl Default for RUMBuffer {
         Self::new()
     }
 }
+
+impl Clone for RUMBuffer {
+    #[inline]
+    fn clone(&self) -> Self {
+        self.freeze()
+    }
+}
+
 /*
 impl Drop for RUMBuffer {
     fn drop(&mut self) {
