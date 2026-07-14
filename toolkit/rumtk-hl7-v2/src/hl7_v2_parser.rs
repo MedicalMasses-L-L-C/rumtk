@@ -48,7 +48,7 @@ pub mod v2_parser {
     use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
+    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, cpu_unlikely_branch, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     pub use rumtk_core::strings::{
@@ -368,22 +368,11 @@ pub mod v2_parser {
             // It's fascinating because we are doing extra work here that you would think is a lot more than allocation bookkeeping, but no... SIMD rocks!
             let mut field_list = V2FieldList::with_capacity(buffer_count(&raw_segment, parser_chars.field_separator));
 
-            let raw_field = match raw_fields.next() {
+            let segment_id_field = match raw_fields.next() {
                 Some(raw_field) => raw_field,
                 None => return Err(rumtk_format!("Failed to get first field in segment! The segment is empty? => {:?}", &raw_segment)),
             };
-
-            let segment_id = V2_SEGMENT_IDS(&raw_field);
-
-            if segment_id == V2_MSHEADER_ID {
-                field_list.push(
-                    vec![
-                        V2Field::from_single_field(parser_chars.to_buffer(), parser_chars),
-                    ].into()
-                );
-
-                raw_fields.next();
-            }
+            let segment_id = V2_SEGMENT_IDS(&segment_id_field);
 
             for raw_field in &mut raw_fields {
                 field_list.push(Self::generate_subfields(raw_field, parser_chars));
@@ -395,6 +384,29 @@ pub mod v2_parser {
             };
 
             Ok((segment_id, segment))
+        }
+
+        #[inline(always)]
+        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2OptionalFieldGroup {
+            if field.is_empty() {
+                return None;
+            }
+
+            // Minor (~0.7ms) optimization for the more common case of no repeat fields.
+            if cpu_unlikely_branch(buffer_contains(&field, parser_chars.repetition_separator)) {
+                let mut field_group = V2FieldGroup::new();
+                let mut splitter = field.split_fast(parser_chars.repetition_separator);
+                for subfield in &mut splitter {
+                    field_group.push(V2Field::from(subfield, parser_chars))
+                }
+                field_group.push(V2Field::from(splitter.remainder, parser_chars));
+
+                Some(field_group)
+            } else {
+                vec![
+                    V2Field::from(field, parser_chars),
+                ].into()
+            }
         }
 
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
@@ -450,22 +462,6 @@ pub mod v2_parser {
 
         pub fn len(&self) -> usize {
             self.f.len()
-        }
-
-        #[inline(always)]
-        pub fn generate_subfields(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2OptionalFieldGroup {
-            if field.is_empty() {
-                return None;
-            }
-
-            let mut field_group = V2FieldGroup::new();
-            let mut splitter = field.split_fast(parser_chars.repetition_separator);
-            for subfield in &mut splitter {
-                field_group.push(V2Field::from(subfield, parser_chars))
-            }
-            field_group.push(V2Field::from(splitter.remainder, parser_chars));
-
-            Some(field_group)
         }
     }
 
