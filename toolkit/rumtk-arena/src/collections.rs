@@ -237,40 +237,6 @@ where
     htable
 }
 
-///
-/// Build an Ordered Hash Table instance of type [ArenaOrderedHashMap] which is arena aware.
-///
-#[inline(always)]
-pub fn new_orderedhashmap<K, V>(arena: &Arena, len: Option<usize>) -> ArenaOrderedHashMap<K, V>
-where
-    K: Clone + Eq + Hash,
-    V: Clone + PartialEq
-{
-    match len {
-        Some(len) => ArenaOrderedHashMap::<K, V>::with_capacity(
-            len,
-            arena,
-        ),
-        None => ArenaOrderedHashMap::<K, V>::new_in(arena),
-    }
-}
-
-///
-/// Build an Ordered Hash Table instance of type [ArenaOrderedHashMap] which is arena aware using the items passed.
-///
-#[inline(always)]
-pub fn new_orderedhashmap_from<K, V, const N: usize>(data: [(K, V); N], arena: &Arena) -> ArenaOrderedHashMap<K, V>
-where
-    K: Sized + Clone + Eq + Hash,
-    V: Sized + Clone + PartialEq
-{
-    let mut htable: ArenaOrderedHashMap<K, V> = new_orderedhashmap(arena, Some(data.len()));
-    for (k, v) in data {
-        htable.insert(k, v);
-    }
-    htable
-}
-
 #[inline(always)]
 pub fn new_box<V>(v: V, arena: &Arena) -> Box<V, &Arena> {
     vec![1,2,4];
@@ -321,17 +287,5 @@ macro_rules! rumtk_arena_hashmap {
     ( $items:expr, $arena:expr ) => {{
         use $crate::collections::new_hashmap_from;
         new_hashmap_from($items, $arena)
-    }};
-}
-
-#[macro_export]
-macro_rules! rumtk_arena_orderedhashmap {
-    ( $arena:expr ) => {{
-        use $crate::collections::new_orderedhashmap;
-        new_orderedhashmap($arena, None)
-    }};
-    ( $items:expr, $arena:expr ) => {{
-        use $crate::collections::new_orderedhashmap_from;
-        new_orderedhashmap_from($items, $arena)
     }};
 }

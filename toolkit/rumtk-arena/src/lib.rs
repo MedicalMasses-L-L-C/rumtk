@@ -14,8 +14,8 @@ pub use arena::Arena;
 
 #[cfg(test)]
 mod tests {
-    use crate::collections::{ArenaHashMap, ArenaOrderedHashMap, ArenaVec, ArenaVecDeque};
-    use crate::{rumtk_arena_hashmap, rumtk_arena_orderedhashmap, rumtk_arena_vec, rumtk_arena_vecdeque, rumtk_dune_new, Arena};
+    use crate::collections::{ArenaHashMap, ArenaVec, ArenaVecDeque};
+    use crate::{rumtk_arena_hashmap, rumtk_arena_vec, rumtk_arena_vecdeque, rumtk_dune_new, Arena};
     use std::alloc::Allocator;
     use std::alloc::Layout;
     use std::ptr::NonNull;
@@ -53,7 +53,7 @@ mod tests {
         let v2 = unsafe { arena.grow(v.cast(), old_layout, new_layout).unwrap() };
         let v3 = unsafe { arena.grow(v2.cast(), new_layout, new_layout).unwrap() };
 
-        assert_eq!(v2, v3, "Failed to reallocate without invalidating pointer!");
+        assert_eq!(v2.addr(), v3.addr(), "Failed to reallocate without invalidating pointer!");
     }
 
     #[test]
@@ -193,60 +193,12 @@ mod tests {
     }
 
     #[test]
-    fn test_arena_create_orderedhashmap_with_macro() {
-        let arena = Arena::with_capacity(5);
-        let v: ArenaOrderedHashMap<&str, &str> = rumtk_arena_orderedhashmap!(&arena);
-
-        assert!(v.is_empty(), "Failed to create vector with arena allocation enabled.");
-    }
-
-    #[test]
     fn test_arena_create_hashmap_with_macro_with_items() {
         let arena = Arena::with_capacity(120);
         let expected = [(0, "Hello"), (1, "World"), (2, "!")];
         let v: ArenaHashMap<usize, &str> = rumtk_arena_hashmap!(expected.clone(), &arena);
 
         assert_eq!(v[&0], expected[0].1, "Failed to create hashmap with arena allocation enabled and item slice.");
-    }
-
-    #[test]
-    fn test_arena_create_orderedhashmap_with_macro_with_items() {
-        let arena = Arena::with_capacity(500);
-        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
-        let v: ArenaOrderedHashMap<usize, &str> = rumtk_arena_orderedhashmap!(expected.clone(), &arena);
-
-        let mut order: Vec<(usize, &str)> = Vec::new();
-        for k in v.keys() {
-            order.push((k.clone(), v.get(&k).unwrap()));
-        }
-        println!("{:?}", order);
-
-        assert_eq!(order.as_slice(), expected, "Failed to create hashmap with arena allocation enabled and item slice.");
-    }
-
-    #[test]
-    fn test_arena_complex_allocations() {
-        #[derive(Debug)]
-        struct MyType<'a> {
-            pub order: ArenaVec<'static, &'a str>,
-            pub data: ArenaOrderedHashMap<'static, usize, &'a str>
-        }
-        let arena = rumtk_dune_new!(500);
-        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
-
-
-        let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena),
-        };
-
-        let mut order: Vec<(usize, &str)> = Vec::new();
-        for k in v.data.keys() {
-            order.push((k.clone(), v.data.get(&k).unwrap()));
-        }
-        println!("{:?}", order);
-
-        assert_eq!(order.as_slice(), expected, "Failed to create hashmap with arena allocation enabled and item slice.");
     }
 
     #[test]
@@ -269,34 +221,6 @@ mod tests {
 
 
         let v = rumtk_arena_hashmap!(expected.clone(), &arena.arena);
-        println!("{:?}", &v);
-    }
-
-    #[test]
-    fn test_arena_orderedmap_debug_print() {
-        let arena = rumtk_dune_new!(500);
-        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
-
-
-        let v = rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena);
-        println!("{:?}", &v);
-    }
-
-    #[test]
-    fn test_arena_complex_type_debug_print() {
-        #[derive(Debug)]
-        struct MyType<'a> {
-            pub order: ArenaVec<'static, &'a str>,
-            pub data: ArenaOrderedHashMap<'static, usize, &'a str>
-        }
-        let arena = rumtk_dune_new!(500);
-        let expected = [(5, "Hello"), (1, "World"), (3, "!")];
-
-
-        let v: MyType = MyType {
-            order: rumtk_arena_vec!(["asdf", "dfds", "ertw"], &arena.arena),
-            data: rumtk_arena_orderedhashmap!(expected.clone(), &arena.arena),
-        };
         println!("{:?}", &v);
     }
 }
