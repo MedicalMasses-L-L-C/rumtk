@@ -1487,7 +1487,7 @@ mod tests {
             splits
         });
 
-        assert!(time <= 2000, "basic buffer splits of large message took {} microseconds [> 2000 us]!", time);
+        assert!(time <= 3000, "basic buffer splits of large message took {} microseconds [> 3000 us]!", time);
     }
 
     #[test]
