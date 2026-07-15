@@ -19,13 +19,12 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-rm -r demo/echo_interface
-
-mkdir demo
-mkdir demo/echo_interface
+if [ -f ./demo/tmp/interface/out.log ]; then
+  rm -r ./demo/tmp/interface/out.log
+fi
 
 echo "Setting up Interface Chain"
-./target/debug/rumtk-v2-interface --port 55555 --local > ./demo/echo_interface/out.log &
+./target/debug/rumtk-v2-interface --port 55555 --local > ./demo/tmp/interface/out.log &
 sleep 1
 ./target/debug/rumtk-v2-interface --port 55556 --local | ./target/debug/rumtk-v2-interface --outbound --port 55555 --local &
 sleep 1
@@ -33,16 +32,16 @@ sleep 1
 echo "Pushing Message through PIPEs!"
 cat ./examples/hl7/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55556
 
-sleep 1
-sync ./demo/echo_interface/out.log
+echo "Clean up"
+sleep 10
+pkill -i -e -f rumtk-v2-interface
+sleep 10
+sync ./demo/tmp/interface/out.log
 sleep 10
 
 echo "Output"
-#DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/echo_interface/out.log) )
-DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/echo_interface/out.log) )
-
-echo "Clean up"
-pkill -i -e -f rumtk-v2-interface
+#DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/tmp/interface/out.log) )
+DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/tmp/interface/out.log) )
 
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"
@@ -50,7 +49,7 @@ if [ "$DIFF" != "" ]; then
     cat -A ./examples/hl7/sample_hl7.hl7
     echo ""
     echo ">>>>>>>>>>>>>>>>Output"
-    cat -A ./demo/echo_interface/out.log
+    cat -A ./demo/tmp/interface/out.log
     echo ""
     echo ">>>>>>>>>>>>>>>>Diff"
     echo "$DIFF"
