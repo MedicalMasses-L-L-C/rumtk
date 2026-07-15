@@ -35,6 +35,7 @@ sleep 1
 pkill -i -e -f rumtk-v2-interface
 slepp 5
 sync ./demo/tmp/interface/out.log
+cat ./demo/tmp/interface/out.log
 sleep 1
 
 echo "Output"
