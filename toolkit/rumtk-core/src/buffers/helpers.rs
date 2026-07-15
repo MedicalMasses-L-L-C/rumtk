@@ -208,6 +208,13 @@ pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
 
 #[inline(always)]
 pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> Option<usize> {
+    // Optimize the empty case
+    if buffer.is_empty() { return None }
+    
+    // Optimize the byte is next door case
+    if buffer[0] == byte { return Some(0) }
+
+    // Attempt normal search otherwise.
     cpu_find_simd(buffer, byte)
 }
 

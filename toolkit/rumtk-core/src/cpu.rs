@@ -83,6 +83,12 @@ pub fn cpu_slice_to_array_padded<const SLICE_SIZE: usize, const PAD: u8>(chunk: 
 }
 
 #[inline(always)]
+pub fn cpu_slice_to_simd<const SLICE_SIZE: usize, const PAD: u8>(chunk: &[u8]) -> u8xN<SLICE_SIZE> {
+    let arr = cpu_slice_to_array_padded::<SLICE_SIZE, PAD>(chunk);
+    u8xN::from_array(arr)
+}
+
+#[inline(always)]
 pub fn cpu_slice_splat<const SLICE_SIZE: usize>(input: &[u8]) -> [u8; SLICE_SIZE] {
     let mut result = [0u8; SLICE_SIZE];
 
