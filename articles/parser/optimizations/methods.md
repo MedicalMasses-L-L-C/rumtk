@@ -1,6 +1,8 @@
 # Project HIFLAMES: Building a Bridge to the Future (Part 2)
 
-<img src="https://opencollective.com/medicalmasses-llc/contribute/button@2x.png?color=blue" width=300 />
+<a href="https://opencollective.com/medicalmasses-llc/projects/rumtk-v2" rel="Help finance the project!">
+    <img src="https://opencollective.com/medicalmasses-llc/contribute/button@2x.png?color=blue" width=300 />
+</a>
 
 ## Financial Contributors
 <object type="image/svg+xml" data="https://opencollective.com/medicalmasses-llc/tiers/backers.svg?avatarHeight=36&width=600"></object>
@@ -10,6 +12,7 @@
 * [Project HIFLAMES: Building a Bridge to the Future (Part 2)](./methods.md)
 * [Project HIFLAMES: Building a Bridge to the Future (Part 3)](./results1.md)
 * [Project HIFLAMES: Building a Bridge to the Future (Part 4)](./results2.md)
+* [Project HIFLAMES: Building a Bridge to the Future (Part 5)](./results3.md)
 
 ## Introduction:
 Before going over the data on our HL7 parser, it is important we set the stage for our methodology and our architectural choices. The following article details how we structured our toolkit and how those decisions affect the speed of processing.

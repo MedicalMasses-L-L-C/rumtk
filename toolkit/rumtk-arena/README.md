@@ -1,5 +1,9 @@
 # Rumtk-arena
 
+<a href="https://opencollective.com/medicalmasses-llc/projects/rumtk-v2" rel="Help finance the project!">
+    <img src="https://opencollective.com/medicalmasses-llc/contribute/button@2x.png?color=blue" width=300 />
+</a>
+
 [![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-arena)](COPYING.LESSER) [![Crates.io](https://img.shields.io/crates/v/rumtk-arena)](https://crates.io/crates/rumtk-arena) [![Released API docs](https://docs.rs/rumtk-arena/badge.svg)](https://docs.rs/rumtk-arena) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
 
 Rust's Universal Medical Toolkit is a toolkit being developed to put together a set of tools and libraries to facilitate
