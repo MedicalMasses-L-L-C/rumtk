@@ -19,6 +19,8 @@
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+rm -r demo/echo_interface
+
 mkdir demo
 mkdir demo/echo_interface
 
@@ -32,6 +34,8 @@ echo "Pushing Message through PIPEs!"
 cat ./examples/hl7/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55556
 
 sleep 1
+sync ./demo/echo_interface/out.log
+sleep 10
 
 echo "Output"
 #DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/echo_interface/out.log) )
@@ -39,14 +43,15 @@ DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/echo_interface/ou
 
 echo "Clean up"
 pkill -i -e -f rumtk-v2-interface
-#rm -r demo/echo_interface
 
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"
     echo ">>>>>>>>>>>>>>>>Input"
     cat -A ./examples/hl7/sample_hl7.hl7
+    echo ""
     echo ">>>>>>>>>>>>>>>>Output"
     cat -A ./demo/echo_interface/out.log
+    echo ""
     echo ">>>>>>>>>>>>>>>>Diff"
     echo "$DIFF"
     exit 69
