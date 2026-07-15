@@ -178,9 +178,19 @@ pub fn cpu_find_simd_n<const LANE_SIZE: usize>
     }
 }
 
+#[cfg(feature = "simd")]
 #[inline]
-pub fn cpu_find_simd(window: &[u8], byte: u8) -> Option<usize> {
+pub fn cpu_find(window: &[u8], byte: u8) -> Option<usize> {
     cpu_find_simd_n::<CPU_SIMD_64_SIZE>(
+        window,
+        byte,
+    )
+}
+
+#[cfg(not(feature = "simd"))]
+#[inline]
+pub fn cpu_find(window: &[u8], byte: u8) -> Option<usize> {
+    cpu_find_fallback(
         window,
         byte,
     )

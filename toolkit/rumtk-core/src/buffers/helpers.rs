@@ -19,7 +19,6 @@
  */
 
 use crate::base::{RUMResult, RUMVec};
-use crate::buffers::constants::DEFAULT_BYTE_WINDOW_SIZE;
 use crate::buffers::RUMBuffer;
 use crate::cpu::*;
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
@@ -185,37 +184,15 @@ pub fn buffer_contains(buffer: &[u8], pattern: u8) -> bool {
 }
 
 #[inline(always)]
-pub fn buffer_slice_to_array(chunk: &[u8]) -> &[u8; DEFAULT_BYTE_WINDOW_SIZE] {
-    chunk.try_into().expect("length mismatch")
-}
-
-#[inline(always)]
-pub fn buffer_chunk_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
-    chunk.iter().position(|c| *c==byte)
-}
-
-#[inline(always)]
-pub fn buffer_chunk_find(chunk: &[u8], byte: u8) -> usize {
-    let length = chunk.len();
-
-    if length == DEFAULT_BYTE_WINDOW_SIZE {
-        let chunk_window = buffer_slice_to_array(chunk);
-        cpu_find_simd(chunk_window, byte).unwrap_or(length)
-    } else {
-        buffer_chunk_find_fallback(chunk, byte).unwrap_or(length)
-    }
-}
-
-#[inline(always)]
 pub fn buffer_find_byte(buffer: &[u8], byte: u8) -> Option<usize> {
     // Optimize the empty case
     if buffer.is_empty() { return None }
-    
+
     // Optimize the byte is next door case
     if buffer[0] == byte { return Some(0) }
 
     // Attempt normal search otherwise.
-    cpu_find_simd(buffer, byte)
+    cpu_find(buffer, byte)
 }
 
 #[inline(always)]

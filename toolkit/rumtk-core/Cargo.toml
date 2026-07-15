@@ -26,7 +26,8 @@ rustflags = ["-Clink-arg=-Wl,-z,stack-size=8388608"]
 rustflags = ["-Clink-arg=-Wl,-stack_size,8388608"]
 
 [features]
-default = ["mimalloc"]
+default = ["mimalloc", "simd"]
+simd = ["rand/simd_support"]
 
 [dependencies]
 rumtk-arena = { version = "0.3.0", path = "../rumtk-arena" }

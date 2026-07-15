@@ -445,7 +445,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::{cpu_collect_simd, cpu_find_replace_simd_n, cpu_find_simd, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
+    use crate::cpu::{cpu_collect_simd, cpu_find, cpu_find_replace_simd_n, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
@@ -943,7 +943,7 @@ mod tests {
     fn test_cpu_find_needle() {
         let data = b"                                                         n                    ";
         let expected = Some(57);
-        let indx = cpu_find_simd(data, b'n');
+        let indx = cpu_find(data, b'n');
 
         assert_eq!(indx, expected, "Could not find the needle in the haystack");
     }
@@ -953,7 +953,7 @@ mod tests {
         let data = new_random_buffer::<2048>();
         let expected = 1000;
         let (found, time) = rumtk_benchmark_snippet!(||{
-            cpu_find_simd(&data, b'\n')
+            cpu_find(&data, b'\n')
         });
 
         assert!(time <= expected, "Counting of instances in buffer was too slow! Took {:?} us", time);
@@ -966,7 +966,7 @@ mod tests {
         for i in 0..4096 {
             let data = new_random_buffer::<2048>();
             let (found, time) = rumtk_benchmark_snippet!(||{
-                    cpu_find_simd(&data, b'\n')
+                    cpu_find(&data, b'\n')
             });
             all_time += time;
         }
