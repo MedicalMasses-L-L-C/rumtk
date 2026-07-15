@@ -43,6 +43,11 @@ pkill -i -e -f rumtk-v2-interface
 
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"
-    echo "Diff: $DIFF"
+    echo ">>>>>>>>>>>>>>>>Input"
+    cat -A ./examples/hl7/sample_hl7.hl7
+    echo ">>>>>>>>>>>>>>>>Output"
+    cat -A ./demo/echo_interface/out.log
+    echo ">>>>>>>>>>>>>>>>Diff"
+    echo "$DIFF"
     exit 69
 fi
