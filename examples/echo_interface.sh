@@ -33,11 +33,10 @@ echo "Pushing Message through PIPEs!"
 cat ./examples/hl7/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55556
 
 echo "Clean up"
-sleep 10
+sleep 1
 pkill -i -e -f rumtk-v2-interface
-sleep 10
 sync ./demo/tmp/interface/out.log
-sleep 10
+sleep 1
 
 echo "Output"
 #DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/tmp/interface/out.log) )
