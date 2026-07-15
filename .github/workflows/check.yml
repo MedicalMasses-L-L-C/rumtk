@@ -23,4 +23,4 @@ jobs:
       - name: Run tests
         run: cargo test --release --verbose 
       - name: Run integration tests
-        run: ./examples/stdin_interface.sh && ./examples/echo_interface.sh
+        run: ./examples/run_integration_tests.sh 
