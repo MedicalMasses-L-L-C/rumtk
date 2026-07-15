@@ -30,9 +30,8 @@ echo "Pushing Message through PIPEs!"
 cat ./examples/hl7/sample_hl7.hl7 | ./target/release/rumtk-v2-interface --outbound --local --port 55556
 
 echo "Clean up"
-sleep 1
-pkill -i -e -f rumtk-v2-interface
 sleep 10
+pkill -i -e -f rumtk-v2-interface
 ls -ltr ./demo/tmp/interface
 sync "$OUTPUT"
 cat "$OUTPUT"
