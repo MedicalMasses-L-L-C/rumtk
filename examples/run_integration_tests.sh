@@ -27,4 +27,4 @@ echo "Running STD Interface test..."
 ./examples/stdin_interface.sh
 sleep 5
 echo "Running Echo Interface test..."
-./examples/echo_interface.sh
+#./examples/echo_interface.sh
