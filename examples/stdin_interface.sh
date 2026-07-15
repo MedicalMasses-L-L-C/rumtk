@@ -24,15 +24,16 @@ if [ -f ./demo/tmp/interface/out.log ]; then
 fi
 
 echo "Setting up Interface Chain"
-./target/debug/rumtk-v2-interface --port 55555 --local > ./demo/tmp/interface/out.log &
+./target/release/rumtk-v2-interface --port 55555 --local > ./demo/tmp/interface/out.log &
 sleep 1
 
 echo "Pushing Message through PIPEs!"
-cat ./examples/hl7/sample_hl7.hl7 | ./target/debug/rumtk-v2-interface --outbound --local --port 55555
+cat ./examples/hl7/sample_hl7.hl7 | ./target/release/rumtk-v2-interface --outbound --local --port 55555
 
 echo "Clean up"
 sleep 1
 pkill -i -e -f rumtk-v2-interface
+slepp 5
 sync ./demo/tmp/interface/out.log
 sleep 1
 
