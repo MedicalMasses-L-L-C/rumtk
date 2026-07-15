@@ -18,13 +18,10 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-if [ -f ./demo/tmp/interface/out.log ]; then
-  rm -r ./demo/tmp/interface/out.log
-fi
+OUTPUT="./demo/tmp/interface/$(uuidgen | tr '[:upper:]' '[:lower:]').out"
 
 echo "Setting up Interface Chain"
-./target/release/rumtk-v2-interface --port 55555 --local > ./demo/tmp/interface/out.log &
+./target/release/rumtk-v2-interface --port 55555 --local > "$OUTPUT" &
 sleep 1
 ./target/release/rumtk-v2-interface --port 55556 --local | ./target/release/rumtk-v2-interface --outbound --port 55555 --local &
 sleep 1
@@ -36,13 +33,14 @@ echo "Clean up"
 sleep 1
 pkill -i -e -f rumtk-v2-interface
 sleep 10
-sync ./demo/tmp/interface/out.log
-cat ./demo/tmp/interface/out.log
+ls -ltr ./demo/tmp/interface
+sync "$OUTPUT"
+cat "$OUTPUT"
 sleep 1
 
 echo "Output"
 #DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/tmp/interface/out.log) )
-DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat ./demo/tmp/interface/out.log) )
+DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat "$OUTPUT") )
 
 if [ "$DIFF" != "" ]; then
     echo "Values mismatch!"
@@ -50,7 +48,7 @@ if [ "$DIFF" != "" ]; then
     cat -A ./examples/hl7/sample_hl7.hl7
     echo ""
     echo ">>>>>>>>>>>>>>>>Output"
-    cat -A ./demo/tmp/interface/out.log
+    cat -A "$OUTPUT"
     echo ""
     echo ">>>>>>>>>>>>>>>>Diff"
     echo "$DIFF"
