@@ -82,6 +82,7 @@ pub fn cpu_slice_to_array_padded<const SLICE_SIZE: usize, const PAD: u8>(chunk: 
     result
 }
 
+#[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_slice_to_simd<const SLICE_SIZE: usize, const PAD: u8>(chunk: &[u8]) -> u8xN<SLICE_SIZE> {
     let arr = cpu_slice_to_array_padded::<SLICE_SIZE, PAD>(chunk);
@@ -108,11 +109,13 @@ pub fn cpu_slice_splat<const SLICE_SIZE: usize>(input: &[u8]) -> [u8; SLICE_SIZE
 }
 
 ////////////////////////////////////////SIMD MASKS//////////////////////////////////////////
+#[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_simd_shift_right_n<const LANE_SIZE: usize, const SHIFT: usize, const PAD: u8>(item: &u8xN<LANE_SIZE>) -> u8xN<LANE_SIZE> {
     item.shift_elements_right::<SHIFT>(PAD)
 }
 
+#[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_simd_masks<const LANE_SIZE: usize>(pattern: &[u8]) -> RUMVec<u8xN<LANE_SIZE>> {
     let mask = u8xN::<LANE_SIZE>::from_array(cpu_slice_splat(pattern));
@@ -135,6 +138,7 @@ pub fn cpu_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
     chunk.iter().position(|c| *c==byte)
 }
 
+#[cfg(feature = "simd")]
 #[inline]
 fn cpu_find_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(data_vec: &u8xN<SEARCH_WINDOW_SIZE>, target: u8xN<SEARCH_WINDOW_SIZE>) -> Option<usize> {
     let mask = data_vec.simd_eq(target);
@@ -148,6 +152,7 @@ fn cpu_find_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(data_vec: &u8xN<SEARCH_
     None
 }
 
+#[cfg(feature = "simd")]
 #[inline]
 pub fn cpu_find_simd_n<const LANE_SIZE: usize>
 (
@@ -197,7 +202,16 @@ pub fn cpu_find(window: &[u8], byte: u8) -> Option<usize> {
 }
 
 /////////////////////////////Replacement Helpers///////////////////////////////
+#[inline(always)]
+pub fn cpu_replace_fallback(data: &mut [u8], pattern: u8, replacement: u8) {
+    for i in 0..data.len() {
+        if data[i] == pattern {
+            data[i] = replacement;
+        }
+    }
+}
 
+#[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_find_replace_simd_n<const LANE_SIZE: usize>(chunk: &mut [u8], pattern: u8xN<LANE_SIZE>, replacement: u8xN<LANE_SIZE>) {
     let simd_chunk = u8xN::<LANE_SIZE>::from_array(cpu_slice_to_array_padded::<LANE_SIZE, 0>(chunk));
@@ -208,6 +222,7 @@ pub fn cpu_find_replace_simd_n<const LANE_SIZE: usize>(chunk: &mut [u8], pattern
     }
 }
 
+#[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_replace_simd_n<const LANE_SIZE: usize>(data: &mut [u8], pattern: u8, replacement: u8) {
     let mask = u8xN::<LANE_SIZE>::splat(pattern);
@@ -218,9 +233,16 @@ pub fn cpu_replace_simd_n<const LANE_SIZE: usize>(data: &mut [u8], pattern: u8, 
     }
 }
 
+#[cfg(feature = "simd")]
 #[inline(always)]
-pub fn cpu_replace_simd(data: &mut [u8], pattern: u8, replacement: u8) {
+pub fn cpu_replace_byte(data: &mut [u8], pattern: u8, replacement: u8) {
     cpu_replace_simd_n::<CPU_SIMD_64_SIZE>(data, pattern, replacement)
+}
+
+#[cfg(not(feature = "simd"))]
+#[inline(always)]
+pub fn cpu_replace_byte(data: &mut [u8], pattern: u8, replacement: u8) {
+    cpu_replace_fallback(data, pattern, replacement)
 }
 
 /////////////////////////////GATHER ALL INDICES OF NEEDLE IN HAYSTACK///////////////////////////////
@@ -232,8 +254,8 @@ pub type CPUTokenSet = (u8, u32);
 pub type CPUTokenSetCollection = RUMVec<CPUTokenSet>;
 
 #[inline(always)]
-pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offset: usize) -> CPUTokenRelativeStackInfo<LANE_SIZE> {
-    let mut results: CPUTokenStackIndex<LANE_SIZE> = [0; LANE_SIZE];
+pub fn cpu_collect_fallback(chunk: &[u8], byte: u8, offset: usize) -> CPUTokenIndexCollection {
+    let mut results: CPUTokenStackIndex<CPU_SIMD_64_SIZE> = [0; CPU_SIMD_64_SIZE];
     let mut length = 0;
 
     for i in 0..chunk.len() {
@@ -244,9 +266,10 @@ pub fn cpu_collect_fallback<const LANE_SIZE: usize>(chunk: &[u8], byte: u8, offs
         }
     }
 
-    (length, results)
+    CPUTokenIndexCollection::from(&results[..length])
 }
 
+#[cfg(feature = "simd")]
 #[inline]
 fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, target: u8xN<LANE_SIZE>, offset: usize) -> Option<CPUTokenRelativeStackInfo<LANE_SIZE>> {
     let mut results: CPUTokenStackIndex<LANE_SIZE> = [0; LANE_SIZE];
@@ -271,6 +294,7 @@ fn cpu_collect_simd_avx2_n<const LANE_SIZE: usize>(data_vec: &u8xN<LANE_SIZE>, t
     None
 }
 
+#[cfg(feature = "simd")]
 #[inline]
 pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
 (
@@ -283,8 +307,8 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
     let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
 
     let mut local_offset: usize = offset;
-    let (initial, data): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(prefix, byte, local_offset);
-    let mut positions: CPUTokenIndexCollection = CPUTokenIndexCollection::from(&data[..initial]);
+    let data: CPUTokenIndexCollection = cpu_collect_fallback(prefix, byte, local_offset);
+    let mut positions: CPUTokenIndexCollection = CPUTokenIndexCollection::from(data);
     local_offset += prefix.len();
 
     for window in middle.into_iter() {
@@ -297,14 +321,15 @@ pub fn cpu_collect_simd_n<const LANE_SIZE: usize>
         local_offset += LANE_SIZE;
     }
 
-    let (len, data): CPUTokenRelativeStackInfo<LANE_SIZE> = cpu_collect_fallback(postfix, byte, local_offset);
-    positions.extend_from_slice(&data[..len]);
+    let data: CPUTokenIndexCollection = cpu_collect_fallback(postfix, byte, local_offset);
+    positions.extend_from_slice(&data);
 
     positions
 }
 
+#[cfg(feature = "simd")]
 #[inline]
-pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndexSet {
+pub fn cpu_collect(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndexSet {
     let indx = cpu_collect_simd_n::<CPU_SIMD_64_SIZE>(
         window,
         byte,
@@ -313,15 +338,26 @@ pub fn cpu_collect_simd(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndex
     (byte, indx)
 }
 
+#[cfg(not(feature = "simd"))]
 #[inline]
-pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
+pub fn cpu_collect(window: &[u8], byte: u8, offset: usize) -> CPUTokenIndexSet {
+    let indx = cpu_collect_fallback(
+        window,
+        byte,
+        offset
+    );
+    (byte, indx)
+}
+
+#[inline]
+pub fn cpu_tokenize<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
 {
-    let mut results = CPUTokenSetCollection::with_capacity(1024 * size_of::<CPUTokenSet>());
+    let mut results = CPUTokenSetCollection::with_capacity(haystack.len() * size_of::<CPUTokenSet>());
     let mut offset = 0;
 
     for window in haystack.chunks(WINDOW_SIZE) {
         for byte in bytes {
-            let (b, indx) = cpu_collect_simd(window, *byte, offset);
+            let (b, indx) = cpu_collect(window, *byte, offset);
 
             if !indx.is_empty() {
                 for tok_indx in indx {
@@ -338,8 +374,8 @@ pub fn cpu_tokenize_simd<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]
 }
 
 #[inline]
-pub fn cpu_tokenize_simd_rev<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
+pub fn cpu_tokenize_rev<const WINDOW_SIZE: usize>(haystack: &[u8], bytes: &[u8]) -> CPUTokenSetCollection
 {
     let reversed: Vec<u8> = bytes.iter().rev().cloned().collect();
-    cpu_tokenize_simd::<WINDOW_SIZE>(haystack, &reversed)
+    cpu_tokenize::<WINDOW_SIZE>(haystack, &reversed)
 }

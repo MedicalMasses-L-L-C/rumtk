@@ -64,7 +64,7 @@ mod tests {
     use rumtk_core::base::{RUMResult, RUMVec};
     use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
-    use rumtk_core::cpu::{cpu_collect_simd, CPUTokenIndexCollection, CPU_SEARCH_WINDOW_256_SIZE};
+    use rumtk_core::cpu::{cpu_collect, CPUTokenIndexCollection, CPU_SEARCH_WINDOW_256_SIZE};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use rumtk_core::strings::{basic_escape, rumtk_format, AsStr, RUMArrayConversions, RUMString, StringUtils};
@@ -1603,7 +1603,7 @@ mod tests {
     #[test]
     fn test_scan_msh_segment() {
         let input = HL7_V2_MSH_ONLY;
-        let (tok, segment_indices) = cpu_collect_simd(input.as_bytes(), b'|', 0);
+        let (tok, segment_indices) = cpu_collect(input.as_bytes(), b'|', 0);
         let expected: CPUTokenIndexCollection = vec![3, 8, 19, 30, 41, 52, 76, 77, 93, 122, 124, 130, 131, 132, 135, 138, 139, 140, 141, 142, 156, 167];
 
         println!("{}", input);
@@ -1618,7 +1618,7 @@ mod tests {
     fn test_scan_msh_segment_benchmark() {
         let input = HL7_V2_MSH_ONLY;
 
-        let (r, time) = rumtk_benchmark_snippet!(|| cpu_collect_simd(input.as_bytes(), b'|', 0));
+        let (r, time) = rumtk_benchmark_snippet!(|| cpu_collect(input.as_bytes(), b'|', 0));
 
         println!("Parsed message in {} us", &time);
 
@@ -1628,7 +1628,7 @@ mod tests {
     #[test]
     fn test_scan_msh_segment2() {
         let input = EXPECTED_MSH_SEGMENT;
-        let segment_indices = cpu_collect_simd(input.as_bytes(), b'|', 0);
+        let segment_indices = cpu_collect(input.as_bytes(), b'|', 0);
 
         println!("{}", input);
 
@@ -1641,7 +1641,7 @@ mod tests {
     #[test]
     fn test_scan_large_message() {
         let input = V2_TEST_LARGE_MESSAGE;
-        let segment_indices = cpu_collect_simd(input.as_bytes(), b'|', 0);
+        let segment_indices = cpu_collect(input.as_bytes(), b'|', 0);
         let expected: CPUTokenIndexCollection = HL7_V2_MESSAGE_TOKEN_POSITIONS.clone();
 
         assert_eq!(
@@ -1654,7 +1654,7 @@ mod tests {
     fn test_scan_large_message_benchmark() {
         let input = V2_TEST_LARGE_MESSAGE;
 
-        let (r, time) = rumtk_benchmark_snippet!(|| cpu_collect_simd(input.as_bytes(), b'|', 0));
+        let (r, time) = rumtk_benchmark_snippet!(|| cpu_collect(input.as_bytes(), b'|', 0));
 
         println!("Parsed message in {} us", &time);
 

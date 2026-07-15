@@ -262,7 +262,7 @@ pub fn buffer_replace_in_place<'a>(buffer: &'a mut [u8], pattern: &[u8], replace
 
     // Optimize the single byte replace using SIMD
     if pattern.len() == 1  {
-        cpu_replace_simd(buffer, pattern[0], replacement[0]);
+        cpu_replace_byte(buffer, pattern[0], replacement[0]);
         return;
     }
 

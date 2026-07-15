@@ -48,7 +48,7 @@ pub mod v2_parser {
     use rumtk_core::buffers::*;
     use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_tokenize_simd_rev, cpu_unlikely_branch, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
+    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_unlikely_branch, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
     use rumtk_core::scripting::python_utils::RUMPyResult;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     pub use rumtk_core::strings::{

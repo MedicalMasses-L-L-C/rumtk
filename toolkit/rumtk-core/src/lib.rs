@@ -60,7 +60,7 @@ mod tests {
     use crate::buffers::*;
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
     use crate::cache::RUMCache;
-    use crate::cpu::{cpu_replace_simd, u8xN, CPU_SIMD_64_SIZE};
+    use crate::cpu::{cpu_replace_byte, u8xN, CPU_SIMD_64_SIZE};
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
     use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
@@ -445,7 +445,7 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::{cpu_collect_simd, cpu_find, cpu_find_replace_simd_n, cpu_tokenize_simd, CPU_SEARCH_WINDOW_16_SIZE};
+    use crate::cpu::{cpu_collect, cpu_find, cpu_find_replace_simd_n, cpu_tokenize, CPU_SEARCH_WINDOW_16_SIZE};
     use crate::net::tcp::LOCALHOST;
     use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
@@ -978,7 +978,7 @@ mod tests {
     fn test_cpu_collect_needle() {
         let data = b"                                                         n                    ";
         let expected = vec![57];
-        let indices = cpu_collect_simd(data, b'n', 0);
+        let indices = cpu_collect(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
@@ -987,7 +987,7 @@ mod tests {
     fn test_cpu_collect_needle_3() {
         let data = b"                                                         nnn                    ";
         let expected = vec![57, 58, 59];
-        let indices = cpu_collect_simd(data, b'n', 0);
+        let indices = cpu_collect(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
@@ -996,7 +996,7 @@ mod tests {
     fn test_cpu_collect_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
         let expected = vec![17, 18, 19, 60, 61, 62];
-        let indices = cpu_collect_simd(data, b'n', 0);
+        let indices = cpu_collect(data, b'n', 0);
 
         assert_eq!(indices.1, expected, "Could not find the needle in the haystack");
     }
@@ -1005,7 +1005,7 @@ mod tests {
     fn test_cpu_tokenize_needle_6() {
         let data = b"                 nnn                                        nnn                    ";
         let expected = vec![(110, 17), (110, 18), (110, 19), (110, 60), (110, 61), (110, 62)];
-        let indices = cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n");
+        let indices = cpu_tokenize::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n");
 
         assert_eq!(indices, expected, "Could not find the needle in the haystack");
     }
@@ -1014,7 +1014,7 @@ mod tests {
     fn test_cpu_tokenize_needle_6_benchmark() {
         let data = b"                 nnn                                        nnn                    ";
         let (indices, time) = rumtk_benchmark_snippet!(||{
-            cpu_tokenize_simd::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n")
+            cpu_tokenize::<CPU_SEARCH_WINDOW_16_SIZE>(data, b"n")
         });
 
         println!("Tokenized message in {} us", &time);
@@ -1027,7 +1027,7 @@ mod tests {
         let mut data = b"                                                         n                    ".to_vec();
         let expected = b"                                                                              ".to_vec();
 
-        cpu_replace_simd(data.as_mut_slice(), b'n', b' ');
+        cpu_replace_byte(data.as_mut_slice(), b'n', b' ');
 
         assert_eq!(data, expected, "Failed to replace in SIMD!");
     }
@@ -1037,7 +1037,7 @@ mod tests {
         let mut data = b"              nnnnnnnn                  nnnn                         n    nn                ".to_vec();
         let expected = b"                                                                                            ".to_vec();
 
-        cpu_replace_simd(data.as_mut_slice(), b'n', b' ');
+        cpu_replace_byte(data.as_mut_slice(), b'n', b' ');
 
         assert_eq!(data, expected, "Failed to replace in SIMD!");
     }
