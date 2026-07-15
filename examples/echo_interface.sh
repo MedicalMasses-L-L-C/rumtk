@@ -35,7 +35,7 @@ cat ./examples/hl7/sample_hl7.hl7 | ./target/release/rumtk-v2-interface --outbou
 echo "Clean up"
 sleep 1
 pkill -i -e -f rumtk-v2-interface
-slepp 10
+sleep 10
 sync ./demo/tmp/interface/out.log
 cat ./demo/tmp/interface/out.log
 sleep 1
