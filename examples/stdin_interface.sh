@@ -36,6 +36,7 @@ sync "$OUTPUT"
 cat "$OUTPUT"
 sleep 1
 
+echo ""
 echo "Output"
 #(jq -S . ./examples/hl7/sample_hl7.json) for JSON inputs
 DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat "$OUTPUT") )

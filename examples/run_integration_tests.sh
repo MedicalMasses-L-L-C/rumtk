@@ -18,6 +18,13 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+echo "Resetting work directory..."
+rm -rf ./demo/tmp/interface/*.out
+rm -rf ./demo/tmp/interface/*.log
 
+echo "Running Tests..."
+echo "Running STD Interface test..."
 ./examples/stdin_interface.sh
+sleep 5
+echo "Running Echo Interface test..."
 ./examples/echo_interface.sh

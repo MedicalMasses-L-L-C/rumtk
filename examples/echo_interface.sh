@@ -38,6 +38,7 @@ sync "$OUTPUT"
 cat "$OUTPUT"
 sleep 1
 
+echo ""
 echo "Output"
 #DIFF=$( diff <(jq -S . examples/sample_hl7.json) <(jq -S . demo/tmp/interface/out.log) )
 DIFF=$( diff <(cat ./examples/hl7/sample_hl7.hl7) <(cat "$OUTPUT") )
