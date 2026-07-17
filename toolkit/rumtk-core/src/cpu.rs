@@ -41,6 +41,7 @@ pub const CPU_SEARCH_WINDOW_32_SIZE: usize = 32;
 pub const CPU_SEARCH_WINDOW_16_SIZE: usize = 16;
 
 
+#[cfg(feature = "simd")]
 pub type u8xN<const SEARCH_WINDOW_SIZE: usize> = Simd<u8, SEARCH_WINDOW_SIZE>;
 
 ////////////////////////////////////////CPU CACHE HINTS///////////////////////////////
