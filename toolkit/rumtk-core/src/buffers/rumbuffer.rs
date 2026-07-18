@@ -20,8 +20,7 @@
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
-use rumtk_arena::dune::Dune;
-use rumtk_arena::rumtk_dune_new;
+use std::alloc::{alloc, Layout};
 use std::cmp::PartialEq;
 use std::mem;
 use std::ops::DerefMut;
@@ -31,10 +30,9 @@ use std::sync::LazyLock;
 
 #[derive(Default, Debug, Clone)]
 enum RUMBufferDataPtr {
-    StaticBuffer(&'static [u8]),
-    String(String),
-    Vec(RUMVec<u8>),
-    Arena(Dune),
+    Static(*const u8),
+    Owned(*mut u8),
+    View(*const u8),
     #[default]
     None
 }
@@ -82,19 +80,15 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 #[derive(Debug)]
 pub struct RUMBuffer {
     data: RUMBufferInner,
-    ptr: *const u8,
     size: usize,
 }
 
 impl RUMBuffer {
     #[inline]
     pub const fn new() -> Self {
-        let data_length = 0;
-        let ptr = EMPTY_BUFFER_DATA.as_ptr();
         Self {
             data: RUMBufferDataPtr::None,
-            ptr,
-            size: data_length,
+            size: 0,
         }
     }
 
@@ -105,46 +99,43 @@ impl RUMBuffer {
         }
 
         let data_length = data.len();
-        let mut mem = rumtk_dune_new!(data_length);
-        let mut ptr = mem.allocate_raw(data_length).unwrap();
+        let ptr = unsafe { alloc(Layout::from_size_align_unchecked(data_length, 1)) };
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferDataPtr::Arena(mem),
-            ptr,
+            data: RUMBufferDataPtr::Owned(ptr),
             size: data_length,
         }
     }
 
     #[inline]
     pub fn from_vec(mut data: Vec<u8>) -> Self {
-        let mut ptr = data.as_mut_ptr();
+        let ptr = data.as_mut_ptr();
         let size = data.len();
+        mem::forget(data);
         Self {
-            data: RUMBufferDataPtr::Vec(data),
-            ptr,
+            data: RUMBufferDataPtr::Owned(ptr),
             size,
         }
     }
 
     #[inline]
     pub fn from_string(mut data: String) -> Self {
-        let mut ptr = data.as_mut_ptr();
+        let ptr = data.as_mut_ptr();
         let size = data.len();
+        mem::forget(data);
         Self {
-            data: RUMBufferDataPtr::String(data),
-            ptr,
+            data: RUMBufferDataPtr::Owned(ptr),
             size,
         }
     }
 
     #[inline]
     pub fn from_static(mut data: &'static [u8]) -> Self {
-        let mut ptr = data.as_mut_ptr();
+        let ptr = data.as_ptr();
         let size = data.len();
         Self {
-            data: RUMBufferDataPtr::StaticBuffer(data),
-            ptr,
+            data: RUMBufferDataPtr::Static(ptr),
             size,
         }
     }
@@ -152,12 +143,13 @@ impl RUMBuffer {
     #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
         debug_assert!(offset <= self.size, "offset too large");
+        let ptr = self.as_ptr();
+        let new_ptr = unsafe { ptr.add(offset) };
         let copy = Self {
-            data: RUMBufferDataPtr::None,
-            ptr: self.ptr,
+            data: RUMBufferDataPtr::View(ptr),
             size: offset,
         };
-        self.ptr = unsafe { self.ptr.add(offset) };
+        self.data = RUMBufferDataPtr::View(new_ptr);
         self.size -= offset;
         copy
     }
@@ -165,8 +157,7 @@ impl RUMBuffer {
     #[inline]
     pub fn freeze(&self) -> Self {
         Self {
-            data: RUMBufferDataPtr::None,
-            ptr: self.ptr,
+            data: RUMBufferDataPtr::View(self.as_ptr()),
             size: self.size,
         }
     }
@@ -210,7 +201,7 @@ impl Iterator for RUMBuffer {
         if self.size == 0 { return None };
 
         let v = self[0];
-        self.ptr = unsafe { self.ptr.add(1) };
+        self.data = RUMBufferDataPtr::View(unsafe { self.as_ptr().add(1) });
         Some(v)
     }
 }
@@ -224,11 +215,21 @@ impl SizedType for RUMBuffer {
 impl AsPtr for RUMBuffer {
     #[inline(always)]
     fn as_ptr(&self) -> *const u8 {
-        self.ptr
+        match self.data {
+            RUMBufferDataPtr::None => EMPTY_BUFFER_DATA.as_ptr(),
+            RUMBufferDataPtr::Static(ptr) => ptr,
+            RUMBufferDataPtr::Owned(ptr) => ptr,
+            RUMBufferDataPtr::View(ptr) => ptr,
+        }
     }
     #[inline(always)]
     fn as_mut_ptr(&mut self) -> *mut u8 {
-        self.ptr as *mut u8
+        match self.data {
+            RUMBufferDataPtr::None => EMPTY_BUFFER_DATA.as_mut_ptr(),
+            RUMBufferDataPtr::Static(ptr) => ptr as *mut u8,
+            RUMBufferDataPtr::Owned(ptr) => ptr,
+            RUMBufferDataPtr::View(ptr) => ptr as *mut u8,
+        }
     }
 }
 
