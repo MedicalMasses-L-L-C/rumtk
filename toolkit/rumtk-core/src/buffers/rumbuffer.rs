@@ -28,23 +28,6 @@ use std::ops::{Deref, RangeTo, RangeToInclusive};
 use std::ops::{Index, Range, RangeFull};
 use std::sync::LazyLock;
 
-#[derive(Default, Debug, Clone)]
-enum RUMBufferDataPtr {
-    Static(*const u8),
-    Owned(*mut u8),
-    View(*const u8),
-    #[default]
-    None
-}
-
-impl PartialEq for RUMBufferDataPtr {
-    fn eq(&self, other: &Self) -> bool {
-        mem::discriminant(self) == mem::discriminant(other)
-    }
-}
-
-pub type RUMBufferInner = RUMBufferDataPtr;
-
 const EMPTY_BUFFER_DATA: [u8;0] = [0;0];
 static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new());
 
@@ -79,7 +62,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 ///
 #[derive(Debug)]
 pub struct RUMBuffer {
-    data: RUMBufferInner,
+    data: *const u8,
     size: usize,
 }
 
@@ -87,7 +70,7 @@ impl RUMBuffer {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            data: RUMBufferDataPtr::None,
+            data: EMPTY_BUFFER_DATA.as_ptr(),
             size: 0,
         }
     }
@@ -103,29 +86,29 @@ impl RUMBuffer {
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
-            data: RUMBufferDataPtr::Owned(ptr),
+            data: ptr,
             size: data_length,
         }
     }
 
     #[inline]
     pub fn from_vec(mut data: Vec<u8>) -> Self {
-        let ptr = data.as_mut_ptr();
+        let ptr = data.as_ptr();
         let size = data.len();
         mem::forget(data);
         Self {
-            data: RUMBufferDataPtr::Owned(ptr),
+            data: ptr,
             size,
         }
     }
 
     #[inline]
     pub fn from_string(mut data: String) -> Self {
-        let ptr = data.as_mut_ptr();
+        let ptr = data.as_ptr();
         let size = data.len();
         mem::forget(data);
         Self {
-            data: RUMBufferDataPtr::Owned(ptr),
+            data: ptr,
             size,
         }
     }
@@ -135,7 +118,7 @@ impl RUMBuffer {
         let ptr = data.as_ptr();
         let size = data.len();
         Self {
-            data: RUMBufferDataPtr::Static(ptr),
+            data: ptr,
             size,
         }
     }
@@ -146,10 +129,10 @@ impl RUMBuffer {
         let ptr = self.as_ptr();
         let new_ptr = unsafe { ptr.add(offset) };
         let copy = Self {
-            data: RUMBufferDataPtr::View(ptr),
+            data: ptr,
             size: offset,
         };
-        self.data = RUMBufferDataPtr::View(new_ptr);
+        self.data = new_ptr;
         self.size -= offset;
         copy
     }
@@ -157,7 +140,7 @@ impl RUMBuffer {
     #[inline]
     pub fn freeze(&self) -> Self {
         Self {
-            data: RUMBufferDataPtr::View(self.as_ptr()),
+            data: self.as_ptr(),
             size: self.size,
         }
     }
@@ -189,7 +172,7 @@ impl RUMBuffer {
 
     #[inline]
     pub fn is_view(&self) -> bool {
-        self.data == RUMBufferDataPtr::None
+        true
     }
 }
 
@@ -201,7 +184,7 @@ impl Iterator for RUMBuffer {
         if self.size == 0 { return None };
 
         let v = self[0];
-        self.data = RUMBufferDataPtr::View(unsafe { self.as_ptr().add(1) });
+        self.data = unsafe { self.as_ptr().add(1) };
         Some(v)
     }
 }
@@ -215,21 +198,11 @@ impl SizedType for RUMBuffer {
 impl AsPtr for RUMBuffer {
     #[inline(always)]
     fn as_ptr(&self) -> *const u8 {
-        match self.data {
-            RUMBufferDataPtr::None => EMPTY_BUFFER_DATA.as_ptr(),
-            RUMBufferDataPtr::Static(ptr) => ptr,
-            RUMBufferDataPtr::Owned(ptr) => ptr,
-            RUMBufferDataPtr::View(ptr) => ptr,
-        }
+        self.data
     }
     #[inline(always)]
     fn as_mut_ptr(&mut self) -> *mut u8 {
-        match self.data {
-            RUMBufferDataPtr::None => EMPTY_BUFFER_DATA.as_mut_ptr(),
-            RUMBufferDataPtr::Static(ptr) => ptr as *mut u8,
-            RUMBufferDataPtr::Owned(ptr) => ptr,
-            RUMBufferDataPtr::View(ptr) => ptr as *mut u8,
-        }
+        self.data as *mut u8
     }
 }
 
