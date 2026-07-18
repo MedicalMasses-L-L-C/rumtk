@@ -932,7 +932,7 @@ mod tests {
         let data = RUMBuffer::new();
         let struct_size = size_of::<RUMBuffer>();
 
-        assert!(struct_size <= 48, "Empty RUMBuffer structure size is too large! Length is {} bytes.", struct_size);
+        assert!(struct_size <= 16, "Empty RUMBuffer structure size is too large! Length is {} bytes.", struct_size);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

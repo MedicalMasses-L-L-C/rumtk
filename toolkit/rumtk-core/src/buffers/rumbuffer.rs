@@ -20,7 +20,7 @@
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
-use std::alloc::{alloc, Layout};
+use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
 use std::mem;
 use std::ops::DerefMut;
@@ -63,7 +63,8 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 #[derive(Debug)]
 pub struct RUMBuffer {
     data: *const u8,
-    size: usize,
+    size: u32,
+    dealloc: bool,
 }
 
 impl RUMBuffer {
@@ -72,6 +73,7 @@ impl RUMBuffer {
         Self {
             data: EMPTY_BUFFER_DATA.as_ptr(),
             size: 0,
+            dealloc: false,
         }
     }
 
@@ -82,34 +84,39 @@ impl RUMBuffer {
         }
 
         let data_length = data.len();
-        let ptr = unsafe { alloc(Layout::from_size_align_unchecked(data_length, 1)) };
+        let ptr = unsafe { alloc(Layout::from_size_align_unchecked(data_length, size_of::<u8>())) };
         let dst = as_slice_mut(ptr, data_length);
         copy_from_slice(&data[..], dst);
         Self {
             data: ptr,
-            size: data_length,
+            size: data_length as u32,
+            dealloc: true,
         }
     }
 
     #[inline]
     pub fn from_vec(mut data: Vec<u8>) -> Self {
+        data.shrink_to_fit();
         let ptr = data.as_ptr();
         let size = data.len();
         mem::forget(data);
         Self {
             data: ptr,
-            size,
+            size: size as u32,
+            dealloc: true,
         }
     }
 
     #[inline]
     pub fn from_string(mut data: String) -> Self {
+        data.shrink_to_fit();
         let ptr = data.as_ptr();
         let size = data.len();
         mem::forget(data);
         Self {
             data: ptr,
-            size,
+            size: size as u32,
+            dealloc: true,
         }
     }
 
@@ -119,21 +126,23 @@ impl RUMBuffer {
         let size = data.len();
         Self {
             data: ptr,
-            size,
+            size: size as u32,
+            dealloc: false,
         }
     }
 
     #[inline]
     pub fn split_to(&mut self, offset: usize) -> Self {
-        debug_assert!(offset <= self.size, "offset too large");
+        debug_assert!(offset <= (self.size as usize), "offset too large");
         let ptr = self.as_ptr();
         let new_ptr = unsafe { ptr.add(offset) };
         let copy = Self {
             data: ptr,
-            size: offset,
+            size: offset as u32,
+            dealloc: false,
         };
         self.data = new_ptr;
-        self.size -= offset;
+        self.size -= (offset as u32);
         copy
     }
 
@@ -142,6 +151,7 @@ impl RUMBuffer {
         Self {
             data: self.as_ptr(),
             size: self.size,
+            dealloc: false,
         }
     }
 
@@ -157,7 +167,7 @@ impl RUMBuffer {
 
     #[inline]
     pub fn truncate(&mut self, len: usize) {
-        self.size = len;
+        self.size = len as u32;
     }
 
     #[inline]
@@ -172,7 +182,7 @@ impl RUMBuffer {
 
     #[inline]
     pub fn is_view(&self) -> bool {
-        true
+        self.dealloc
     }
 }
 
@@ -191,7 +201,7 @@ impl Iterator for RUMBuffer {
 
 impl SizedType for RUMBuffer {
     fn size(&self) -> usize {
-        self.size
+        self.size as usize
     }
 }
 
@@ -251,18 +261,16 @@ impl Clone for RUMBuffer {
     }
 }
 
-/*
 impl Drop for RUMBuffer {
     fn drop(&mut self) {
-        match self.data.clone() {
-            Some(mem) => {
-                drop(mem)
-            },
-            None => {}
+        if self.dealloc {
+            unsafe {
+                dealloc(self.as_mut_ptr(), Layout::from_size_align_unchecked(self.len(), size_of::<u8>()))
+            }
         }
     }
 }
-*/
+
 unsafe impl Send for RUMBuffer {}
 unsafe impl Sync for RUMBuffer {}
 
