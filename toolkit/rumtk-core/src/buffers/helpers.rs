@@ -21,6 +21,7 @@
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::RUMBuffer;
 use crate::cpu::*;
+use crate::mem::AsPtr;
 use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
 use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
@@ -304,9 +305,9 @@ pub fn buffer_replace(buffer: &[u8], pattern: &[u8], replacement: &[u8]) -> RUMB
 }
 
 #[inline]
-pub fn buffer_trim(buffer: &RUMBuffer) -> RUMBuffer {
-    let trimmed = buffer_slice_trim(&buffer[..]);
-    RUMBuffer::from(trimmed)
+pub fn buffer_trim(buffer: &[u8]) -> RUMBuffer {
+    let trimmed = buffer_slice_trim(buffer);
+    RUMBuffer::from_parts(trimmed.as_ptr(), trimmed.len(), false)
 }
 
 #[inline(always)]
