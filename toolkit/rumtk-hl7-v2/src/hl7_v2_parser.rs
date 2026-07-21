@@ -57,6 +57,7 @@ pub mod v2_parser {
     use rumtk_core::strings::{string_to_buffer, AsString};
     use rumtk_core::types::RUMOrderedMap;
     use rumtk_core::{rumtk_cache_fetch, rumtk_mem_quick_array_init, rumtk_serialize};
+    use std::alloc::dealloc;
     use std::io::BufRead;
     use std::mem;
     use std::mem::ManuallyDrop;
@@ -549,13 +550,14 @@ pub mod v2_parser {
         /// ```
         /// ```
         ///
-        pub fn try_from_buffer(raw_msg: RUMBuffer) -> V2Result<Self> {
-            let sanitized = Self::sanitize(raw_msg);
+        #[inline]
+        pub fn try_from_buffer(mut raw_msg: RUMBuffer) -> V2Result<Self> {
+            let sanitized = Self::sanitize(&mut raw_msg);
             let parse_characters = V2ParserCharacters::from(&sanitized)?;
             let sanitized_view = sanitized.freeze();
             let segments = Self::extract_segments(sanitized_view, &parse_characters)?;
             let mut message = Self {
-                data: sanitized,
+                data: raw_msg,
                 sep: parse_characters.clone(),
                 sg: segments,
             };
@@ -731,9 +733,9 @@ pub mod v2_parser {
         /// ```
         ///
         #[inline(always)]
-        pub fn sanitize(mut raw_message: RUMBuffer) -> RUMBuffer {
-            buffer_replace_in_place(&mut raw_message, &['\n'  as u8], &['\r' as u8]);
-            buffer_trim(&raw_message)
+        pub fn sanitize(raw_message: &mut [u8]) -> RUMBuffer {
+            buffer_replace_in_place(raw_message, &['\n'  as u8], &['\r' as u8]);
+            buffer_trim(raw_message)
         }
 
         ///
@@ -773,6 +775,17 @@ pub mod v2_parser {
             group.insert(key.into(), segment_set);
         }
     }
+
+/*
+    impl Drop for V2Message {
+        #[inline(always)]
+        fn drop(&mut self) {
+            for _ in 0..self.sg.len() {
+                self.sg.swap_remove_index(0);
+            }
+        }
+    }
+    */
 
     impl PartialEq for V2Message {
         fn eq(&self, other: &V2Message) -> bool {

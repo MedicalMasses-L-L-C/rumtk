@@ -117,8 +117,8 @@ mod tests {
     #[test]
     fn test_sanitize_hl7_v2_message() {
         let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.clone().as_bytes());
-        let raw = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.clone().as_bytes());
-        let sanitized_message = V2Message::sanitize(raw.freeze());
+        let mut raw = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.clone().as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut raw);
         println!("{:?}", buffer_to_str(message.as_slice()).unwrap());
         println!("{:?}", buffer_to_str(sanitized_message.as_slice()).unwrap());
         
@@ -153,8 +153,8 @@ mod tests {
     #[test]
     fn test_load_hl7_v2_encoding_characters() {
         let encode_chars = V2ParserCharacters::new();
-        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
-        let sanitized_message = V2Message::sanitize(message);
+        let mut message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{:#?}", encode_chars);
         assert!(
@@ -189,8 +189,8 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_segments() {
-        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
-        let sanitized_message = V2Message::sanitize(message);
+        let mut message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         let parsed_segments = V2Message::extract_segments(sanitized_message.freeze(), &encode_chars).unwrap();
         let keys = parsed_segments.keys();
@@ -227,8 +227,8 @@ mod tests {
 
     #[test]
     fn test_extract_hl7_v2_message_scrambled_segments() {
-        let message = RUMBuffer::from(HL7_V2_SCRAMBLED.as_bytes());
-        let sanitized_message = V2Message::sanitize(message);
+        let mut message = RUMBuffer::from(HL7_V2_SCRAMBLED.as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         println!("{}", buffer_to_str(&sanitized_message.as_slice()).unwrap());
         let parsed_segments = V2Message::extract_segments(sanitized_message.freeze(), &encode_chars).unwrap();
@@ -276,8 +276,8 @@ mod tests {
 
     #[test]
     fn test_load_hl7_v2_two_segments_parsed_correctly() {
-        let message = RUMBuffer::from(DEFAULT_HL7_V2_TWO_SEGMENTS.as_bytes());
-        let sanitized_message = V2Message::sanitize(message);
+        let mut message = RUMBuffer::from(DEFAULT_HL7_V2_TWO_SEGMENTS.as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut message);
         let message = V2Message::try_from(sanitized_message.clone()).unwrap();
         let generated = rumtk_v2_generate_message!(message);
         assert_eq!(
@@ -1014,8 +1014,8 @@ mod tests {
 
     #[test]
     fn test_validated_cast_component_to_type() {
-        let message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
-        let sanitized_message = V2Message::sanitize(message);
+        let mut message = RUMBuffer::from(DEFAULT_HL7_V2_MESSAGE.as_bytes());
+        let sanitized_message = V2Message::sanitize(&mut message);
         let encode_chars = V2ParserCharacters::from(&sanitized_message).unwrap();
         let v2_component = V2ComponentTypeDescriptor::new(
             "date",
