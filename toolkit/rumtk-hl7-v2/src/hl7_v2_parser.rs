@@ -159,7 +159,7 @@ pub mod v2_parser {
         ///
         /// Will not support 2.7.8 Local encodings (\Zxxyy) until needed in the wild.
         ///
-        #[inline]
+        #[inline(always)]
         fn from(component: RUMBuffer) -> Self {
             Self {
                 c: component
@@ -225,14 +225,14 @@ pub mod v2_parser {
     }
 
     impl V2Field {
-        #[inline]
+        #[inline(always)]
         pub fn new() -> Self {
             Self {
                 cs: vec![V2Component::new()]
             }
         }
 
-        #[inline]
+        #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             if buffer_contains(&field, parser_chars.component_separator) {
@@ -265,7 +265,7 @@ pub mod v2_parser {
             }
         }
 
-        #[inline]
+        #[inline(always)]
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
             let mut components: RUMVec<&str> = RUMVec::with_capacity(self.cs.len());
             for component in self.cs.iter() {
@@ -370,7 +370,7 @@ pub mod v2_parser {
         /// checking if to push the `parser chars` field onto the field list. **My latest hypothesis is that we are not storing the
         /// Field ID field onto the field list of the segment and instead we store its id which is effectively a compression operation.**
         ///
-        #[inline]
+        #[inline(always)]
         pub fn from(raw_segment: RUMBuffer, parser_chars: &V2ParserCharacters) -> V2Result<(u8, Self)> {
             debug_assert!(raw_segment.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
 
@@ -421,6 +421,7 @@ pub mod v2_parser {
             }
         }
 
+        #[inline(always)]
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
             let mut segment: RUMVec<V2String> = RUMVec::with_capacity(self.f.len());
             for field_group in self.f.iter() {
@@ -499,7 +500,7 @@ pub mod v2_parser {
     /// implemented by default and simply let the lists deallocate the memory slice they allocated.
     ///
     impl Drop for V2Segment {
-        #[inline]
+        #[inline(always)]
         fn drop(&mut self) {
             for v in self.f.iter() {
                 match v {
@@ -570,6 +571,7 @@ pub mod v2_parser {
         /// but this is an artifact of following the standard and forcing all linefeed characters into
         /// carriage return characters as terminator.
         ///
+        #[inline(always)]
         pub fn to_string(&self) -> V2String {
             let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.sg.len());
             for segment_key in self.sg.keys() {
@@ -603,7 +605,7 @@ pub mod v2_parser {
         /// interferes with different splitting events to the point that what should remain as a single field
         /// with a single component becomes a field with multiple components.
         ///
-        #[inline]
+        #[inline(always)]
         fn patch_msh_pattern(message: &mut V2Message, parser_chars: &V2ParserCharacters) {
             message.sg[&V2_MSHEADER_ID][0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
         }
