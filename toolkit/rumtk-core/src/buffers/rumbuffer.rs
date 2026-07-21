@@ -106,11 +106,11 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn from_parts(data: *const u8, length: usize) -> Self {
+    pub fn from_parts(data: *const u8, length: usize, dealloc: bool) -> Self {
         Self {
             data,
             size: length as u32,
-            dealloc: true,
+            dealloc,
         }
     }
 
@@ -160,12 +160,12 @@ impl RUMBuffer {
 
     #[inline]
     pub fn is_buffer(&self) -> bool {
-        !self.is_view()
+        self.dealloc
     }
 
     #[inline]
     pub fn is_view(&self) -> bool {
-        self.dealloc
+        !self.dealloc
     }
 }
 
@@ -303,7 +303,7 @@ impl Index<RangeFull> for RUMBuffer {
 impl From<String> for RUMBuffer {
     #[inline]
     fn from(data: String) -> Self {
-        let instance = Self::from_parts(data.as_ptr(), data.len());
+        let instance = Self::from_parts(data.as_ptr(), data.len(), true);
         mem::forget(data);
         instance
     }
@@ -311,7 +311,7 @@ impl From<String> for RUMBuffer {
 impl From<Vec<u8>> for RUMBuffer {
     #[inline]
     fn from(data: Vec<u8>) -> Self {
-        let instance = Self::from_parts(data.as_ptr(), data.len());
+        let instance = Self::from_parts(data.as_ptr(), data.len(), true);
         mem::forget(data);
         instance
     }
