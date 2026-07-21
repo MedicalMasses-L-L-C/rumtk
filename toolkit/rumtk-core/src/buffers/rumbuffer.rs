@@ -95,32 +95,6 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn from_vec(mut data: Vec<u8>) -> Self {
-        data.shrink_to_fit();
-        let ptr = data.as_ptr();
-        let size = data.len();
-        mem::forget(data);
-        Self {
-            data: ptr,
-            size: size as u32,
-            dealloc: true,
-        }
-    }
-
-    #[inline]
-    pub fn from_string(mut data: String) -> Self {
-        data.shrink_to_fit();
-        let ptr = data.as_ptr();
-        let size = data.len();
-        mem::forget(data);
-        Self {
-            data: ptr,
-            size: size as u32,
-            dealloc: true,
-        }
-    }
-
-    #[inline]
     pub fn from_static(mut data: &'static [u8]) -> Self {
         let ptr = data.as_ptr();
         let size = data.len();
@@ -128,6 +102,15 @@ impl RUMBuffer {
             data: ptr,
             size: size as u32,
             dealloc: false,
+        }
+    }
+
+    #[inline]
+    pub fn from_parts(data: *const u8, length: usize) -> Self {
+        Self {
+            data,
+            size: length as u32,
+            dealloc: true,
         }
     }
 
@@ -320,13 +303,17 @@ impl Index<RangeFull> for RUMBuffer {
 impl From<String> for RUMBuffer {
     #[inline]
     fn from(data: String) -> Self {
-        Self::from_string(data)
+        let instance = Self::from_parts(data.as_ptr(), data.len());
+        mem::forget(data);
+        instance
     }
 }
 impl From<Vec<u8>> for RUMBuffer {
     #[inline]
     fn from(data: Vec<u8>) -> Self {
-        Self::from_vec(data)
+        let instance = Self::from_parts(data.as_ptr(), data.len());
+        mem::forget(data);
+        instance
     }
 }
 
