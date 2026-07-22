@@ -24,7 +24,7 @@ pub use mem::*;
 #[cfg(test)]
 mod tests {
     use crate::collections::{ArenaHashMap, ArenaVec, ArenaVecDeque};
-    use crate::{rumtk_arena_hashmap, rumtk_arena_vec, rumtk_arena_vecdeque, rumtk_dune_new, Arena};
+    use crate::{rumtk_arena_hashmap, rumtk_arena_new, rumtk_arena_vec, rumtk_arena_vecdeque, Arena};
     use std::alloc::Allocator;
     use std::alloc::Layout;
     use std::ptr::NonNull;
@@ -212,8 +212,8 @@ mod tests {
 
     #[test]
     fn test_arena_vec_debug_print() {
-        let arena = rumtk_dune_new!(500);
-        let mut test_vec = ArenaVec::new_in(arena.arena);
+        let arena = rumtk_arena_new!(500);
+        let mut test_vec = ArenaVec::new_in(&arena);
         let expected = ["Hello", "World", "!"];
 
         for s in expected.iter() {
@@ -225,11 +225,11 @@ mod tests {
 
     #[test]
     fn test_arena_map_debug_print() {
-        let arena = rumtk_dune_new!(500);
+        let arena = rumtk_arena_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = rumtk_arena_hashmap!(expected.clone(), &arena.arena);
+        let v = rumtk_arena_hashmap!(expected.clone(), &arena);
         println!("{:?}", &v);
     }
 }

@@ -41,7 +41,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 /// ## Example
 /// ### Creation
 /// ```
-/// use rumtk_core::buffers::*;
+/// use rumtk_arena::buffers::*;
 ///
 /// let buffer = RUMBuffer::from("Hello World!");
 /// let expected = b"Hello World!";
@@ -51,7 +51,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 ///
 /// ### Split Buffer
 /// ```
-/// use rumtk_core::buffers::*;
+/// use rumtk_arena::buffers::*;
 ///
 /// let mut buffer = RUMBuffer::from("Hello World!");
 /// let section = buffer.split_to(5);
