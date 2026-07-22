@@ -750,11 +750,9 @@ pub mod v2_parser {
 
             let mut splitter = msg.split_fast(parser_chars.segment_terminator);
             for segment in &mut splitter {
-                if segment.is_empty() {
-                    continue;
+                if !segment.is_empty() {
+                    V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
                 }
-
-                V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
             }
 
             if !splitter.remainder.is_empty() {
