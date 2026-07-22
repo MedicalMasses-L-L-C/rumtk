@@ -12,5 +12,14 @@ categories = ["parsing", "science", "parser-implementations"]
 edition = "2021"
 rust-version = "1.81.0"
 
+[features]
+default = []
+fast_allocator = ["mimalloc", "libmimalloc-sys"]
+
 [dependencies]
-memmap2 = "0.9.10"
+mimalloc = {  version = "0.1.52", features = ["default", "extended"], optional = true}
+libmimalloc-sys = {  version = "0.1.49",  features = ["extended", "arena"], optional = true }
+ahash = { version = "0.8.12", features = ["serde"] }
+rand = "0.10.1"
+bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
+branches = "0.4.4"
