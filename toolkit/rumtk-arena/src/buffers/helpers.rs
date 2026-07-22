@@ -157,7 +157,7 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 ///
 #[inline(always)]
 pub fn buffer_to_string(buffer: &[u8]) -> RUMResult<RUMString> {
-    match buffer.to_string() {
+    match RUMString::from_utf8(buffer.to_vec()) {
         Ok(string) => Ok(string),
         Err(e) => Err(rumtk_format!("Failure to parse incoming UTF-8 string: {}", e)),
     }
