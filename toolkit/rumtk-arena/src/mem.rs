@@ -42,11 +42,13 @@ use crate::base::RUMVec;
 use crate::cpu::CPU_SIMD_64_SIZE;
 /////////////////If using MiMalloc//////////////////////////////
 #[cfg(feature = "fast_global_allocator")]
-use crate::dune::Dune;
+use crate::dune::Arrakis;
+#[cfg(feature = "fast_global_allocator")]
+use crate::rumtk_dune_new;
 
 #[cfg(feature = "fast_global_allocator")]
 #[global_allocator]
-static GLOBAL: Dune = Dune {};
+static GLOBAL: Arrakis = rumtk_dune_new!();
 
 ////////////////////////Traits//////////////////////////////////
 pub trait AsPtr {
