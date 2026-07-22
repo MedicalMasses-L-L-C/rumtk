@@ -10,12 +10,11 @@ extern crate core;
 
 pub mod arena;
 pub mod collections;
-pub mod dune;
 pub mod constants;
 pub mod buffers;
 pub mod cpu;
 pub mod mem;
-pub mod global;
+pub mod dune;
 pub mod base;
 pub mod serde;
 

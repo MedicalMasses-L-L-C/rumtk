@@ -17,95 +17,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::arena::{ArenaBaseAddress, ArenaResult};
-use crate::Arena;
-use std::alloc::{Allocator, GlobalAlloc};
-use std::borrow::Borrow;
-use std::collections::LinkedList;
-use std::sync::{Arc, LazyLock, Mutex, RwLock};
+#[cfg(feature = "fast_allocator")]
+use libmimalloc_sys as ffi_mimalloc;
+#[cfg(feature = "fast_allocator")]
+use mimalloc::MiMalloc;
+#[cfg(feature = "fast_allocator")]
+use std::alloc::GlobalAlloc;
+#[cfg(feature = "fast_allocator")]
+use std::ffi::c_long;
 
-pub type SafeArena = Arc<RwLock<Arena>>;
-type Sand = LinkedList<Arena>;
-type DuneLock = Arc<Mutex<u8>>;
-type NullDune = LazyLock<Arena>;
-type ArrakisDunes = LazyLock<Sand>;
-type ArrakisLock = LazyLock<DuneLock>;
+#[cfg(feature = "fast_allocator")]
+pub type Dune = MiMalloc;
 
-static NULL: NullDune = NullDune::new(|| Arena::new());
-static mut ARRAKIS: ArrakisDunes = ArrakisDunes::new(|| Sand::default());
-static mut LOCK: ArrakisLock = ArrakisLock::new(|| Arc::new(Mutex::new(0)));
-
+#[cfg(feature = "fast_allocator")]
 #[inline]
-fn dune_allocate(chunk_size: usize) -> &'static Arena {
+pub fn global_reserve_memory(allocation: usize) {
+    // Config MiMalloc before generating instance
     unsafe {
-        let _unused = LOCK.lock().unwrap();
-        ARRAKIS.push_back_mut(Arena::with_capacity(chunk_size))
+        // Pre-allocate memory to speed up most programs.
+        ffi_mimalloc::mi_option_set(ffi_mimalloc::mi_option_reserve_os_memory, allocation as c_long);
     }
-}
-
-#[inline]
-fn dune_deallocate(address: &ArenaBaseAddress) {
-    unsafe {
-        let _unused = LOCK.lock().unwrap();
-
-        ARRAKIS.retain(|e| e.address() != address.clone());
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Dune {
-    pub address: ArenaBaseAddress,
-    pub arena: &'static Arena,
-}
-
-impl Dune {
-    pub fn new() -> Self {
-        Self {
-            address: unsafe{ (*NULL).address() },
-            arena: unsafe{ &(*NULL) },
-        }
-    }
-
-    pub fn with_capacity(chunk_size: usize) -> Self {
-        let arena: &Arena = dune_allocate(chunk_size);
-        let address = arena.address();
-        Self {
-            address,
-            arena,
-        }
-    }
-
-    pub fn allocate_raw(&mut self, size: usize) -> ArenaResult<*mut u8> {
-        Ok(self.arena.commit(size)? as *mut u8)
-    }
-
-    pub fn allocate_const_raw(&mut self, size: usize) -> ArenaResult<*const u8> {
-        Ok(self.arena.commit(size)? as *const u8)
-    }
-}
-
-impl Default for Dune {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Drop for Dune {
-    fn drop(&mut self) {
-        dune_deallocate(&self.address);
-    }
-}
-
-#[macro_export]
-macro_rules! rumtk_dune_new {
-    (  ) => {{
-        use $crate::dune::Dune;
-
-        Dune::default()
-    }};
-    ( $capacity:expr ) => {{
-        use $crate::dune::Dune;
-
-        Dune::with_capacity($capacity)
-    }};
 }
