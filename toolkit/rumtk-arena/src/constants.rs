@@ -19,3 +19,7 @@
  */
 
 pub const NULL_U8_PTR: [u8;0] = [0u8;0];
+pub const KB: usize = 1024;
+pub const MB: usize = 1024 * 1024;
+pub const GB: usize = 1024 * 1024 * 1024;
+pub const DEFAULT_GLOBAL_MB_ALLOCATION: usize = 50 * MB;
