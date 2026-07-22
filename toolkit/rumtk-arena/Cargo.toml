@@ -15,6 +15,7 @@ rust-version = "1.81.0"
 [features]
 default = []
 fast_allocator = ["mimalloc", "libmimalloc-sys"]
+fast_global_allocator = ["fast_allocator"]
 
 [dependencies]
 mimalloc = {  version = "0.1.52", features = ["default", "extended"], optional = true}
