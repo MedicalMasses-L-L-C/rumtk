@@ -756,7 +756,10 @@ pub mod v2_parser {
 
                 V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
             }
-            V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
+
+            if !splitter.remainder.is_empty() {
+                V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
+            }
 
             Ok(segments)
         }
@@ -775,17 +778,6 @@ pub mod v2_parser {
             group.insert(key.into(), segment_set);
         }
     }
-
-/*
-    impl Drop for V2Message {
-        #[inline(always)]
-        fn drop(&mut self) {
-            for _ in 0..self.sg.len() {
-                self.sg.swap_remove_index(0);
-            }
-        }
-    }
-    */
 
     impl PartialEq for V2Message {
         fn eq(&self, other: &V2Message) -> bool {
