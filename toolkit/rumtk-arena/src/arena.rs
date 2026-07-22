@@ -17,9 +17,12 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::mem::{as_slice, as_slice_mut, AsPtr, AsSlice, SizedType};
 use std::alloc::{alloc, AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
 use std::io::{Read, Write};
+use std::ops::Index;
+use std::ops::{Range, RangeFrom, RangeFull, RangeTo, RangeToInclusive};
 use std::ptr::NonNull;
 use std::sync::{Arc, RwLock};
 
@@ -236,7 +239,7 @@ impl ArenaAlloc {
     #[inline(always)]
     pub fn uncommit(&mut self, length: usize) {
         let new_lower_bound = self.remaining() - (length % self.len());
-        self.remaining = unsafe { std::slice::from_raw_parts_mut((&mut self.memory[new_lower_bound..]).as_mut_ptr(), new_lower_bound) };
+        self.remaining = unsafe { as_slice_mut(self.memory.add(self.capacity).sub(new_lower_bound), new_lower_bound) };
     }
 
     ///
@@ -244,13 +247,12 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn reset(&mut self) {
-        let full_range = &mut self.memory[..];
-        self.remaining = unsafe { std::slice::from_raw_parts_mut(full_range.as_mut_ptr(), full_range.len()) };
+        self.remaining = as_slice_mut(self.memory, self.capacity);
     }
 
     #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
-        self.memory.as_ptr()
+        self.as_ptr()
     }
 
     #[inline(always)]
@@ -260,7 +262,37 @@ impl ArenaAlloc {
 
     #[inline(always)]
     pub fn len(&self) -> usize {
-        self.memory.len()
+        self.capacity()
+    }
+}
+
+impl AsSlice for ArenaAlloc {
+    #[inline(always)]
+    fn as_slice(&self) -> &'static [u8] { as_slice(self.as_ptr(),  self.size()) }
+    #[inline(always)]
+    fn as_slice_mut(&mut self) -> &'static mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+
+    #[inline(always)]
+    fn contains(&self, x: &u8) -> bool {
+        self.as_slice().contains(x)
+    }
+}
+
+impl AsPtr for ArenaAlloc {
+    #[inline(always)]
+    fn as_ptr(&self) -> *const u8 {
+        self.memory as *const u8
+    }
+    #[inline(always)]
+    fn as_mut_ptr(&mut self) -> *mut u8 {
+        self.memory
+    }
+}
+
+impl SizedType for ArenaAlloc {
+    #[inline(always)]
+    fn size(&self) -> usize {
+        self.capacity
     }
 }
 
@@ -272,6 +304,54 @@ impl Default for ArenaAlloc {
 
 unsafe impl Send for ArenaAlloc {}
 unsafe impl Sync for ArenaAlloc {}
+
+impl Index<usize> for ArenaAlloc {
+    type Output = u8;
+    #[inline]
+    fn index(&self, i: usize) -> & Self::Output {
+        &self.as_slice()[i]
+    }
+}
+
+impl Index<Range<usize>> for ArenaAlloc {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: Range<usize>) -> & Self::Output {
+        &self.as_slice()[i.start..i.end]
+    }
+}
+
+impl Index<RangeTo<usize>> for ArenaAlloc {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeTo<usize>) -> & Self::Output {
+        &self.as_slice()[..i.end]
+    }
+}
+
+impl Index<RangeFrom<usize>> for ArenaAlloc {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeFrom<usize>) -> & Self::Output {
+        &self.as_slice()[i.start..]
+    }
+}
+
+impl Index<RangeToInclusive<usize>> for ArenaAlloc {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeToInclusive<usize>) -> & Self::Output {
+        &self.as_slice()[..=i.end]
+    }
+}
+
+impl Index<RangeFull> for ArenaAlloc {
+    type Output = [u8];
+    #[inline]
+    fn index(&self, i: RangeFull) -> & Self::Output {
+        self.as_slice()
+    }
+}
 
 type ArenaRef = Arc<RwLock<ArenaAlloc>>;
 
