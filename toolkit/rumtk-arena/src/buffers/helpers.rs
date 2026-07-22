@@ -18,22 +18,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::base::{RUMResult, RUMVec};
+use crate::base::*;
 use crate::buffers::RUMBuffer;
 use crate::cpu::*;
 use crate::mem::AsPtr;
-use crate::strings::{rumtk_format, RUMArrayConversions, RUMString};
-use clap::builder::TypedValueParser;
 use rand::{distr::Alphanumeric, RngExt};
-use tokio::io::AsyncReadExt;
 
 ///
 /// Convert slice of `&[u8]` to [RUMBuffer].
 ///
 /// ## Example
 /// ```
-/// use rumtk_core::buffers::slice_to_buffer;
-/// use rumtk_core::buffers::*;
+/// use rumtk_arena::buffers::slice_to_buffer;
+/// use rumtk_arena::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from(expected.as_bytes());
@@ -55,7 +52,7 @@ pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_arena::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -78,7 +75,7 @@ pub fn new_random_buffer<const N: usize>() -> [u8; N] {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_arena::buffers::{new_random_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -99,7 +96,7 @@ pub fn new_random_rumbuffer<const N: usize>() -> RUMBuffer {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::buffers::{new_random_string_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_arena::buffers::{new_random_string_buffer, DEFAULT_BUFFER_CHUNK_SIZE};
 ///
 /// let buffer = new_random_string_buffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
 ///
@@ -123,7 +120,7 @@ pub fn new_random_string_buffer<const N: usize>() -> RUMString {
 /// ## Example
 ///
 /// ```
-/// use rumtk_core::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE};
+/// use rumtk_arena::buffers::{new_random_string_set, DEFAULT_BUFFER_CHUNK_SIZE};
 ///const item_count: usize = 5;
 ///
 /// let buffer = new_random_string_set::<DEFAULT_BUFFER_CHUNK_SIZE>(item_count);
@@ -148,8 +145,8 @@ pub fn new_random_string_set<const N: usize>(item_count: usize) -> RUMVec<RUMStr
 ///
 /// ## Example
 /// ```
-/// use rumtk_core::buffers::buffer_to_string;
-/// use rumtk_core::buffers::*;
+/// use rumtk_arena::buffers::buffer_to_string;
+/// use rumtk_arena::buffers::*;
 ///
 /// const expected: &str = "Hello World!";
 /// let buffer = RUMBuffer::from(expected.as_bytes());
