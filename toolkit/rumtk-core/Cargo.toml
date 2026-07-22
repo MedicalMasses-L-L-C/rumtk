@@ -27,8 +27,8 @@ rustflags = ["-Clink-arg=-Wl,-stack_size,8388608"]
 
 [features]
 default = ["mimalloc", "simd"]
-simd = ["rand/simd_support"]
-mimalloc = ["rumtk-arena"]
+simd = ["rand/simd_support", "rumtk-arena/simd"]
+mimalloc = ["rumtk-arena", "rumtk-arena/fast_global_allocator"]
 
 [dependencies]
 rumtk-arena = { version = "0.3.0", path = "../rumtk-arena", features = ["default", "mimalloc"], optional = true }
