@@ -17,8 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use memmap2::MmapMut;
-use std::alloc::{AllocError, Allocator};
+use std::alloc::{alloc, AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
 use std::io::{Read, Write};
 use std::ptr::NonNull;
@@ -108,8 +107,9 @@ pub type ArenaBaseAddress = *const u8;
 ///
 #[derive(Debug)]
 pub struct ArenaAlloc {
-    memory: MmapMut,
+    memory: *mut u8,
     remaining: &'static mut [u8],
+    capacity: usize,
 }
 
 impl ArenaAlloc {
@@ -126,15 +126,13 @@ impl ArenaAlloc {
     ///
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        let mut memory = match MmapMut::map_anon(capacity) {
-            Ok(m) => m,
-            Err(_) => panic!("Failed to map memory"),
-        };
-        let remaining = unsafe { std::slice::from_raw_parts_mut((&mut memory[..]).as_mut_ptr(), capacity) };
+        let mut memory = unsafe { alloc(Layout::from_size_align_unchecked(capacity, size_of::<u8>())) };
+        let remaining = unsafe { std::slice::from_raw_parts_mut(memory, capacity) };
 
         Self {
             memory,
             remaining,
+            capacity,
         }
     }
 
@@ -149,7 +147,7 @@ impl ArenaAlloc {
 
     #[inline(always)]
     pub fn capacity(&self) -> usize {
-        self.memory.len()
+        self.capacity
     }
 
     ///
@@ -271,6 +269,9 @@ impl Default for ArenaAlloc {
         Self::new()
     }
 }
+
+unsafe impl Send for ArenaAlloc {}
+unsafe impl Sync for ArenaAlloc {}
 
 type ArenaRef = Arc<RwLock<ArenaAlloc>>;
 

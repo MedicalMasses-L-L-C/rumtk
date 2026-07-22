@@ -2,6 +2,7 @@
 #![feature(slice_ptr_get)]
 #![feature(liballoc_internals)]
 #![feature(linked_list_retain)]
+#![feature(portable_simd)]
 extern crate alloc;
 extern crate core;
 
@@ -9,6 +10,11 @@ pub mod arena;
 pub mod collections;
 pub mod dune;
 pub mod constants;
+pub mod buffers;
+pub mod cpu;
+pub mod mem;
+mod global;
+mod base;
 
 pub use arena::Arena;
 
