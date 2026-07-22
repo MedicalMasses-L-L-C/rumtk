@@ -22,8 +22,10 @@ pub mod constants;
 pub mod helpers;
 pub mod types;
 pub mod rumbuffer;
+pub mod serde_impl;
 
 pub use constants::*;
 pub use helpers::*;
 pub use rumbuffer::*;
+pub use serde_impl::*;
 pub use types::*;

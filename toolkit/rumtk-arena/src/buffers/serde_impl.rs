@@ -17,42 +17,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub use crate::serde::json::*;
-pub use crate::types::RUMOrderedMap;
-use std::hash::Hash;
-use std::mem::ManuallyDrop;
+use crate::buffers::{buffer_to_str, RUMBuffer};
+use crate::serde::{RUMDeJson, RUMJsonDeserializer, RUMJsonSerializer, RUMSerJson};
 
-#[derive(Default, Debug, PartialEq, Clone)]
-pub struct RUMSerializableManualDrop<T>(pub ManuallyDrop<T>);
-
-impl<T> RUMSerializableManualDrop<T> {
-    pub fn new(v: T) -> Self {
-        RUMSerializableManualDrop(ManuallyDrop::new(v))
-    }
-
-    pub fn inner(&self) -> &T {
-        &self.0
-    }
-}
-
-impl<T> RUMSerJson for RUMSerializableManualDrop<T>
-where
-    T: RUMSerJson + Clone,
-{
+impl RUMSerJson for RUMBuffer {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: RUMJsonSerializer,
     {
-        self.inner().serialize(serializer)
+        // Convert external type to a serializable format
+        let string = match buffer_to_str(&self.as_slice()) {
+            Ok(string) => string,
+            Err(err) => return Err(serde::ser::Error::custom(err)),
+        };
+        serializer.serialize_str(string)
     }
 }
 
-impl<'a, T: RUMDeJson<'a>> RUMDeJson<'a> for RUMSerializableManualDrop<T> {
+impl<'a> RUMDeJson<'a> for RUMBuffer {
     fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
     where
         D: RUMJsonDeserializer<'a>,
     {
-        let escaped_val = T::deserialize(deserializer)?;
-        Ok(RUMSerializableManualDrop(ManuallyDrop::new(escaped_val)))
+        let escaped_val = String::deserialize(deserializer)?;
+        if escaped_val.len() > 0 {
+            Ok(RUMBuffer::from(escaped_val))
+        } else {
+            Ok(RUMBuffer::default())
+        }
     }
 }

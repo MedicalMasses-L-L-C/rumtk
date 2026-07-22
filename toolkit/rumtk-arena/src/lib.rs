@@ -3,6 +3,8 @@
 #![feature(liballoc_internals)]
 #![feature(linked_list_retain)]
 #![feature(portable_simd)]
+#![feature(str_as_str)]
+
 extern crate alloc;
 extern crate core;
 
@@ -13,10 +15,12 @@ pub mod constants;
 pub mod buffers;
 pub mod cpu;
 pub mod mem;
-mod global;
-mod base;
+pub mod global;
+pub mod base;
+pub mod serde;
 
 pub use arena::Arena;
+pub use mem::*;
 
 #[cfg(test)]
 mod tests {

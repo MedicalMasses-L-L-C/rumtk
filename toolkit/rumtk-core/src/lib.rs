@@ -48,10 +48,13 @@ pub mod search;
 pub mod strings;
 pub mod threading;
 pub mod types;
-pub mod buffers;
 mod instrumentation;
-pub mod cpu;
-pub mod mem;
+
+pub use rumtk_arena::buffers;
+pub use rumtk_arena::cpu;
+pub use rumtk_arena::mem;
+
+pub use rumtk_arena::*;
 
 #[cfg(test)]
 mod tests {

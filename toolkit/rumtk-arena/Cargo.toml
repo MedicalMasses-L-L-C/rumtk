@@ -23,3 +23,4 @@ ahash = { version = "0.8.12", features = ["serde"] }
 rand = "0.10.1"
 bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
 branches = "0.4.4"
+serde = { version = "1.0.228", features = ["derive", "std", "rc"] }

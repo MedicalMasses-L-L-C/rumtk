@@ -17,42 +17,15 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub use crate::serde::json::*;
-pub use crate::types::RUMOrderedMap;
-use std::hash::Hash;
-use std::mem::ManuallyDrop;
-
-#[derive(Default, Debug, PartialEq, Clone)]
-pub struct RUMSerializableManualDrop<T>(pub ManuallyDrop<T>);
-
-impl<T> RUMSerializableManualDrop<T> {
-    pub fn new(v: T) -> Self {
-        RUMSerializableManualDrop(ManuallyDrop::new(v))
-    }
-
-    pub fn inner(&self) -> &T {
-        &self.0
-    }
-}
-
-impl<T> RUMSerJson for RUMSerializableManualDrop<T>
-where
-    T: RUMSerJson + Clone,
-{
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: RUMJsonSerializer,
-    {
-        self.inner().serialize(serializer)
-    }
-}
-
-impl<'a, T: RUMDeJson<'a>> RUMDeJson<'a> for RUMSerializableManualDrop<T> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, <D>::Error>
-    where
-        D: RUMJsonDeserializer<'a>,
-    {
-        let escaped_val = T::deserialize(deserializer)?;
-        Ok(RUMSerializableManualDrop(ManuallyDrop::new(escaped_val)))
-    }
-}
+pub use serde::{
+    de::Error as RUMDeJsonError,
+    de::Visitor as RUMDeJsonVisitor,
+    ser::Error as RUMSerJsonError,
+    ser::SerializeMap as RUMSerJsonSerializeMap,
+    ser::SerializeSeq as RUMSerJsonSerializeSequence,
+    ser::SerializeStruct as RUMSerJsonSerializeStruct,
+    Deserialize as RUMDeJson,
+    Deserializer as RUMJsonDeserializer,
+    Serialize as RUMSerJson,
+    Serializer as RUMJsonSerializer,
+};
