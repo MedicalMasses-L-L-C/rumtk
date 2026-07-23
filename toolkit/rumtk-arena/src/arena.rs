@@ -17,14 +17,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::buffers::RUMBuffer;
+use crate::direct_alloc;
 use crate::mem::{as_slice, as_slice_mut, AsPtr, AsSlice, SizedType};
-use std::alloc::{alloc, AllocError, Allocator};
-use std::alloc::{GlobalAlloc, Layout};
-use std::io::{Read, Write};
+use std::alloc::{AllocError, Allocator};
+use std::alloc::GlobalAlloc;
 use std::ops::Index;
 use std::ops::{Range, RangeFrom, RangeFull, RangeTo, RangeToInclusive};
 use std::ptr::NonNull;
-use std::sync::{Arc, RwLock};
 
 pub const ONE_KB: usize = 1024;
 pub const ONE_MB: usize = 1024 * ONE_KB;
@@ -92,7 +92,7 @@ pub type ArenaBaseAddress = *const u8;
 /// ```
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 1);
+/// let mut arena = Arena::with_capacity(size_of::<usize>() * 1);
 /// let result_ptr = arena.write(5);
 ///
 /// ```
@@ -102,20 +102,20 @@ pub type ArenaBaseAddress = *const u8;
 /// #![feature(allocator_api)]
 /// use crate::rumtk_arena::Arena;
 ///
-/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 5);
+/// let mut arena = Arena::with_capacity(size_of::<usize>() * 5);
 /// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
 /// v.push(5);
 ///
 /// ```
 ///
 #[derive(Debug)]
-pub struct ArenaAlloc {
-    memory: *mut u8,
-    remaining: &'static mut [u8],
+pub struct Arena {
+    memory: RUMBuffer,
+    remaining: usize,
     capacity: usize,
 }
 
-impl ArenaAlloc {
+impl Arena {
     ///
     /// Allocates a new Arena using the [DEFAULT_ARENA_MEMORY_ALLOCATION] allocation size.
     ///
@@ -129,23 +129,38 @@ impl ArenaAlloc {
     ///
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
-        let mut memory = unsafe { alloc(Layout::from_size_align_unchecked(capacity, size_of::<u8>())) };
-        let remaining = unsafe { std::slice::from_raw_parts_mut(memory, capacity) };
-
         Self {
-            memory,
-            remaining,
+            memory: RUMBuffer::from_parts(unsafe { direct_alloc(capacity) }, capacity, true),
+            remaining: capacity,
             capacity,
         }
     }
 
-    ///
-    /// Provides the remaining `uncommitted` number of bytes. This represents the number of bytes left
-    /// to add more objects.
-    ///
+    #[inline]
+    pub fn from_parts(ptr: *mut u8, capacity: usize, dealloc: bool) -> Self {
+        Self {
+            memory: RUMBuffer::from_parts(ptr, capacity, dealloc),
+            remaining: capacity,
+            capacity,
+        }
+    }
+
+    #[inline]
+    pub fn split_to(&mut self, len: usize) -> Self {
+        let new_buffer = self.memory.split_to(len);
+        self.remaining -= len;
+        self.capacity -= len;
+
+        Self {
+            memory: new_buffer,
+            remaining: len,
+            capacity: len,
+        }
+    }
+
     #[inline(always)]
     pub fn remaining(&self) -> usize {
-        self.remaining.len()
+        self.remaining
     }
 
     #[inline(always)]
@@ -174,19 +189,11 @@ impl ArenaAlloc {
     #[inline(always)]
     pub fn commit(&mut self, size: usize) -> ArenaResult<*mut [u8]> {
         if self.can_allocate(size) {
-            Ok(&mut self.remaining[..size])
+            Ok(&mut self.memory[..size])
         } else {
             eprintln!("Cannot allocate {} bytes due to lack of space!", size);
             Err(AllocError)
         }
-    }
-
-    ///
-    /// Grows the allocated memory. Basically, we advance the pointer by the difference
-    ///
-    #[inline(always)]
-    pub fn grow(&mut self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
-        self.commit(new_size - old_size)
     }
 
     ///
@@ -239,7 +246,7 @@ impl ArenaAlloc {
     #[inline(always)]
     pub fn uncommit(&mut self, length: usize) {
         let new_lower_bound = self.remaining() - (length % self.len());
-        self.remaining = unsafe { as_slice_mut(self.memory.add(self.capacity).sub(new_lower_bound), new_lower_bound) };
+        self.remaining = new_lower_bound;
     }
 
     ///
@@ -247,7 +254,7 @@ impl ArenaAlloc {
     ///
     #[inline(always)]
     pub fn reset(&mut self) {
-        self.remaining = as_slice_mut(self.memory, self.capacity);
+        self.remaining = self.capacity;
     }
 
     #[inline(always)]
@@ -266,7 +273,7 @@ impl ArenaAlloc {
     }
 }
 
-impl AsSlice for ArenaAlloc {
+impl AsSlice for Arena {
     #[inline(always)]
     fn as_slice(&self) -> &'static [u8] { as_slice(self.as_ptr(),  self.size()) }
     #[inline(always)]
@@ -278,34 +285,34 @@ impl AsSlice for ArenaAlloc {
     }
 }
 
-impl AsPtr for ArenaAlloc {
+impl AsPtr for Arena {
     #[inline(always)]
     fn as_ptr(&self) -> *const u8 {
-        self.memory as *const u8
+        self.memory.as_ptr()
     }
     #[inline(always)]
     fn as_mut_ptr(&mut self) -> *mut u8 {
-        self.memory
+        self.memory.as_mut_ptr()
     }
 }
 
-impl SizedType for ArenaAlloc {
+impl SizedType for Arena {
     #[inline(always)]
     fn size(&self) -> usize {
         self.capacity
     }
 }
 
-impl Default for ArenaAlloc {
+impl Default for Arena {
     fn default() -> Self {
         Self::new()
     }
 }
 
-unsafe impl Send for ArenaAlloc {}
-unsafe impl Sync for ArenaAlloc {}
+unsafe impl Send for Arena {}
+unsafe impl Sync for Arena {}
 
-impl Index<usize> for ArenaAlloc {
+impl Index<usize> for Arena {
     type Output = u8;
     #[inline]
     fn index(&self, i: usize) -> & Self::Output {
@@ -313,7 +320,7 @@ impl Index<usize> for ArenaAlloc {
     }
 }
 
-impl Index<Range<usize>> for ArenaAlloc {
+impl Index<Range<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: Range<usize>) -> & Self::Output {
@@ -321,7 +328,7 @@ impl Index<Range<usize>> for ArenaAlloc {
     }
 }
 
-impl Index<RangeTo<usize>> for ArenaAlloc {
+impl Index<RangeTo<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeTo<usize>) -> & Self::Output {
@@ -329,7 +336,7 @@ impl Index<RangeTo<usize>> for ArenaAlloc {
     }
 }
 
-impl Index<RangeFrom<usize>> for ArenaAlloc {
+impl Index<RangeFrom<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeFrom<usize>) -> & Self::Output {
@@ -337,7 +344,7 @@ impl Index<RangeFrom<usize>> for ArenaAlloc {
     }
 }
 
-impl Index<RangeToInclusive<usize>> for ArenaAlloc {
+impl Index<RangeToInclusive<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeToInclusive<usize>) -> & Self::Output {
@@ -345,194 +352,11 @@ impl Index<RangeToInclusive<usize>> for ArenaAlloc {
     }
 }
 
-impl Index<RangeFull> for ArenaAlloc {
+impl Index<RangeFull> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeFull) -> & Self::Output {
         self.as_slice()
-    }
-}
-
-type ArenaRef = Arc<RwLock<ArenaAlloc>>;
-
-
-///
-/// Arena Allocator wrapper with interior mutability that uses the crate `memmap2` to request
-/// wholesale allocation of memory from the system.
-///
-/// An arena is a memory management strategy in which you request a chunk of memory upfront and use it
-/// to allocate many objects in sequence. Essentially, it turns memory allocation from a heap problem
-/// into a stack problem increasing the speed of this process. It is a technique common in the video
-/// game industry to minimize the time spent asking the system for allocations.
-///
-/// Here we offer this small implementation to help speed up parsing operations in other `RUMTK` crates.
-/// This is a standalone crate with no dependencies on other `RUMTK` crates.
-///
-/// Another feature is that we implement the `Allocator` trait thus allowing you to provide an instance
-/// of the Arena to other standard collections through the nightly compiler's `allocator_api` feature.
-/// Note that this feature is considered unstable.
-///
-/// ## Safety
-///
-/// * Calling `reset` simply resets the pointer to 0 and thus technically allows for the potential to
-/// leak a prior round of work's information if a pointer return by `allocate` is misused.
-/// * No calls to drop are invoked!!! You have to find a different way to manually do so. This implementation
-/// is meant to deal with quick allocation needs and not with self managed resources for which a RAII
-/// approach might be more appropriate.
-///
-/// ## Example
-///
-/// ### Simple initialization and Writing of value.
-/// ```
-/// use crate::rumtk_arena::Arena;
-///
-/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 1);
-/// let result_ptr = arena.write(5);
-///
-/// ```
-///
-/// ### Usage with a Vector.
-/// ```
-/// #![feature(allocator_api)]
-/// use crate::rumtk_arena::Arena;
-///
-/// let mut arena = Arena::with_capacity(std::mem::size_of::<usize>() * 5);
-/// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
-/// v.push(5);
-///
-/// ```
-///
-#[derive(Debug, Default)]
-pub struct Arena {
-    memory: ArenaRef
-}
-impl Arena {
-    pub fn new() -> Self {
-        Self {
-            memory: ArenaRef::new(RwLock::new(ArenaAlloc::new()))
-        }
-    }
-
-    pub fn with_capacity(capacity: usize) -> Self {
-        Self {
-            memory: ArenaRef::new(RwLock::new(ArenaAlloc::with_capacity(capacity)))
-        }
-    }
-
-    #[inline(always)]
-    pub fn commit(&self, size: usize) -> ArenaResult<*mut [u8]> {
-        self.memory.write().unwrap().commit(size)
-    }
-
-    #[inline(always)]
-    pub fn grow_block(&self, old_size: usize, new_size: usize) -> ArenaResult<*mut [u8]> {
-        self.memory.write().unwrap().grow(old_size, new_size)
-    }
-
-    #[inline(always)]
-    pub fn write<T>(&self, data: T) -> ArenaResult<NonNull<T>> {
-        self.memory.write().unwrap().write(data)
-    }
-
-    #[inline(always)]
-    pub fn uncommit(&self, length: usize) {
-        self.memory.write().unwrap().uncommit(length)
-    }
-
-    #[inline(always)]
-    pub fn reset(&self) {
-        self.memory.write().unwrap().reset()
-    }
-
-    #[inline(always)]
-    pub fn remaining(&self) -> usize {
-        self.memory.read().unwrap().remaining()
-    }
-
-    #[inline(always)]
-    pub fn capacity(&self) -> usize {
-        self.memory.read().unwrap().capacity()
-    }
-
-    #[inline(always)]
-    pub fn address(&self) -> ArenaBaseAddress {
-        self.memory.read().unwrap().address()
-    }
-
-    #[inline(always)]
-    pub fn is_empty(&self) -> bool {
-        self.memory.read().unwrap().is_empty()
-    }
-}
-
-impl PartialEq for Arena {
-    fn eq(&self, other: &Self) -> bool {
-        self.address() == other.address() && self.capacity() == other.capacity()
-    }
-}
-
-unsafe impl Allocator for Arena {
-    // Required methods
-    fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
-        let r = self.commit(layout.size())?;
-        let nz_r = cast_to_nonnull(r);
-        Ok(nz_r)
-    }
-    unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
-        self.uncommit(layout.size());
-    }
-
-    // Provided methods
-    fn allocate_zeroed(
-        &self,
-        layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        let length = layout.size();
-        let allocated = self.commit(length)?;
-
-        zero_memory(allocated, 0, length);
-
-        Ok(cast_to_nonnull(allocated))
-    }
-    unsafe fn grow(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = self.grow_block(old_layout.size(), new_layout.size())?;
-        let nz_new_ptr = cast_to_nonnull(new_ptr);
-        Ok(nz_new_ptr)
-    }
-    unsafe fn grow_zeroed(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        let new_ptr = zero_memory(self.grow_block(old_layout.size(), new_layout.size())?, old_layout.size(), new_layout.size());
-        Ok(cast_to_nonnull(new_ptr))
-    }
-    unsafe fn shrink(
-        &self,
-        ptr: NonNull<u8>,
-        old_layout: Layout,
-        new_layout: Layout,
-    ) -> Result<NonNull<[u8]>, AllocError> {
-        self.uncommit(old_layout.size());
-        Ok(cast_to_nonnull(self.commit(new_layout.size())?))
-    }
-    fn by_ref(&self) -> &Self
-    where Self: Sized { &self }
-}
-
-unsafe impl GlobalAlloc for Arena {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        self.commit(layout.size()).unwrap().as_mut_ptr()
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        self.uncommit(layout.size());
     }
 }
 
@@ -547,17 +371,9 @@ macro_rules! rumtk_arena_new {
 
         Arena::with_capacity($capacity)
     }};
-}
+    ( $ptr:expr, $capacity:expr ) => {{
+        use $crate::arena::Arena;
 
-#[macro_export]
-macro_rules! rumtk_arena_raw_new {
-    (  ) => {{
-        use $crate::arena::ArenaAlloc;
-        ArenaAlloc::new()
-    }};
-    ( $capacity:expr ) => {{
-        use $crate::arena::ArenaAlloc;
-
-        ArenaAlloc::with_capacity($capacity)
+        Arena::from_parts($ptr, $capacity)
     }};
 }
