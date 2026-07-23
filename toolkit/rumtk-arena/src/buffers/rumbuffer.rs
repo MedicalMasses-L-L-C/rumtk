@@ -22,7 +22,6 @@ use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
 use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
-use std::mem;
 use std::ops::DerefMut;
 use std::ops::{Deref, RangeTo, RangeToInclusive};
 use std::ops::{Index, Range, RangeFull};
@@ -302,17 +301,19 @@ impl Index<RangeFull> for RUMBuffer {
 /////////////////////// Conversions ////////////////////////////////
 impl From<String> for RUMBuffer {
     #[inline]
-    fn from(data: String) -> Self {
-        let instance = Self::from_parts(data.as_ptr(), data.len(), true);
-        mem::forget(data);
+    fn from(mut data: String) -> Self {
+        data.shrink_to_fit();
+        let (s, l, c) = data.into_raw_parts();
+        let instance = Self::from_parts(s, l, true);
         instance
     }
 }
 impl From<Vec<u8>> for RUMBuffer {
     #[inline]
-    fn from(data: Vec<u8>) -> Self {
-        let instance = Self::from_parts(data.as_ptr(), data.len(), true);
-        mem::forget(data);
+    fn from(mut data: Vec<u8>) -> Self {
+        data.shrink_to_fit();
+        let (s, l, c) = data.into_raw_parts();
+        let instance = Self::from_parts(s, l, true);
         instance
     }
 }

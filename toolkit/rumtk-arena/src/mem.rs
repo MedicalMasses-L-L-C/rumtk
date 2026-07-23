@@ -62,12 +62,6 @@ pub trait AsPtr {
     }
 }
 
-impl AsPtr for [u8] { }
-impl AsPtr for &[u8] { }
-impl AsPtr for RUMVec<u8> { }
-impl AsPtr for &RUMVec<u8> { }
-impl AsPtr for RUMString { }
-
 pub trait SizedType {
     #[inline(always)]
     fn size(&self) -> usize;
@@ -90,12 +84,6 @@ pub trait AsSlice: AsPtr + SizedType {
         self.as_slice().contains(x)
     }
 }
-
-impl AsSlice for [u8] { }
-impl AsSlice for &[u8] { }
-impl AsSlice for RUMVec<u8> { }
-impl AsSlice for &RUMVec<u8> { }
-impl AsSlice for RUMString { }
 
 #[inline]
 pub fn as_slice<'a>(src: *const u8, size: usize) -> &'a [u8] {

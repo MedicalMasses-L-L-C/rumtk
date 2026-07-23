@@ -40,10 +40,6 @@ impl<'a> RUMDeJson<'a> for RUMBuffer {
         D: RUMJsonDeserializer<'a>,
     {
         let escaped_val = String::deserialize(deserializer)?;
-        if escaped_val.len() > 0 {
-            Ok(RUMBuffer::from(escaped_val))
-        } else {
-            Ok(RUMBuffer::default())
-        }
+        Ok(RUMBuffer::from(escaped_val))
     }
 }
