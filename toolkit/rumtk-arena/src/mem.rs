@@ -40,6 +40,36 @@
 use crate::base::RUMString;
 use crate::base::RUMVec;
 use crate::cpu::CPU_SIMD_64_SIZE;
+use std::alloc::{GlobalAlloc, Layout};
+
+#[cfg(feature = "fast_allocator")]
+use mimalloc::MiMalloc;
+
+#[cfg(feature = "fast_allocator")]
+static mut SAND: MiMalloc = MiMalloc;
+
+#[cfg(feature = "fast_allocator")]
+pub unsafe fn direct_alloc(len: usize) -> *mut u8 {
+    SAND.alloc(Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
+
+#[cfg(feature = "fast_allocator")]
+pub unsafe fn direct_dealloc(ptr: *mut u8, len: usize) {
+    SAND.dealloc(ptr, Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
+
+#[cfg(not(feature = "fast_allocator"))]
+use std::alloc::{alloc, dealloc};
+
+#[cfg(not(feature = "fast_allocator"))]
+pub unsafe fn direct_alloc(len: usize) -> *mut u8 {
+    alloc(Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
+
+#[cfg(not(feature = "fast_allocator"))]
+pub unsafe fn direct_dealloc(ptr: *mut u8, len: usize) {
+    dealloc(ptr, Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
 /////////////////If using MiMalloc//////////////////////////////
 #[cfg(feature = "fast_global_allocator")]
 use crate::dune::Arrakis;
