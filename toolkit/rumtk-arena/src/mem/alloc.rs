@@ -1,0 +1,58 @@
+/*
+ *     rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
+ *     This toolkit aims to be reliable, simple, performant, and standards compliant.
+ *     Copyright (C) 2026  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
+ *     Copyright (C) 2026  MedicalMasses L.L.C. <contact@medicalmasses.com>
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+use std::alloc::{AllocError, Allocator, };
+use std::alloc::{GlobalAlloc, Layout};
+
+#[cfg(feature = "fast_allocator")]
+use mimalloc::MiMalloc;
+
+#[cfg(feature = "fast_allocator")]
+static mut SAND: MiMalloc = MiMalloc;
+
+use crate::arena::cast_to_nonnull;
+#[cfg(not(feature = "fast_allocator"))]
+use std::alloc::System;
+use std::ptr::NonNull;
+
+#[cfg(not(feature = "fast_allocator"))]
+static mut SAND: System = System;
+
+pub unsafe fn direct_alloc(len: usize) -> *mut u8 {
+    SAND.alloc(Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
+
+pub unsafe fn direct_dealloc(ptr: *mut u8, len: usize) {
+    SAND.dealloc(ptr, Layout::from_size_align_unchecked(len, size_of::<u8>()))
+}
+
+pub struct DirectAllocator;
+
+unsafe impl Allocator for DirectAllocator {
+    fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
+        let size = layout.size();
+        let ptr = unsafe { direct_alloc(size) };
+        let slice = unsafe { std::slice::from_raw_parts_mut(ptr, size) };
+        Ok(cast_to_nonnull::<[u8]>(slice))
+    }
+    unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
+        direct_dealloc(ptr.as_ptr(), layout.size());
+    }
+}
+
