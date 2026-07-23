@@ -20,8 +20,7 @@
 use crate::buffers::RUMBuffer;
 use crate::direct_alloc;
 use crate::mem::{as_slice, as_slice_mut, AsPtr, AsSlice, SizedType};
-use std::alloc::{AllocError, Allocator};
-use std::alloc::GlobalAlloc;
+use std::alloc::AllocError;
 use std::ops::Index;
 use std::ops::{Range, RangeFrom, RangeFull, RangeTo, RangeToInclusive};
 use std::ptr::NonNull;
@@ -371,9 +370,9 @@ macro_rules! rumtk_arena_new {
 
         Arena::with_capacity($capacity)
     }};
-    ( $ptr:expr, $capacity:expr ) => {{
+    ( $ptr:expr, $capacity:expr, $dealloc:expr ) => {{
         use $crate::arena::Arena;
 
-        Arena::from_parts($ptr, $capacity)
+        Arena::from_parts($ptr, $capacity, $dealloc)
     }};
 }
