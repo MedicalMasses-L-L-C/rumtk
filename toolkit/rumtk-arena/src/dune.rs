@@ -17,36 +17,92 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
 #[cfg(feature = "fast_allocator")]
 use libmimalloc_sys as ffi_mimalloc;
-#[cfg(feature = "fast_allocator")]
-use mimalloc::MiMalloc;
-#[cfg(feature = "fast_allocator")]
-use std::alloc::GlobalAlloc;
-#[cfg(feature = "fast_allocator")]
-use std::alloc::Layout;
-#[cfg(feature = "fast_allocator")]
-use std::ffi::c_long;
-#[cfg(feature = "fast_allocator")]
-use std::sync::LazyLock;
 
-#[cfg(feature = "fast_allocator")]
-pub type Dune = MiMalloc;
+use std::alloc::GlobalAlloc;
+use std::alloc::Layout;
+use std::collections::LinkedList;
+use std::ffi::c_long;
+use std::sync::LazyLock;
+use std::sync::{Arc, Mutex};
+
+use crate::direct_alloc;
+use crate::rumtk_arena_new;
+use crate::Arena;
+
+pub struct Dune {
+    pub sand: LazyLock<LinkedList<Arena>>,
+    pub allocation_size: usize,
+}
+
+impl Dune {
+    pub const fn new(allocation_size: usize) -> Self {
+        Self {
+            sand: LazyLock::new(|| LinkedList::new()),
+            allocation_size,
+        }
+    }
+
+    fn cache_retrieve(&mut self) -> &mut LinkedList<Arena> {
+        &mut (*self.sand)
+    }
+
+    unsafe fn current_arena(&mut self) -> &mut Arena {
+        let cache = self.cache_retrieve();
+        cache.back_mut().unwrap()
+    }
+
+    unsafe fn is_initialized(&mut self) -> bool {
+        let cache = self.cache_retrieve();
+        !cache.is_empty()
+    }
+
+    unsafe fn new_sand(&mut self) -> &mut Arena {
+        let alloc_size = self.allocation_size;
+        let cache = self.cache_retrieve();
+        let ptr = direct_alloc(alloc_size);
+        let new_arena = rumtk_arena_new!(ptr, alloc_size, true);
+        cache.push_back(new_arena);
+        cache.back_mut().unwrap()
+    }
+
+    unsafe fn sand_get(&mut self, min_required_size: usize) -> &mut Arena {
+        let mut current = match self.is_initialized() {
+            true => self.current_arena(),
+            false => self.new_sand(),
+        };
+        if current.remaining() < min_required_size {
+            current = self.new_sand();
+        }
+
+        let slot = current.split_to(min_required_size);
+        let cache = self.cache_retrieve();
+        cache.push_back(slot);
+        cache.back_mut().unwrap()
+    }
+
+    pub unsafe fn allocate(&mut self, size: usize) -> *mut u8 {
+        let arena = self.sand_get(size);
+        arena.commit(size).unwrap() as *mut u8
+    }
+
+    pub unsafe fn deallocate(&mut self, ptr: *mut u8) {
+        let mut cache = self.cache_retrieve();
+        cache.retain(|slot| slot.address() != ptr);
+    }
+}
 
 #[cfg(feature = "fast_allocator")]
 pub struct Arrakis {
-    pub dune: LazyLock<Dune>,
+    pub dunes: Arc<Mutex<Dune>>,
 }
 
 #[cfg(feature = "fast_allocator")]
 impl Arrakis {
-    pub const fn new() -> Self {
+    pub const fn new(allocation_size: usize) -> Self {
         Self {
-            dune: LazyLock::new(|| {
-                global_reserve_memory(DEFAULT_GLOBAL_MB_ALLOCATION);
-                Dune {}
-            })
+            dunes: Arc::new(Mutex::new(Dune::new(allocation_size))),
         }
     }
 }
@@ -55,11 +111,11 @@ impl Arrakis {
 unsafe impl GlobalAlloc for Arrakis {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        (*self.dune).alloc(layout)
+        self.dunes.lock().allocate(layout.size())
     }
 
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        (*self.dune).dealloc(ptr, layout)
+    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
+        self.dunes.lock().deallocate(ptr)
     }
 }
 
@@ -72,13 +128,9 @@ macro_rules! rumtk_dune_new {
     }};
     ( $size:expr ) => {{
         use std::sync::LazyLock;
-        use $crate::dune::{Dune, Arrakis, global_reserve_memory};
-        Arrakis {
-            dune: LazyLock::new(|| {
-                global_reserve_memory($size);
-                Dune {}
-            })
-        }
+        use $crate::dune::{Dune, Arrakis};
+        use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
+        Arrakis::new(DEFAULT_GLOBAL_MB_ALLOCATION)
     }}
 }
 
