@@ -1426,6 +1426,29 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_serialize_deserialize_serialize_v2_message() {
+        let message = rumtk_v2_parse_message!(DEFAULT_HL7_V2_MESSAGE).unwrap();
+        let message_str = rumtk_serialize!(&message).unwrap();
+        let deserialized: V2Message = rumtk_deserialize!(&message_str).unwrap();
+        println!("{:?}", deserialized);
+        let deserialized_str = rumtk_serialize!(&deserialized).unwrap();
+
+        println!("=>{:?}", message_str);
+        println!();
+        println!("=>{:?}", deserialized_str);
+
+        assert_ne!(
+            message, deserialized,
+            "Deserialized JSON matches the expected value, meaning it might still have the extra empty segment!"
+        );
+
+        assert_eq!(
+            message_str, deserialized_str,
+            "Deserialized JSON does not match the expected value!"
+        );
+    }
+
+    #[test]
     fn test_deserialize_large_v2_message() {
         let message = rumtk_v2_parse_message!(V2_TEST_LARGE_MESSAGE).unwrap();
         let message_str = rumtk_serialize!(&message).unwrap();
