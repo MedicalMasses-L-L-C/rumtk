@@ -56,3 +56,5 @@ unsafe impl Allocator for DirectAllocator {
     }
 }
 
+pub static DIRECT_ALLOCATOR: DirectAllocator = DirectAllocator;
+

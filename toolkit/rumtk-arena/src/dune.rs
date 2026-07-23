@@ -17,34 +17,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#[cfg(feature = "fast_allocator")]
-use libmimalloc_sys as ffi_mimalloc;
-
 use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
 use std::collections::LinkedList;
-use std::ffi::c_long;
 use std::sync::LazyLock;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 
-use crate::direct_alloc;
-use crate::rumtk_arena_new;
 use crate::Arena;
+use crate::{direct_alloc, DirectAllocator};
+use crate::{rumtk_arena_new, DIRECT_ALLOCATOR};
+
+type Dune_LL = LinkedList<Arena, &'static DirectAllocator>;
 
 pub struct Dune {
-    pub sand: LazyLock<LinkedList<Arena>>,
+    pub sand: LazyLock<Dune_LL>,
     pub allocation_size: usize,
 }
 
 impl Dune {
     pub const fn new(allocation_size: usize) -> Self {
         Self {
-            sand: LazyLock::new(|| LinkedList::new()),
+            sand: LazyLock::new(|| Dune_LL::new_in(&DIRECT_ALLOCATOR)),
             allocation_size,
         }
     }
 
-    fn cache_retrieve(&mut self) -> &mut LinkedList<Arena> {
+    fn cache_retrieve(&mut self) -> &mut Dune_LL {
         &mut (*self.sand)
     }
 
@@ -95,14 +93,14 @@ impl Dune {
 
 #[cfg(feature = "fast_allocator")]
 pub struct Arrakis {
-    pub dunes: Arc<Mutex<Dune>>,
+    pub dunes: Mutex<Dune>,
 }
 
 #[cfg(feature = "fast_allocator")]
 impl Arrakis {
     pub const fn new(allocation_size: usize) -> Self {
         Self {
-            dunes: Arc::new(Mutex::new(Dune::new(allocation_size))),
+            dunes: Mutex::new(Dune::new(allocation_size)),
         }
     }
 }
@@ -111,11 +109,11 @@ impl Arrakis {
 unsafe impl GlobalAlloc for Arrakis {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        self.dunes.lock().allocate(layout.size())
+        self.dunes.lock().unwrap().allocate(layout.size())
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        self.dunes.lock().deallocate(ptr)
+        self.dunes.lock().unwrap().deallocate(ptr)
     }
 }
 
@@ -132,16 +130,6 @@ macro_rules! rumtk_dune_new {
         use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
         Arrakis::new(DEFAULT_GLOBAL_MB_ALLOCATION)
     }}
-}
-
-#[cfg(feature = "fast_allocator")]
-#[inline]
-pub fn global_reserve_memory(allocation: usize) {
-    // Config MiMalloc before generating instance
-    unsafe {
-        // Pre-allocate memory to speed up most programs.
-        ffi_mimalloc::mi_option_set(ffi_mimalloc::mi_option_reserve_os_memory, allocation as c_long);
-    }
 }
 
 #[cfg(feature = "fast_allocator")]
