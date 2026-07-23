@@ -23,6 +23,7 @@ use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
 use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
 use std::ops::DerefMut;
+use std::ops::IndexMut;
 use std::ops::{Deref, RangeTo, RangeToInclusive};
 use std::ops::{Index, Range, RangeFull};
 use std::sync::LazyLock;
@@ -295,6 +296,43 @@ impl Index<RangeFull> for RUMBuffer {
     #[inline]
     fn index(&self, i: RangeFull) -> &Self::Output {
         self.as_slice()
+    }
+}
+
+///////////////////// Indexing (Mut) ////////////////////////////////////
+
+impl IndexMut<usize> for RUMBuffer {
+    #[inline]
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        &mut self.as_slice_mut()[i]
+    }
+}
+
+impl IndexMut<Range<usize>> for RUMBuffer {
+    #[inline]
+    fn index_mut(&mut self, i: Range<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[i.start..i.end]
+    }
+}
+
+impl IndexMut<RangeTo<usize>> for RUMBuffer {
+    #[inline]
+    fn index_mut(&mut self, i: RangeTo<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[..i.end]
+    }
+}
+
+impl IndexMut<RangeToInclusive<usize>> for RUMBuffer {
+    #[inline]
+    fn index_mut(&mut self, i: RangeToInclusive<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[..=i.end]
+    }
+}
+
+impl IndexMut<RangeFull> for RUMBuffer {
+    #[inline]
+    fn index_mut(&mut self, i: RangeFull) -> &mut Self::Output {
+        self.as_slice_mut()
     }
 }
 
