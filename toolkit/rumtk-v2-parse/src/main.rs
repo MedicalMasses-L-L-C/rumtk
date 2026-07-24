@@ -21,7 +21,7 @@
 use rumtk_core::base::RUMResult;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_deserialize, rumtk_dune_prealloc, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
+use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::{rumtk_format, V2Message};
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
@@ -92,7 +92,6 @@ fn process_message_loop(args: &RUMTKInterfaceArgs) {
 
 fn main() {
     let args = RUMTKInterfaceArgs::parse();
-    rumtk_dune_prealloc!(1024 * 1024 * 1024);
 
     if args.daemon {
         process_message_loop(&args);

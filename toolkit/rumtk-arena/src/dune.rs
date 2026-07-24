@@ -69,10 +69,12 @@ impl Dune {
             true => min_required_size,
             false => self.allocation_size,
         };
+
         let mut current = match self.is_initialized() {
             true => self.current_arena(),
             false => self.new_sand(alloc_size),
         };
+
         if current.remaining() < min_required_size {
             current = self.new_sand(alloc_size);
         }

@@ -188,7 +188,8 @@ impl Arena {
     #[inline(always)]
     pub fn commit(&mut self, size: usize) -> ArenaResult<*mut [u8]> {
         if self.can_allocate(size) {
-            Ok(&mut self.memory[..size])
+            self.remaining -= size;
+            Ok(&mut self.memory[self.remaining..size])
         } else {
             eprintln!("Cannot allocate {} bytes due to lack of space!", size);
             Err(AllocError)
