@@ -56,8 +56,7 @@ impl Dune {
         !cache.is_empty()
     }
 
-    unsafe fn new_sand(&mut self) -> &mut Arena {
-        let alloc_size = self.allocation_size;
+    unsafe fn new_sand(&mut self, alloc_size: usize) -> &mut Arena {
         let cache = self.cache_retrieve();
         let ptr = direct_alloc(alloc_size);
         let new_arena = rumtk_arena_new!(ptr, alloc_size, true);
@@ -66,12 +65,16 @@ impl Dune {
     }
 
     unsafe fn sand_get(&mut self, min_required_size: usize) -> &mut Arena {
+        let alloc_size = match min_required_size > self.allocation_size {
+            true => min_required_size,
+            false => self.allocation_size,
+        };
         let mut current = match self.is_initialized() {
             true => self.current_arena(),
-            false => self.new_sand(),
+            false => self.new_sand(alloc_size),
         };
         if current.remaining() < min_required_size {
-            current = self.new_sand();
+            current = self.new_sand(alloc_size);
         }
 
         let slot = current.split_to(min_required_size);
@@ -129,15 +132,6 @@ macro_rules! rumtk_dune_new {
         use $crate::dune::{Dune, Arrakis};
         use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
         Arrakis::new(DEFAULT_GLOBAL_MB_ALLOCATION)
-    }}
-}
-
-#[cfg(feature = "fast_allocator")]
-#[macro_export]
-macro_rules! rumtk_dune_prealloc {
-    ( $size:expr ) => {{
-        use $crate::dune::global_reserve_memory;
-        global_reserve_memory($size);
     }}
 }
 
