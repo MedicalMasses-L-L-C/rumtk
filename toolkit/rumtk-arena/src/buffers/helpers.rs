@@ -17,12 +17,13 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+use crate::as_slice_mut;
 use crate::base::*;
 use crate::buffers::RUMBuffer;
 use crate::cpu::*;
 use crate::mem::AsPtr;
 use rand::{distr::Alphanumeric, RngExt};
+use std::alloc::{alloc, Layout};
 
 ///
 /// Convert slice of `&[u8]` to [RUMBuffer].
@@ -61,10 +62,12 @@ pub fn slice_to_buffer(buffer: &[u8]) -> RUMBuffer {
 /// ```
 ///
 #[inline(always)]
-pub fn new_random_buffer<const N: usize>() -> [u8; N] {
-    let mut buffer = [0u8; N];
-    rand::fill(&mut buffer);
-    buffer
+pub fn new_random_buffer<'a, const N: usize>() -> RUMVec<u8> {
+    let buffer = unsafe { alloc(Layout::from_size_align_unchecked(N, size_of::<u8>())) };
+    let slice = as_slice_mut(buffer, N * size_of::<u8>());
+
+    rand::fill(slice);
+    unsafe { RUMVec::from_raw_parts(buffer, N, N) }
 }
 
 ///
