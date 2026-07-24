@@ -96,12 +96,10 @@ impl Dune {
     }
 }
 
-#[cfg(feature = "fast_allocator")]
 pub struct Arrakis {
     pub dunes: Mutex<Dune>,
 }
 
-#[cfg(feature = "fast_allocator")]
 impl Arrakis {
     pub const fn new(allocation_size: usize) -> Self {
         Self {
@@ -110,7 +108,6 @@ impl Arrakis {
     }
 }
 
-#[cfg(feature = "fast_allocator")]
 unsafe impl GlobalAlloc for Arrakis {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
@@ -122,7 +119,6 @@ unsafe impl GlobalAlloc for Arrakis {
     }
 }
 
-#[cfg(feature = "fast_allocator")]
 #[macro_export]
 macro_rules! rumtk_dune_new {
     (  ) => {{
