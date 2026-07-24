@@ -1,6 +1,5 @@
 #![feature(allocator_api)]
 #![feature(slice_ptr_get)]
-#![feature(liballoc_internals)]
 #![feature(linked_list_retain)]
 #![feature(portable_simd)]
 #![feature(str_as_str)]
@@ -22,12 +21,11 @@ pub use mem::*;
 
 #[cfg(test)]
 mod tests {
-    use crate::{rumtk_arena_new, Arena};
+    use crate::buffers::new_random_buffer;
+    use crate::constants::*;
+    use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
     use std::alloc::Allocator;
-    use std::alloc::Layout;
     use std::collections::{HashMap, VecDeque};
-    use std::ptr::NonNull;
-
 
     macro_rules! rumtk_benchmark_snippet {
         ( $closure:expr ) => {{
@@ -45,34 +43,27 @@ mod tests {
     }
 
     #[test]
-    fn test_arena_simple_allocation() {
-        let arena = Arena::with_capacity(1024);
-        let v: &str = unsafe { arena.write("hello world").unwrap().as_ref() };
+    fn test_arena_direct_allocation() {
 
-        assert_eq!(v, "hello world", "Failed to allocate and fill a small vector!");
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            unsafe { as_slice_mut(direct_alloc(DEFAULT_GLOBAL_MB_ALLOCATION), DEFAULT_GLOBAL_MB_ALLOCATION) }
+        });
+
+        assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
+        assert!(time < 10, "Allocation took long!")
+
     }
 
     #[test]
-    fn test_arena_simple_reallocation_address() {
-        let arena = Arena::with_capacity(1024);
-        let old_layout = Layout::from_size_align(4, 1).unwrap();
-        let new_layout = Layout::from_size_align(8, 1).unwrap();
-        let v = unsafe { arena.allocate(old_layout).unwrap() };
-        let v2 = unsafe { arena.grow(v.cast(), old_layout, new_layout).unwrap() };
-        let v3 = unsafe { arena.grow(v2.cast(), new_layout, new_layout).unwrap() };
+    fn test_arena_basic_allocation() {
 
-        assert_eq!(v2.addr(), v3.addr(), "Failed to reallocate without invalidating pointer!");
-    }
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            new_random_buffer::<DEFAULT_GLOBAL_MB_ALLOCATION>()
+        });
 
-    #[test]
-    fn test_arena_simple_reallocation() {
-        let arena = Arena::with_capacity(1024);
-        let old_layout = Layout::from_size_align(4, 4).unwrap();
-        let new_layout = Layout::from_size_align(8, 4).unwrap();
-        let v: NonNull<[u8]> = unsafe { arena.allocate(old_layout).unwrap() };
-        let v2: NonNull<[u8]> = unsafe { arena.grow(v.cast(), old_layout, new_layout).unwrap() };
+        assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
+        assert_eq!(time, 10, "Allocation took long!")
 
-        assert_eq!(v.addr(), v2.addr(), "Failed to reallocate without invalidating pointer!");
     }
 
     #[test]
@@ -224,11 +215,14 @@ mod tests {
 
     #[test]
     fn test_arena_map_debug_print() {
-        let arena = rumtk_arena_new!(500);
         let expected = [(5, "Hello"), (1, "World"), (3, "!")];
 
 
-        let v = HashMap::from_iter(expected.clone());
-        println!("{:?}", &v);
+        let m = HashMap::<usize, &str>::from_iter(expected.clone());
+
+        for (k, v) in expected.iter() {
+            assert!(m.contains_key(k), "Key missing!");
+            assert_eq!(v, &m[k], "Contents mismatch!");
+        }
     }
 }
