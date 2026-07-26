@@ -155,14 +155,24 @@ impl Arena {
 
     #[inline]
     pub fn split_to(&mut self, len: usize) -> Self {
-        let new_buffer = self.memory.split_to(len);
-        self.remaining -= len;
-        self.capacity -= len;
+        match self.memory.split_to(len) {
+            Some(new_buffer) => {
+                self.remaining -= len;
+                self.capacity -= len;
 
-        Self {
-            memory: new_buffer,
-            remaining: len,
-            capacity: len,
+                Self {
+                    memory: new_buffer,
+                    remaining: len,
+                    capacity: len,
+                }
+            },
+            None => {
+                Self {
+                    memory: RUMBuffer::new(),
+                    remaining: 0,
+                    capacity: 0,
+                }
+            }
         }
     }
 
@@ -206,8 +216,11 @@ impl Arena {
     #[inline(always)]
     pub fn commit(&mut self, size: usize) -> ArenaResult<*mut [u8]> {
         if self.can_allocate(size) {
+            let lower_bound = self.capacity - self.remaining;
+            let upper_bound = lower_bound + size;
+            let slice = &mut self.memory[lower_bound..upper_bound];
             self.remaining -= size;
-            Ok(&mut self.memory[self.remaining..size])
+            Ok(slice)
         } else {
             eprintln!("Cannot allocate {} bytes due to lack of space!", size);
             Err(AllocError)

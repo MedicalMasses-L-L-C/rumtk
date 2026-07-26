@@ -20,16 +20,17 @@
 use std::alloc::{AllocError, Allocator, };
 use std::alloc::{GlobalAlloc, Layout};
 
+use crate::arena::cast_to_nonnull;
+use std::ptr::NonNull;
+
 #[cfg(feature = "fast_allocator")]
 use mimalloc::MiMalloc;
 
 #[cfg(feature = "fast_allocator")]
 static mut SAND: MiMalloc = MiMalloc;
 
-use crate::arena::cast_to_nonnull;
 #[cfg(not(feature = "fast_allocator"))]
 use std::alloc::System;
-use std::ptr::NonNull;
 
 #[cfg(not(feature = "fast_allocator"))]
 static mut SAND: System = System;

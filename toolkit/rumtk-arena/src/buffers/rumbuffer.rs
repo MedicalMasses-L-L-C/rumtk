@@ -115,18 +115,21 @@ impl RUMBuffer {
     }
 
     #[inline]
-    pub fn split_to(&mut self, offset: usize) -> Self {
-        debug_assert!(offset <= (self.size as usize), "offset too large");
-        let ptr = self.as_ptr();
-        let new_ptr = unsafe { ptr.add(offset) };
-        let copy = Self {
-            data: ptr,
-            size: offset as u32,
-            dealloc: false,
-        };
-        self.data = new_ptr;
-        self.size -= (offset as u32);
-        copy
+    pub fn split_to(&mut self, offset: usize) -> Option<Self> {
+        if offset <= self.size as usize {
+            let ptr = self.as_ptr();
+            let new_ptr = unsafe { ptr.add(offset) };
+            let copy = Self {
+                data: ptr,
+                size: offset as u32,
+                dealloc: false,
+            };
+            self.data = new_ptr;
+            self.size -= (offset as u32);
+            Some(copy)
+        } else {
+            None
+        }
     }
 
     #[inline]

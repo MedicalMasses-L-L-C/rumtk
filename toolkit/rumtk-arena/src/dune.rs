@@ -20,104 +20,72 @@
 use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
 use std::collections::LinkedList;
-use std::sync::LazyLock;
-use std::sync::Mutex;
 
+use crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
 use crate::Arena;
-use crate::{direct_alloc, DirectAllocator};
-use crate::{rumtk_arena_new, DIRECT_ALLOCATOR};
+use crate::{direct_alloc, DirectAllocator, DIRECT_ALLOCATOR};
+use crate::{rumtk_arena_new, AsPtr};
 
 type DuneLL = LinkedList<Arena, &'static DirectAllocator>;
-type SafeDuneLL = Mutex<DuneLL>;
 
-pub struct Dune {
-    pub sand: LazyLock<DuneLL>,
-    pub allocation_size: usize,
-    pub cache: Arena,
+static mut BUFFER: Arena = Arena::null();
+static mut BUFFER_VIEW: Arena = Arena::null();
+static mut DUNES: DuneLL = DuneLL::new_in(&DIRECT_ALLOCATOR);
+static mut ALLOC_SIZE: usize = DEFAULT_GLOBAL_MB_ALLOCATION;
+
+unsafe fn is_empty() -> bool {
+    remaining() <= 0
 }
 
-impl Dune {
-    pub const fn new(allocation_size: usize) -> Self {
-        Self {
-            sand: LazyLock::new(|| DuneLL::new_in(&DIRECT_ALLOCATOR)),
-            allocation_size,
-            cache: Arena::null(),
-        }
+unsafe fn is_initialized() -> bool {
+    !is_empty()
+}
+
+unsafe fn remaining() -> usize {
+    BUFFER_VIEW.remaining()
+}
+
+unsafe fn init_dunes(alloc_size: usize) {
+    ALLOC_SIZE = alloc_size;
+    let ptr = direct_alloc(ALLOC_SIZE);
+    BUFFER = rumtk_arena_new!(ptr, ALLOC_SIZE, true);
+    BUFFER_VIEW = BUFFER.freeze();
+}
+
+unsafe fn allocate(requested: usize, alloc_size: usize) -> *mut u8 {
+    if is_empty() {
+        init_dunes(alloc_size);
     }
 
-    fn cache_retrieve(&mut self) -> &mut DuneLL {
-        &mut (*self.sand)
-    }
+    let slot = BUFFER_VIEW.split_to(requested);
+    DUNES.push_back(slot);
+    DUNES.back_mut().unwrap().as_mut_ptr()
+}
 
-    fn current_arena(&mut self) -> &mut Arena {
-        &mut self.cache
-    }
-
-    unsafe fn is_initialized(&mut self) -> bool {
-        let cache = self.cache_retrieve();
-        !cache.is_empty()
-    }
-
-    unsafe fn new_sand(&mut self, alloc_size: usize) -> &mut Arena {
-        let cache = self.cache_retrieve();
-        let ptr = direct_alloc(alloc_size);
-        let new_arena = rumtk_arena_new!(ptr, alloc_size, true);
-        cache.push_back(new_arena);
-        self.current_arena()
-    }
-
-    unsafe fn sand_get(&mut self, min_required_size: usize) -> &mut Arena {
-        let alloc_size = match min_required_size > self.allocation_size {
-            true => min_required_size,
-            false => self.allocation_size,
-        };
-
-        let mut current = match self.is_initialized() {
-            true => self.current_arena(),
-            false => self.new_sand(alloc_size),
-        };
-
-        if current.remaining() < min_required_size {
-            current = self.new_sand(alloc_size);
-        }
-
-        let slot = current.split_to(min_required_size);
-        let cache = self.cache_retrieve();
-        cache.push_back(slot);
-        cache.back_mut().unwrap()
-    }
-
-    pub unsafe fn allocate(&mut self, size: usize) -> *mut u8 {
-        let arena = self.sand_get(size);
-        arena.commit(size).unwrap() as *mut u8
-    }
-
-    pub unsafe fn deallocate(&mut self, ptr: *mut u8) {
-        let mut cache = self.cache_retrieve();
-        cache.retain(|slot| slot.address() != ptr);
-    }
+unsafe fn deallocate(ptr: *mut u8, _layout: Layout) {
+    //DUNES.uncommit(_layout.size());
 }
 
 pub struct Arrakis {
-    pub dunes: Mutex<Dune>,
+    pub alloc_size: usize,
 }
 
 impl Arrakis {
     pub const fn new(allocation_size: usize) -> Self {
-        Self {
-            dunes: Mutex::new(Dune::new(allocation_size)),
-        }
+        Self { alloc_size: allocation_size }
     }
 }
 
 unsafe impl GlobalAlloc for Arrakis {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        self.dunes.lock().unwrap().allocate(layout.size())
+        allocate(layout.size(), self.alloc_size)
+        //direct_alloc(layout.size())
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        self.dunes.lock().unwrap().deallocate(ptr)
+        deallocate(ptr, _layout)
+        //direct_dealloc(ptr, _layout.size())
     }
 }
 
@@ -129,7 +97,7 @@ macro_rules! rumtk_dune_new {
     }};
     ( $size:expr ) => {{
         use std::sync::LazyLock;
-        use $crate::dune::{Dune, Arrakis};
+        use $crate::dune::{Arrakis};
         use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
         Arrakis::new(DEFAULT_GLOBAL_MB_ALLOCATION)
     }}

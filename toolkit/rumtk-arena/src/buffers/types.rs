@@ -17,8 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::buffers::{buffer_find, buffer_find_byte};
 use crate::buffers::RUMBuffer;
+use crate::buffers::{buffer_find, buffer_find_byte};
 
 pub struct RUMSliceSplitIter<'a, 'b> {
     pub remainder: &'a [u8],
@@ -107,7 +107,7 @@ impl RUMBufferSplitIter {
     pub fn pop_item(&mut self) -> Option<RUMBuffer> {
         match buffer_find_byte(&self.remainder, self.byte) {
             Some(i) => {
-                let mut v = self.remainder.split_to(i + 1);
+                let mut v = self.remainder.split_to(i + 1)?;
                 v.truncate(i);
                 Some(v)
             },
