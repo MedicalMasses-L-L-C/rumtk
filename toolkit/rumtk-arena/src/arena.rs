@@ -136,6 +136,15 @@ impl Arena {
     }
 
     #[inline]
+    pub const fn null() -> Self {
+        Self {
+            memory: RUMBuffer::new(),
+            remaining: 0,
+            capacity: 0,
+        }
+    }
+
+    #[inline]
     pub fn from_parts(ptr: *mut u8, capacity: usize, dealloc: bool) -> Self {
         Self {
             memory: RUMBuffer::from_parts(ptr, capacity, dealloc),
@@ -154,6 +163,15 @@ impl Arena {
             memory: new_buffer,
             remaining: len,
             capacity: len,
+        }
+    }
+
+    #[inline]
+    pub fn freeze(&mut self) -> Self {
+        Self {
+            memory: self.memory.freeze(),
+            remaining: self.remaining,
+            capacity: self.capacity,
         }
     }
 
