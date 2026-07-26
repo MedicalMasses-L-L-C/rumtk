@@ -1498,7 +1498,7 @@ mod tests {
             let split_count = buffer.len() / CPU_SEARCH_WINDOW_256_SIZE;
             let mut splits = RUMVec::<RUMBuffer>::with_capacity(split_count);
             for i in 0..splits.len() {
-                splits.push(buffer.split_to(CPU_SEARCH_WINDOW_256_SIZE));
+                splits.push(buffer.split_to(CPU_SEARCH_WINDOW_256_SIZE).unwrap());
             }
 
             splits

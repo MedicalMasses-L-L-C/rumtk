@@ -927,7 +927,7 @@ mod tests {
         let split = data.split_to(5);
         let expected = RUMBuffer::from(b"Hello");
 
-        assert_eq!(split, expected, "Bad buffer trim! Got {:?}", split);
+        assert_eq!(split, Some(expected), "Bad buffer trim! Got {:?}", split);
     }
 
     #[test]
