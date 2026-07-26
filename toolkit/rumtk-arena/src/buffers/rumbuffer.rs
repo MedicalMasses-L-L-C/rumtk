@@ -54,7 +54,7 @@ static EMPTY_RUMBUFFER: LazyLock<RUMBuffer> = LazyLock::new(|| RUMBuffer::new())
 /// use rumtk_arena::buffers::*;
 ///
 /// let mut buffer = RUMBuffer::from("Hello World!");
-/// let section = buffer.split_to(5);
+/// let section = buffer.split_to(5).unwrap();
 /// let expected = b"Hello";
 ///
 /// assert_eq!(&section[..], expected, "Could not create RUMBuffer!");

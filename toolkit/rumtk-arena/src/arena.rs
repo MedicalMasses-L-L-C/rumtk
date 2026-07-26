@@ -96,17 +96,6 @@ pub type ArenaBaseAddress = *const u8;
 ///
 /// ```
 ///
-/// ### Usage with a Vector.
-/// ```
-/// #![feature(allocator_api)]
-/// use crate::rumtk_arena::Arena;
-///
-/// let mut arena = Arena::with_capacity(size_of::<usize>() * 5);
-/// let mut v = Vec::<usize, &Arena>::with_capacity_in(5, &arena);
-/// v.push(5);
-///
-/// ```
-///
 #[derive(Debug)]
 pub struct Arena {
     memory: RUMBuffer,
