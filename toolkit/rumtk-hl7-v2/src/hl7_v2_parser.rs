@@ -754,12 +754,10 @@ pub mod v2_parser {
                     V2Message::push_to_group(&mut segments, V2Segment::from(segment, parser_chars)?);
                 }
             }
-            V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
-/*
             if !splitter.remainder.is_empty() {
                 V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
             }
-*/
+
             Ok(segments)
         }
 
