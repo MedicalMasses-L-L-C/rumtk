@@ -21,10 +21,10 @@ pub use mem::*;
 
 #[cfg(test)]
 mod tests {
-    use crate::buffers::new_random_buffer;
+    use crate::buffers::RUMBuffer;
     use crate::constants::*;
     use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
-    use std::alloc::Allocator;
+    use std::alloc::{alloc, Allocator, Layout};
     use std::collections::{HashMap, VecDeque};
 
     macro_rules! rumtk_benchmark_snippet {
@@ -56,13 +56,32 @@ mod tests {
 
     #[test]
     fn test_arena_basic_allocation() {
-
         let (r, time) = rumtk_benchmark_snippet!(|| {
-            new_random_buffer::<DEFAULT_GLOBAL_MB_ALLOCATION>()
+            unsafe { as_slice_mut(alloc(Layout::from_size_align_unchecked(DEFAULT_GLOBAL_MB_ALLOCATION, size_of::<u8>())), DEFAULT_GLOBAL_MB_ALLOCATION) }
         });
 
         assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
-        assert_eq!(time, 10, "Allocation took long!")
+        assert!(time < 10, "Allocation took long!")
+
+    }
+
+    #[test]
+    fn test_arena_allocate_and_use() {
+        let (r, time) = rumtk_benchmark_snippet!(|| {
+            let slice = unsafe { as_slice_mut(alloc(Layout::from_size_align_unchecked(DEFAULT_GLOBAL_MB_ALLOCATION, size_of::<u8>())), DEFAULT_GLOBAL_MB_ALLOCATION) };
+            let v = slice.to_vec();
+            let mut buffer = RUMBuffer::from(v);
+            let mut chunk = buffer.freeze();
+
+            for _ in 0..(DEFAULT_GLOBAL_MB_ALLOCATION/5) {
+                chunk.split_to(5);
+            }
+
+            chunk
+        });
+
+        assert_eq!(r.len(), 0);
+        assert!(time < 200000, "Allocation took long!")
 
     }
 
