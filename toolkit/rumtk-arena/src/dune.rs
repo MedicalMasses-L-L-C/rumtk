@@ -27,28 +27,30 @@ use crate::Arena;
 use crate::{direct_alloc, DirectAllocator};
 use crate::{rumtk_arena_new, DIRECT_ALLOCATOR};
 
-type Dune_LL = LinkedList<Arena, &'static DirectAllocator>;
+type DuneLL = LinkedList<Arena, &'static DirectAllocator>;
+type SafeDuneLL = Mutex<DuneLL>;
 
 pub struct Dune {
-    pub sand: LazyLock<Dune_LL>,
+    pub sand: LazyLock<DuneLL>,
     pub allocation_size: usize,
+    pub cache: Arena,
 }
 
 impl Dune {
     pub const fn new(allocation_size: usize) -> Self {
         Self {
-            sand: LazyLock::new(|| Dune_LL::new_in(&DIRECT_ALLOCATOR)),
+            sand: LazyLock::new(|| DuneLL::new_in(&DIRECT_ALLOCATOR)),
             allocation_size,
+            cache: Arena::null(),
         }
     }
 
-    fn cache_retrieve(&mut self) -> &mut Dune_LL {
+    fn cache_retrieve(&mut self) -> &mut DuneLL {
         &mut (*self.sand)
     }
 
-    unsafe fn current_arena(&mut self) -> &mut Arena {
-        let cache = self.cache_retrieve();
-        cache.back_mut().unwrap()
+    fn current_arena(&mut self) -> &mut Arena {
+        &mut self.cache
     }
 
     unsafe fn is_initialized(&mut self) -> bool {
@@ -61,7 +63,7 @@ impl Dune {
         let ptr = direct_alloc(alloc_size);
         let new_arena = rumtk_arena_new!(ptr, alloc_size, true);
         cache.push_back(new_arena);
-        cache.back_mut().unwrap()
+        self.current_arena()
     }
 
     unsafe fn sand_get(&mut self, min_required_size: usize) -> &mut Arena {
