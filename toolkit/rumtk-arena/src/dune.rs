@@ -17,44 +17,55 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::MemoryPool;
+use crate::{direct_alloc, direct_dealloc, MemoryPool};
 use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
 use std::sync::Mutex;
 
-static mut DUNES: Mutex<MemoryPool> = Mutex::new(MemoryPool::new());
-
-unsafe fn allocate(layout: Layout) -> *mut u8 {
-    let mut dunes = DUNES.lock().unwrap();
-    dunes.allocate(layout)
-}
-
-unsafe fn deallocate(ptr: *mut u8, layout: Layout) {
-    let mut dunes = unsafe { DUNES.lock().unwrap() };
-    dunes.deallocate(ptr, layout);
-}
-
 pub struct Arrakis {
-    pub alloc_size: usize,
+    dunes: Mutex<MemoryPool>,
 }
 
 impl Arrakis {
-    pub const fn new(allocation_size: usize) -> Self {
-        Self { alloc_size: allocation_size }
+    pub const fn with_capacity(allocation_size: usize) -> Self {
+        Self { dunes: Mutex::new(MemoryPool::with_chunk_size(allocation_size)) }
+    }
+
+    #[inline]
+    unsafe fn allocate(&self, layout: Layout) -> *mut u8 {
+        let mut dunes = self.dunes.lock().unwrap();
+        dunes.allocate(layout)
+    }
+
+    #[inline]
+    unsafe fn deallocate(&self,ptr: *mut u8, layout: Layout) {
+        let mut dunes = self.dunes.lock().unwrap();
+        dunes.deallocate(ptr, layout);
     }
 }
 
 unsafe impl GlobalAlloc for Arrakis {
+    #[cfg(feature = "fast_global_allocator")]
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        allocate(layout)
-        //direct_alloc(layout.size())
+        direct_alloc(layout.size())
     }
 
+    #[cfg(not(feature = "fast_global_allocator"))]
+    #[inline]
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        self.allocate(layout)
+    }
+    #[cfg(feature = "fast_global_allocator")]
     #[inline]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        deallocate(ptr, _layout)
-        //direct_dealloc(ptr, _layout.size())
+        direct_dealloc(ptr, _layout.size())
+    }
+
+    #[cfg(not(feature = "fast_global_allocator"))]
+    #[inline]
+    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
+        self.deallocate(ptr, _layout)
     }
 }
 
@@ -68,7 +79,7 @@ macro_rules! rumtk_dune_new {
         use std::sync::LazyLock;
         use $crate::dune::{Arrakis};
         use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
-        Arrakis::new(DEFAULT_GLOBAL_MB_ALLOCATION)
+        Arrakis::with_capacity(DEFAULT_GLOBAL_MB_ALLOCATION)
     }}
 }
 
