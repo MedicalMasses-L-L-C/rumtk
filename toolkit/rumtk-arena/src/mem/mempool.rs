@@ -80,7 +80,6 @@ impl Chunk {
     /// Returns [None] if the system refuses to hand us the memory.
     ///
     pub fn new(capacity: usize) -> Option<Self> {
-        let slot_count = capacity / MIN_SLOT_SIZE;
         let base = unsafe { direct_alloc(capacity) };
         if base.is_null() {
             return None;
@@ -89,7 +88,7 @@ impl Chunk {
             base,
             capacity,
             cursor: 0,
-            free_slots: FreeList::with_capacity_in(slot_count, &DIRECT_ALLOCATOR),
+            free_slots: FreeList::with_capacity_in(1024, &DIRECT_ALLOCATOR),
         })
     }
 
@@ -120,8 +119,9 @@ impl Chunk {
     /// Checks if this [Chunk] has a slot of `size` bytes aligned to `align` available, either in
     /// its [FreeList] or in its untouched tail. Call [Self::defragment] first for best results.
     ///
+    #[inline(always)]
     pub fn can_allocate(&self, size: usize, align: usize) -> bool {
-        self.has_free_slot(size, align) || self.can_bump(size, align)
+        self.can_bump(size, align) || self.has_free_slot(size, align)
     }
 
     ///
@@ -130,6 +130,7 @@ impl Chunk {
     /// Because the [FreeList] is kept sorted by address, a single pass suffices. Merging maximizes
     /// the odds that a deallocated region can be recycled for a new allocation.
     ///
+    #[inline]
     pub fn defragment(&mut self) {
         let mut i = 0;
         while i < self.free_slots.len() {
@@ -162,11 +163,17 @@ impl Chunk {
     ///
     /// Returns [None] if no slot is available in this [Chunk].
     ///
+    #[inline]
     pub fn allocate(&mut self, size: usize, align: usize) -> Option<*mut u8> {
-        self.defragment();
-        match self.reclaim(size, align) {
+        match self.bump(size, align) {
             Some(ptr) => Some(ptr),
-            None => self.bump(size, align),
+            None => {
+                self.defragment();
+                match self.reclaim(size, align) {
+                    Some(ptr) => Some(ptr),
+                    None => self.bump(size, align),
+                }
+            }
         }
     }
 
@@ -188,12 +195,14 @@ impl Chunk {
         (align - ((ptr as usize) & (align - 1))) & (align - 1)
     }
 
+    #[inline(always)]
     fn has_free_slot(&self, size: usize, align: usize) -> bool {
         self.free_slots
             .iter()
             .any(|slot| slot.size >= size && Self::aligned(slot.ptr, align))
     }
 
+    #[inline(always)]
     fn can_bump(&self, size: usize, align: usize) -> bool {
         let addr = unsafe { self.base.add(self.cursor) };
         match Self::padding(addr, align).checked_add(size) {
@@ -206,6 +215,7 @@ impl Chunk {
     /// Recycles a deallocated section from the [FreeList]. The winning [FreeSlot] is shrunk by
     /// `size` bytes and removed entirely once exhausted.
     ///
+    #[inline]
     fn reclaim(&mut self, size: usize, align: usize) -> Option<*mut u8> {
         for i in 0.. self.free_slots.len() {
             let slot = &mut self.free_slots[i];
@@ -226,7 +236,12 @@ impl Chunk {
     /// Carves a slot out of the untouched tail of the [Chunk]. Any bytes skipped to satisfy
     /// `align` are recorded in the [FreeList] so they can be recycled later.
     ///
+    #[inline]
     fn bump(&mut self, size: usize, align: usize) -> Option<*mut u8> {
+        if !self.can_bump(size, align) {
+            return None;
+        }
+
         let addr = unsafe { self.base.add(self.cursor) };
         let pad = Self::padding(addr, align);
         let needed = pad.checked_add(size)?;
@@ -244,6 +259,7 @@ impl Chunk {
     /// Inserts a section into the [FreeList] keeping the list sorted by address so
     /// [Self::defragment] can merge adjacent sections in a single pass.
     ///
+    #[inline]
     fn release(&mut self, ptr: *mut u8, size: usize) {
         for i in 0.. self.free_slots.len() {
             let slot = &mut self.free_slots[i];
@@ -357,13 +373,15 @@ impl MemoryPool {
     /// Every visited [Chunk] is defragmented first so adjacent deallocated sections merge back
     /// into continuous memory before its availability is judged.
     ///
-    pub fn find_available_chunk(&mut self, layout: &Layout) -> Option<&mut Chunk> {
-        let size = Self::slot_size(layout)?;
-        let align = layout.align();
-        for chunk in self.chunks.iter_mut() {
-            chunk.defragment();
-            if chunk.can_allocate(size, align) {
-                return Some(chunk);
+    #[inline]
+    pub fn allocate_on_available(&mut self, size: usize, align: usize) -> Option<*mut u8> {
+        for chunk in self.chunks.iter_mut().rev() {
+            match chunk.reclaim(size, align) {
+                Some(ptr) => return Some(ptr),
+                None => match chunk.allocate(size, align) {
+                    Some(ptr) => return Some(ptr),
+                    None => continue,
+                },
             }
         }
         None
@@ -377,21 +395,23 @@ impl MemoryPool {
     /// when no existing slot can serve the request. Returns a null pointer if the system is out
     /// of memory or the rounded size overflows.
     ///
+    #[inline]
     pub fn allocate(&mut self, layout: Layout) -> *mut u8 {
         let size = match Self::slot_size(&layout) {
             Some(size) => size,
             None => return null_mut(),
         };
         let align = layout.align();
-        if let Some(chunk) = self.find_available_chunk(&layout) {
-            if let Some(ptr) = chunk.allocate(size, align) {
-                return ptr;
+
+        match self.allocate_on_available(size, align) {
+            Some(ptr) => ptr,
+            None => {
+                self.grow(size, align);
+                match self.chunks.back_mut() {
+                    Some(chunk) => chunk.allocate(size, align).unwrap_or(null_mut()),
+                    None => null_mut(),
+                }
             }
-        }
-        self.grow(size, align);
-        match self.chunks.back_mut() {
-            Some(chunk) => chunk.allocate(size, align).unwrap_or(null_mut()),
-            None => null_mut(),
         }
     }
 
@@ -405,6 +425,7 @@ impl MemoryPool {
     /// and must not be used after this call. Unknown pointers are ignored, but double frees
     /// corrupt the bookkeeping and lead to overlapping allocations.
     ///
+    #[inline]
     pub unsafe fn deallocate(&mut self, ptr: *mut u8, layout: Layout) {
         if ptr.is_null() {
             return;
@@ -413,7 +434,7 @@ impl MemoryPool {
             Some(size) => size,
             None => return,
         };
-        if let Some(chunk) = self.chunks.iter_mut().find(|chunk| chunk.contains(ptr)) {
+        if let Some(chunk) = self.chunks.iter_mut().rev().find(|chunk| chunk.contains(ptr)) {
             chunk.deallocate(ptr, size);
         }
     }
@@ -422,6 +443,7 @@ impl MemoryPool {
     /// Allocates a new [Chunk] of at least [Self::chunk_size] bytes. Requests bigger than the
     /// configured chunk size get a dedicated [Chunk] large enough to hold them.
     ///
+    #[inline]
     fn grow(&mut self, size: usize, align: usize) {
         let needed = size.saturating_add(align);
         let capacity = if needed > self.chunk_size {
