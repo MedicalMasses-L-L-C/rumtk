@@ -17,15 +17,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use std::ptr::NonNull;
 
-pub mod alloc;
-pub mod copy;
-pub mod global;
-pub mod traits;
-pub mod mem;
+#[inline(always)]
+pub fn cast_to_nonnull<T: ?Sized>(dst: *mut T) -> NonNull<T> {
+    match NonNull::new(dst) {
+        Some(ptr) => ptr,
+        None => panic!("Failed to allocate memory"),
+    }
+}
 
-pub use alloc::*;
-pub use mem::*;
-pub use copy::*;
-pub use global::*;
-pub use traits::*;
+#[inline(always)]
+pub fn cast_data_to_ptr<T>(data: &T) -> *const u8 {
+    std::ptr::addr_of!(*data).cast::<u8>()
+}
+
+#[inline(always)]
+pub fn sizeof<T>(data: &T) -> usize {
+    size_of::<T>()
+}
+
+#[inline(always)]
+pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
+    let chunk = unsafe { &mut *data };
+    for i in offset..offset + length {
+        chunk[i] = 0;
+    }
+
+    data
+}

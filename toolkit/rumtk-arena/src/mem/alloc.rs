@@ -17,10 +17,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use std::alloc::{AllocError, Allocator, };
+use std::alloc::{AllocError, Allocator};
 use std::alloc::{GlobalAlloc, Layout};
 
-use crate::arena::cast_to_nonnull;
+use crate::mem::cast_to_nonnull;
 use std::ptr::NonNull;
 
 #[cfg(feature = "fast_allocator")]

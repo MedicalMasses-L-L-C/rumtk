@@ -18,45 +18,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::buffers::RUMBuffer;
-use crate::direct_alloc;
-use crate::mem::{as_slice, as_slice_mut, AsPtr, AsSlice, SizedType};
+use crate::constants::KB;
+use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsPtr, AsSlice, SizedType};
 use std::alloc::AllocError;
 use std::ops::Index;
 use std::ops::{Range, RangeFrom, RangeFull, RangeTo, RangeToInclusive};
 use std::ptr::NonNull;
 
-pub const ONE_KB: usize = 1024;
-pub const ONE_MB: usize = 1024 * ONE_KB;
-pub const ONE_GB: usize = 1024 * ONE_MB;
-pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * ONE_KB;
-
-#[inline(always)]
-pub fn cast_to_nonnull<T: ?Sized>(dst: *mut T) -> NonNull<T> {
-    match NonNull::new(dst) {
-        Some(ptr) => ptr,
-        None => panic!("Failed to allocate memory"),
-    }
-}
-
-#[inline(always)]
-pub fn cast_data_to_ptr<T>(data: &T) -> *const u8 {
-    std::ptr::addr_of!(*data).cast::<u8>()
-}
-
-#[inline(always)]
-pub fn get_data_length<T>(data: &T) -> usize {
-    size_of::<T>()
-}
-
-#[inline(always)]
-pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
-    let chunk = unsafe { &mut *data };
-    for i in offset..offset + length {
-        chunk[i] = 0;
-    }
-
-    data
-}
+pub const DEFAULT_ARENA_MEMORY_ALLOCATION: usize = 4 * KB;
 
 pub type ArenaResult<T> = Result<T, AllocError>;
 pub type ArenaBaseAddress = *const u8;
