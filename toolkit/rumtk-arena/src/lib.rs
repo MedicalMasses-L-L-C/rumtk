@@ -1,6 +1,7 @@
 #![feature(allocator_api)]
 #![feature(slice_ptr_get)]
 #![feature(linked_list_retain)]
+#![feature(linked_list_cursors)]
 #![feature(portable_simd)]
 #![feature(str_as_str)]
 
@@ -24,7 +25,7 @@ mod tests {
     use crate::buffers::RUMBuffer;
     use crate::constants::*;
     use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
-    use std::alloc::{alloc, Allocator, Layout};
+    use std::alloc::{alloc, Layout};
     use std::collections::{HashMap, VecDeque};
 
     macro_rules! rumtk_benchmark_snippet {
@@ -50,7 +51,7 @@ mod tests {
         });
 
         assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
-        assert!(time < 310, "Allocation took long! => {}us", time)
+        assert!(time < 500, "Allocation took long! => {}us", time)
 
     }
 

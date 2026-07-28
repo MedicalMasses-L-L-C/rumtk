@@ -17,53 +17,21 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::MemoryPool;
 use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
-use std::collections::LinkedList;
+use std::sync::Mutex;
 
-use crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
-use crate::{direct_alloc, DirectAllocator, DIRECT_ALLOCATOR};
-use crate::{direct_dealloc, Arena};
-use crate::{rumtk_arena_new, AsPtr};
+static mut DUNES: Mutex<MemoryPool> = Mutex::new(MemoryPool::new());
 
-type DuneLL = LinkedList<Arena, &'static DirectAllocator>;
-
-static mut BUFFER: Arena = Arena::null();
-static mut BUFFER_VIEW: Arena = Arena::null();
-static mut DUNES: DuneLL = DuneLL::new_in(&DIRECT_ALLOCATOR);
-static mut ALLOC_SIZE: usize = DEFAULT_GLOBAL_MB_ALLOCATION;
-
-unsafe fn is_empty() -> bool {
-    remaining() <= 0
+unsafe fn allocate(layout: Layout) -> *mut u8 {
+    let mut dunes = DUNES.lock().unwrap();
+    dunes.allocate(layout)
 }
 
-unsafe fn is_initialized() -> bool {
-    !is_empty()
-}
-
-unsafe fn remaining() -> usize {
-    BUFFER_VIEW.remaining()
-}
-
-unsafe fn init_dunes(alloc_size: usize) {
-    ALLOC_SIZE = alloc_size;
-    let ptr = direct_alloc(ALLOC_SIZE);
-    BUFFER = rumtk_arena_new!(ptr, ALLOC_SIZE, true);
-    BUFFER_VIEW = BUFFER.freeze();
-}
-
-unsafe fn allocate(requested: usize, alloc_size: usize) -> *mut u8 {
-    if is_empty() {
-        init_dunes(alloc_size);
-    }
-
-    let slot = BUFFER_VIEW.split_to(requested);
-    DUNES.push_back(slot);
-    DUNES.back_mut().unwrap().as_mut_ptr()
-}
-
-unsafe fn deallocate(ptr: *mut u8, _layout: Layout) {
-    //DUNES.uncommit(_layout.size());
+unsafe fn deallocate(ptr: *mut u8, layout: Layout) {
+    let mut dunes = unsafe { DUNES.lock().unwrap() };
+    dunes.deallocate(ptr, layout);
 }
 
 pub struct Arrakis {
@@ -79,14 +47,14 @@ impl Arrakis {
 unsafe impl GlobalAlloc for Arrakis {
     #[inline]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        //allocate(layout.size(), self.alloc_size)
-        direct_alloc(layout.size())
+        allocate(layout)
+        //direct_alloc(layout.size())
     }
 
     #[inline]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        //deallocate(ptr, _layout)
-        direct_dealloc(ptr, _layout.size())
+        deallocate(ptr, _layout)
+        //direct_dealloc(ptr, _layout.size())
     }
 }
 
