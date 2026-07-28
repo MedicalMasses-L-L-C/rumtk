@@ -130,11 +130,10 @@ impl Chunk {
     /// Because the [FreeList] is kept sorted by address, a single pass suffices. Merging maximizes
     /// the odds that a deallocated region can be recycled for a new allocation.
     ///
-    pub fn defragment(&mut self) {;
+    pub fn defragment(&mut self) {
         let mut i = 0;
         while i < self.free_slots.len() {
-            let current = &mut self.free_slots[i];
-            let (ptr, size) = (current.ptr, current.size);
+            let (ptr, size) = (self.free_slots[i].ptr, self.free_slots[i].size);
 
             let merge_size = match self.free_slots.get(i + 1) {
                 Some(next) if ptr.wrapping_add(size) == next.ptr => Some(next.size),
@@ -144,33 +143,11 @@ impl Chunk {
             match merge_size {
                 Some(extra) => {
                     self.free_slots.remove(i + 1);
-                    current.size += extra;
+                    self.free_slots[i].size += extra;
                 }
                 None => {
                     i += 1;
                 },
-            }
-        }
-        let mut cursor = self.free_slots.cursor_front_mut();
-        loop {
-            let (ptr, size) = match cursor.current() {
-                Some(slot) => (slot.ptr, slot.size),
-                None => break,
-            };
-            let merge_size = match cursor.peek_next() {
-                Some(next) if ptr.wrapping_add(size) == next.ptr => Some(next.size),
-                _ => None,
-            };
-            match merge_size {
-                Some(extra) => {
-                    cursor.move_next();
-                    cursor.remove_current();
-                    cursor.move_prev();
-                    if let Some(slot) = cursor.current() {
-                        slot.size += extra;
-                    }
-                }
-                None => cursor.move_next(),
             }
         }
     }
@@ -230,31 +207,19 @@ impl Chunk {
     /// `size` bytes and removed entirely once exhausted.
     ///
     fn reclaim(&mut self, size: usize, align: usize) -> Option<*mut u8> {
-        let mut cursor = self.free_slots.cursor_front_mut();
-        loop {
-            let claim = match cursor.current() {
-                None => return None,
-                Some(slot) => {
-                    if slot.size >= size && Self::aligned(slot.ptr, align) {
-                        let ptr = slot.ptr;
-                        slot.ptr = unsafe { slot.ptr.add(size) };
-                        slot.size -= size;
-                        Some((ptr, slot.size == 0))
-                    } else {
-                        None
-                    }
+        for i in 0.. self.free_slots.len() {
+            let slot = &mut self.free_slots[i];
+            if slot.size >= size && Self::aligned(slot.ptr, align) {
+                let ptr = slot.ptr;
+                slot.ptr = unsafe { slot.ptr.add(size) };
+                slot.size -= size;
+                if slot.size == 0 {
+                    self.free_slots.remove(i);
                 }
-            };
-            match claim {
-                Some((ptr, exhausted)) => {
-                    if exhausted {
-                        cursor.remove_current();
-                    }
-                    return Some(ptr);
-                }
-                None => cursor.move_next(),
+                return Some(ptr);
             }
         }
+        None
     }
 
     ///
@@ -280,15 +245,13 @@ impl Chunk {
     /// [Self::defragment] can merge adjacent sections in a single pass.
     ///
     fn release(&mut self, ptr: *mut u8, size: usize) {
-        let mut cursor = self.free_slots.cursor_front_mut();
-        loop {
-            match cursor.current() {
-                Some(slot) if slot.ptr < ptr => cursor.move_next(),
-                _ => {
-                    cursor.insert_before(FreeSlot { ptr, size });
-                    return;
-                }
+        for i in 0.. self.free_slots.len() {
+            let slot = &mut self.free_slots[i];
+            if slot.ptr < ptr {
+                continue;
             }
+
+            self.free_slots.insert(i, FreeSlot { ptr, size });
         }
     }
 }
