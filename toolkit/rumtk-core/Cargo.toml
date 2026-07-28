@@ -31,7 +31,7 @@ simd = ["rand/simd_support", "rumtk-arena/simd"]
 mimalloc = ["rumtk-arena", "rumtk-arena/fast_global_allocator"]
 
 [dependencies]
-rumtk-arena = { version = "0.3.0", path = "../rumtk-arena", features = ["default", "mimalloc"], optional = true }
+rumtk-arena = { version = "0.4.0", path = "../rumtk-arena", features = ["default", "mimalloc"], optional = true }
 unicode-segmentation = "1.13.2"
 encoding_rs = "0.8.35"
 chardetng = "1.0.0"
