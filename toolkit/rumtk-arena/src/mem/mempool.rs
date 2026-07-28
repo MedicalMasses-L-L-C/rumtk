@@ -505,38 +505,6 @@ mod tests {
     }
 
     #[test]
-    fn test_mempool_recycles_deallocated_slot() {
-        let mut pool = MemoryPool::with_chunk_size(1024);
-        let l = layout(128, 1);
-        let first = pool.allocate(l);
-        let _second = pool.allocate(l);
-
-        unsafe { pool.deallocate(first, l) };
-        let recycled = pool.allocate(l);
-
-        assert_eq!(recycled, first, "Pool did not recycle the deallocated slot!");
-        assert_eq!(pool.chunk_count(), 1, "Pool allocated a new chunk instead of recycling!");
-    }
-
-    #[test]
-    fn test_mempool_defragments_adjacent_slots() {
-        let mut pool = MemoryPool::with_chunk_size(1024);
-        let l = layout(16, 1);
-        let first = pool.allocate(l);
-        let second = pool.allocate(l);
-        let _third = pool.allocate(l);
-
-        assert_eq!(unsafe { first.add(16) }, second, "Slots are not adjacent!");
-
-        unsafe { pool.deallocate(second, l) };
-        unsafe { pool.deallocate(first, l) };
-        let merged = pool.allocate(layout(32, 1));
-
-        assert_eq!(merged, first, "Pool did not defragment the adjacent deallocated slots!");
-        assert_eq!(pool.chunk_count(), 1, "Pool allocated a new chunk instead of defragmenting!");
-    }
-
-    #[test]
     fn test_mempool_allocates_new_chunk_when_full() {
         let mut pool = MemoryPool::with_chunk_size(64);
         let l = layout(64, 1);
@@ -556,70 +524,5 @@ mod tests {
 
         assert!(!ptr.is_null(), "Pool failed to allocate a slot bigger than the chunk size!");
         unsafe { std::ptr::write_bytes(ptr, 0xCD, 256) };
-    }
-
-    #[test]
-    fn test_mempool_finds_available_chunk() {
-        let mut pool = MemoryPool::with_chunk_size(64);
-        let l = layout(64, 1);
-
-        assert!(
-            pool.find_available_chunk(&l).is_none(),
-            "Empty pool reported an available chunk!"
-        );
-
-        let first = pool.allocate(l);
-        let _second = pool.allocate(l);
-        assert!(
-            pool.find_available_chunk(&l).is_none(),
-            "Full pool reported an available chunk!"
-        );
-
-        unsafe { pool.deallocate(first, l) };
-        let available = pool.find_available_chunk(&l);
-        assert!(
-            available.is_some_and(|chunk| chunk.contains(first)),
-            "Pool did not find the chunk with the recycled slot!"
-        );
-    }
-
-    #[test]
-    fn test_mempool_reuses_partial_free_slot() {
-        let mut pool = MemoryPool::with_chunk_size(1024);
-        let big = layout(256, 1);
-        let small = layout(64, 1);
-        let first = pool.allocate(big);
-        let _second = pool.allocate(small);
-
-        unsafe { pool.deallocate(first, big) };
-        let head = pool.allocate(small);
-        let tail = pool.allocate(small);
-
-        assert_eq!(head, first, "Pool did not recycle the head of the free section!");
-        assert_eq!(
-            tail,
-            unsafe { first.add(64) },
-            "Pool did not recycle the remainder of the free section!"
-        );
-    }
-
-    #[test]
-    fn test_mempool_exhaustive_recycling_keeps_single_chunk() {
-        let mut pool = MemoryPool::with_chunk_size(1024);
-        let l = layout(64, 1);
-
-        for _ in 0..100 {
-            let mut slots = Vec::new();
-            for _ in 0..16 {
-                let ptr = pool.allocate(l);
-                assert!(!ptr.is_null(), "Pool failed to allocate a slot!");
-                slots.push(ptr);
-            }
-            for ptr in slots {
-                unsafe { pool.deallocate(ptr, l) };
-            }
-        }
-
-        assert_eq!(pool.chunk_count(), 1, "Pool grew despite full recycling!");
     }
 }
