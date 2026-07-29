@@ -83,15 +83,7 @@ pub fn cpu_slice_splat<const SLICE_SIZE: usize>(input: &[u8]) -> [u8; SLICE_SIZE
     let mut result = [0u8; SLICE_SIZE];
 
     for chunk in result.chunks_mut(input.len()) {
-        if chunk.len() == input.len() {
-            for i in 0..input.len() {
-                chunk[i] = input[i]
-            }
-        } else {
-            for i in 0..chunk.len() {
-                chunk[i] = input[i];
-            }
-        }
+        chunk.copy_from_slice(&input[..chunk.len()]);
     }
 
     result
