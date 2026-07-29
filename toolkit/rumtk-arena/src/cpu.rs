@@ -67,19 +67,8 @@ pub fn cpu_slice_to_array<const SLICE_SIZE: usize>(chunk: &[u8]) -> &[u8; SLICE_
 
 #[inline(always)]
 pub fn cpu_slice_to_array_padded<const SLICE_SIZE: usize, const PAD: u8>(chunk: &[u8]) -> [u8; SLICE_SIZE] {
-    let mut result = [0u8; SLICE_SIZE];
-    let input_len = chunk.len();
-    let left = SLICE_SIZE - input_len;
-    let processed = SLICE_SIZE - left;
-
-    for i in 0..input_len {
-        result[i] = chunk[i];
-    }
-
-    for i in 0..left {
-        result[processed + i] = PAD;
-    }
-
+    let mut result = [PAD; SLICE_SIZE];
+    result[..chunk.len()].copy_from_slice(chunk);
     result
 }
 
