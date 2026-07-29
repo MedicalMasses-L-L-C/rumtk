@@ -75,8 +75,7 @@ pub fn cpu_slice_to_array_padded<const SLICE_SIZE: usize, const PAD: u8>(chunk: 
 #[cfg(feature = "simd")]
 #[inline(always)]
 pub fn cpu_slice_to_simd<const SLICE_SIZE: usize, const PAD: u8>(chunk: &[u8]) -> u8xN<SLICE_SIZE> {
-    let arr = cpu_slice_to_array_padded::<SLICE_SIZE, PAD>(chunk);
-    u8xN::from_array(arr)
+    u8xN::from_array(cpu_slice_to_array_padded::<SLICE_SIZE, PAD>(chunk))
 }
 
 #[inline(always)]
