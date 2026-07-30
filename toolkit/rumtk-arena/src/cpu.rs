@@ -209,8 +209,8 @@ pub fn cpu_replace_simd_n<const LANE_SIZE: usize>(data: &mut [u8], pattern: u8, 
     let mask = u8xN::<LANE_SIZE>::splat(pattern);
     let simd_replacement = u8xN::<LANE_SIZE>::splat(replacement);
 
-    for mut chunk in data.chunks_mut(LANE_SIZE) {
-        cpu_find_replace_simd_n::<LANE_SIZE>(&mut chunk[..], mask, simd_replacement);
+    for chunk in data.chunks_mut(LANE_SIZE) {
+        cpu_find_replace_simd_n::<LANE_SIZE>(chunk, mask, simd_replacement);
     }
 }
 
