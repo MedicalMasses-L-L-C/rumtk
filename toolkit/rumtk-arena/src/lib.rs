@@ -24,7 +24,7 @@ pub use mem::*;
 mod tests {
     use crate::buffers::RUMBuffer;
     use crate::constants::*;
-    use crate::cpu::cpu_slice_to_array_padded;
+    use crate::cpu::{cpu_find, cpu_slice_to_array_padded};
     use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
     use std::alloc::{alloc, Layout};
     use std::collections::{HashMap, VecDeque};
@@ -56,6 +56,30 @@ mod tests {
         let expected = b"Hello World\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
         let result = cpu_slice_to_array_padded::<32, b'\n'>(b"Hello World");
         assert_eq!(&result, expected, "Stack array was not properly padded!");
+    }
+
+    #[test]
+    fn test_cpu_find_simd_aligned() {
+        let input = b"Hello World\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n00000000000000000000000000000000";
+        let expected = 6;
+        let result = cpu_find(input, b'W').unwrap();
+        assert_eq!(result, expected, "Failed to find needle in haystack!");
+    }
+
+    #[test]
+    fn test_cpu_find_simd_unaligned() {
+        let input = b"Hello World\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        let expected = 6;
+        let result = cpu_find(input, b'W').unwrap();
+        assert_eq!(result, expected, "Failed to find needle in haystack!");
+    }
+
+    #[test]
+    fn test_cpu_find_simd_unaligned_none() {
+        let input = b"Hello World\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        let expected = 6;
+        let result = cpu_find(input, b'\0');
+        assert!(result.is_none(), "Succeeded to find needle in haystack when the search character is not part of the haystack!");
     }
 
     #[test]

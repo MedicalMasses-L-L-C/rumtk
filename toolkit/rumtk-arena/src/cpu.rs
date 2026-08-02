@@ -121,7 +121,8 @@ pub fn cpu_find_fallback(chunk: &[u8], byte: u8) -> Option<usize> {
 
 #[cfg(feature = "simd")]
 #[inline]
-fn cpu_find_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(data_vec: &u8xN<SEARCH_WINDOW_SIZE>, target: u8xN<SEARCH_WINDOW_SIZE>) -> Option<usize> {
+fn cpu_find_simd_avx2_n<const SEARCH_WINDOW_SIZE: usize>(chunk: &[u8], target: u8xN<SEARCH_WINDOW_SIZE>) -> Option<usize> {
+    let data_vec = cpu_slice_to_simd::<SEARCH_WINDOW_SIZE, 0>(chunk);
     let mask = data_vec.simd_eq(target);
 
     if mask.any() {
@@ -142,26 +143,21 @@ pub fn cpu_find_simd_n<const LANE_SIZE: usize>
 ) -> Option<usize>
 {
     let mask = u8xN::<LANE_SIZE>::splat(byte);
-    let (prefix, middle, postfix) = chunk.as_simd::<LANE_SIZE>();
+    let mut indx = 0;
 
-    match cpu_find_fallback(prefix, byte) {
-        Some(lane_i) => return Some(lane_i),
-        None => {},
-    }
-
-    for (i, window) in middle.into_iter().enumerate() {
+    for window in chunk.chunks(LANE_SIZE) {
         match cpu_find_simd_avx2_n::<LANE_SIZE>(window, mask) {
             Some(lane_i) => {
-                return Some(prefix.len() + (i * LANE_SIZE) + lane_i)
+                return Some(indx + lane_i)
             },
-            None => continue,
+            None => {
+                indx += LANE_SIZE;
+                continue
+            },
         }
     }
 
-    match cpu_find_fallback(postfix, byte) {
-        Some(lane_i) => Some(prefix.len() + (middle.len() * LANE_SIZE) + lane_i),
-        None => None,
-    }
+    None
 }
 
 #[cfg(feature = "simd")]
