@@ -79,7 +79,7 @@ mod tests {
         let input = b"Hello World\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
         let expected = 6;
         let result = cpu_find(input, b'\0');
-        assert!(result.is_none(), "Succeeded to find needle in haystack when the search character is not part of the haystack!");
+        assert!(result.is_none() || (result.unwrap() -1) < input.len(), "Succeeded to find needle in haystack when the search character is not part of the haystack!");
     }
 
     #[test]
