@@ -54,8 +54,8 @@ macro_rules! rumtk_mem_quick_array_init {
         let arr: [$typ; $size] = unsafe { mem::transmute([0u8; DATA_SLICE_LEN]) };
         arr
     }};
-    ( $typ:ty, $size:expr, $func:expr ) => {{
-        let arr: [$typ; $size] = [const {$func()}; $size];
+    ( $typ:ty, $size:expr, $default:expr ) => {{
+        let arr: [$typ; $size] = [const {$default}; $size];
         arr
-    }}
+    }};
 }
