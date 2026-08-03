@@ -46,3 +46,18 @@ pub fn zero_memory(data: *mut [u8], offset: usize, length: usize) -> *mut [u8] {
 
     data
 }
+
+#[macro_export]
+macro_rules! rumtk_layout {
+    (  ) => {{
+        rumtk_layout!(0, u8)
+    }};
+    ( $size:expr ) => {{
+        rumtk_layout!($size, u8)
+    }};
+    ( $size:expr, $alignment:ty ) => {{
+        use std::alloc::{Layout};
+
+        Layout::from_size_align_unchecked($size, size_of::<$alignment>())
+    }};
+}

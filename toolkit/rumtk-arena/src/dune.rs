@@ -59,7 +59,7 @@ unsafe impl GlobalAlloc for Arrakis {
     #[cfg(feature = "fast_global_allocator")]
     #[inline]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        direct_dealloc(ptr, _layout.size())
+        direct_dealloc(ptr, _layout)
     }
 
     #[cfg(not(feature = "fast_global_allocator"))]
