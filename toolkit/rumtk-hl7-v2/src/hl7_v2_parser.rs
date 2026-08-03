@@ -782,7 +782,7 @@ pub mod v2_parser {
         pub fn push_to_group(group: &mut V2SegmentArray, segment: (u8, V2Segment)) {
             let indx = segment.0 - 1;
 
-            match group[indx as usize].as_mut() {
+            match &mut group[indx as usize] {
                 Some(segment_set) => {
                     segment_set.push(segment.1);
                     return;
