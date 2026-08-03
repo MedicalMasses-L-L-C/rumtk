@@ -40,30 +40,24 @@ pub mod v2_parser {
         V2_DELETE_FIELD, V2_EMPTY_STRING, V2_MSHEADER_PATTERN, V2_SEGMENT_DESC, V2_SEGMENT_IDS,
         V2_SEGMENT_TERMINATOR, V2_SEGMENT_TERMINATORS
     };
-    use crate::hl7_v2_constants::{V2_MSHEADER_ID, V2_SEGMENT_NAMES};
-    use pyo3::exceptions::PyValueError;
+    use crate::hl7_v2_constants::{V2_MSHEADER_ID, V2_SEGMENT_NAMES, V2_TOTAL_VALID_SEGMENTS};
     use pyo3::prelude::*;
-    use rumtk_core::base::{clamp_index, RUMError, RUMVec};
-    use rumtk_core::base::{RUMResult, RUMVecDeque};
+    use rumtk_core::base::RUMResult;
+    use rumtk_core::base::{clamp_index, RUMVec};
     use rumtk_core::buffers::*;
-    use rumtk_core::buffers::{buffer_contains, buffer_count, buffer_find_byte, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_str, buffer_to_string, buffer_trim, RUMBufferIteratorExt, RUMBufferSplitIter, RUMByteSliceIteratorExt};
+    use rumtk_core::buffers::{buffer_contains, buffer_replace_in_place, buffer_to_str, buffer_trim, RUMBufferIteratorExt};
     use rumtk_core::cache::{new_cache, LazyRUMCache};
-    use rumtk_core::cpu::{cpu_l3_prefetch, cpu_likely_branch, cpu_unlikely_branch, CPUTokenSetCollection, CPU_L1_CACHE_LINE_SIZE, CPU_PAGE_SIZE, CPU_SEARCH_WINDOW_512_SIZE};
-    use rumtk_core::scripting::python_utils::RUMPyResult;
+    use rumtk_core::cpu::cpu_unlikely_branch;
     use rumtk_core::serde::json::{RUMDeJson, RUMSerJson};
     pub use rumtk_core::strings::{
         rumtk_format, try_decode_with, unescape_string, AsStr, RUMString, RUMStringConversions,
     };
+    use rumtk_core::serde::{RUMJsonDeserializer, RUMJsonSerializer, RUMSerJsonSerializeSequence};
     use rumtk_core::strings::{string_to_buffer, AsString};
-    use rumtk_core::types::RUMOrderedMap;
-    use rumtk_core::{rumtk_cache_fetch, rumtk_mem_quick_array_init, rumtk_serialize};
-    use std::alloc::dealloc;
-    use std::io::BufRead;
+    use rumtk_core::{rumtk_cache_fetch, rumtk_mem_quick_array_init};
     use std::mem;
-    use std::mem::ManuallyDrop;
     use std::ops::{Index, IndexMut};
-    use std::str::Chars;
-    use std::sync::{Arc, LazyLock};
+    use std::sync::LazyLock;
     /**************************** Globals ***************************************/
 
     static mut search_cache: LazyRUMCache<RUMString, V2SearchIndex> = new_cache();
@@ -531,9 +525,9 @@ pub mod v2_parser {
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
-    pub type V2SegmentMap = RUMOrderedMap<u8, V2SegmentGroup>;
+    pub type V2SegmentMap = Vec<Option<V2SegmentGroup>>;
 
-    #[derive(Default, Debug, RUMSerJson, RUMDeJson, Clone)]
+    #[derive(Debug, RUMSerJson, RUMDeJson, Clone)]
     pub struct V2Message {
         #[serde(skip)]
         data: RUMBuffer,
@@ -542,6 +536,13 @@ pub mod v2_parser {
     }
 
     impl V2Message {
+        pub fn new() -> Self {
+            Self {
+                data: RUMBuffer::new(),
+                sep: V2ParserCharacters::new(),
+                sg: rumtk_mem_quick_array_init!(Option<V2SegmentGroup>, V2_TOTAL_VALID_SEGMENTS as usize, None).into()
+            }
+        }
         ///
         /// Attempts to parse incoming raw HL7 v2 message into an instance of [V2Message](V2Message).
         ///
@@ -576,13 +577,17 @@ pub mod v2_parser {
         #[inline(always)]
         pub fn to_string(&self) -> V2String {
             let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.sg.len());
-            for segment_key in self.sg.keys() {
-                let segment_group = &self.sg[segment_key];
-                for segment in segment_group {
-                    msg.push(rumtk_format!("{}{}{}",
-                        buffer_to_str(V2_SEGMENT_NAMES(*segment_key)).unwrap_or_default(),
-                        buffer_to_str(&[self.sep.field_separator]).unwrap_or_default(),
-                        segment.to_string(&self.sep)));
+            for (indx, group) in self.sg.iter().enumerate() {
+                match group {
+                    Some(segment_group) => {
+                        for segment in segment_group {
+                            msg.push(rumtk_format!("{}{}{}",
+                            buffer_to_str(V2_SEGMENT_NAMES((indx + 1) as u8)).unwrap_or_default(),
+                            buffer_to_str(&[self.sep.field_separator]).unwrap_or_default(),
+                            segment.to_string(&self.sep)));
+                        }
+                    },
+                    None => {}
                 }
             }
 
@@ -609,62 +614,62 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         fn patch_msh_pattern(message: &mut V2Message, parser_chars: &V2ParserCharacters) {
-            message.sg[&V2_MSHEADER_ID][0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
+            message.sg[V2_MSHEADER_ID as usize].as_mut().unwrap()[0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
         }
 
-        pub fn get(&self, segment_index: &u8, sub_segment: usize) -> V2Result<&V2Segment> {
-            let segment_group = self.get_group(segment_index)?;
+        pub fn get(&self, segment_id: u8, sub_segment: usize) -> V2Result<&V2Segment> {
+            let segment_group = self.get_group(segment_id)?;
             let subsegment_indx = sub_segment - 1;
             match segment_group.get(subsegment_indx) {
                 Some(segment) => Ok(segment),
                 None => Err(rumtk_format!(
                     "Subsegment {} was not found in segment group {}!",
                     subsegment_indx,
-                    segment_index
+                    segment_id
                 )),
             }
         }
 
         pub fn get_mut(
             &mut self,
-            segment_index: &u8,
+            segment_id: u8,
             sub_segment: usize,
         ) -> V2Result<&mut V2Segment> {
-            let segment_group = self.get_mut_group(segment_index)?;
+            let segment_group = self.get_mut_group(segment_id)?;
             let subsegment_indx = sub_segment - 1;
             match segment_group.get_mut(subsegment_indx) {
                 Some(segment) => Ok(segment),
                 None => Err(rumtk_format!(
                     "Subsegment {} was not found in segment group {}!",
                     subsegment_indx,
-                    segment_index
+                    segment_id
                 )),
             }
         }
 
-        pub fn get_group(&self, segment_index: &u8) -> V2Result<&V2SegmentGroup> {
-            match self.sg.get(segment_index) {
+        pub fn get_group(&self, segment_id: u8) -> V2Result<&V2SegmentGroup> {
+            match self.sg[segment_id as usize].as_ref() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
-                    segment_index
+                    segment_id
                 )),
             }
         }
 
-        pub fn get_mut_group(&mut self, segment_index: &u8) -> V2Result<&mut V2SegmentGroup> {
-            match self.sg.get_mut(segment_index) {
+        pub fn get_mut_group(&mut self, segment_id: u8) -> V2Result<&mut V2SegmentGroup> {
+            match self.sg[segment_id as usize].as_mut() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
-                    segment_index
+                    segment_id
                 )),
             }
         }
 
         pub fn find_component(&self, search_pattern: &str) -> V2Result<&V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, &search_pattern.to_string(), || {compile_search_index(search_pattern)})?;
-            let segment = self.get(&index.segment, index.segment_group as usize)?;
+            let segment = self.get(index.segment, index.segment_group as usize)?;
             let field_group = segment.get(index.field as isize)?;
             let field = match field_group.get((index.field_group - 1) as usize) {
                 Some(field) => field,
@@ -679,7 +684,7 @@ pub mod v2_parser {
             search_pattern: &str,
         ) -> V2Result<&mut V2Component> {
             let index = rumtk_cache_fetch!(&mut search_cache, &search_pattern.to_string(), || {compile_search_index(search_pattern)})?;
-            let segment = self.get_mut(&index.segment, index.segment_group as usize)?;
+            let segment = self.get_mut(index.segment, index.segment_group as usize)?;
             let mut field = match segment.get_mut(index.field as isize)?.get_mut((index.field_group - 1) as usize) {
                 Some(field) => field,
                 None => return Err(rumtk_format!("Subfield provided is not 1 indexed or out of bounds. Did you give us a 0 when you meant 1? Got {}!", index.field_group))
@@ -687,17 +692,20 @@ pub mod v2_parser {
             field.get_mut(index.component as isize)
         }
 
-        pub fn is_repeat_segment(&self, segment_index: &u8) -> bool {
-            let _segment_group: &V2SegmentGroup = self.get_group(segment_index).unwrap();
+        pub fn is_repeat_segment(&self, segment_id: u8) -> bool {
+            let _segment_group = self.get_group(segment_id).unwrap();
             _segment_group.len() > 1
         }
 
-        pub fn segment_exists(&self, segment_index: &u8) -> bool {
-            self.sg.contains_key(segment_index)
+        pub fn segment_exists(&self, segment_id: u8) -> bool {
+            self.sg[segment_id as usize].is_some()
         }
 
-        pub fn segment_group_count(&self, segment_index: &u8) -> usize {
-            self.sg[segment_index].len()
+        pub fn segment_group_count(&self, segment_index: u8) -> usize {
+            match &self.sg[segment_index as usize] {
+                Some(grp) => grp.len(),
+                None => 0
+            }
         }
 
         ///
@@ -746,7 +754,7 @@ pub mod v2_parser {
             parser_chars: &V2ParserCharacters,
         ) -> V2Result<V2SegmentMap> {
             debug_assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
-            let mut segments: V2SegmentMap = V2SegmentMap::new();
+            let mut segments = rumtk_mem_quick_array_init!(Option<V2SegmentGroup>, V2_TOTAL_VALID_SEGMENTS as usize, None);
 
             let mut splitter = msg.split_fast(parser_chars.segment_terminator);
             for segment in &mut splitter {
@@ -758,21 +766,28 @@ pub mod v2_parser {
                 V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
             }
 
-            Ok(segments)
+            Ok(segments.into())
         }
 
         #[inline(always)]
         pub fn push_to_group(group: &mut V2SegmentMap, segment: (u8, V2Segment)) {
-            let key = segment.0;
+            let indx = segment.0 - 1;
 
-            if cpu_likely_branch(group.contains_key(&key)) {
-                group.get_mut(&key).unwrap().push(segment.1);
-                return;
-            }
+            match group[indx as usize].as_mut() {
+                Some(segment_set) => {
+                    segment_set.push(segment.1);
+                    return;
+                },
+                None => {}
+            };
 
-            let mut segment_set = V2SegmentGroup::new();
-            segment_set.push(segment.1);
-            group.insert(key.into(), segment_set);
+            group[indx as usize] = Some(vec![segment.1]);
+        }
+    }
+
+    impl Default for V2Message {
+        fn default() -> Self {
+            Self::new()
         }
     }
 
@@ -782,16 +797,16 @@ pub mod v2_parser {
         }
     }
 
-    impl<'a> Index<&'_ u8> for V2Message {
+    impl<'a> Index<u8> for V2Message {
         type Output = V2SegmentGroup;
-        fn index(&self, segment_index: &u8) -> &V2SegmentGroup {
-            self.get_group(segment_index).unwrap()
+        fn index(&self, segment_id: u8) -> &V2SegmentGroup {
+            self.get_group(segment_id).unwrap()
         }
     }
 
-    impl<'a> IndexMut<&'_ u8> for V2Message {
-        fn index_mut(&mut self, segment_index: &u8) -> &mut V2SegmentGroup {
-            self.get_mut_group(segment_index).unwrap()
+    impl<'a> IndexMut<u8> for V2Message {
+        fn index_mut(&mut self, segment_id: u8) -> &mut V2SegmentGroup {
+            self.get_mut_group(segment_id).unwrap()
         }
     }
 
