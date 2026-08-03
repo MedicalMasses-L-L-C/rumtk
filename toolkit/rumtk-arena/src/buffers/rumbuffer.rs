@@ -249,6 +249,7 @@ impl Clone for RUMBuffer {
 }
 
 impl Drop for RUMBuffer {
+    #[inline]
     fn drop(&mut self) {
         if self.dealloc {
             unsafe {
