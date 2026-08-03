@@ -30,12 +30,12 @@ pub mod hl7_v2_datasets;
 pub mod hl7_v2_field_descriptors;
 pub mod hl7_v2_interpreter;
 pub mod hl7_v2_mllp;
-mod hl7_v2_optionality_rules;
+pub mod hl7_v2_optionality_rules;
 pub mod hl7_v2_parser;
-mod hl7_v2_scripting;
+pub mod hl7_v2_scripting;
 pub mod hl7_v2_search;
 pub mod hl7_v2_types;
-mod hl7_v2_python_types;
+pub mod hl7_v2_python_types;
 /*****************************************Tests****************************************/
 #[cfg(test)]
 mod tests {
@@ -63,7 +63,7 @@ mod tests {
     };
     use rumtk_core::base::{RUMResult, RUMVec};
     use rumtk_core::buffers::*;
-    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_has_pattern, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
+    use rumtk_core::buffers::{buffer_find, buffer_find_instances, buffer_replace, buffer_replace_in_place, buffer_to_str, RUMBufferIteratorExt};
     use rumtk_core::cpu::{cpu_collect, CPUTokenIndexCollection, CPU_SEARCH_WINDOW_256_SIZE};
     use rumtk_core::search::rumtk_search::{string_search_named_captures, SearchGroups};
     use rumtk_core::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
