@@ -39,6 +39,7 @@ pub const V2_EMPTY_STRING: &str = "";
 
 pub type ElementDesc = fn(u8) -> &'static str;
 pub type ElementID = fn(&[u8]) -> u8;
+pub type ElementIDUSize = fn(&[u8]) -> usize;
 pub type ElementName = fn(u8) -> &'static [u8];
 pub const V2_SEGMENT_DESC: ElementDesc = |k | -> &'static str {
     match k {
@@ -432,6 +433,10 @@ pub static V2_SEGMENT_IDS: ElementID = |k| -> u8 {
         b"VND" => 191u8,
         _ => 192u8
     }
+};
+
+pub static V2_SEGMENT_IDS_USIZE: ElementIDUSize = |k| -> usize {
+    V2_SEGMENT_IDS(k) as usize
 };
 
 pub static V2_SEGMENT_INDX: ElementID = |k| -> u8 {

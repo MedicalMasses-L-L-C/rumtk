@@ -522,6 +522,8 @@ pub mod v2_parser {
     ///
     pub type V2SegmentGroup = RUMVec<V2Segment>;
 
+    pub type V2SegmentArray = [Option<V2SegmentGroup>; V2_TOTAL_VALID_SEGMENTS as usize];
+
     ///
     /// We collect segment groups in a map thus yielding the core of a message.
     ///
@@ -563,7 +565,7 @@ pub mod v2_parser {
                 sg: segments,
             };
 
-            Self::patch_msh_pattern(&mut message, &parse_characters);
+            Self::patch_msh_pattern(&mut message, &parse_characters)?;
 
             Ok(message)
         }
@@ -613,8 +615,9 @@ pub mod v2_parser {
         /// with a single component becomes a field with multiple components.
         ///
         #[inline(always)]
-        fn patch_msh_pattern(message: &mut V2Message, parser_chars: &V2ParserCharacters) {
-            message.sg[V2_MSHEADER_ID as usize].as_mut().unwrap()[0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
+        fn patch_msh_pattern(message: &mut V2Message, parser_chars: &V2ParserCharacters) -> RUMResult<()> {
+            message.get_mut_group(V2_MSHEADER_ID)?[0][1] = vec![V2Field::from_single_field(parser_chars.to_buffer(), parser_chars)].into();
+            Ok(())
         }
 
         pub fn get(&self, segment_id: u8, sub_segment: usize) -> V2Result<&V2Segment> {
@@ -647,22 +650,26 @@ pub mod v2_parser {
             }
         }
 
+        #[inline]
         pub fn get_group(&self, segment_id: u8) -> V2Result<&V2SegmentGroup> {
-            match self.sg[segment_id as usize].as_ref() {
+            let indx = (segment_id - 1) as usize;
+            match self.sg[indx].as_ref() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
-                    segment_id
+                    indx
                 )),
             }
         }
 
+        #[inline]
         pub fn get_mut_group(&mut self, segment_id: u8) -> V2Result<&mut V2SegmentGroup> {
-            match self.sg[segment_id as usize].as_mut() {
+            let indx = (segment_id - 1) as usize;
+            match self.sg[indx].as_mut() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
                     "Segment id {} not found in message!",
-                    segment_id
+                    indx
                 )),
             }
         }
@@ -697,14 +704,16 @@ pub mod v2_parser {
             _segment_group.len() > 1
         }
 
+        #[inline]
         pub fn segment_exists(&self, segment_id: u8) -> bool {
-            self.sg[segment_id as usize].is_some()
+            self.get_group(segment_id).is_ok()
         }
 
-        pub fn segment_group_count(&self, segment_index: u8) -> usize {
-            match &self.sg[segment_index as usize] {
-                Some(grp) => grp.len(),
-                None => 0
+        #[inline]
+        pub fn segment_group_count(&self, segment_id: u8) -> usize {
+            match self.get_group(segment_id) {
+                Ok(grp) => grp.len(),
+                Err(_) => 0
             }
         }
 
@@ -770,7 +779,7 @@ pub mod v2_parser {
         }
 
         #[inline(always)]
-        pub fn push_to_group(group: &mut V2SegmentMap, segment: (u8, V2Segment)) {
+        pub fn push_to_group(group: &mut V2SegmentArray, segment: (u8, V2Segment)) {
             let indx = segment.0 - 1;
 
             match group[indx as usize].as_mut() {
