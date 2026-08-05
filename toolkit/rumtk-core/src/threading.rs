@@ -503,7 +503,8 @@ pub mod threading_functions {
     use crate::threading::thread_primitives::{AsyncRwLock, SafeLock};
     use num_cpus;
     use std::future::Future;
-    use std::sync::Arc;
+    use std::slice::SliceIndex;
+    use std::sync::{Arc, LazyLock};
     use std::thread::{available_parallelism, sleep as std_sleep};
     use std::time::Duration;
     use tokio::runtime::Runtime;
@@ -511,11 +512,24 @@ pub mod threading_functions {
     use tokio::time::sleep as tokio_sleep;
     /**************************** Globals **************************************/
     static mut DEFAULT_RUNTIME: SafeTokioRuntime = SafeTokioRuntime::new();
+    pub static DEFAULT_CPUS: LazyLock<usize> = LazyLock::<usize>::new(|| {
+        let cpus: usize = num_cpus::get();
+        let parallelism = match available_parallelism() {
+            Ok(n) => n.get(),
+            Err(_) => 0,
+        };
+
+        if parallelism >= cpus {
+            parallelism
+        } else {
+            cpus
+        }
+    });
 
     pub const NANOS_PER_SEC: u64 = 1000000000;
     pub const MILLIS_PER_SEC: u64 = 1000;
     pub const MICROS_PER_SEC: u64 = 1000000;
-    const DEFAULT_SLEEP_DURATION: f32 = 0.001;
+    pub const DEFAULT_SLEEP_DURATION: f32 = 0.001;
     /**************************** Helpers **************************************/
     pub fn init_runtime<'a>(workers: usize) -> &'a Runtime {
         unsafe {
@@ -535,20 +549,12 @@ pub mod threading_functions {
         }
     }
 
+    #[inline]
     pub fn get_default_system_thread_count() -> usize {
-        let cpus: usize = num_cpus::get();
-        let parallelism = match available_parallelism() {
-            Ok(n) => n.get(),
-            Err(_) => 0,
-        };
-
-        if parallelism >= cpus {
-            parallelism
-        } else {
-            cpus
-        }
+        *DEFAULT_CPUS
     }
 
+    #[inline]
     pub fn sleep(s: f32) {
         let ns = s * NANOS_PER_SEC as f32;
         let rounded_ns = ns.round() as u64;
@@ -556,6 +562,7 @@ pub mod threading_functions {
         std_sleep(duration);
     }
 
+    #[inline]
     pub async fn async_sleep(s: f32) {
         let ns = s * NANOS_PER_SEC as f32;
         let rounded_ns = ns.round() as u64;
