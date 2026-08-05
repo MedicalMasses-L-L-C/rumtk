@@ -610,6 +610,7 @@ pub mod threading_functions {
     ///     https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html#method.spawn_blocking
     /// ```
     ///
+    #[inline]
     pub fn block_on_task<R, F>(task: F) -> R
     where
         F: Future<Output = R> + Send + 'static,
