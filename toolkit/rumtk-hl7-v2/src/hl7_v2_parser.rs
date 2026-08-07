@@ -230,7 +230,7 @@ pub mod v2_parser {
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             if buffer_contains(&field, parser_chars.component_separator) {
-                const CHUNK_SIZE: usize = 10;
+                const CHUNK_SIZE: usize = 16;
                 let mut component_list = RUMVec::with_capacity(CHUNK_SIZE);
                 let mut splitter = field.split_fast(parser_chars.component_separator);
 
