@@ -1669,12 +1669,24 @@ mod tests {
     ////////////////////////////Fuzzed Tests/////////////////////////////////
 
     #[test]
+    fn test_fuzzed_no_msh() {
+        let input = RUMBuffer::from(&[136u8]);
+        match rumtk_v2_parse_message!(&input) {
+            Err(e) => println!("Correctly identified input as garbage! => {}", &e),
+            Ok(message) => {
+                println!("Test input [{:?}] Result => {:?}", &input, message);
+                panic!("Message parsed without errors despite being malformed!")
+            }
+        }
+    }
+
+    #[test]
     fn test_fuzzed_garbage_parsing() {
         let input = "MSH@~��MS";
         match rumtk_v2_parse_message!(&input) {
             Err(e) => println!("Correctly identified input as garbage! => {}", &e),
             Ok(message) => {
-                println!("Test input [{}] Result => {:?}", &input, message);
+                println!("Test input [{:?}] Result => {:?}", &input, message);
                 panic!("Message parsed without errors despite being malformed!")
             }
         }
