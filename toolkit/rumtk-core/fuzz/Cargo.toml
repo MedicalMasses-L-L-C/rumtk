@@ -8,9 +8,9 @@ edition = "2021"
 cargo-fuzz = true
 
 [dependencies]
-libfuzzer-sys = "0.4"
+libfuzzer-sys = "0.4.13"
 
-[dependencies.rumtk-hl7-v2-fuzz]
+[dependencies.rumtk-core]
 path = ".."
 
 [[bin]]
