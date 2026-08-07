@@ -231,19 +231,31 @@ pub mod v2_parser {
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             if buffer_contains(&field, parser_chars.component_separator) {
-                let mut component_list = rumtk_mem_quick_array_init!(V2Component, 20);
+                let mut component_list = RUMVec::with_capacity(CHUNK_SIZE);
+                const CHUNK_SIZE: usize = 16;
+                let mut component_array_list = rumtk_mem_quick_array_init!(V2Component, CHUNK_SIZE);
                 let mut splitter = field.split_fast(parser_chars.component_separator);
                 let mut len = 0;
 
+                //
                 for c in &mut splitter {
-                    component_list[len] = V2Component::from(c);
-                    len += 1;
+                    if len < CHUNK_SIZE {
+                        component_array_list[len] = V2Component::from(c);
+                        len += 1;
+                    } else {
+                        component_list.extend_from_slice(&component_array_list[..len]);
+                        len = 0;
+                        component_array_list[len] = V2Component::from(c);
+                    }
                 }
-                component_list[len] = V2Component::from(splitter.remainder);
-                len += 1;
+
+                if len == CHUNK_SIZE {
+                    component_list.extend_from_slice(&component_array_list[..len]);
+                }
+                component_list.push(V2Component::from(splitter.remainder));
 
                 Self {
-                    cs: RUMVec::from(&component_list[..len])
+                    cs: component_list
                 }
             } else {
                 Self {
