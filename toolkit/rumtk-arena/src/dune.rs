@@ -46,24 +46,24 @@ impl Arrakis {
 
 unsafe impl GlobalAlloc for Arrakis {
     #[cfg(feature = "fast_global_allocator")]
-    #[inline]
+    #[inline(always)]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        direct_alloc(layout.size())
+        direct_alloc(layout)
     }
 
     #[cfg(not(feature = "fast_global_allocator"))]
-    #[inline]
+    #[inline(always)]
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         self.allocate(layout)
     }
     #[cfg(feature = "fast_global_allocator")]
-    #[inline]
+    #[inline(always)]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         direct_dealloc(ptr, _layout)
     }
 
     #[cfg(not(feature = "fast_global_allocator"))]
-    #[inline]
+    #[inline(always)]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         self.deallocate(ptr, _layout)
     }

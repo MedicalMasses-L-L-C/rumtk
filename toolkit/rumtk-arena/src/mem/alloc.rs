@@ -31,15 +31,17 @@ static mut SAND: MiMalloc = MiMalloc;
 
 #[cfg(not(feature = "fast_allocator"))]
 use std::alloc::System;
-use crate::rumtk_layout;
+
 
 #[cfg(not(feature = "fast_allocator"))]
 static mut SAND: System = System;
 
-pub unsafe fn direct_alloc(len: usize) -> *mut u8 {
-    SAND.alloc(rumtk_layout!(len))
+#[inline(always)]
+pub unsafe fn direct_alloc(layout: Layout) -> *mut u8 {
+    SAND.alloc(layout)
 }
 
+#[inline(always)]
 pub unsafe fn direct_dealloc(ptr: *mut u8, layout: Layout) {
     SAND.dealloc(ptr, layout)
 }
@@ -47,12 +49,13 @@ pub unsafe fn direct_dealloc(ptr: *mut u8, layout: Layout) {
 pub struct DirectAllocator;
 
 unsafe impl Allocator for DirectAllocator {
+    #[inline(always)]
     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
-        let size = layout.size();
-        let ptr = unsafe { direct_alloc(size) };
-        let slice = unsafe { std::slice::from_raw_parts_mut(ptr, size) };
+        let ptr = unsafe { direct_alloc(layout) };
+        let slice = unsafe { std::slice::from_raw_parts_mut(ptr, layout.size()) };
         Ok(cast_to_nonnull::<[u8]>(slice))
     }
+    #[inline(always)]
     unsafe fn deallocate(&self, ptr: NonNull<u8>, layout: Layout) {
         direct_dealloc(ptr.as_ptr(), layout);
     }

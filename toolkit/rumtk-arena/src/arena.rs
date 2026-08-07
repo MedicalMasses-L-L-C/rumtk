@@ -20,6 +20,7 @@
 use crate::buffers::RUMBuffer;
 use crate::constants::KB;
 use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsPtr, AsSlice, SizedType};
+use crate::rumtk_layout;
 use std::alloc::AllocError;
 use std::ops::Index;
 use std::ops::{Range, RangeFrom, RangeFull, RangeTo, RangeToInclusive};
@@ -87,7 +88,7 @@ impl Arena {
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            memory: RUMBuffer::from_parts(unsafe { direct_alloc(capacity) }, capacity, true),
+            memory: RUMBuffer::from_parts(unsafe { direct_alloc(rumtk_layout!(capacity)) }, capacity, true),
             remaining: capacity,
             capacity,
         }

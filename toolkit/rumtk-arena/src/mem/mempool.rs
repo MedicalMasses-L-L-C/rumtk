@@ -81,7 +81,7 @@ impl Chunk {
     /// Returns [None] if the system refuses to hand us the memory.
     ///
     pub fn new(capacity: usize) -> Option<Self> {
-        let base = unsafe { direct_alloc(capacity) };
+        let base = unsafe { direct_alloc(rumtk_layout!(capacity)) };
         if base.is_null() {
             return None;
         }
