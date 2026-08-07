@@ -1691,4 +1691,16 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_fuzzed_bad_index() {
+        let input = "MSH\u{226}\u{000}\u{202}:\u{250}\u{226}\u{204}\u{226}\u{000}\u{000}\u{000}\u{000}\u{000}?SHl\u{000}\u{000}=\u{000}\u{000}\u{000}\u{000}\u{000}H\u{000}\u{224}@Hl\u{000}\u{000}\u{000}\u{000}\u{000}\u{000}\u{000}\u{226}\u{012}\u{366}\u{250}\u{226}\u{204}\u{366}";
+        match rumtk_v2_parse_message!(&input) {
+            Err(e) => println!("Correctly identified input as garbage! => {}", &e),
+            Ok(message) => {
+                println!("Test input [{:?}] Result => {:?}", &input, message);
+                panic!("Message parsed without errors despite being malformed!")
+            }
+        }
+    }
 }
