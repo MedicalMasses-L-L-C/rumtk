@@ -13,6 +13,9 @@ libfuzzer-sys = "0.4.13"
 [dependencies.rumtk-web]
 path = ".."
 
+[dependencies.rumtk-core]
+path = "../../rumtk-core"
+
 [[bin]]
 name = "fuzz_api"
 path = "fuzz_targets/fuzz_api.rs"
