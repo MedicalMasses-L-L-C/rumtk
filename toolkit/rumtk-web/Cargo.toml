@@ -26,3 +26,4 @@ phf_macros = "0.13.1"
 pulldown-cmark = "0.13.3"
 minifier = { version = "0.3.6", features = ["html"] }
 serde = { version = "1.0.228", features = ["derive", "std"] }
+reqwest = { version = "0.13.4", features = ["json"] }
