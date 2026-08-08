@@ -32,10 +32,11 @@ pub mod response;
 pub mod testdata;
 pub mod types;
 pub mod conversions;
-mod client;
+pub mod client;
 
 pub use render::*;
 pub use types::*;
+pub use client::*;
 
 #[macro_export]
 macro_rules! rumtk_web_get_text_item {
