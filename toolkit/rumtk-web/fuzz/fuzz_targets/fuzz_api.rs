@@ -7,7 +7,7 @@ use rumtk_web::*;
 use std::thread::spawn;
 
 fuzz_target!(|data: &[u8]| {
-    let app_thread = spawn(|| {
+    let _ = spawn(|| {
         rumtk_web_run_app!()
     });
 

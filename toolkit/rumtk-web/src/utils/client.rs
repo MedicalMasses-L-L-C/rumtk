@@ -29,7 +29,7 @@ pub async fn rumtk_web_get(url: &str) -> Result<Response, RequestError> {
 
 #[inline]
 pub fn rumtk_web_sync_get(url: &str) -> Result<Response, RequestError> {
-    rumtk_resolve_task!(async move || -> Result<Response, RequestError> {
+    rumtk_resolve_task!(async move || {
         rumtk_web_get(url).await
     })
 }
@@ -40,7 +40,7 @@ pub async fn rumtk_web_post<T>(url: &str, data: &T) -> Result<Response, RequestE
 }
 
 pub fn rumtk_web_sync_post<T>(url: &str, data: &T) -> Result<Response, RequestError> {
-    rumtk_resolve_task!(async move || -> Result<Response, RequestError> {
+    rumtk_resolve_task!(async move || {
         rumtk_web_post(url, data).await
     })
 }
