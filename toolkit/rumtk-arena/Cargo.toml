@@ -19,10 +19,17 @@ fast_global_allocator = ["fast_allocator"]
 simd = ["rand/simd_support"]
 
 [dependencies]
-mimalloc = {  version = "0.1.52", features = ["default", "extended"], optional = true}
+mimalloc = {  version = "0.1.52", features = ["extended"], optional = true, default-features = false}
 libmimalloc-sys = {  version = "0.1.49",  features = ["extended", "arena"], optional = true }
 ahash = { version = "0.8.12", features = ["serde"] }
 rand = "0.10.1"
 bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
 branches = "0.4.4"
 serde = { version = "1.0.228", features = ["derive", "std", "rc"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true

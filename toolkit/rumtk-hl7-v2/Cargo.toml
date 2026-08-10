@@ -24,8 +24,10 @@ rumtk-core = { version = "0.17.2", path = "../rumtk-core" }
 
 [profile.release]
 opt-level = 3
-lto = "fat"
+lto = true
 codegen-units = 1
+panic = 'abort'
+strip = true
 
 [profile.test]
 opt-level = 3

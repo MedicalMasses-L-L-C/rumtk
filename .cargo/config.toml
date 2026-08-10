@@ -1,0 +1,7 @@
+[build]
+rustflags = [
+    "-C",
+    "target-cpu=native",
+    "-Z",
+    "default-visibility=hidden"
+]
