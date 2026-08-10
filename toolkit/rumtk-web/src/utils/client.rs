@@ -20,27 +20,26 @@
 
 pub use reqwest::{Client, Response, Request, Error as RequestError};
 use rumtk_core::rumtk_resolve_task;
+use rumtk_core::serde::RUMSerJson;
 
 #[inline]
-pub async fn rumtk_web_get(url: &str) -> Result<Response, RequestError> {
+pub async fn rumtk_web_get(url: String) -> Result<Response, RequestError> {
     let client = Client::new();
     client.get(url).send().await
 }
 
 #[inline]
 pub fn rumtk_web_sync_get(url: &str) -> Result<Response, RequestError> {
-    rumtk_resolve_task!(async move || {
-        rumtk_web_get(url).await
-    })
+    let url = url.to_string();
+    rumtk_resolve_task!(rumtk_web_get(url))
 }
 
-pub async fn rumtk_web_post<T>(url: &str, data: &T) -> Result<Response, RequestError> {
+pub async fn rumtk_web_post<T: RUMSerJson + Sync + Send + 'static>(url: String, data: T) -> Result<Response, RequestError> {
     let client = Client::new();
-    client.post(url).json(data).send().await
+    client.post(url).json(&data).send().await
 }
 
-pub fn rumtk_web_sync_post<T>(url: &str, data: &T) -> Result<Response, RequestError> {
-    rumtk_resolve_task!(async move || {
-        rumtk_web_post(url, data).await
-    })
+pub fn rumtk_web_sync_post<T: RUMSerJson + Sync + Send + 'static>(url: &str, data: T) -> Result<Response, RequestError> {
+    let url = url.to_string();
+    rumtk_resolve_task!(rumtk_web_post(url, data))
 }
