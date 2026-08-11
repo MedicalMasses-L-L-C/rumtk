@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::buffers::RUMBuffer;
-use crate::constants::KB;
+use crate::mem::constants::KB;
 use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsPtr, AsSlice, SizedType};
 use crate::rumtk_layout;
 use std::alloc::AllocError;

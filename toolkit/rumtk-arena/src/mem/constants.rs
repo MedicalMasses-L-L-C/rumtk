@@ -23,3 +23,14 @@ pub const KB: usize = 1024;
 pub const MB: usize = 1024 * 1024;
 pub const GB: usize = 1024 * 1024 * 1024;
 pub const DEFAULT_GLOBAL_MB_ALLOCATION: usize = 50 * MB;
+
+#[cfg(feature = "fast_allocator_options")]
+pub mod mimalloc_constants {
+    use crate::KB;
+    use std::ffi::{c_int, c_long};
+
+    pub const DEFAULT_GLOBAL_MIMALLOC_ALLOCATION: c_long = (100 * KB) as c_long;
+    pub const OPT_RESERVE_OS_MEMORY: c_int = 10;
+    pub const OPT_ARENA_RESERVE: c_int = 23;
+    pub const OPT_ALLOW_THP: c_int = 43;
+}

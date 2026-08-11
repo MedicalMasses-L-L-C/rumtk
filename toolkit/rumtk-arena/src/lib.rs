@@ -9,7 +9,6 @@ extern crate alloc;
 extern crate core;
 
 pub mod arena;
-pub mod constants;
 pub mod buffers;
 pub mod cpu;
 pub mod mem;
@@ -23,8 +22,8 @@ pub use mem::*;
 #[cfg(test)]
 mod tests {
     use crate::buffers::RUMBuffer;
-    use crate::constants::*;
     use crate::cpu::{cpu_find, cpu_slice_to_array_padded};
+    use crate::mem::constants::*;
     use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
     use std::alloc::{alloc, Layout};
     use std::collections::{HashMap, VecDeque};

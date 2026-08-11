@@ -21,8 +21,8 @@ use std::alloc::Layout;
 use std::collections::LinkedList;
 use std::ptr::null_mut;
 
-use crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
 use crate::mem::alloc::{direct_alloc, direct_dealloc, DirectAllocator, DIRECT_ALLOCATOR};
+use crate::mem::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
 use crate::rumtk_layout;
 
 ///

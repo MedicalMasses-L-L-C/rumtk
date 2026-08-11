@@ -56,6 +56,7 @@ unsafe impl GlobalAlloc for Arrakis {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         self.allocate(layout)
     }
+    
     #[cfg(feature = "fast_global_allocator")]
     #[inline(always)]
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
@@ -72,15 +73,15 @@ unsafe impl GlobalAlloc for Arrakis {
 #[macro_export]
 macro_rules! rumtk_dune_new {
     (  ) => {{
-        use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
+        use $crate::mem::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
         rumtk_dune_new!(DEFAULT_GLOBAL_MB_ALLOCATION)
     }};
     ( $size:expr ) => {{
         use std::sync::LazyLock;
         use $crate::dune::{Arrakis};
-        use $crate::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
-        Arrakis::with_capacity(DEFAULT_GLOBAL_MB_ALLOCATION)
-    }}
+
+        Arrakis::with_capacity($size)
+    }};
 }
 
 

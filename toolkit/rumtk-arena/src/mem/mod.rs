@@ -24,6 +24,8 @@ pub mod global;
 pub mod traits;
 pub mod mem;
 pub mod mempool;
+pub mod alloc_opts;
+pub mod constants;
 
 pub use alloc::*;
 pub use mem::*;
@@ -31,3 +33,4 @@ pub use copy::*;
 pub use global::*;
 pub use traits::*;
 pub use mempool::*;
+pub use constants::*;
