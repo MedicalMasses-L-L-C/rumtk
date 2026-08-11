@@ -44,6 +44,8 @@ use std::alloc::System;
 #[cfg(not(feature = "fast_allocator"))]
 static mut SAND: System = System;
 
+#[cfg(feature = "fast_allocator_options")]
+#[inline(always)]
 pub fn set_and_init_allocator_options(options_init_fn: Option<fn()>)
 {
     if let Some(fx) = options_init_fn {
@@ -57,6 +59,7 @@ pub fn set_and_init_allocator_options(options_init_fn: Option<fn()>)
 
 #[inline(always)]
 pub unsafe fn direct_alloc(layout: Layout) -> *mut u8 {
+    #[cfg(feature = "fast_allocator_options")]
     set_and_init_allocator_options(None);
     SAND.alloc(layout)
 }
