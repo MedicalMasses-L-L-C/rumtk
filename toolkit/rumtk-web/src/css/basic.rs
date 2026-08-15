@@ -61,7 +61,6 @@ pub const BASIC_CSS: &str = r"
         }
 
         .md a {
-            filter: invert();
         }
         
     ";

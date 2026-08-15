@@ -22,9 +22,8 @@
 pub const LAYOUT_CSS: &str = r"
             .header-default-container {
                 position: fixed;
-                top: 0;
-
-                padding: 1em;
+                top: 32px;
+                left: 32px;
 
                 display: flex;
                 flex-direction: row;
@@ -34,16 +33,17 @@ pub const LAYOUT_CSS: &str = r"
                 justify-content: space-between;
                 justify-items: center;
 
-                background-color: var(--color-indigo);
-                border-bottom: var(--color-turqoise) 0.1em solid;
+                background-color: var(--color-nav-bg);
 
-                width: 100%;
+                width: 95%;
                 backdrop-filter: blur(5px);
 
                 opacity: 0.9;
                 height: fit-content;
 
                 z-index: var(--top-layer);
+
+                border-radius: 16px;
             }
 
             .header-default-navlogo {
@@ -67,8 +67,6 @@ pub const LAYOUT_CSS: &str = r"
                 flex-direction: row;
                 justify-content: space-around;
                 justify-items: center;
-
-                padding: 10px;
             }
 
             .header-default-misc {

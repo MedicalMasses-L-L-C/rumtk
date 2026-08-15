@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_TITLES};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
 use crate::utils::TextMap;
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
@@ -32,19 +32,16 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/title.css' rel='stylesheet'>
         {% endif %}
-        <div class='f14 centered title-{{ css_class }}-container'>
-            <a id='{{typ}}'>
-                <h2 class='title-{{ css_class }}'>{{ text.to_uppercase() }}</h2>
-                <h2 class='title-{{ css_class }}-overlay no-select'>{{ text.to_uppercase() }}</h2>
-            </a>
+        <div class='centered title-{{ css_class }}-container'>
+            <h1 id='{{typ}}' class='title-{{ css_class }}'>{{ text }}</h1>
         </div>
     ",
     ext = "html"
 )]
-pub struct Title {
-    typ: RUMString,
-    text: RUMString,
-    css_class: RUMString,
+pub struct Title<'a> {
+    typ: &'a str,
+    text: &'a str,
+    css_class: &'a str,
     custom_css_enabled: bool,
 }
 
@@ -52,16 +49,16 @@ pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TITLES);
     let itm = rumtk_web_get_text_item!(&text_store, typ, &TextMap::default());
-    let text = RUMString::from(rumtk_web_get_text_item!(&itm, "title", typ));
+    let text = rumtk_web_get_text_item!(&itm, "title", typ);
 
     rumtk_web_render_template!(Title {
-        typ: RUMString::from(typ),
+        typ,
         text,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

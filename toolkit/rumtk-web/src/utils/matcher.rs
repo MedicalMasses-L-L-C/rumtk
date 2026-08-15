@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::app_shell::app_shell;
-use crate::components::div::div;
+use crate::components::html::div;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;

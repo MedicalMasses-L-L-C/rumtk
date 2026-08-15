@@ -23,9 +23,8 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, S
 use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_modify_state,
-    rumtk_web_render_template, rumtk_web_set_config, AppState, RUMWebTemplate,
+    rumtk_web_render_template, RUMWebTemplate,
 };
-use rumtk_core::strings::RUMStringConversions;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -67,7 +66,7 @@ pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState)
         None => rumtk_web_get_config_section!(state, typ),
     };
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     rumtk_web_render_template!(List {
         items,

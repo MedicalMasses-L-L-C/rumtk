@@ -26,7 +26,7 @@ use crate::{
     rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
-use rumtk_core::strings::{rumtk_format, RUMStringConversions};
+use rumtk_core::strings::rumtk_format;
 
 #[derive(Debug, Clone)]
 struct Social {
@@ -83,7 +83,7 @@ pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppSta
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let icons = get_social_list(&social_list, &state);
 

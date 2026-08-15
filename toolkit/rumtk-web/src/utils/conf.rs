@@ -28,7 +28,6 @@ pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
-use rumtk_core::strings::RUMStringConversions;
 use rumtk_core::types::RUMID;
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
@@ -44,6 +43,12 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 
 pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
 
+
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
+pub struct FlagsConf {
+    pub custom_css: bool,
+    pub enable_icons: bool,
+}
 #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
     pub logo_source: Option<RUMString>,
@@ -146,7 +151,7 @@ pub struct AppConf {
     pub copyright: RUMString,
     pub lang: RUMString,
     pub theme: RUMString,
-    pub custom_css: bool,
+    pub flags: FlagsConf,
     pub header_conf: HeaderConf,
     pub footer_conf: FooterConf,
 

@@ -51,6 +51,7 @@ pub enum RUMWebResponse {
     None,
 }
 
+pub type ComponentResult<T> = Result<T, RUMString>;
 pub type HTMLResult = Result<RUMWebResponse, RUMString>;
 
 /* Implementations */

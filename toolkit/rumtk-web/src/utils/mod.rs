@@ -72,6 +72,6 @@ macro_rules! rumtk_web_get_param {
 macro_rules! rumtk_web_params_map {
     ( $params:expr ) => {{
         use $crate::RUMWebDataProxy;
-        RUMWebDataProxy::from($params)
+        RUMWebDataProxy::from(&$params)
     }};
 }

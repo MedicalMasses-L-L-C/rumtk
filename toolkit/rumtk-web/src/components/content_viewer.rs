@@ -74,7 +74,7 @@ pub fn content_viewer(
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     rumtk_web_render_template!(ContentViewer {
         id,

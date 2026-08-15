@@ -18,49 +18,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::html::{header, Header};
 use crate::components::navlink::navlink;
-use crate::defaults::PARAMS_TARGET;
+use crate::defaults::{PARAMS_CONTENTS, PARAMS_TARGET};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE, SECTION_LINKS};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_template, RUMWebData, RUMWebTemplate,
-};
-use rumtk_core::strings::RUMStringConversions;
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_template, RUMWebData, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {% if custom_css_enabled %}
-            <link href='/static/components/header.css' rel='stylesheet'>
+        {% if !disable_logo %}
+        <div class='header-{{ css_class }}-navlogo'>
+            <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
+                {{logo|safe}}
+                <h3 class='brand-name'> {{company}}</h3>
+            </a>
+        </div>
         {% endif %}
-        <header class='header-{{ css_class }}-container header'>
-            {% if !disable_logo %}
-            <div class='header-{{ css_class }}-navlogo'>
-                <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
-                    {{logo|safe}}
-                    <h3 class='brand-name'> {{company}}</h3>
-                </a>
-            </div>
-            {% endif %}
-            <div class='header-{{ css_class }}-navactions gap-10'>
-                {% for item in nav_links %}
-                    {{item|safe}}
-                {% endfor %}
-            </div>
-            <div class='header-{{ css_class }}-misc gap-10'>
-            </div>
-        </header>
+        <div class='header-{{ css_class }}-navactions gap-10'>
+            {% for item in nav_links %}
+                {{item|safe}}
+            {% endfor %}
+        </div>
+        <div class='header-{{ css_class }}-misc gap-10'>
+        </div>
     ",
     ext = "html"
 )]
-pub struct Header {
+pub struct Nav<'a> {
     company: RUMString,
     logo: RUMString,
     nav_links: Vec<RUMString>,
-    css_class: RUMString,
-    custom_css_enabled: bool,
     disable_logo: bool,
+    css_class: &'a str,
 }
 
 fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMString> {
@@ -80,11 +71,21 @@ fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMSt
     nav_links
 }
 
-pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+#[derive(RUMWebTemplate, Debug, Clone)]
+#[template(
+    source = "
+        {{app_nav|safe}}
+    ",
+    ext = "html"
+)]
+pub struct AppNav<'a> {
+    app_nav: Header<'a>,
+}
+
+pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let company = rumtk_web_get_config!(state).company.clone();
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
 
     let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
     let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
@@ -120,12 +121,27 @@ pub fn header(_path_components: URLPath, params: URLParams, state: SharedAppStat
         )?.to_string(),
     };
 
-    rumtk_web_render_template!(Header {
-        company: RUMString::from(company),
+    let contents = rumtk_web_render_template!(Nav {
+        company,
         logo,
         nav_links,
-        css_class: RUMString::from(css_class),
-        custom_css_enabled,
-        disable_logo
+        disable_logo,
+        css_class
+    })?.to_string();
+
+    let app_params = rumtk_web_params_map!(
+        [
+            (PARAMS_CONTENTS, contents),
+            (PARAMS_CSS_CLASS, css_class.to_string())
+        ]
+    );
+    let app_nav = header(
+        _path_components,
+        app_params.get_inner(),
+        state
+    )?;
+
+    rumtk_web_render_template!(AppNav {
+        app_nav
     })
 }

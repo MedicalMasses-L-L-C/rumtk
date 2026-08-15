@@ -52,7 +52,7 @@ pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppSta
     let target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
     let itm = rumtk_web_get_text_item!(&links_store, target, &DEFAULT_TEXTMAP());

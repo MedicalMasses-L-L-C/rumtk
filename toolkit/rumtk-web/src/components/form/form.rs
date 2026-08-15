@@ -33,13 +33,13 @@ use crate::{
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
             {% if !module.is_empty() %}
-                <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js'>
+                <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' defer>
                 </script>
             {% endif %}
             {% if !title.is_empty() %}
                 {{title|safe}}
             {% endif %}
-            <form id='form-{{htmx_target}}' class='f18 centered form-default-container gap-10 form-{{css_class}}-container' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
+            <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
                 {% for element in elements %}
                     {{ element|safe }}
                 {% endfor %}
@@ -97,7 +97,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let endpoint_store = rumtk_web_get_config_section!(state, SECTION_ENDPOINTS);
     let endpoint_url = rumtk_web_get_text_item!(&endpoint_store, endpoint, endpoint);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let elements = rumtk_web_get_form!(typ)?;
 

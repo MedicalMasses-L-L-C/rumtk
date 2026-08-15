@@ -25,8 +25,8 @@ pub const BODY: &str = r"
         display: flex;
         flex-direction: column;
         
-        background-color: var(--color-jaguar);
-        color: white;
+        background-image: radial-gradient(var(--color-body-bg), var(--color-body-bg-accent));
+        color: var(--color-text-default);
     
         margin: auto;
         width: 100%;
