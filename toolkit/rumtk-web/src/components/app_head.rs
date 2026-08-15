@@ -63,7 +63,7 @@ pub fn app_head(
     let html_css = rumtk_web_render_component!(css);
 
     //Let's render the head component
-    let html_fontawesome = rumtk_web_render_component!(fontawesome);
+    let html_fontawesome = rumtk_web_render_component!(fontawesome, state);
 
     //Let's render the head component
     let html_htmx = rumtk_web_render_component!(htmx);

@@ -106,31 +106,40 @@ pub const LIST_CSS: &str = r"
     }
 
     .text-card-default {
-        max-width: 1700px;
-        padding: 20px;
-        background-color: var(--color-indigo);
-
-        border-radius: 15px;
     }
 
     .container-default {
-        max-width: 1700px;
-        padding: 20px;
-        background-color: var(--color-indigo);
+        min-width: 300px;
+        width: 70%;
+        max-width: 1200px;
+        padding: 2em;
+        margin: 2em;
+        background-color: var(--color-card-bg);
 
-        border-radius: 15px;
+        border-radius: 16px;
+        margin: auto;
     }
 
     .title-default-container {
         display: block;
-        height: 40px;
+        width: auto;
+        height: auto;
+
         align-content: center;
         margin-block: 20px 20px;
+        padding-left: 2.5em;
+        padding-right: 2.5em;
+
+        background-color: var(--color-submit-bg);
+
+        border-radius: 16px;
     }
 
     .title-default {
         display: block;
         margin-block: 0;
+
+        color: var(--color-text-title);
     }
 
     .title-default-overlay {
@@ -154,8 +163,8 @@ pub const LIST_CSS: &str = r"
     }
 
     .navlink:hover {
-        background-color: var(--color-darkpurple);
-        border-radius: 10px;
+        background-color: var(--color-nav-link-hover);
+        border-radius: 16px;
     }
 
     .label-default {
@@ -164,9 +173,7 @@ pub const LIST_CSS: &str = r"
     }
 
     .brand-name {
-        background-image: linear-gradient(to right, var(--color-darkpurple), var(--color-ticklemepink), var(--color-cerulean), var(--color-turqoise));
-        background-clip: text;
-        color: transparent;
+        color: var(--color-text-title);
     }
 
     .formatted-label-default {
@@ -176,7 +183,7 @@ pub const LIST_CSS: &str = r"
 
     .footer-default-container, #footer {
         display: grid;
-        background-color: var(--color-indigo);
+        background-color: var(--color-nav-bg);
         color: white;
         padding: 1em;
         justify-items: center;
@@ -200,15 +207,16 @@ pub const LIST_CSS: &str = r"
     .logo {
         display: flex;
         justify-content: center;
-        margin-bottom: 20px;
+        padding: 2em;
     }
 
     .logo-default {
-        min-height: 200px;
+        min-height: 32px;
     }
 
     .logo-small {
         width: 64px;
+        min-height: 48px;
         height: auto;
     }
 
@@ -223,7 +231,7 @@ pub const LIST_CSS: &str = r"
     .info-card-default-titlebox {
         display: flex;
         flex: 1;
-        background-color: var(--color-indigo);
+        background-color: var(--color-card-bg);
         align-items: end;
         padding: 10px;
         justify-content: center;

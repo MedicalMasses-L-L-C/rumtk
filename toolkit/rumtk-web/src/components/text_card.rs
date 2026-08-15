@@ -31,7 +31,7 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/text_card.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered text-card-{{css_class}}'>
+        <div class='centered container-default text-card-{{css_class}}'>
           {{formatted_label|safe}}
         </div>
     ",
@@ -51,7 +51,7 @@ pub fn text_card(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let formatted_label = rumtk_web_render_component!("formatted_label", [(PARAMS_TYPE, typ)], state)?.to_string();
 

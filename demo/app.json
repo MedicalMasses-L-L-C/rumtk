@@ -5,7 +5,10 @@
   "copyright": "2026",
   "lang": "en",
   "theme": "",
-  "custom_css": false,
+  "flags": {
+    "custom_css": false,
+    "enable_icons": false
+  },
   "header_conf": {
     "logo_source": "https://www.medicalmasses.com/static/img/logo.webp",
     "logo_size": "small",
@@ -63,7 +66,8 @@
       }
     },
     "targets": {
-      "parser_release": "../target/release/rumtk-hl7-v2-parse"
+      "parser_release": "../target/release/rumtk-hl7-v2-parse",
+      "parser_debug": "../target/debug/rumtk-hl7-v2-parse"
     },
     "categories": {
       "perf": {

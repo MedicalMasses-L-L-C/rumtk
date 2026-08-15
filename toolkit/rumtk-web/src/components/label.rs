@@ -24,8 +24,8 @@ use crate::utils::defaults::{
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
-    rumtk_web_render_markdown, RUMWebTemplate,
+    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item,
+    rumtk_web_render_markdown, rumtk_web_render_template, RUMWebTemplate,
 };
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -50,7 +50,7 @@ pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppState
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TEXT);
     let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());

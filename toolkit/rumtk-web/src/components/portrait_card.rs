@@ -22,10 +22,9 @@ use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
     rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_template, RUMWebData, RUMWebTemplate,
+    rumtk_web_render_template, RUMWebTemplate,
 };
 use rumtk_core::base::RUMResult;
-use rumtk_core::strings::RUMStringConversions;
 
 type PortraitGrid = Vec<Vec<RUMString>>;
 
@@ -92,7 +91,7 @@ pub fn portrait_card(
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let icon_data = get_portrait_grid(section, typ, &state)?;
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     rumtk_web_render_template!(PortraitCard {
         icon_data,

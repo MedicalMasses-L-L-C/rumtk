@@ -32,27 +32,26 @@ pub mod app_shell;
 mod contact_button;
 mod contact_card;
 mod content_viewer;
-pub mod div;
-mod footer;
+mod app_footer;
 pub mod form;
-mod formatted_label;
-mod header;
-mod info_card;
-mod label;
-mod list;
-mod logo;
-mod main;
-mod navlink;
-mod portrait_card;
-mod script;
-mod socials;
-mod spacer;
-mod text_card;
-mod title;
-mod select;
-mod loader;
-mod job_loader;
-mod container;
+pub mod formatted_label;
+pub mod app_nav;
+pub mod info_card;
+pub mod label;
+pub mod list;
+pub mod logo;
+pub mod main;
+pub mod navlink;
+pub mod portrait_card;
+pub mod socials;
+pub mod spacer;
+pub mod text_card;
+pub mod title;
+pub mod select;
+pub mod loader;
+pub mod job_loader;
+pub mod container;
+pub mod html;
 
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentItem<'a> = (&'a str, ComponentFunction);
@@ -60,7 +59,7 @@ pub type UserComponents<'a> = Vec<UserComponentItem<'a>>;
 pub type UserComponentCacheItem = ComponentFunction;
 
 static mut COMPONENT_CACHE: ComponentCache = new_cache();
-static DEFAULT_COMPONENT: ComponentFunction = div::div;
+static DEFAULT_COMPONENT: ComponentFunction = html::div;
 
 pub fn register_component(name: &str, component_fxn: ComponentFunction) {
     let key = RUMString::from(name);
@@ -80,9 +79,9 @@ pub fn init_components(user_components: Option<UserComponents>) {
     register_component("info_card", info_card::info_card);
     register_component("portrait_card", portrait_card::portrait_card);
     register_component("title", title::title);
-    register_component("footer", footer::footer);
+    register_component("app_footer", app_footer::app_footer);
     register_component("main", main::main);
-    register_component("header", header::header);
+    register_component("app_nav", app_nav::app_nav);
     register_component("contact_card", contact_card::contact_card);
     register_component("contact_button", contact_button::contact_button);
     register_component("socials", socials::socials);
@@ -93,13 +92,15 @@ pub fn init_components(user_components: Option<UserComponents>) {
     register_component("text_card", text_card::text_card);
     register_component("form", form::form::form);
     register_component("spacer", spacer::spacer);
-    register_component("script", script::script);
+    register_component("script", html::script);
     register_component("loader", loader::loader);
     register_component("job_loader", job_loader::job_loader);
     register_component("content_viewer", content_viewer::content_viewer);
     register_component("container", container::container);
     register_component("select", select::select);
-    register_component("div", div::div);
+    register_component("a", html::a);
+    register_component("anchor", html::anchor);
+    register_component("div", html::div);
 
     /* Init any user prescribed components */
     for itm in user_components.unwrap_or_default() {

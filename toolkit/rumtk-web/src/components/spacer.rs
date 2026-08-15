@@ -44,7 +44,7 @@ pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppStat
         .parse::<usize>()
         .unwrap_or(0);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     rumtk_web_render_template!(Spacer {
         size,

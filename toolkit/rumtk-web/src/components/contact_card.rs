@@ -51,7 +51,7 @@ use crate::{
                         <a  class='f14 no-text-color' href='tel:{{ details_data }}'>{{ details_data }}</a>
                     </p>
                     {% else if details_typ == &\"portrait\" && !details_data.is_empty() %}
-                    <img src='{{ details_data }}' alt='{{ alt }}' class='contact-card-{{ css_class }}-portrait' fetchpriority='low' />
+                    <img src='{{ details_data }}' alt='{{ alt }}' class='contact-card-{{ css_class }}-portrait' fetchpriority='low' loading='lazy'/>
                     {% else if !details_data.is_empty() %}
                     <p class='f14' >
                         {{ details_data }}
@@ -78,7 +78,7 @@ pub fn contact_card(
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_conf = rumtk_web_get_config_string!(state, SECTION_CONTACT);
     let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());

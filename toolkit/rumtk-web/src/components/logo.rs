@@ -40,7 +40,7 @@ use crate::{
             <link href='/static/components/logo.css' rel='stylesheet'>
         {% endif %}
         <div class='centered logo'>
-        <img src='{{ source }}' alt='Logo' class='logo-{{ css_class }}' fetchpriority='high' />
+        <img src='{{ source }}' alt='Logo' class='logo-{{ css_class }}' fetchpriority='high' loading='lazy' />
         </div>
     ",
     ext = "html"
@@ -55,7 +55,7 @@ pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState)
     let source = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_LOGO_SOURCE);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
+    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     rumtk_web_render_template!(Logo {
         source,

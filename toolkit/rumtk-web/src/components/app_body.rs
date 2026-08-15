@@ -24,13 +24,12 @@ use crate::{
     rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
-use rumtk_core::rumtk_critical_section_read;
 
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
-        <body class='f12 theme-{{theme}}'>
-            <a href='#main-content header'>Skip to main content</a>
+        <body class='f12 fw100 theme-{{theme}}'>
+            <a href='#main-content header' hidden>Skip to main content</a>
             {{header|safe}}
             {{main|safe}}
             {{footer|safe}}
@@ -38,8 +37,8 @@ use rumtk_core::rumtk_critical_section_read;
     ",
     ext = "html"
 )]
-pub struct AppBody {
-    theme: RUMString,
+pub struct AppBody<'a> {
+    theme: &'a str,
     header: RUMString,
     main: RUMString,
     footer: RUMString,
@@ -50,11 +49,11 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = rumtk_web_render_component!("header", DEFAULT_EMPTY_PARAMS, state)?.to_string();
+    let header = rumtk_web_render_component!("app_nav", DEFAULT_EMPTY_PARAMS, state)?.to_string();
     let main = rumtk_web_render_component!("main", path_components, DEFAULT_EMPTY_PARAMS, state)?.to_string();
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
     let footer = rumtk_web_render_component!(
-        "footer",
+        "app_footer",
         [(
             "social_list",
             rumtk_web_get_config!(state).footer_conf.socials_list.as_str()
@@ -63,7 +62,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
     )?.to_string();
 
     rumtk_web_render_template!(AppBody {
-        theme: RUMString::from(theme),
+        theme,
         header,
         main,
         footer

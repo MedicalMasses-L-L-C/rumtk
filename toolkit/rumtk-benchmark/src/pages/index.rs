@@ -21,13 +21,13 @@ use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
 
 pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "intro")], app_state)?;
+    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "Intro")], app_state)?;
     let text_card_intro = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "instructions")], app_state)?;
     let basic_benchmark = rumtk_web_render_component!(
         "form",
         [
             (PARAMS_TYPE, "basic_benchmark"),
-            (PARAMS_TITLE, "basic benchmark"),
+            (PARAMS_TITLE, "Basic Benchmark"),
             (PARAMS_TARGET, "basic_benchmark"),
             (PARAMS_SWAP_MODE, "outerHTML"),
             (PARAMS_ENDPOINT, "/api/benchmarks/basic")

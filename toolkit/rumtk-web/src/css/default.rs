@@ -20,12 +20,12 @@
  */
 
 pub const DEFAULT_CSS: &str = r"
-
         html, body {
           height: 100%;
         }
 
         pre {
+            font-family: 'IBM Plex Sans', sans-serif;
             max-width: 100%;
             white-space: pre-wrap;
             overflow-wrap: normal;
@@ -53,6 +53,26 @@ pub const DEFAULT_CSS: &str = r"
 
         table td, table th {
             padding: 5px;
+        }
+
+        a {
+            color: var(--color-link);
+            font-weight: 900;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        code {
+            font-size: 100%;
+            font-style: italic;
+            font-weight: 500;
+            background-color: var(--color-text-code);
+
+            border-radius: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
     ";

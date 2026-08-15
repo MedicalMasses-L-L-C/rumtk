@@ -18,37 +18,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
+use crate::defaults::{
+    DEFAULT_NO_TEXT, DEFAULT_SCRIPT, DEFAULT_SCRIPT_MODULE, PARAMS_ID, PARAMS_TYPE,
 };
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS};
+use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        {% if custom_css_enabled %}
-            <link href='/static/components/div.css' rel='stylesheet'>
+        {% if typ.is_empty() || typ == DEFAULT_SCRIPT %}
+            <script id={{id}}>{{script|safe}}</script>
+        {% else if typ == DEFAULT_SCRIPT_MODULE %}
+            <script type='module' id={{id}}>{{script|safe}}</script>
+        {% else %}
+            <script type='module' src='{{script|safe}}' id={{id}} defer></script>
         {% endif %}
-        <div class='div-{{css_class}}'>{{contents|safe}}</div>
     ",
     ext = "html"
 )]
-pub struct Div<'a> {
-    contents: &'a str,
-    css_class: &'a str,
-    custom_css_enabled: bool,
+pub struct Script<'a> {
+    id: &'a str,
+    typ: &'a str,
+    script: RUMString,
 }
 
-pub fn div(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn script(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_SCRIPT);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
-    let custom_css_enabled = rumtk_web_get_config!(state).custom_css;
-
-    rumtk_web_render_template!(Div {
-        contents: contents,
-        css_class: css_class,
-        custom_css_enabled
+    rumtk_web_render_template!(Script {
+        id,
+        typ,
+        script: RUMString::from(contents),
     })
 }

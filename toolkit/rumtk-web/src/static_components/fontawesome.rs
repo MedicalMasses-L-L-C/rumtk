@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_template, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_render_template, RUMWebTemplate, SharedAppState};
 
 #[derive(Debug)]
 pub struct FontAwesomeCSSElement {
@@ -31,17 +31,21 @@ pub struct FontAwesomeCSSElement {
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        {% for e in elements %}
-            <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{{e.version}}/css/{{e.file}}' integrity='{{e.sha}}' crossorigin='anonymous' referrerpolicy='no-referrer' onerror='this.onerror=null;this.href=\'/static/fontawesome-free/css/{{e.file}}\';' />
-        {% endfor %}
+        {% if enable %}
+            {% for e in elements %}
+                <link rel='preload' as='style' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{{e.version}}/css/{{e.file}}' integrity='{{e.sha}}' crossorigin='anonymous' referrerpolicy='no-referrer'  onload='this.rel=\"stylesheet\"' onerror='this.onerror=null;this.href=\"/static/fontawesome-free/css/{{e.file}}\";' />
+                <noscript><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{{e.version}}/css/{{e.file}}'></noscript>
+            {% endfor %}
+        {% endif %}
     ",
     ext = "html"
 )]
 pub struct FontAwesome {
     elements: Vec<FontAwesomeCSSElement>,
+    enable: bool
 }
 
-pub fn fontawesome() -> HTMLResult {
+pub fn fontawesome(state: SharedAppState) -> HTMLResult {
     let elements = vec![
         FontAwesomeCSSElement {
             file: "fontawesome.min.css",
@@ -59,6 +63,7 @@ pub fn fontawesome() -> HTMLResult {
             sha: "sha512-WxpJXPm/Is1a/dzEdhdaoajpgizHQimaLGL/QqUIAjIihlQqlPQb1V9vkGs9+VzXD7rgI6O+UsSKl4u5K36Ydw==",
         },
     ];
+    let enable = rumtk_web_get_config!(state).flags.enable_icons;
 
-    rumtk_web_render_template!(FontAwesome { elements })
+    rumtk_web_render_template!(FontAwesome { elements, enable })
 }

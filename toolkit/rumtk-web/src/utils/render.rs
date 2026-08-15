@@ -19,12 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::types::HTMLResult;
-use crate::{RUMWebData, RUMWebRedirect, RUMWebTemplate};
-use pulldown_cmark::{Options, Parser};
+use crate::{RUMWebRedirect, RUMWebTemplate};
+use pulldown_cmark::Options;
 use rumtk_core::base::RUMResult;
-use rumtk_core::search::rumtk_search::{string_replace_all_matches, string_search_list};
+use rumtk_core::search::rumtk_search::string_replace_all_matches;
 use rumtk_core::strings::{
-    rumtk_format, AsStr, GraphemePattern, GraphemePatternPair, RUMString, RUMStringConversions,
+    rumtk_format, AsStr, GraphemePatternPair, RUMString,
 };
 use std::sync::OnceLock;
 
@@ -228,10 +228,10 @@ macro_rules! rumtk_web_render_component {
         rumtk_web_render_component!($component, &[""], $params, $app_state)
     }};
     ( $component:expr, $path:expr, $params:expr, $app_state:expr ) => {{
-        use $crate::components::div::div;
+        use $crate::components::html::div;
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
 
-        let params = rumtk_web_params_map!(&$params);
+        let params = rumtk_web_params_map!($params);
 
         match rumtk_web_get_component!($component) {
             Some(component) => component($path, params.get_inner(), $app_state.clone()),

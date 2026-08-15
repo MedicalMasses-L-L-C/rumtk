@@ -26,11 +26,11 @@ pub const FORM_CSS: &str = r"
                 --spanish-red: #E60026;
             }
 
-            .form-default-container {
+            .form-default-contents {
                 display: flex;
                 flex-direction: column;
 
-                background-color: var(--color-indigo);
+                background-color: var(--color-card-bg);
                 border-radius: 10px;
 
                 width: 70%;
@@ -45,49 +45,57 @@ pub const FORM_CSS: &str = r"
                 padding: 20px;
             }
 
-            .form-default-container > input{
+            .form-default-contents > input{
                 width: 80%;
             }
 
-            .form-default-container > input:invalid{
+            .form-default-contents > input:invalid{
                 background-color: var(--spanish-red);
                 color: var(--white);
             }
 
-            .form-default-container > input:invalid::placeholder{
+            .form-default-contents > input:invalid::placeholder{
                 color: var(--white);
             }
 
-            .form-default-container > input:valid{
-                background-color: var(--tropical-green);
+            .form-default-contents > input:valid{
+                background-color: var(--color-submit-bg);
                 color: var(--white);
             }
 
-            .form-default-container > input:valid::placeholder{
+            .form-default-contents > input:valid::placeholder{
                 color: var(--white);
             }
 
-            .form-default-container > textarea{
+            .form-default-contents > textarea{
                 min-width: 90%;
                 min-height: 300px;
                 object-fit: scale-down;
             }
 
-            .form-default-container > #submit {
-                width: 200px;
-                height: 100px;
+            .form-default-contents > input[type='submit'] {
+                min-width: 200px;
+                width: 50%;
+                max-width: 500px;
 
-                border-radius: 10px;
+                border-radius: 5px;
+
+                font-weight: bolder;
+
+                padding-left: 16px;
+                padding-right: 16px;
+                padding-top: 8px;
+                padding-bottom: 8px;
             }
 
-            form:valid > #submit {
+            form:valid > input[type='submit'] {
                 opacity: 1.0;
                 pointer-events: auto;
-                background-color: var(--tropical-green);
+                background-color: var(--color-submit-bg);
                 color: var(--white);
             }
 
-            form:invalid > #submit {
+            form:invalid > input[type='submit'] {
                 opacity: 0.5;
                 pointer-events: none;
                 background-color: var(--spanish-red);
