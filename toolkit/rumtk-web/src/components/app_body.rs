@@ -28,7 +28,7 @@ use crate::{
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
-        <body class='f12 fw100 theme-{{theme}}'>
+        <body class='f12 fw300 theme-{{theme}}'>
             <a href='#main-content header' hidden>Skip to main content</a>
             {{header|safe}}
             {{main|safe}}
