@@ -18,10 +18,6 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-///
-/// General media controlling CSS to ensure different media display our contents properly.
-///
-pub const MEDIA_CSS: &str = r"
     @media screen
     and (width > 700px) {
         .portrait-card-default-row {
@@ -51,4 +47,3 @@ pub const MEDIA_CSS: &str = r"
     @media print {
       .header { display: none; }
     }
-";

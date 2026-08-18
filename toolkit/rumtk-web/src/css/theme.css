@@ -19,18 +19,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const BODY: &str = r"
+    .theme-default {
+        --color-nav-bg: #8B63B6;
+        --color-nav-link: #8B63B6;
+        --color-nav-link-hover: #D6AFFF;
 
-    body {
-        display: flex;
-        flex-direction: column;
-        
-        background-image: radial-gradient(var(--color-body-bg), var(--color-body-bg-accent));
-        color: var(--color-text-default);
-    
-        margin: auto;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
+        --color-body-bg: #D8D8D8;
+        --color-body-bg-accent: #ECECEC;
+
+        --color-text-title: #FFFFFF;
+        --color-text-default: #333;
+        --color-text-code: #E2E2E2;
+
+        --color-card-bg: #FDFDFD;
+
+        --color-submit-bg: #8B63B6;
+        --color-link: #1A95AB;
     }
-";

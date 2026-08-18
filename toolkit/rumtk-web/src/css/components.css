@@ -18,8 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-pub const LIST_CSS: &str = r"
     .item-default-container {
         max-width: 1000px;
         margin-inline: auto;
@@ -256,4 +254,3 @@ pub const LIST_CSS: &str = r"
         height: 120px;
         animation: spin 2s linear infinite;
     }
-";

@@ -19,48 +19,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const BASIC_CSS: &str = r"
-
-        :root {
-            --lowest-layer: 0;
-            --mid-layer: 50;
-            --top-layer: 99;
-        }
-
-        .no-decoration, .undecorated {
-            text-decoration: none;
-        }
-
-        .no-select {
-            user-select: none;
-        }
-
-        .centered {
-            max-width: fit-content;
-            margin-inline: auto;
-        }
-
-        .twothird-width {
-            width: 66vw;
-        }
-
-        .threequarter-width {
-            width: 75vw;
-        }
-
-        .half-width {
-            width: 50vw;
-        }
-
-        .padded-1x {
-            padding: 1em;
-        }
-
-        .margin-1x {
-            margin: 1em;
-        }
-
-        .md a {
-        }
+    body {
+        display: flex;
+        flex-direction: column;
         
-    ";
+        background-image: radial-gradient(var(--color-body-bg), var(--color-body-bg-accent));
+        color: var(--color-text-default);
+    
+        margin: auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }

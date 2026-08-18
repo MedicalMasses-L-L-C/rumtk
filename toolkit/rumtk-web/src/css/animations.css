@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const ANIMATIONS_CSS: &str = r"
+
         @keyframes slide {
             from {
                 background-position-x: 0;
@@ -33,4 +33,3 @@ pub const ANIMATIONS_CSS: &str = r"
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    ";

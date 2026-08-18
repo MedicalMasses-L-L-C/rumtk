@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const FONTS_CSS: &str = r"
         /* Google fonts *//* cyrillic-ext */
         @font-face {
           font-family: 'IBM Plex Sans';
@@ -294,4 +293,3 @@ pub const FONTS_CSS: &str = r"
         .fw900 {
             font-weight: 900;
         }
-    ";

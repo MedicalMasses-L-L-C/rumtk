@@ -22,40 +22,15 @@ use crate::utils::packaging::{minify_asset, Asset};
 use rumtk_core::hash::has_same_hash;
 use rumtk_core::strings::{RUMString, RUMStringConversions};
 use std::{fs, path};
+mod defaults;
 
-mod animations;
-mod basic;
-mod components;
-mod default;
-mod fonts;
-mod forms;
-mod gap;
-mod imgs;
-mod index;
-mod layout;
-mod theme;
-mod media;
-
-pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
-pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
+pub use defaults::*;
 
 pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_default_css: bool) {
-    let mut css: RUMString = RUMString::default();
-
-    if !skip_default_css {
-        css += theme::THEME;
-        css += index::BODY;
-        css += basic::BASIC_CSS;
-        css += default::DEFAULT_CSS;
-        css += fonts::FONTS_CSS;
-        css += gap::GAP_CSS;
-        css += animations::ANIMATIONS_CSS;
-        css += forms::FORM_CSS;
-        css += components::LIST_CSS;
-        css += layout::LAYOUT_CSS;
-        css += imgs::IMGS;
-        css += media::MEDIA_CSS;
-    }
+    let mut css: RUMString = match skip_default_css {
+        true => RUMString::default(),
+        false => DEFAULT_CSS.to_string(),
+    };
 
     for source in sources {
         let css_data = fs::read_to_string(source).unwrap_or_default();

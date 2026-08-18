@@ -19,7 +19,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const FORM_CSS: &str = r"
             :root {
                 --white: #ffffff;
                 --tropical-green: #00755E;
@@ -101,4 +100,3 @@ pub const FORM_CSS: &str = r"
                 background-color: var(--spanish-red);
                 color: var(--white);
             }
-";

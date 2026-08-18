@@ -19,60 +19,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const DEFAULT_CSS: &str = r"
-        html, body {
-          height: 100%;
+
+        :root {
+            --lowest-layer: 0;
+            --mid-layer: 50;
+            --top-layer: 99;
         }
 
-        pre {
-            font-family: 'IBM Plex Sans', sans-serif;
-            max-width: 100%;
-            white-space: pre-wrap;
-            overflow-wrap: normal;
-            text-wrap: wrap;
-            word-wrap: break-word;
-        }
-        
-        textarea {
-            max-width: 100%;
-        }
-        
-        img {
-            max-width: 100%;
+        .no-decoration, .undecorated {
+            text-decoration: none;
         }
 
-        header {
+        .no-select {
+            user-select: none;
         }
 
-        main {
-            flex: 1;
+        .centered {
+            max-width: fit-content;
+            margin-inline: auto;
         }
 
-        footer {
+        .twothird-width {
+            width: 66vw;
         }
 
-        table td, table th {
-            padding: 5px;
+        .threequarter-width {
+            width: 75vw;
         }
 
-        a {
-            color: var(--color-link);
-            font-weight: 900;
+        .half-width {
+            width: 50vw;
         }
 
-        strong {
-            font-weight: bold;
+        .padded-1x {
+            padding: 1em;
         }
 
-        code {
-            font-size: 100%;
-            font-style: italic;
-            font-weight: 500;
-            background-color: var(--color-text-code);
-
-            border-radius: 8px;
-            padding-left: 8px;
-            padding-right: 8px;
+        .margin-1x {
+            margin: 1em;
         }
 
-    ";
+        .md a {
+        }
+
