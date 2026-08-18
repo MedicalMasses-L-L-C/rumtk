@@ -81,7 +81,7 @@ pub fn basic_benchmark(builder: FormElementBuilder, state: &SharedAppState) -> F
                 required: false,
                 multiple: false,
             },
-            "f18"
+            "f16"
         ),
         builder(
             "label",
@@ -139,7 +139,7 @@ pub fn basic_benchmark(builder: FormElementBuilder, state: &SharedAppState) -> F
                 required: false,
                 multiple: false,
             },
-            "f18"
+            "f16"
         ),
         builder(
             "input",
