@@ -43,3 +43,7 @@ In its initial stages, I will be pushing code directly to the main branch. Once 
 everyone including myself is required to open an issue for discussions, fork the project, and open a PR under your own
 feature or main branch. I kindly ask you include a battery of unit tests with your PR to help protect the project
 against regressions. Any contributions are very appreciated.
+
+# Attributions
+
+- "WCAG 2.1 Compliant Theme" by Nathan McComber is licensed under CC BY SA 4.0
