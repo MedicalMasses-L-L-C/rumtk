@@ -25,8 +25,9 @@ use std::{fs, path};
 mod defaults;
 
 pub use defaults::*;
+use rumtk_core::base::RUMResult;
 
-pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_default_css: bool) {
+pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_default_css: bool) -> RUMResult<()> {
     let mut css: RUMString = match skip_default_css {
         true => RUMString::default(),
         false => DEFAULT_CSS.to_string(),
@@ -39,16 +40,21 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_def
 
     fs::create_dir_all(out_dir).unwrap_or_default();
 
-    let out_path = path::Path::new(out_dir)
+    let path = path::Path::new(out_dir)
         .join(out_file)
-        .with_extension("css")
+        .with_extension("css");
+    let out_path = match path
         .to_str()
-        .expect("Could not create path to CSS file!")
-        .to_string();
+    {
+        Some(path) => path,
+        None => return Err("Could not create path to CSS file!".into()),
+    };
 
-    let minified = minify_asset(Asset::CSS(&css))
-        .expect("Failed to minify the CSS contents!")
-        .to_string();
+    let minified = match minify_asset(Asset::CSS(&css))
+    {
+        Ok(minified) => minified,
+        Err(err) => return Err(format!("Failed to minify the CSS contents! {}", err).into()),
+    };
 
     let file_exists = fs::exists(&out_path).unwrap_or_default();
     let skip_write_css = file_exists
@@ -61,8 +67,12 @@ pub fn bundle_css(sources: &Vec<String>, out_dir: &str, out_file: &str, skip_def
 
     if !skip_write_css {
         println!("Generated minified CSS file!");
-        fs::write(&out_path, minified).expect("Failed to write to CSS file!");
+        match fs::write(&out_path, minified){
+            Ok(_) => (),
+            Err(err) => return Err(format!("Failed to write to CSS file! {}", err).into()),
+        };
     }
+    Ok(())
 }
 
 pub fn collect_css_sources(root: &str, depth: u8) -> Vec<String> {
