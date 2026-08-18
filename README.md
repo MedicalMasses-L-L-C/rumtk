@@ -146,6 +146,10 @@ communication and automation in medicine.
 
 [![Best Open Source and Best Security](awards/siim-hackathon-2025-spotlight-award-winner222x222.png)](https://siim.org/award/hackathon-awards/)
 
+# Attributions
+
+- "WCAG 2.1 Compliant Theme" by Nathan McComber is licensed under CC BY SA 4.0
+
 # Contributing
 
 - [ ] Create an issue ticket if it has not been done.
