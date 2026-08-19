@@ -18,32 +18,35 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const JS_SCRIPT_NEW_FILE_CACHE: &str = r"
-    const fileCache = new Map();
-";
+const fileCache = init_file_cache();
 
-const JS_SCRIPT_CACHE_UPLOAD_FILE: &str = r"
-    document.getElementById('file').addEventListener('change', function(event) {
+function init_file_cache() {
+    if (!fileCache)
+        return new Map();
+    return fileCache;
+}
+
+export function register_element_file_handler(element_id) {
+    document.getElementById(element_id).addEventListener('change', function(event) {
             const selectedFile = event.target.files[0];
             const file = {
                 filename: '',
                 contents: ''
             };
             if (selectedFile) {
-              // You can use the FileReader API to read the contents if needed
-              const reader = new FileReader();
-              file.filename = selectedFile.name;
+                // You can use the FileReader API to read the contents if needed
+                const reader = new FileReader();
+                file.filename = selectedFile.name;
 
-              // Define what happens when the file is loaded
-              reader.onload = function(e) {
-                file.contents = e.target.result;
-                fileCache.set(file.filename, file);
-              };
+                // Define what happens when the file is loaded
+                reader.onload = function(e) {
+                    file.contents = e.target.result;
+                    fileCache.set(file.filename, file);
+                };
 
-              // Read the file as text (or use readAsDataURL for images)
-              reader.readAsDataURL(selectedFile);
+                // Read the file as text (or use readAsDataURL for images)
+                reader.readAsDataURL(selectedFile);
             }
         }
     );
-";
-
+}

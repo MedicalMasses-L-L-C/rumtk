@@ -17,4 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub mod cache_file;
+use rumtk_core::base::RUMResult;
+use rumtk_core::strings::{rumtk_format, RUMString};
+use std::{fs, path};
+
+mod default_library;
+
+pub const DEFAULT_OUT_JS_DIR: &str = "./static/js";
+
+fn select_from_library(item_name: &str) -> &'static str {
+    match item_name {
+        "file_cache" => default_library::JS_FILE_CACHE,
+        _ => "",
+    }
+}
+
+pub fn rumtk_web_js_get_item(item_name: &str) -> RUMResult<RUMString> {
+    let path = path::Path::new(DEFAULT_OUT_JS_DIR)
+        .join(item_name)
+        .with_extension("js");
+    let out_path = match path
+        .to_str()
+    {
+        Some(path) => path.to_string(),
+        None => return Err(rumtk_format!("Could not create path to JS file {}!", item_name)),
+    };
+    match fs::exists(&out_path) {
+        Ok(result) => match result {
+            true => Ok(out_path),
+            false => match fs::write(&out_path, select_from_library(item_name)) {
+                Ok(_) => Ok(out_path),
+                Err(e) => Err(rumtk_format!("Failed to write JS file: {} => because {}", out_path, e)),
+            },
+        },
+        Err(e) => Err(rumtk_format!("Failed to generate JS file: {} => because {}", out_path, e)),
+    }
+}
