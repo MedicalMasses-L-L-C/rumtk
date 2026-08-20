@@ -18,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{DEFAULT_EMPTY_PARAMS, DEFAULT_TEXT_ITEM};
+use crate::utils::defaults::DEFAULT_EMPTY_PARAMS;
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
+    rumtk_web_get_config, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -45,7 +45,7 @@ pub struct AppBody<'a> {
 }
 
 pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
-    let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
+    let theme = rumtk_web_get_config!(state).theme.as_str();
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
