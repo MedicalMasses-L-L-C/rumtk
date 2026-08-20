@@ -24,6 +24,7 @@ use crate::{
     rumtk_web_get_config, rumtk_web_render_component, rumtk_web_render_template,
     RUMWebTemplate,
 };
+use rumtk_core::strings::AsStr;
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -45,7 +46,7 @@ pub struct AppBody<'a> {
 }
 
 pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
-    let theme = rumtk_web_get_config!(state).theme.as_str();
+    let theme = rumtk_web_get_config!(state).theme.clone();
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
@@ -62,7 +63,7 @@ pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppSta
     )?.to_string();
 
     rumtk_web_render_template!(AppBody {
-        theme,
+        theme: theme.as_str(),
         header,
         main,
         footer

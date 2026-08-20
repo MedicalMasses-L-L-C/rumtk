@@ -144,7 +144,7 @@ impl PipelineConf {
 /// at runtime. The settings will dictate a few key project behaviors such as properly labeling
 /// some components with the company name or use the correct language text.
 ///
-#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone)]
 pub struct AppConf {
     pub title: RUMString,
     pub description: RUMString,
