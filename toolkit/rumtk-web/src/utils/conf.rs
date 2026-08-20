@@ -25,6 +25,7 @@ use askama::PrimitiveType;
 use axum::extract::State;
 use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
+use crate::defaults::{DEFAULT_LANG_ITEM, DEFAULT_THEME_ITEM};
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
@@ -214,6 +215,25 @@ impl AppConf {
                 None => TextMap::default(),
             },
             None => TextMap::default(),
+        }
+    }
+}
+
+impl Default for AppConf {
+    fn default() -> Self {
+        AppConf {
+            title: "".to_string(),
+            description: "".to_string(),
+            company: "".to_string(),
+            copyright: "".to_string(),
+            lang: DEFAULT_LANG_ITEM.to_string(),
+            theme: DEFAULT_THEME_ITEM.to_string(),
+            flags: FlagsConf::default(),
+            header_conf: HeaderConf::default(),
+            footer_conf: FooterConf::default(),
+            strings: RootNestedNestedTextMap::default(),
+            config: NestedNestedTextMap::default(),
+            pipelines: PipelineConf::default(),
         }
     }
 }
