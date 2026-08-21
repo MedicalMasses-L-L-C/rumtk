@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState};
-use crate::{rumtk_web_get_config, rumtk_web_render_template, RUMWebTemplate};
+use crate::utils::types::SharedAppState;
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -34,14 +35,14 @@ use crate::{rumtk_web_get_config, rumtk_web_render_template, RUMWebTemplate};
     ",
     ext = "html"
 )]
-pub struct Meta<'a> {
-    title: &'a str,
-    description: &'a str,
+pub struct Meta {
+    title: RUMString,
+    description: RUMString,
 }
 
-pub fn meta(state: SharedAppState) -> ComponentResult<T> {
+pub fn meta(state: SharedAppState) -> ComponentResult<Meta> {
     Ok(Meta {
-        title: rumtk_web_get_config!(state).title.as_str(),
-        description: rumtk_web_get_config!(state).description.as_str()
+        title: rumtk_web_get_config!(state).title.to_string(),
+        description: rumtk_web_get_config!(state).description.to_string()
     })
 }

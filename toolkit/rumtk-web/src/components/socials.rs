@@ -18,14 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOCIAL_LIST, SECTION_SOCIALS,
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_SOCIALS,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 use rumtk_core::strings::rumtk_format;
 
 #[derive(Debug, Clone)]
@@ -79,9 +75,9 @@ fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
     sl
 }
 
-pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn socials<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Socials> {
+    let social_list = rumtk_web_get_config!(state).footer_conf.socials_list.to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
@@ -89,7 +85,7 @@ pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppSta
 
     Ok(Socials {
         icons,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

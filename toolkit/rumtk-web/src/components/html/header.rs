@@ -18,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::PARAMS_CONTENTS;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, URLParams};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -30,20 +30,19 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMW
             <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}
         <header class='header-{{ css_class }}-container header'>
-            {{contents|safe}}
+            {{contents}}
         </header>
     ",
     ext = "html"
 )]
-pub struct Header<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Header<T: RUMWebTemplate> {
+    contents: T,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn header<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Header<'a>> {
-    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn header<'a, T: RUMWebTemplate>(contents: T, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Header<T>> {
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

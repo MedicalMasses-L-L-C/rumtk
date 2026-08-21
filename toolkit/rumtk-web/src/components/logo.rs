@@ -26,11 +26,9 @@
 /// * [PARAMS_CSS_CLASS] => Which variant of CSS styling to use. Defaults to `default` => `logo-default`.
 ///
 use crate::utils::defaults::{DEFAULT_LOGO_SOURCE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -45,15 +43,15 @@ use crate::{
     ",
     ext = "html"
 )]
-pub struct Logo<'a> {
-    source: &'a str,
-    css_class: &'a str,
+pub struct Logo {
+    source: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let source = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_LOGO_SOURCE);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn logo<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Logo> {
+    let source = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_LOGO_SOURCE).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

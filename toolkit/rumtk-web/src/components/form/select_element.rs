@@ -17,9 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::form::form_node::{FormNode, ToFormNode};
 use crate::components::form::props::InputProps;
-use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_template, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate};
 
 type SelectOptions<'a> = Vec<(&'a str, &'a str)>;
 
@@ -70,7 +70,9 @@ fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
     result
 }
 
-pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<T> {
+impl ToFormNode<SelectElement<'_>> for SelectElement<'_> {}
+
+pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<FormNode> {
     let items = parse_select_data(data);
     let count = match props.multiple {
         true => items.len(),
@@ -82,5 +84,5 @@ pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: 
         props: &props.to_string().replace("\\\\", "\\"),
         count,
         css_class,
-    })
+    }.to_form_node())
 }

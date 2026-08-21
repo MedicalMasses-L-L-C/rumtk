@@ -18,9 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::html::{div, Div};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -28,26 +30,27 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_comp
         {% if custom_css_enabled %}
             <link href='/static/components/container.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered container-default container-{{css_class}}'>{{contents|safe}}</div>
+        <div class='centered container-default container-{{css_class}}'>{{contents}}</div>
     ",
     ext = "html"
 )]
-pub struct Container<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Container {
+    contents: Div,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn container<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Container> {
+    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let inner = rumtk_web_render_component!("div", [(PARAMS_CSS_CLASS, css_class), (PARAMS_CONTENTS, contents)], state)?.to_string();
+    let inner_params = rumtk_web_params_map!([(PARAMS_CSS_CLASS, &css_class), (PARAMS_CONTENTS, &contents)]);
+    let inner = div(_path_components, inner_params.get_inner(), state)?;
 
     Ok(Container {
-        contents: inner.as_str(),
+        contents: inner,
         css_class,
         custom_css_enabled
     })

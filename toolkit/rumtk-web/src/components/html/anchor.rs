@@ -21,6 +21,7 @@ use crate::defaults::PARAMS_ID;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -33,15 +34,15 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMW
     ",
     ext = "html"
 )]
-pub struct Anchor<'a> {
-    id: &'a str,
-    css_class: &'a str,
+pub struct Anchor {
+    id: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn anchor(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Anchor> {
-    let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn anchor<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Anchor> {
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_TEXT_ITEM).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
@@ -52,6 +53,6 @@ pub fn anchor(_path_components: URLPath, params: URLParams, state: SharedAppStat
     })
 }
 
-pub fn a(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Anchor> {
+pub fn a<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Anchor> {
     anchor(_path_components, params, state)
 }

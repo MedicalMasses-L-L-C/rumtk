@@ -21,12 +21,10 @@
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_TEXT,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item,
-    rumtk_web_render_markdown, rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -34,9 +32,9 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/label.css' rel='stylesheet'>
         {% endif %}
-        <pre class='label-{{css_class}}'>
-            {{text|safe}}
-        </pre>
+        <span class='label-{{css_class}}'>
+            {{text}}
+        </span>
     ",
     ext = "html"
 )]
@@ -46,20 +44,19 @@ pub struct Label {
     custom_css_enabled: bool,
 }
 
-pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+pub fn label<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Label> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TEXT);
-    let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());
-    let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
-    let html = rumtk_web_render_markdown!(desc);
+    let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP);
+    let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT).to_string();
 
     Ok(Label {
-        text: html,
-        css_class: RUMString::from(css_class),
+        text: desc,
+        css_class,
         custom_css_enabled
     })
 }

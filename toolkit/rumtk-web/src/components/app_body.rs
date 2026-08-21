@@ -18,51 +18,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::html::{footer, header, Footer, Header};
+use crate::components::app_footer::{app_footer, AppFooter};
+use crate::components::app_nav::{app_nav, AppNav};
 use crate::components::main::{main, Main};
 use crate::utils::defaults::DEFAULT_EMPTY_PARAMS;
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
-use rumtk_core::strings::AsStr;
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
         <body class='f12 fw300 theme-{{theme}}'>
             <a href='#main-content header' hidden>Skip to main content</a>
-            {{header|safe}}
-            {{main|safe}}
-            {{footer|safe}}
+            {{header}}
+            {{main}}
+            {{footer}}
         </body>
     ",
     ext = "html"
 )]
-pub struct AppBody<'a> {
-    theme: &'a str,
-    header: Header<'a>,
+pub struct AppBody {
+    theme: RUMString,
+    header: AppNav,
     main: Main,
-    footer: Footer<'a>,
+    footer: AppFooter,
 }
 
-pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<AppBody> {
+pub fn app_body<'a>(path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppBody> {
     let theme = rumtk_web_get_config!(state).theme.clone();
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = header(path_components, DEFAULT_EMPTY_PARAMS, state)?;
-    let main = main(path_components, DEFAULT_EMPTY_PARAMS, state)?;
+    let header = app_nav(path_components, DEFAULT_EMPTY_PARAMS.get_inner(), state.clone())?;
+    let main = main(path_components, DEFAULT_EMPTY_PARAMS.get_inner(), state.clone())?;
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
-    let footer = footer(
+    let footer = app_footer(
         path_components,
-        rumtk[(
-            "social_list",
-            rumtk_web_get_config!(state).footer_conf.socials_list.as_str()
-        )],
+        params,
         state
-    )?.to_string();
+    )?;
 
     Ok(AppBody {
-        theme: theme.as_str(),
+        theme,
         header,
         main,
         footer

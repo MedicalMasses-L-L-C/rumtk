@@ -18,15 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::html::{markdown, Markdown};
+use crate::defaults::PARAMS_CONTENTS;
 use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_TEXT,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_markdown,
-    rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -34,36 +34,42 @@ use crate::{
         {% if custom_css_enabled %}
             <link href='/static/components/formatted_label.css' rel='stylesheet'>
         {% endif %}
-        <pre class='formatted-label-{{css_class}} md'>
-            {{text|safe}}
-        </pre>
+        <div class='formatted-label-{{css_class}}'>
+            {{md}}
+        </div>
     ",
     ext = "html"
 )]
 pub struct FormattedLabel {
-    text: RUMString,
+    md: Markdown,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn formatted_label(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn formatted_label<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> ComponentResult<FormattedLabel> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TEXT);
-    let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP());
+    let itm = rumtk_web_get_text_item!(&text_store, typ, &DEFAULT_TEXTMAP);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
-    let html = rumtk_web_render_markdown!(desc);
+
+    let md_params = rumtk_web_params_map!([(PARAMS_CONTENTS, desc)]);
+    let html = markdown(
+        _path_components,
+        md_params.get_inner(),
+        state.clone()
+    )?;
 
     Ok(FormattedLabel {
-        text: html,
-        css_class: RUMString::from(css_class),
+        md: html,
+        css_class,
         custom_css_enabled
     })
 }

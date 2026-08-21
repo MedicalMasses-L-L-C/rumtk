@@ -17,14 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+use crate::components::form::form_node::FormNode;
 use crate::components::form::props::InputProps;
 use crate::components::form::select_element::select_element;
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, ELEMENT_SELECT, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -33,25 +32,25 @@ use crate::{
             <link href='/static/components/div.css' rel='stylesheet'>
         {% endif %}
         <div class='div-{{css_class}}'>
-        {{contents|safe}}
+        {{contents}}
         </div>
     ",
     ext = "html"
 )]
-pub struct Select<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Select {
+    contents: FormNode,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+pub fn select<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Select> {
     let items = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let props = InputProps::default();
-    let contents = &select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?.to_string();
+    let contents = select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?;
 
     Ok(Select {
         contents,

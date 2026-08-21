@@ -36,7 +36,7 @@ pub struct Link<'a> {
     file: &'a str
 }
 
-pub fn style<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Link<'a>> {
+pub fn link<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Link<'a>> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_NO_TEXT);
     let url = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_NO_TEXT);
 

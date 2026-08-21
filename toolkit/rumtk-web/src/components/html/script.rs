@@ -44,7 +44,7 @@ pub struct Script<'a> {
     script: RUMString,
 }
 
-pub fn script(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Script> {
+pub fn script<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Script<'a>> {
     let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_SCRIPT);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);

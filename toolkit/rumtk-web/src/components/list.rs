@@ -20,11 +20,9 @@
  */
 use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_ID};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_SERVICES};
-use crate::utils::types::{HTMLResult, SharedAppState, TextMap, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_modify_state,
-    rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, TextMap, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, rumtk_web_modify_state, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -49,16 +47,16 @@ use crate::{
     ",
     ext = "html"
 )]
-pub struct List<'a> {
+pub struct List {
     items: TextMap,
-    css_class: &'a str,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn list(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+pub fn list<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<List> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, SECTION_SERVICES);
     let clipboard_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let item_list = rumtk_web_modify_state!(state).pop_clipboard(&clipboard_id.to_string());
     let items = match item_list {

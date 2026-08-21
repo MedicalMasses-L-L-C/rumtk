@@ -17,10 +17,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
-use crate::{rumtk_web_get_text_item, rumtk_web_render_template};
-use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
+use crate::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use crate::{rumtk_web_get_text_item, ComponentResult};
+use crate::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -29,12 +29,12 @@ use crate::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
     ",
     ext = "html"
 )]
-pub struct Loader<'a> {
-    css_class: &'a str,
+pub struct Loader {
+    css_class: RUMString,
 }
 
-pub fn loader(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn loader<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Loader> {
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
 
     Ok(Loader {

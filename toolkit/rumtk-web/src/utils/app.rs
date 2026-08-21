@@ -18,12 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::{form::Forms, UserComponents};
+use crate::components::form::Forms;
 use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_components, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
+use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 
 use rumtk_core::base::RUMResult;
@@ -120,11 +120,6 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
     let app = Router::new()
         /* Robots.txt */
         .route("/robots.txt", get(rumtk_web_fetch!(default_robots_matcher)))
-        /* Components */
-        .route(
-            "/component/{*name}",
-            get(rumtk_web_fetch!(default_component_matcher)),
-        )
         /* Pages */
         .route("/", get(rumtk_web_fetch!(default_page_matcher)))
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
@@ -223,7 +218,6 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
 #[derive(Default, Debug, PartialEq)]
 pub struct AppComponents<'a> {
     pub pages: Option<UserPages<'a>>,
-    pub components: Option<UserComponents<'a>>,
     pub forms: Option<Forms<'a>>,
     pub apis: Option<UserAPIEndpoints<'a>>,
 }
@@ -263,7 +257,6 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
     let args = Args::parse();
     let state = rumtk_web_load_conf!(&args);
 
-    rumtk_web_init_components!(app_components.components);
     rumtk_web_init_pages!(app_components.pages);
     rumtk_web_init_forms!(app_components.forms, state);
     rumtk_web_init_api_endpoints!(app_components.apis);

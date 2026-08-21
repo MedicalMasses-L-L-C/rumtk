@@ -20,16 +20,13 @@
  */
 use crate::defaults::{DEFAULT_HOME_PAGE, DEFAULT_HOME_PAGE_URL, PARAMS_TITLE};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 
 #[derive(Debug, Clone)]
-struct NavItem<'a> {
-    title: &'a str,
-    url: &'a str,
+struct NavItem {
+    title: RUMString,
+    url: RUMString,
 }
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -42,16 +39,16 @@ struct NavItem<'a> {
     ",
     ext = "html"
 )]
-pub struct NavLink<'a> {
-    target: NavItem<'a>,
+pub struct NavLink {
+    target: NavItem,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_HOME_PAGE);
-    let url = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_HOME_PAGE_URL);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn navlink<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<NavLink> {
+    let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_HOME_PAGE).to_string();
+    let url = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_HOME_PAGE_URL).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

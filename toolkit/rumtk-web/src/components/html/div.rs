@@ -20,7 +20,8 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, sanitize_html, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -28,25 +29,27 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMW
         {% if custom_css_enabled %}
             <link href='/static/components/div.css' rel='stylesheet'>
         {% endif %}
-        <div class='div-{{css_class}}'>{{contents|safe}}</div>
+        <div class='div-{{css_class}}'>{{sanitized_contents|safe}}</div>
     ",
     ext = "html"
 )]
-pub struct Div<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Div {
+    sanitized_contents: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn div(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Div> {
+pub fn div<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Div> {
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
+    let sanitized_contents = sanitize_html(contents);
+
     Ok(Div {
-        contents: contents,
-        css_class: css_class,
+        sanitized_contents,
+        css_class,
         custom_css_enabled
     })
 }

@@ -18,8 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_template, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate};
 
 #[derive(Debug)]
 pub struct HTMXElement {
@@ -38,7 +37,7 @@ pub struct HTMX {
     lib: HTMXElement,
 }
 
-pub fn htmx() -> ComponentResult<T> {
+pub fn htmx() -> ComponentResult<HTMX> {
     Ok(HTMX {
         lib: HTMXElement {
             version: "2.0.8",

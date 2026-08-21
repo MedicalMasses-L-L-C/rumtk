@@ -19,11 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::defaults::DEFAULT_NO_TEXT;
-use crate::{
-    rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_component,
-    rumtk_web_render_contents, rumtk_web_render_template, HTMLResult, RUMWebTemplate, SharedAppState,
-    URLParams, URLPath,
-};
+use crate::{rumtk_web_collect_page, rumtk_web_get_param, rumtk_web_render_contents, ComponentResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]
@@ -45,15 +41,13 @@ pub struct Main {
     contents: RUMString,
 }
 
-pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+pub fn main(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Main> {
     let page: RUMString =
         rumtk_web_get_param!(path_components, 0, RUMString::from(DEFAULT_NO_TEXT));
 
     //Let's render the main tag contents
     let body_components = rumtk_web_collect_page!(page, state)?;
-    let contents = rumtk_web_render_component!(|| -> ComponentResult<T> {
-        rumtk_web_render_contents(&body_components)
-    });
+    let contents = rumtk_web_render_contents(&body_components)?;
 
-    Ok(Main { contents })
+    Ok(Main { contents: contents.to_string() })
 }

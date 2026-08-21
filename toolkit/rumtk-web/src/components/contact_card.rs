@@ -22,12 +22,10 @@ use crate::defaults::SECTION_ALT;
 use crate::utils::defaults::{
     DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_CONTACT,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, TextMap, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, TextMap, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
-    RUMWebTemplate, DEFAULT_TEXT,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_TEXT};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -63,31 +61,31 @@ use crate::{
     ",
     ext = "html"
 )]
-pub struct ContactCard<'a> {
-    alt: &'a str,
-    contact_lines: &'a TextMap,
+pub struct ContactCard {
+    alt: RUMString,
+    contact_lines: TextMap,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn contact_card(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn contact_card<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> ComponentResult<ContactCard> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_conf = rumtk_web_get_config_string!(state, SECTION_CONTACT);
-    let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());
-    let alt_text = rumtk_web_get_text_item!(&contact_lines, SECTION_ALT, &DEFAULT_TEXT());
+    let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP).clone();
+    let alt_text = rumtk_web_get_text_item!(&contact_lines, SECTION_ALT, &*DEFAULT_TEXT).to_string();
 
     Ok(ContactCard {
-        alt: &alt_text,
+        alt: alt_text,
         contact_lines,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

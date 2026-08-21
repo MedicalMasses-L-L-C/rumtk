@@ -19,11 +19,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::html::{header, Header};
-use crate::components::navlink::navlink;
-use crate::defaults::{PARAMS_CONTENTS, PARAMS_TARGET, PARAMS_TITLE};
+use crate::components::logo::{logo, Logo};
+use crate::components::navlink::{navlink, NavLink};
+use crate::components::title::{title, Title};
+use crate::defaults::{PARAMS_TARGET, PARAMS_TITLE};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_template, PageConf, RUMWebData, RUMWebTemplate};
+use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, PageConf, RUMWebData, RUMWebTemplate};
+use rumtk_core::base::RUMResult;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -31,31 +34,37 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map,
         {% if !disable_logo %}
         <div class='header-{{ css_class }}-navlogo'>
             <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
-                {{logo|safe}}
+                {{logo}}
                 <h3 class='brand-name'> {{company}}</h3>
             </a>
         </div>
         {% endif %}
+        {% if !disable_links %}
         <div class='header-{{ css_class }}-navactions gap-10'>
             {% for item in nav_links %}
-                {{item|safe}}
+                {{item}}
             {% endfor %}
         </div>
+        {% else %}
+        {{title}}
+        {% endif %}
         <div class='header-{{ css_class }}-misc gap-10'>
         </div>
     ",
     ext = "html"
 )]
-pub struct Nav<'a> {
+pub struct Nav {
     company: RUMString,
-    logo: RUMString,
-    nav_links: Vec<RUMString>,
+    logo: Logo,
+    title: Title,
+    nav_links: Vec<NavLink>,
+    disable_links: bool,
     disable_logo: bool,
-    css_class: &'a str,
+    css_class: RUMString,
 }
 
-fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -> Vec<RUMString> {
-    let mut nav_links = Vec::<RUMString>::with_capacity(itms.len());
+fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -> RUMResult<Vec<NavLink>> {
+    let mut nav_links = Vec::<NavLink>::with_capacity(itms.len());
     for (k, itm) in itms {
         nav_links.push(
             navlink(
@@ -65,30 +74,38 @@ fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -
                     (PARAMS_TARGET.to_string(), itm.url.to_string()),
                 ]),
                 app_state.clone(),
-            )
-            .unwrap_or_default()
-            .to_string(),
+            )?,
         );
     }
 
-    nav_links
+    Ok(nav_links)
 }
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {{app_nav|safe}}
+        {{app_nav}}
     ",
     ext = "html"
 )]
-pub struct AppNav<'a> {
-    app_nav: Header<'a>,
+pub struct AppNav {
+    app_nav: Header<Nav>,
 }
 
-pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn app_nav<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppNav> {
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let company = rumtk_web_get_config!(state).company.clone();
+
+    let title_params = rumtk_web_params_map!([(
+                PARAMS_TYPE,
+                rumtk_web_get_config!(state).title.as_str()
+            )]);
+    let title = title(
+            _path_components,
+            title_params.get_inner(),
+            state.clone()
+        )?;
 
     let links = match &rumtk_web_get_config!(state).router.pages {
         Some(pages) => {
@@ -100,55 +117,37 @@ pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppSta
         },
         None => vec![],
     };
-    let nav_links = match rumtk_web_get_config!(state).header_conf.disable_navlinks {
-        true => vec![rumtk_web_render_component!(
-            "title",
-            [(
-                PARAMS_TYPE,
-                rumtk_web_get_config!(state).title.as_str()
-            )],
-            state
-        )?.to_string()],
-        false => get_nav_links(&links, state.clone()),
-    };
+    let disable_links = rumtk_web_get_config!(state).header_conf.disable_navlinks;
+    let nav_links = get_nav_links(&links, state.clone())?;
 
     let disable_logo =
         rumtk_web_get_config!(state).header_conf.disable_logo;
-    let logo = match disable_logo {
-        true => RUMString::default(),
-        false => rumtk_web_render_component!(
-            "logo",
-            [
-                (
-                    PARAMS_SOURCE_URL,
-                    rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or_default().as_str()
-                ),
-                (
-                    PARAMS_CSS_CLASS,
-                    rumtk_web_get_config!(state).header_conf.logo_size.as_str()
-                ),
-            ],
-            state
-        )?.to_string(),
-    };
+    let logo_params = rumtk_web_params_map!([
+                    (
+                        PARAMS_SOURCE_URL,
+                        rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or_default().as_str()
+                    ),
+                    (
+                        PARAMS_CSS_CLASS,
+                        rumtk_web_get_config!(state).header_conf.logo_size.as_str()
+                    ),
+                ]
+    );
+    let logo = logo(_path_components, logo_params.get_inner(), state.clone())?;
 
-    let contents = Ok(Nav {
+    let contents = Nav {
         company,
         logo,
+        title,
         nav_links,
         disable_logo,
+        disable_links,
         css_class
-    })?.to_string();
+    };
 
-    let app_params = rumtk_web_params_map!(
-        [
-            (PARAMS_CONTENTS, contents),
-            (PARAMS_CSS_CLASS, css_class.to_string())
-        ]
-    );
     let app_nav = header(
-        _path_components,
-        app_params.get_inner(),
+        contents,
+        params,
         state
     )?;
 

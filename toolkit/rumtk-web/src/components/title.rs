@@ -19,41 +19,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE, SECTION_TITLES};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::utils::TextMap;
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
-#[derive(RUMWebTemplate, Debug)]
+#[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {% if custom_css_enabled %}
-            <link href='/static/components/title.css' rel='stylesheet'>
+        {% if !text.is_empty() %}
+            {% if custom_css_enabled %}
+                <link href='/static/components/title.css' rel='stylesheet'>
+            {% endif %}
+            <div class='centered title-{{ css_class }}-container'>
+                <h1 id='{{typ}}' class='title-{{ css_class }}'>{{ text }}</h1>
+            </div>
         {% endif %}
-        <div class='centered title-{{ css_class }}-container'>
-            <h1 id='{{typ}}' class='title-{{ css_class }}'>{{ text }}</h1>
-        </div>
     ",
     ext = "html"
 )]
-pub struct Title<'a> {
-    typ: &'a str,
-    text: &'a str,
-    css_class: &'a str,
+pub struct Title {
+    typ: RUMString,
+    text: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn title<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Title> {
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TITLES);
-    let itm = rumtk_web_get_text_item!(&text_store, typ, &TextMap::default());
-    let text = rumtk_web_get_text_item!(&itm, "title", typ);
+    let itm = rumtk_web_get_text_item!(&text_store, &typ, &TextMap::default());
+    let text = rumtk_web_get_text_item!(&itm, "title", &typ).to_string();
 
     Ok(Title {
         typ,

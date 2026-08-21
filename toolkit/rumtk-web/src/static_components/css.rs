@@ -18,8 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_template, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -31,6 +30,6 @@ use crate::{rumtk_web_render_template, RUMWebTemplate};
 )]
 pub struct CSS {}
 
-pub fn css() -> ComponentResult<T> {
+pub fn css() -> ComponentResult<CSS> {
     Ok(CSS {})
 }

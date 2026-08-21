@@ -18,15 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::contact_card::{contact_card, ContactCard};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_component,
-    rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
 use rumtk_core::base::RUMResult;
+use rumtk_core::strings::RUMString;
 
-type PortraitGrid = Vec<Vec<RUMString>>;
+type PortraitGrid = Vec<Vec<ContactCard>>;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -42,7 +41,7 @@ type PortraitGrid = Vec<Vec<RUMString>>;
                     <tr class='portrait-card-{{ css_class }}-row'>
                         {% for item in row %}
                         <td class='portrait-card-{{ css_class }}-item'>
-                            {{item|safe}}
+                            {{item}}
                         </td>
                         {% endfor %}
                     </tr>
@@ -59,21 +58,22 @@ pub struct PortraitCard {
     custom_css_enabled: bool,
 }
 
-fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> RUMResult<PortraitGrid> {
+fn get_portrait_grid<'a>(section: &'a str, typ: &'a str, app_state: &'a SharedAppState) -> RUMResult<PortraitGrid> {
     let text_conf = rumtk_web_get_config_string!(app_state, typ);
 
     let mut grid = Vec::with_capacity(text_conf.len());
     for (_r_name, r_list) in text_conf {
         let mut grid_row = Vec::with_capacity(r_list.len());
         for (i_name, _i_item) in r_list {
-            let item = rumtk_web_render_component!(
-                "contact_card",
-                [
-                    ("section", section),
+            let item_params = rumtk_web_params_map!([
+                    (PARAMS_SECTION, section),
                     (PARAMS_TYPE, i_name.as_str()),
-                ],
-                app_state
-            )?.to_string();
+            ]);
+            let item = contact_card(
+                &[],
+                item_params.get_inner(),
+                app_state.clone()
+            )?;
             grid_row.push(item);
         }
         grid.push(grid_row);
@@ -81,21 +81,21 @@ fn get_portrait_grid(section: &str, typ: &str, app_state: &SharedAppState) -> RU
     Ok(grid)
 }
 
-pub fn portrait_card(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn portrait_card<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> ComponentResult<PortraitCard> {
     let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
     let icon_data = get_portrait_grid(section, typ, &state)?;
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     Ok(PortraitCard {
         icon_data,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

@@ -18,55 +18,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::app_body::AppBody;
+use crate::components::app_head::AppShellHead;
 use crate::components::{app_body::app_body, app_head::app_head};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, LANG_EN};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template, rumtk_web_set_config,
-    RUMWebTemplate,
-};
-use rumtk_core::{rumtk_critical_section_read, rumtk_critical_section_write};
+use crate::defaults::DEFAULT_THEME_ITEM;
+use crate::utils::defaults::LANG_EN;
+use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_text_item, rumtk_web_set_config, ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
         <!DOCTYPE html>
         <html lang='{{lang}}'>
-            {{head|safe}}
-            {{body|safe}}
+            {{head}}
+            {{body}}
         </html>
     ",
     ext = "html"
 )]
 pub struct AppShell {
-    head: RUMString,
+    head: AppShellHead,
     lang: RUMString,
-    body: RUMString,
+    body: AppBody,
 }
 
-pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let lang = rumtk_web_get_text_item!(params, "lang", LANG_EN);
-    let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
+pub fn app_shell<'a>(path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppShell> {
+    let lang = rumtk_web_get_text_item!(params, "lang", LANG_EN).to_string();
+    let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_THEME_ITEM).to_string();
     // TODO: We need to reevaluate how to validate the options that should be standardized to avoid parameter injection as an attack vector.
     //owned_state.opts = *params.clone();
 
     //Config App
-    rumtk_web_set_config!(state).lang = RUMString::from(lang);
-    rumtk_web_set_config!(state).theme = RUMString::from(theme);
-
-    //Let's render the head component
-    let head = rumtk_web_render_component!(|| -> ComponentResult<T> {
-        app_head(path_components, params, state.clone())
-    });
-
-    //Let's render the head component
-    let body = rumtk_web_render_component!(|| -> ComponentResult<T> {
-        app_body(path_components, params, state.clone())
-    });
+    rumtk_web_set_config!(state).lang = lang.clone();
+    rumtk_web_set_config!(state).theme = theme;
 
     Ok(AppShell {
-        lang: RUMString::from(lang),
-        head,
-        body
+        lang,
+        head: app_head(path_components, params, state.clone())?,
+        body: app_body(path_components, params, state.clone())?
     })
 }

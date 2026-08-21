@@ -23,27 +23,15 @@ use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use askama::PrimitiveType;
 use axum::extract::State;
-use phf::OrderedMap;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use crate::defaults::{DEFAULT_LANG_ITEM, DEFAULT_THEME_ITEM};
+use crate::{NestedNestedTextMap, NestedTextMap, PipelineGroup, RootNestedNestedTextMap, TextMap};
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
 use rumtk_core::types::RUMID;
 use rumtk_core::types::{RUMHashMap, RUMOrderedMap};
 use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
-
-pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
-pub type NestedTextMap = RUMOrderedMap<RUMString, TextMap>;
-pub type NestedNestedTextMap = RUMOrderedMap<RUMString, NestedTextMap>;
-pub type RootNestedNestedTextMap = RUMOrderedMap<RUMString, NestedNestedTextMap>;
-
-pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
-pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
-pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNestedTextMap>;
-
-pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
-
 
 #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct FlagsConf {
@@ -626,12 +614,3 @@ macro_rules! rumtk_web_modify_state {
         rumtk_lock_write!($state.clone())
     }};
 }
-
-/*
-   Default non static data to minimize allocations.
-*/
-pub const DEFAULT_TEXT: fn() -> RUMString = || RUMString::default();
-pub const DEFAULT_TEXTMAP: fn() -> TextMap = || TextMap::default();
-pub const DEFAULT_NESTEDTEXTMAP: fn() -> NestedTextMap = || NestedTextMap::default();
-pub const DEFAULT_NESTEDNESTEDTEXTMAP: fn() -> NestedNestedTextMap =
-    || NestedNestedTextMap::default();

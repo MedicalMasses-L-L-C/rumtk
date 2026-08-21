@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::types::HTMLResult;
-use crate::{RUMWebRedirect, RUMWebTemplate};
+use crate::{sanitize_html, RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::Options;
 use rumtk_core::base::RUMResult;
 use rumtk_core::search::rumtk_search::string_replace_all_matches;
@@ -90,9 +90,10 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
     string_replace_all_matches(filtered.as_str(), TEMPLATE_MIDDLE_REGEX, TEMPLATE_MIDDLE_REPLACEMENT)
 }
 
-pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> ComponentResult<T> {
+pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
     let filtered = rumtk_web_trim_rendered_html(html)?;
-    Ok(url.into_web_response(Some(filtered)))
+    let sanitized = sanitize_html(&filtered);
+    Ok(url.into_web_response(Some(sanitized)))
 }
 
 ///
@@ -119,7 +120,7 @@ pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> ComponentRes
 /// assert_eq!(result, expected, "Test Div template rendered improperly!");
 /// ```
 ///
-pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> ComponentResult<T> {
+pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
         Ok(html) => {
@@ -132,11 +133,11 @@ pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> 
     }
 }
 
-pub fn rumtk_web_render_contents(elements: &[RUMString]) -> ComponentResult<T> {
+pub fn rumtk_web_render_contents(elements: &[RUMString]) -> HTMLResult {
     rumtk_web_render(ContentBlock { elements }, RUMWebRedirect::None)
 }
 
-pub fn rumtk_web_redirect(url: RUMWebRedirect) -> ComponentResult<T> {
+pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
     Ok(url.into_web_response(Some(String::default())))
 }
 

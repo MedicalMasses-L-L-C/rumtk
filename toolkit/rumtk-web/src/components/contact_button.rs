@@ -18,16 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{
-    DEFAULT_CONTACT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_TYPE,
+use crate::components::title::{title, Title};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_CONTACT_FUNCTION};
+use rumtk_core::strings::RUMString;
 
-#[derive(RUMWebTemplate, Debug)]
+#[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         {% if custom_css_enabled %}
@@ -43,36 +41,35 @@ use crate::{
         </script>
         <div class='contact-{{ css_class }}-button-container'>
             <button class='contact-{{ css_class }}-button' onclick='{{ send_function }}()'>
-                {{title|safe}}
+                {{title}}
             </button>
         </div>
     ",
     ext = "html"
 )]
 pub struct ContactButton {
-    title: RUMString,
+    title: Title,
     send_function: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn contact_button(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn contact_button<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
-    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
-    let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+) -> ComponentResult<ContactButton> {
+    let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_FUNCTION).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let title = rumtk_web_render_component!("title", [(PARAMS_TYPE, typ)], state)?.to_string();
+    let title = title(_path_components, params, state)?;
 
     Ok(ContactButton {
         title,
-        send_function: RUMString::from(send_function),
-        css_class: RUMString::from(css_class),
+        send_function,
+        css_class,
         custom_css_enabled
     })
 }

@@ -18,12 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::formatted_label::{formatted_label, FormattedLabel};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -32,32 +31,33 @@ use crate::{
             <link href='/static/components/text_card.css' rel='stylesheet'>
         {% endif %}
         <div class='centered container-default text-card-{{css_class}}'>
-          {{formatted_label|safe}}
+          {{formatted_label}}
         </div>
     ",
     ext = "html"
 )]
 pub struct TextCard {
-    formatted_label: RUMString,
+    formatted_label: FormattedLabel,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn text_card(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn text_card<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> ComponentResult<TextCard> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let formatted_label = rumtk_web_render_component!("formatted_label", [(PARAMS_TYPE, typ)], state)?.to_string();
+    let formatted_params = rumtk_web_params_map!([(PARAMS_TYPE, typ)]);
+    let formatted_label = formatted_label(_path_components, formatted_params.get_inner(), state)?;
 
     Ok(TextCard {
         formatted_label,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

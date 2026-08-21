@@ -18,11 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::PARAMS_CONTENTS;
-use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use crate::utils::types::{SharedAppState, URLParams};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -31,20 +30,19 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMW
             <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}
         <footer role='contentinfo' class='footer-{{ css_class }}-container'>
-            {{contents|safe}}
+            {{contents}}
         </footer>
     ",
     ext = "html"
 )]
-pub struct Footer<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Footer<T: RUMWebTemplate> {
+    contents: T,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn footer<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Footer<'a>> {
-    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn footer<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Footer<T>> {
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

@@ -35,6 +35,7 @@ pub mod conversions;
 pub mod client;
 mod sanitize_html;
 
+pub use defaults::*;
 pub use render::*;
 pub use types::*;
 pub use client::*;

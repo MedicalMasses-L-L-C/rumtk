@@ -31,7 +31,7 @@ use rumtk_web::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
 )]
 pub struct BenchmarkReportView<'a> {
     data: &'a str,
-    css_class: &'a str,
+    css_class: RUMString,
 }
 
 pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {

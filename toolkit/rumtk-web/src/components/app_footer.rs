@@ -18,13 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::contact_button::{contact_button, ContactButton};
 use crate::components::html::{footer, Footer};
-use crate::defaults::PARAMS_CONTENTS;
-use crate::utils::defaults::{
-    DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION, PARAMS_SOCIAL_LIST, PARAMS_TYPE,
-};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate};
+use crate::components::socials::{socials, Socials};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -32,70 +31,60 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map,
         <p class='f16'>
             {{company}} &copy; {{copyright}}
         </p>
-        {{button|safe}}
-        {{socials|safe}}
+        {% if !disable_contact_button %}
+        {{button}}
+        {% endif %}
+        {{socials}}
     ",
     ext = "html"
 )]
-pub struct FooterContents<'a> {
-    company: &'a str,
-    copyright: &'a str,
-    button: RUMString,
-    socials: RUMString,
+pub struct FooterContents {
+    company: RUMString,
+    copyright: RUMString,
+    button: ContactButton,
+    socials: Socials,
+    disable_contact_button: bool
 }
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {{footer|safe}}
+        {{footer}}
     ",
     ext = "html"
 )]
-pub struct AppFooter<'a> {
-    footer: Footer<'a>
+pub struct AppFooter {
+    footer: Footer<FooterContents>
 }
 
-pub fn app_footer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-
+pub fn app_footer<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppFooter> {
     let company = rumtk_web_get_config!(state).company.clone();
     let copyright = rumtk_web_get_config!(state).copyright.clone();
 
-    let contact_button = match rumtk_web_get_config!(state).footer_conf.disable_contact_button {
-        true => RUMString::default(),
-        false => rumtk_web_render_component!(
-            "contact_button",
-            [
-                (PARAMS_TYPE, "contact"),
-                (PARAMS_FUNCTION, "goto_contact"),
-                (PARAMS_CSS_CLASS, "centered")
-            ],
-            state
-        )?.to_string(),
-    };
-    let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_string();
+    let disable_contact_button = rumtk_web_get_config!(state).footer_conf.disable_contact_button;
+    let contact_button = contact_button(
+                _path_components,
+                params,
+                state.clone()
+            )?;
 
-    let contents = Ok(FooterContents {
-        company: &company,
-        copyright: &copyright,
+    let socials = socials(_path_components, params, state.clone())?;
+
+    let footer_contents = FooterContents {
+        company,
+        copyright,
         button: contact_button,
         socials,
-    })?.to_string();
+        disable_contact_button
+    };
 
-    let app_params = rumtk_web_params_map!(
-        [
-            (PARAMS_CONTENTS, contents),
-            (PARAMS_CSS_CLASS, css_class.to_string())
-        ]
-    );
     let app_footer = footer(
-        _path_components,
-        app_params.get_inner(),
+        footer_contents,
+        params,
         state
     )?;
 
     Ok(AppFooter {
-        footer: app_footer
+        footer: app_footer,
     })
 }

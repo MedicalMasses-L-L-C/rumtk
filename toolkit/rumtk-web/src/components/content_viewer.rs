@@ -25,6 +25,7 @@ use crate::utils::defaults::{
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 use rumtk_core::rumtk_generate_id;
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -54,10 +55,10 @@ use rumtk_core::rumtk_generate_id;
     ext = "html"
 )]
 pub struct ContentViewer<'a> {
-    id: &'a str,
+    id: RUMString,
     typ: &'a str,
     contents: &'a str,
-    css_class: &'a str,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
@@ -67,10 +68,10 @@ pub fn content_viewer<'a>(
     state: SharedAppState,
 ) -> ComponentResult<ContentViewer<'a>> {
     let default_id = rumtk_generate_id!();
-    let id = rumtk_web_get_text_item!(params, PARAMS_ID, default_id.as_str());
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, default_id.as_str()).to_string();
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

@@ -22,12 +22,10 @@ use crate::utils::defaults::{
     DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, OPT_INVERTED_DIRECTION, PARAMS_CSS_CLASS, PARAMS_INVERTED,
     PARAMS_ITEM, SECTION_TEXT,
 };
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_param_eq, rumtk_web_get_text_item,
-    rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_param_eq, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -55,35 +53,35 @@ use crate::{
     ",
     ext = "html"
 )]
-pub struct InfoCard<'a> {
-    title: &'a str,
-    description: &'a str,
+pub struct InfoCard {
+    title: RUMString,
+    description: RUMString,
     inverted: bool,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn info_card(
-    _path_components: URLPath,
-    params: URLParams,
+pub fn info_card<'a>(
+    _path_components: URLPath<'a, 'a>,
+    params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> ComponentResult<InfoCard> {
     let card_text_item = rumtk_web_get_text_item!(params, PARAMS_ITEM, DEFAULT_TEXT_ITEM);
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let text_store = rumtk_web_get_config_string!(state, SECTION_TEXT);
-    let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP());
-    let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
-    let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
+    let itm = rumtk_web_get_text_item!(&text_store, card_text_item, &DEFAULT_TEXTMAP);
+    let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT).to_string();
+    let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT).to_string();
 
     Ok(InfoCard {
         title,
         description: desc,
         inverted,
-        css_class: RUMString::from(css_class),
+        css_class,
         custom_css_enabled
     })
 }

@@ -17,40 +17,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::PARAMS_TITLE;
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_render, RUMWebRedirect, RUMWebTemplate};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {% if custom_css_enabled %}
-            <link href='/static/components/summary.css' rel='stylesheet'>
-        {% endif %}
-        <summary class='summary-{{css_class}}-title'>
-            {{ title }}
-        </summary>
+        {{data}}
     ",
     ext = "html"
 )]
-pub struct Summary {
-    title: RUMString,
-    css_class: RUMString,
-    custom_css_enabled: bool,
+pub struct FormNode {
+    data: RUMString,
 }
 
-pub fn summary<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Summary> {
-    let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_TEXT_ITEM).to_string();
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
-
-    let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
-
-    Ok(Summary {
-        title,
-        css_class,
-        custom_css_enabled
-    })
+pub trait ToFormNode<T: RUMWebTemplate> {
+    fn to_form_node(self) -> FormNode
+    where
+        Self: RUMWebTemplate + Sized,
+    {
+        FormNode { data: rumtk_web_render(self, RUMWebRedirect::None).unwrap_or_default().to_string() }
+    }
 }
-

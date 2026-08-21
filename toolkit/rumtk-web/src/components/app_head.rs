@@ -18,27 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::static_components::css::CSS;
+use crate::static_components::fontawesome::FontAwesome;
+use crate::static_components::htmx::HTMX;
+use crate::static_components::meta::Meta;
 use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_render_component, rumtk_web_render_template, RUMWebTemplate};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
         <head>
-            {{meta|safe}}
-            {{css|safe}}
-            {{fontawesome|safe}}
-            {{htmx|safe}}
+            {{meta}}
+            {{css}}
+            {{fontawesome}}
+            {{htmx}}
         </head>
     ",
     ext = "html"
 )]
 pub struct AppShellHead {
-    meta: RUMString,
-    css: RUMString,
-    fontawesome: RUMString,
-    htmx: RUMString,
+    meta: Meta,
+    css: CSS,
+    fontawesome: FontAwesome,
+    htmx: HTMX,
 }
 
 ///
@@ -51,27 +55,15 @@ pub struct AppShellHead {
 ///      It is not ideal but it will allow continuance of service for websites during CDN outages
 ///      which do happen.
 ///
-pub fn app_head(
-    _path_components: URLPath,
-    _params: URLParams,
+pub fn app_head<'a>(
+    _path_components: URLPath<'a, 'a>,
+    _params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<T> {
-    //Let's render the head component
-    let html_meta = rumtk_web_render_component!(meta, state);
-
-    //Let's render the head component
-    let html_css = rumtk_web_render_component!(css);
-
-    //Let's render the head component
-    let html_fontawesome = rumtk_web_render_component!(fontawesome, state);
-
-    //Let's render the head component
-    let html_htmx = rumtk_web_render_component!(htmx);
-
+) -> ComponentResult<AppShellHead> {
     Ok(AppShellHead {
-        meta: html_meta,
-        css: html_css,
-        fontawesome: html_fontawesome,
-        htmx: html_htmx
+        meta: meta(state.clone())?,
+        css: css()?,
+        fontawesome: fontawesome(state.clone())?,
+        htmx: htmx()?
     })
 }

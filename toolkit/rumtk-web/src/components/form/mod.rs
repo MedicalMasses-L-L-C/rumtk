@@ -19,11 +19,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::form::form_element::form_element;
+use crate::components::form::form_node::FormNode;
 use crate::components::form::props::InputProps;
-use crate::utils::HTMLResult;
-use crate::{rumtk_web_render_component, SharedAppState};
-use rumtk_core::cache::{new_cache, LazyRUMCache};
+use crate::{ComponentResult, SharedAppState};
 use rumtk_core::base::RUMResult;
+use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::RUMString;
 use rumtk_core::{rumtk_cache_fetch, rumtk_cache_push};
 
@@ -32,11 +32,12 @@ pub mod props;
 pub mod input_element;
 pub mod select_element;
 pub mod form;
+pub mod form_node;
 
 pub type FormElements = Vec<RUMString>;
 pub type FormCache = LazyRUMCache<RUMString, FormElements>;
 pub type FormElementBuilder =
-    fn(element: &str, data: &str, props: InputProps, css: &str) -> RUMString;
+    fn(element: &str, data: &str, props: InputProps, css: &str) -> ComponentResult<FormNode>;
 pub type FormBuilderFunction = fn(builder: FormElementBuilder, state: &SharedAppState) -> FormElements;
 pub type FormItem<'a> = (&'a str, FormBuilderFunction);
 pub type Forms<'a> = Vec<FormItem<'a>>;
@@ -49,8 +50,9 @@ fn new_form_entry() -> RUMResult<FormElements> {
     Ok(DEFAULT_FORMELEMENTS.clone())
 }
 
-fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> RUMString {
-    rumtk_web_render_component!(|| -> ComponentResult<T> { form_element(element, data, props, css) })
+#[inline]
+fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> ComponentResult<FormNode> {
+    form_element(element, data, props, css)
 }
 
 pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction, state: &SharedAppState) {

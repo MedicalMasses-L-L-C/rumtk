@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::form::form_node::{FormNode, ToFormNode};
 use crate::components::form::props::InputProps;
-use crate::utils::types::HTMLResult;
-use crate::{rumtk_web_render_template, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -36,11 +36,13 @@ pub struct InputElement<'a> {
     css_class: &'a str,
 }
 
-pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<T> {
+impl ToFormNode<InputElement<'_>> for InputElement<'_> {}
+
+pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<FormNode> {
     Ok(InputElement {
         element,
         data,
         props: &props.to_string().replace("\\\\", "\\"),
         css_class
-    })
+    }.to_form_node())
 }

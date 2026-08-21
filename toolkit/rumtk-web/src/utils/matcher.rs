@@ -19,12 +19,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::app_shell::app_shell;
-use crate::components::html::div;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;
 use crate::utils::{HTMLResult, RUMString};
-use crate::{rumtk_web_get_api_endpoint, rumtk_web_get_component, rumtk_web_render_component, RUMWebData, RUMWebResponse, RouterForm};
+use crate::{rumtk_web_get_api_endpoint, rumtk_web_render_template, RUMWebData, RUMWebResponse, RouterForm};
 use axum::body::Body;
 use axum::http::Response;
 use axum::response::{Html, IntoResponse};
@@ -34,7 +33,7 @@ pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
     _params: RUMWebData,
     _state: SharedAppState,
-) -> ComponentResult<T> {
+) -> HTMLResult {
     RUMWebResponse::into_get_response(DEFAULT_ROBOT_TXT).into_html_result()
 }
 
@@ -42,14 +41,16 @@ pub async fn default_page_matcher(
     path: Vec<RUMString>,
     params: RUMWebData,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> HTMLResult {
     let path_components = match path.first() {
         Some(x) => x.split('/').collect::<Vec<&str>>(),
         None => Vec::new(),
     };
 
     // Do not minify the page. we saved 0.3KB but transfer went from 5ms to 45ms
-    app_shell(&path_components, &params, state)
+    let page = app_shell(&path_components, &params, state)?;
+
+    rumtk_web_render_template!(page)
 }
 
 pub async fn default_api_matcher(
@@ -57,31 +58,13 @@ pub async fn default_api_matcher(
     params: RUMWebData,
     mut form: RouterForm,
     state: SharedAppState,
-) -> ComponentResult<T> {
+) -> HTMLResult {
     let form_data = compile_form_data(&mut form).await?;
     let api_endpoint = match rumtk_web_get_api_endpoint!(&path) {
         Some(endpoint) => endpoint,
         None => return Err(rumtk_format!("Requested endpoint is not registered!"))
     };
     api_endpoint(path, params, form_data, state)
-}
-
-pub async fn default_component_matcher(
-    path: Vec<RUMString>,
-    params: RUMWebData,
-    state: SharedAppState,
-) -> ComponentResult<T> {
-    let path_components = match path.first() {
-        Some(x) => x.split('/').collect::<Vec<&str>>(),
-        None => Vec::new(),
-    };
-
-    let component = match path_components.last() {
-        Some(component) => component,
-        None => return Err(RUMString::from("Missing component name to fetch!")),
-    };
-
-    rumtk_web_render_component!(component, &[""], params, state)
 }
 
 pub fn match_maker(match_response: HTMLResult) -> Response<Body> {

@@ -20,11 +20,12 @@
  */
 pub use super::conf::*;
 use axum::extract::{Multipart, Path, Query};
-use phf::Map;
+use phf::{Map, OrderedMap};
 pub use rumtk_core::strings::RUMString;
 pub use rumtk_core::strings::{AsStr, RUMStringConversions, StringLike};
 use rumtk_core::types::{RUMHashMap, RUMID};
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
+use std::ops::Deref;
 use std::sync::Arc;
 
 pub type RUMWebData = RUMHashMap<RUMString, RUMString>;
@@ -44,20 +45,31 @@ pub type RouterParams = Query<RUMWebData>;
 pub type RouterForm = Multipart;
 
 /* Config Types */
-pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> ComponentResult<T>;
 pub type PageFunction = fn(SharedAppState) -> RenderedPageComponentsResult;
-pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
 
 /* API Types */
 pub use crate::utils::form_data::{FormBuffer, FormData};
 pub type RouterAPIPath = Path<RUMString>;
 pub type APIPath = RUMString;
-pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> ComponentResult<T>;
+pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTMLResult;
+
+/* Conf Types */
+pub type TextMap = RUMOrderedMap<RUMString, RUMString>;
+pub type NestedTextMap = RUMOrderedMap<RUMString, TextMap>;
+pub type NestedNestedTextMap = RUMOrderedMap<RUMString, NestedTextMap>;
+pub type RootNestedNestedTextMap = RUMOrderedMap<RUMString, NestedNestedTextMap>;
+
+pub type ConstTextMap = OrderedMap<&'static str, &'static str>;
+pub type ConstNestedTextMap = OrderedMap<&'static str, &'static ConstTextMap>;
+pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNestedTextMap>;
+
+pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
 
 pub use askama::Template as RUMWebTemplate;
 use rumtk_core::base::RUMResult;
-
+use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
+use rumtk_core::serde::RUMOrderedMap;
 
 ///
 /// ```
@@ -68,11 +80,18 @@ use rumtk_core::base::RUMResult;
 ///
 /// ```
 ///
+#[derive(Debug, Clone)]
 pub struct RUMWebDataProxy(RUMWebData);
 
 impl RUMWebDataProxy {
+    #[inline]
     pub fn get_inner(&self) -> &RUMWebData {
         &self.0
+    }
+
+    #[inline]
+    pub fn consume(mut self) -> RUMWebData {
+        self.0
     }
 
     pub fn from_params<K, V, const N: usize>(data: &[(K, V); N]) -> Self
@@ -89,6 +108,14 @@ impl RUMWebDataProxy {
             );
         }
         RUMWebDataProxy(new_params)
+    }
+}
+
+impl Deref for RUMWebDataProxy {
+    type Target = RUMWebData;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

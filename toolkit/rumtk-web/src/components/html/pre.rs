@@ -21,6 +21,7 @@ use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_CONTENTS};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -34,15 +35,15 @@ use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMW
     ",
     ext = "html"
 )]
-pub struct Pre<'a> {
-    contents: &'a str,
-    css_class: &'a str,
+pub struct Pre {
+    contents: RUMString,
+    css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn pre<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Pre<'a>> {
-    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+pub fn pre<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Pre> {
+    let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 

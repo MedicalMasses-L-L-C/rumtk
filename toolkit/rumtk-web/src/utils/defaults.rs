@@ -19,7 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::ConstTextMap;
+use crate::{rumtk_web_params_map, NestedNestedTextMap, NestedTextMap, RUMWebDataProxy, TextMap};
 use phf_macros::phf_ordered_map;
+use rumtk_core::strings::RUMString;
+use std::sync::LazyLock;
 /*
    TextMap
 */
@@ -36,6 +39,9 @@ pub const DEFAULT_OUTBOUND_LISTENING_ADDRESS: &str = "0.0.0.0:3000";
 */
 pub const DEFAULT_TEXT_ITEM: &str = "default";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
+pub const DEFAULT_CONTACT_TYPE: &str = "contact";
+pub const DEFAULT_CONTACT_FUNCTION: &str = "goto_contact";
+pub const DEFAULT_CONTACT_CSS: &str = "centered";
 pub const DEFAULT_NO_TEXT: &str = "";
 pub const DEFAULT_JOB_LOADER_NAME: &str = "job_loader";
 pub const DEFAULT_HTMX_SWAP_MODE: &str = "outerHTML";
@@ -139,7 +145,7 @@ pub const DEFAULT_LOGO_SOURCE: &str = "/static/img/logo.webp";
 /*
     Slices
  */
-pub const DEFAULT_EMPTY_PARAMS: &[(&str, &str); 1] = &[("", "")];
+pub static DEFAULT_EMPTY_PARAMS: LazyLock<RUMWebDataProxy> = LazyLock::new( || rumtk_web_params_map!([("", "")]));
 
 /*
     Elements
@@ -147,3 +153,12 @@ pub const DEFAULT_EMPTY_PARAMS: &[(&str, &str); 1] = &[("", "")];
 pub const ELEMENT_INPUT: &str = "input";
 pub const ELEMENT_LABEL: &str = "label";
 pub const ELEMENT_SELECT: &str = "select";
+
+/*
+   Default non static data to minimize allocations.
+*/
+pub static DEFAULT_TEXT: RUMString = RUMString::new();
+pub static DEFAULT_TEXTMAP: LazyLock<TextMap> = LazyLock::new(|| TextMap::default());
+pub static DEFAULT_NESTEDTEXTMAP: LazyLock<NestedTextMap> = LazyLock::new(|| NestedTextMap::default());
+pub static DEFAULT_NESTEDNESTEDTEXTMAP: LazyLock<NestedNestedTextMap> =
+    LazyLock::new(|| NestedNestedTextMap::default());

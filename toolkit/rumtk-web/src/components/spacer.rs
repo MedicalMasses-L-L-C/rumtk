@@ -19,10 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::defaults::{PARAMS_SIZE, SECTION_DEFAULT};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -39,7 +37,7 @@ pub struct Spacer {
     custom_css_enabled: bool,
 }
 
-pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Spacer> {
     let size = rumtk_web_get_text_item!(params, PARAMS_SIZE, SECTION_DEFAULT)
         .parse::<usize>()
         .unwrap_or(0);
