@@ -38,7 +38,7 @@ pub struct Container<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -46,7 +46,7 @@ pub fn container(_path_components: URLPath, params: URLParams, state: SharedAppS
 
     let inner = rumtk_web_render_component!("div", [(PARAMS_CSS_CLASS, css_class), (PARAMS_CONTENTS, contents)], state)?.to_string();
 
-    rumtk_web_render_template!(Container {
+    Ok(Container {
         contents: inner.as_str(),
         css_class,
         custom_css_enabled

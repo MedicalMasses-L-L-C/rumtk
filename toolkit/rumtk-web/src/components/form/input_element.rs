@@ -36,8 +36,8 @@ pub struct InputElement<'a> {
     css_class: &'a str,
 }
 
-pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
-    rumtk_web_render_template!(InputElement {
+pub fn input_element(element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<T> {
+    Ok(InputElement {
         element,
         data,
         props: &props.to_string().replace("\\\\", "\\"),

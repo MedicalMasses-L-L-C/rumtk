@@ -38,8 +38,8 @@ pub struct HTMX {
     lib: HTMXElement,
 }
 
-pub fn htmx() -> HTMLResult {
-    rumtk_web_render_template!(HTMX {
+pub fn htmx() -> ComponentResult<T> {
+    Ok(HTMX {
         lib: HTMXElement {
             version: "2.0.8",
             sha: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"

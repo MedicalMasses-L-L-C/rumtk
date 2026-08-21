@@ -39,14 +39,14 @@ pub struct Spacer {
     custom_css_enabled: bool,
 }
 
-pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn spacer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let size = rumtk_web_get_text_item!(params, PARAMS_SIZE, SECTION_DEFAULT)
         .parse::<usize>()
         .unwrap_or(0);
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    rumtk_web_render_template!(Spacer {
+    Ok(Spacer {
         size,
         custom_css_enabled
     })

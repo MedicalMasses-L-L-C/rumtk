@@ -85,7 +85,7 @@ pub fn portrait_card(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let section = rumtk_web_get_text_item!(params, PARAMS_SECTION, DEFAULT_TEXT_ITEM);
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
@@ -93,7 +93,7 @@ pub fn portrait_card(
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    rumtk_web_render_template!(PortraitCard {
+    Ok(PortraitCard {
         icon_data,
         css_class: RUMString::from(css_class),
         custom_css_enabled

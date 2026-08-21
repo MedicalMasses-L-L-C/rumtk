@@ -48,14 +48,14 @@ pub struct NavLink<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_HOME_PAGE);
     let url = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_HOME_PAGE_URL);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    rumtk_web_render_template!(NavLink {
+    Ok(NavLink {
         target: NavItem { title, url },
         css_class: RUMString::from(css_class),
         custom_css_enabled

@@ -90,7 +90,7 @@ impl RUMWebResponse {
         }
     }
 
-    pub fn into_html_result(self) -> HTMLResult {
+    pub fn into_html_result(self) -> ComponentResult<T> {
         Ok(self)
     }
 

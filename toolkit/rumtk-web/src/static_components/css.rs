@@ -31,6 +31,6 @@ use crate::{rumtk_web_render_template, RUMWebTemplate};
 )]
 pub struct CSS {}
 
-pub fn css() -> HTMLResult {
-    rumtk_web_render_template!(CSS {})
+pub fn css() -> ComponentResult<T> {
+    Ok(CSS {})
 }

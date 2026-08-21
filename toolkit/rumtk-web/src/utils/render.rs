@@ -90,7 +90,7 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
     string_replace_all_matches(filtered.as_str(), TEMPLATE_MIDDLE_REGEX, TEMPLATE_MIDDLE_REPLACEMENT)
 }
 
-pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
+pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> ComponentResult<T> {
     let filtered = rumtk_web_trim_rendered_html(html)?;
     Ok(url.into_web_response(Some(filtered)))
 }
@@ -119,7 +119,7 @@ pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
 /// assert_eq!(result, expected, "Test Div template rendered improperly!");
 /// ```
 ///
-pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
+pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> ComponentResult<T> {
     let result = template.render();
     match result {
         Ok(html) => {
@@ -132,11 +132,11 @@ pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> 
     }
 }
 
-pub fn rumtk_web_render_contents(elements: &[RUMString]) -> HTMLResult {
+pub fn rumtk_web_render_contents(elements: &[RUMString]) -> ComponentResult<T> {
     rumtk_web_render(ContentBlock { elements }, RUMWebRedirect::None)
 }
 
-pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
+pub fn rumtk_web_redirect(url: RUMWebRedirect) -> ComponentResult<T> {
     Ok(url.into_web_response(Some(String::default())))
 }
 

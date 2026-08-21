@@ -41,14 +41,14 @@ pub struct JobLoader<'a> {
     css_class: &'a str,
 }
 
-pub fn job_loader(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn job_loader(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let element_name = rumtk_web_get_text_item!(params, PARAMS_ELEMENT, DEFAULT_JOB_LOADER_NAME);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let loader = &rumtk_web_render_component!("loader", [(PARAMS_CSS_CLASS, css_class)], state)?.to_string();
 
-    rumtk_web_render_template!(JobLoader {
+    Ok(JobLoader {
             job_id,
             element_name,
             loader,

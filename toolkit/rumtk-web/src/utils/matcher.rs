@@ -34,7 +34,7 @@ pub async fn default_robots_matcher(
     _path: Vec<RUMString>,
     _params: RUMWebData,
     _state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     RUMWebResponse::into_get_response(DEFAULT_ROBOT_TXT).into_html_result()
 }
 
@@ -42,7 +42,7 @@ pub async fn default_page_matcher(
     path: Vec<RUMString>,
     params: RUMWebData,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let path_components = match path.first() {
         Some(x) => x.split('/').collect::<Vec<&str>>(),
         None => Vec::new(),
@@ -57,7 +57,7 @@ pub async fn default_api_matcher(
     params: RUMWebData,
     mut form: RouterForm,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let form_data = compile_form_data(&mut form).await?;
     let api_endpoint = match rumtk_web_get_api_endpoint!(&path) {
         Some(endpoint) => endpoint,
@@ -70,7 +70,7 @@ pub async fn default_component_matcher(
     path: Vec<RUMString>,
     params: RUMWebData,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let path_components = match path.first() {
         Some(x) => x.split('/').collect::<Vec<&str>>(),
         None => Vec::new(),

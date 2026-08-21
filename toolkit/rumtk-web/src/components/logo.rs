@@ -51,13 +51,13 @@ pub struct Logo<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn logo(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let source = rumtk_web_get_text_item!(params, PARAMS_SOURCE_URL, DEFAULT_LOGO_SOURCE);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    rumtk_web_render_template!(Logo {
+    Ok(Logo {
         source,
         css_class,
         custom_css_enabled

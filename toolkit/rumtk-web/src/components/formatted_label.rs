@@ -50,7 +50,7 @@ pub fn formatted_label(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -61,7 +61,7 @@ pub fn formatted_label(
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = rumtk_web_render_markdown!(desc);
 
-    rumtk_web_render_template!(FormattedLabel {
+    Ok(FormattedLabel {
         text: html,
         css_class: RUMString::from(css_class),
         custom_css_enabled

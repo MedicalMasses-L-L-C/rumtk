@@ -44,7 +44,7 @@ pub type RouterParams = Query<RUMWebData>;
 pub type RouterForm = Multipart;
 
 /* Config Types */
-pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> HTMLResult;
+pub type ComponentFunction = fn(URLPath, URLParams, SharedAppState) -> ComponentResult<T>;
 pub type PageFunction = fn(SharedAppState) -> RenderedPageComponentsResult;
 pub type ComponentMap = Map<&'static str, ComponentFunction>;
 pub type PageMap = Map<&'static str, PageFunction>;
@@ -53,7 +53,7 @@ pub type PageMap = Map<&'static str, PageFunction>;
 pub use crate::utils::form_data::{FormBuffer, FormData};
 pub type RouterAPIPath = Path<RUMString>;
 pub type APIPath = RUMString;
-pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> HTMLResult;
+pub type APIFunction = fn(APIPath, RUMWebData, FormData, SharedAppState) -> ComponentResult<T>;
 
 pub use askama::Template as RUMWebTemplate;
 use rumtk_core::base::RUMResult;

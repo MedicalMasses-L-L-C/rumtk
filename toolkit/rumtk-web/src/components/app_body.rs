@@ -18,12 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::html::{footer, header, Footer, Header};
+use crate::components::main::{main, Main};
 use crate::utils::defaults::DEFAULT_EMPTY_PARAMS;
-use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_render_component, rumtk_web_render_template,
-    RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
 use rumtk_core::strings::AsStr;
 
 #[derive(RUMWebTemplate)]
@@ -40,29 +39,29 @@ use rumtk_core::strings::AsStr;
 )]
 pub struct AppBody<'a> {
     theme: &'a str,
-    header: RUMString,
-    main: RUMString,
-    footer: RUMString,
+    header: Header<'a>,
+    main: Main,
+    footer: Footer<'a>,
 }
 
-pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_body(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<AppBody> {
     let theme = rumtk_web_get_config!(state).theme.clone();
 
     //Let's render the header and footer
     //<div class="" hx-get="/component/navbar" hx-target="#navbar" hx-trigger="load" id="navbar"></div>
-    let header = rumtk_web_render_component!("app_nav", DEFAULT_EMPTY_PARAMS, state)?.to_string();
-    let main = rumtk_web_render_component!("main", path_components, DEFAULT_EMPTY_PARAMS, state)?.to_string();
+    let header = header(path_components, DEFAULT_EMPTY_PARAMS, state)?;
+    let main = main(path_components, DEFAULT_EMPTY_PARAMS, state)?;
     //<div class="" hx-get="/component/footer?social_list=linkedin,github" hx-target="#footer" hx-trigger="load" id="footer"></div>
-    let footer = rumtk_web_render_component!(
-        "app_footer",
-        [(
+    let footer = footer(
+        path_components,
+        rumtk[(
             "social_list",
             rumtk_web_get_config!(state).footer_conf.socials_list.as_str()
         )],
         state
     )?.to_string();
 
-    rumtk_web_render_template!(AppBody {
+    Ok(AppBody {
         theme: theme.as_str(),
         header,
         main,

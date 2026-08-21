@@ -79,7 +79,7 @@ fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
     sl
 }
 
-pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -87,7 +87,7 @@ pub fn socials(_path_components: URLPath, params: URLParams, state: SharedAppSta
 
     let icons = get_social_list(&social_list, &state);
 
-    rumtk_web_render_template!(Socials {
+    Ok(Socials {
         icons,
         css_class: RUMString::from(css_class),
         custom_css_enabled

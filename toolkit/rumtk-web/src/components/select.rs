@@ -44,7 +44,7 @@ pub struct Select<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let items = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -53,7 +53,7 @@ pub fn select(_path_components: URLPath, params: URLParams, state: SharedAppStat
     let props = InputProps::default();
     let contents = &select_element(ELEMENT_SELECT, items, props, DEFAULT_NO_TEXT)?.to_string();
 
-    rumtk_web_render_template!(Select {
+    Ok(Select {
         contents,
         css_class,
         custom_css_enabled

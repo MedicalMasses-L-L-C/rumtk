@@ -24,7 +24,7 @@ use crate::defaults::{ELEMENT_INPUT, ELEMENT_LABEL, ELEMENT_SELECT};
 use crate::utils::types::HTMLResult;
 use rumtk_core::strings::rumtk_format;
 
-pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
+pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<T> {
     match element {
         ELEMENT_INPUT | ELEMENT_LABEL => input_element(element, data, props, css_class),
         ELEMENT_SELECT => select_element(element, data, props, css_class),

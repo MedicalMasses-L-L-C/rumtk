@@ -55,7 +55,7 @@ pub fn app_head(
     _path_components: URLPath,
     _params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     //Let's render the head component
     let html_meta = rumtk_web_render_component!(meta, state);
 
@@ -68,7 +68,7 @@ pub fn app_head(
     //Let's render the head component
     let html_htmx = rumtk_web_render_component!(htmx);
 
-    rumtk_web_render_template!(AppShellHead {
+    Ok(AppShellHead {
         meta: html_meta,
         css: html_css,
         fontawesome: html_fontawesome,

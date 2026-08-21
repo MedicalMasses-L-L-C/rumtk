@@ -47,7 +47,7 @@ pub fn text_card(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -55,7 +55,7 @@ pub fn text_card(
 
     let formatted_label = rumtk_web_render_component!("formatted_label", [(PARAMS_TYPE, typ)], state)?.to_string();
 
-    rumtk_web_render_template!(TextCard {
+    Ok(TextCard {
         formatted_label,
         css_class: RUMString::from(css_class),
         custom_css_enabled

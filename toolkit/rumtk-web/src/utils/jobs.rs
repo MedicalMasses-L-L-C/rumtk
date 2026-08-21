@@ -113,7 +113,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///     Ok(None)
 /// }
 ///
-/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
 ///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
 ///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
@@ -161,7 +161,7 @@ macro_rules! rumtk_web_generate_job_id {
 ///     Ok(Some(rumtk_web_post_process_html!(RUMString::from(HELLO_STR))))
 /// }
 ///
-/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
 ///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
 ///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///

@@ -46,7 +46,7 @@ pub struct Label {
     custom_css_enabled: bool,
 }
 
-pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -57,7 +57,7 @@ pub fn label(_path_components: URLPath, params: URLParams, state: SharedAppState
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
     let html = rumtk_web_render_markdown!(desc);
 
-    rumtk_web_render_template!(Label {
+    Ok(Label {
         text: html,
         css_class: RUMString::from(css_class),
         custom_css_enabled

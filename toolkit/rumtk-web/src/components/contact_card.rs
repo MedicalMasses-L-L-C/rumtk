@@ -74,7 +74,7 @@ pub fn contact_card(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -84,7 +84,7 @@ pub fn contact_card(
     let contact_lines = rumtk_web_get_text_item!(&text_conf, typ, &DEFAULT_TEXTMAP());
     let alt_text = rumtk_web_get_text_item!(&contact_lines, SECTION_ALT, &DEFAULT_TEXT());
 
-    rumtk_web_render_template!(ContactCard {
+    Ok(ContactCard {
         alt: &alt_text,
         contact_lines,
         css_class: RUMString::from(css_class),

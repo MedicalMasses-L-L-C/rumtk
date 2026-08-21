@@ -67,7 +67,7 @@ pub fn info_card(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let card_text_item = rumtk_web_get_text_item!(params, PARAMS_ITEM, DEFAULT_TEXT_ITEM);
     let inverted = rumtk_web_get_param_eq!(params, PARAMS_INVERTED, OPT_INVERTED_DIRECTION, false);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
@@ -79,7 +79,7 @@ pub fn info_card(
     let title = rumtk_web_get_text_item!(&itm, "title", DEFAULT_NO_TEXT);
     let desc = rumtk_web_get_text_item!(&itm, "description", DEFAULT_NO_TEXT);
 
-    rumtk_web_render_template!(InfoCard {
+    Ok(InfoCard {
         title,
         description: desc,
         inverted,

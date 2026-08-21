@@ -39,8 +39,8 @@ pub struct Meta<'a> {
     description: &'a str,
 }
 
-pub fn meta(state: SharedAppState) -> HTMLResult {
-    rumtk_web_render_template!(Meta {
+pub fn meta(state: SharedAppState) -> ComponentResult<T> {
+    Ok(Meta {
         title: rumtk_web_get_config!(state).title.as_str(),
         description: rumtk_web_get_config!(state).description.as_str()
     })

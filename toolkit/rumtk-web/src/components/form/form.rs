@@ -76,7 +76,7 @@ struct Form<'a> {
     auto_hide_progress: bool,
 }
 
-pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_NO_TEXT);
     let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
@@ -101,7 +101,7 @@ pub fn form(_path_components: URLPath, params: URLParams, state: SharedAppState)
 
     let elements = rumtk_web_get_form!(typ)?;
 
-    rumtk_web_render_template!(Form {
+    Ok(Form {
         typ,
         title: title_elem,
         module: module_name,

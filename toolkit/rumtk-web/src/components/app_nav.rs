@@ -85,7 +85,7 @@ pub struct AppNav<'a> {
     app_nav: Header<'a>,
 }
 
-pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let company = rumtk_web_get_config!(state).company.clone();
@@ -132,7 +132,7 @@ pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppSta
         )?.to_string(),
     };
 
-    let contents = rumtk_web_render_template!(Nav {
+    let contents = Ok(Nav {
         company,
         logo,
         nav_links,
@@ -152,7 +152,7 @@ pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppSta
         state
     )?;
 
-    rumtk_web_render_template!(AppNav {
+    Ok(AppNav {
         app_nav
     })
 }

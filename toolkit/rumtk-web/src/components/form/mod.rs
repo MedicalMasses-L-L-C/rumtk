@@ -50,7 +50,7 @@ fn new_form_entry() -> RUMResult<FormElements> {
 }
 
 fn build_form_element(element: &str, data: &str, props: InputProps, css: &str) -> RUMString {
-    rumtk_web_render_component!(|| -> HTMLResult { form_element(element, data, props, css) })
+    rumtk_web_render_component!(|| -> ComponentResult<T> { form_element(element, data, props, css) })
 }
 
 pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction, state: &SharedAppState) {

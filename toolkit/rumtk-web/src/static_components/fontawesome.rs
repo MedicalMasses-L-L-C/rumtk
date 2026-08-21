@@ -45,7 +45,7 @@ pub struct FontAwesome {
     enable: bool
 }
 
-pub fn fontawesome(state: SharedAppState) -> HTMLResult {
+pub fn fontawesome(state: SharedAppState) -> ComponentResult<T> {
     let elements = vec![
         FontAwesomeCSSElement {
             file: "fontawesome.min.css",
@@ -65,5 +65,5 @@ pub fn fontawesome(state: SharedAppState) -> HTMLResult {
     ];
     let enable = rumtk_web_get_config!(state).flags.enable_icons;
 
-    rumtk_web_render_template!(FontAwesome { elements, enable })
+    Ok(FontAwesome { elements, enable })
 }

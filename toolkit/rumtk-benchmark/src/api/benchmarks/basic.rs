@@ -50,10 +50,10 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
     // Render the HTML result.
-    Ok(Some(rumtk_web_render_template!(&report)))
+    Ok(Some(Ok(&report)))
 }
 
-pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
+pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
     let job_id = rumtk_web_get_job_manager!()?.spawn_task(basic_processor(form, state.clone()))?;
     let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_ID, job_id)], state)?.to_string();
 

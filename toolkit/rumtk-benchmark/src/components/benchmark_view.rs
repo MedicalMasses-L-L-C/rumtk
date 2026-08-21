@@ -34,7 +34,7 @@ pub struct BenchmarkReportView<'a> {
     css_class: &'a str,
 }
 
-pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -45,7 +45,7 @@ pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: Share
     
     let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, job_result)], state)?.to_string();
 
-    rumtk_web_render_template!(BenchmarkReportView {
+    Ok(BenchmarkReportView {
             data: data.as_str(),
             css_class
         }

@@ -44,7 +44,7 @@ pub struct AppShell {
     body: RUMString,
 }
 
-pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let lang = rumtk_web_get_text_item!(params, "lang", LANG_EN);
     let theme = rumtk_web_get_text_item!(params, "theme", DEFAULT_TEXT_ITEM);
     // TODO: We need to reevaluate how to validate the options that should be standardized to avoid parameter injection as an attack vector.
@@ -55,16 +55,16 @@ pub fn app_shell(path_components: URLPath, params: URLParams, state: SharedAppSt
     rumtk_web_set_config!(state).theme = RUMString::from(theme);
 
     //Let's render the head component
-    let head = rumtk_web_render_component!(|| -> HTMLResult {
+    let head = rumtk_web_render_component!(|| -> ComponentResult<T> {
         app_head(path_components, params, state.clone())
     });
 
     //Let's render the head component
-    let body = rumtk_web_render_component!(|| -> HTMLResult {
+    let body = rumtk_web_render_component!(|| -> ComponentResult<T> {
         app_body(path_components, params, state.clone())
     });
 
-    rumtk_web_render_template!(AppShell {
+    Ok(AppShell {
         lang: RUMString::from(lang),
         head,
         body

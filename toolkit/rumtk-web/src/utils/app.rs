@@ -504,7 +504,7 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_string()?)))
 /// }
 ///
-/// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
+/// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
 ///     let job_id = rumtk_web_get_job_manager!()?.spawn_task(upload_processor(form))?;
 ///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state)?.to_string();
 ///
@@ -803,13 +803,13 @@ macro_rules! rumtk_web_register_app_switches {
 ///         custom_css_enabled: bool,
 ///     }
 ///
-///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
 ///         let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 ///
-///         rumtk_web_render_template!(MyDiv {
+///         Ok(MyDiv {
 ///             contents: RUMString::from(contents),
 ///             css_class: RUMString::from(css_class),
 ///             custom_css_enabled
@@ -822,7 +822,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         ]
 ///     }
 ///
-///     fn my_api_handler(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
+///     fn my_api_handler(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
 ///         Err(rumtk_format!(
 ///             "No handler registered for API endpoint => {}",
 ///             path

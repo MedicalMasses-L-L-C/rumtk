@@ -60,7 +60,7 @@ pub fn contact_button(
     _path_components: URLPath,
     params: URLParams,
     state: SharedAppState,
-) -> HTMLResult {
+) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_CONTACT_ITEM);
     let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
@@ -69,7 +69,7 @@ pub fn contact_button(
 
     let title = rumtk_web_render_component!("title", [(PARAMS_TYPE, typ)], state)?.to_string();
 
-    rumtk_web_render_template!(ContactButton {
+    Ok(ContactButton {
         title,
         send_function: RUMString::from(send_function),
         css_class: RUMString::from(css_class),

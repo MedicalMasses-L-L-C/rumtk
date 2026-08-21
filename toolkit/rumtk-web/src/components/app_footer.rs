@@ -55,7 +55,7 @@ pub struct AppFooter<'a> {
     footer: Footer<'a>
 }
 
-pub fn app_footer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn app_footer(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let social_list = rumtk_web_get_text_item!(params, PARAMS_SOCIAL_LIST, DEFAULT_NO_TEXT);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -76,7 +76,7 @@ pub fn app_footer(_path_components: URLPath, params: URLParams, state: SharedApp
     };
     let socials = rumtk_web_render_component!("socials", [(PARAMS_SOCIAL_LIST, social_list)], state)?.to_string();
 
-    let contents = rumtk_web_render_template!(FooterContents {
+    let contents = Ok(FooterContents {
         company: &company,
         copyright: &copyright,
         button: contact_button,
@@ -95,7 +95,7 @@ pub fn app_footer(_path_components: URLPath, params: URLParams, state: SharedApp
         state
     )?;
 
-    rumtk_web_render_template!(AppFooter {
+    Ok(AppFooter {
         footer: app_footer
     })
 }

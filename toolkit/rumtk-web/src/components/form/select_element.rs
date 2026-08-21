@@ -70,14 +70,14 @@ fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
     result
 }
 
-pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> HTMLResult {
+pub fn select_element(_element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<T> {
     let items = parse_select_data(data);
     let count = match props.multiple {
         true => items.len(),
         false => 1,
     };
 
-    rumtk_web_render_template!(SelectElement {
+    Ok(SelectElement {
         items,
         props: &props.to_string().replace("\\\\", "\\"),
         count,

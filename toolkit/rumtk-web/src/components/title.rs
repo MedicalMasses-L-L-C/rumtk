@@ -45,7 +45,7 @@ pub struct Title<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
@@ -55,7 +55,7 @@ pub fn title(_path_components: URLPath, params: URLParams, state: SharedAppState
     let itm = rumtk_web_get_text_item!(&text_store, typ, &TextMap::default());
     let text = rumtk_web_get_text_item!(&itm, "title", typ);
 
-    rumtk_web_render_template!(Title {
+    Ok(Title {
         typ,
         text,
         css_class,
