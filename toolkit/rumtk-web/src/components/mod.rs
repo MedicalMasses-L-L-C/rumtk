@@ -52,6 +52,7 @@ pub mod loader;
 pub mod job_loader;
 pub mod container;
 pub mod html;
+pub mod widgets;
 
 pub type ComponentCache = LazyRUMCache<RUMString, ComponentFunction>;
 pub type UserComponentItem<'a> = (&'a str, ComponentFunction);
