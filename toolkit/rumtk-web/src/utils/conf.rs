@@ -137,6 +137,44 @@ impl PipelineConf {
     }
 }
 
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
+pub struct PageConf {
+    pub url: RUMString,
+    pub _static: bool,
+}
+
+pub type PageMap = RUMOrderedMap<RUMString, PageConf>;
+
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
+pub struct RouterConf {
+    pub pages: Option<PageMap>,
+    pub redirect: Option<TextMap>,
+    pub service_routes: Option<TextMap>,
+}
+
+impl RouterConf {
+    pub fn get_page(&self, name: &RUMString) -> Option<&PageConf> {
+        match &self.pages {
+            Some(pages) => pages.get(name),
+            None => None
+        }
+    }
+
+    pub fn get_redirect(&self, name: &RUMString) -> Option<&RUMString> {
+        match &self.redirect {
+            Some(redirects) => redirects.get(name),
+            None => None
+        }
+    }
+
+    pub fn get_service_route(&self, name: &RUMString) -> Option<&RUMString> {
+        match &self.service_routes {
+            Some(service_routes) => service_routes.get(name),
+            None => None
+        }
+    }
+}
+
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
 /// a series of fields that represent the web app initial state or configuration. The idea is that
@@ -159,6 +197,7 @@ pub struct AppConf {
     strings: RootNestedNestedTextMap,
     config: NestedNestedTextMap,
     pipelines: PipelineConf,
+    pub router: RouterConf,
     //pub opts: TextMap,
 }
 
@@ -234,6 +273,7 @@ impl Default for AppConf {
             strings: RootNestedNestedTextMap::default(),
             config: NestedNestedTextMap::default(),
             pipelines: PipelineConf::default(),
+            router: RouterConf::default(),
         }
     }
 }

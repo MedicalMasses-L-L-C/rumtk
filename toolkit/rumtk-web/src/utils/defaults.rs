@@ -42,6 +42,8 @@ pub const DEFAULT_HTMX_SWAP_MODE: &str = "outerHTML";
 pub const DEFAULT_PROGRESS_MODE: &str = "hidden";
 pub const DEFAULT_THEME_ITEM: &str = "light";
 pub const DEFAULT_LANG_ITEM: &str = "en";
+pub const DEFAULT_HOME_PAGE: &str = "Home";
+pub const DEFAULT_HOME_PAGE_URL: &str = "./";
 
 /*
     Options

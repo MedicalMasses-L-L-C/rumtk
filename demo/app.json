@@ -4,7 +4,7 @@
   "company": "",
   "copyright": "2026",
   "lang": "en",
-  "theme": "",
+  "theme": "light",
   "flags": {
     "custom_css": false,
     "enable_icons": false
@@ -21,12 +21,6 @@
   },
   "strings": {
     "en": {
-      "links": {
-        "index": {
-          "title": "Basic",
-          "url": "./"
-        }
-      },
       "text": {
         "instructions": {
           "title": "",
@@ -181,5 +175,15 @@
         ]
       }
     }
+  },
+  "router": {
+    "pages": {
+      "index": {
+        "url": "./",
+        "_static": true
+      }
+    },
+    "redirect": null,
+    "service_routes": null
   }
 }

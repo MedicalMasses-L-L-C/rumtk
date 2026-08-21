@@ -20,10 +20,10 @@
  */
 use crate::components::html::{header, Header};
 use crate::components::navlink::navlink;
-use crate::defaults::{PARAMS_CONTENTS, PARAMS_TARGET};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE, SECTION_LINKS};
+use crate::defaults::{PARAMS_CONTENTS, PARAMS_TARGET, PARAMS_TITLE};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_template, RUMWebData, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_template, PageConf, RUMWebData, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -54,13 +54,16 @@ pub struct Nav<'a> {
     css_class: &'a str,
 }
 
-fn get_nav_links(keys: &Vec<&RUMString>, app_state: SharedAppState) -> Vec<RUMString> {
-    let mut nav_links = Vec::<RUMString>::with_capacity(keys.len());
-    for key in keys {
+fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -> Vec<RUMString> {
+    let mut nav_links = Vec::<RUMString>::with_capacity(itms.len());
+    for (k, itm) in itms {
         nav_links.push(
             navlink(
                 &[],
-                &RUMWebData::from([(PARAMS_TARGET.to_string(), key.to_string())]),
+                &RUMWebData::from([
+                    (PARAMS_TITLE.to_string(), k.to_string()),
+                    (PARAMS_TARGET.to_string(), itm.url.to_string()),
+                ]),
                 app_state.clone(),
             )
             .unwrap_or_default()
@@ -87,8 +90,16 @@ pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppSta
 
     let company = rumtk_web_get_config!(state).company.clone();
 
-    let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
-    let nav_keys = links_store.keys().collect::<Vec<&RUMString>>();
+    let links = match &rumtk_web_get_config!(state).router.pages {
+        Some(pages) => {
+            let mut links = Vec::<(RUMString, PageConf)>::with_capacity(pages.len());
+            for (k, v) in pages.iter() {
+                links.push((k.clone(), v.clone()));
+            }
+            links
+        },
+        None => vec![],
+    };
     let nav_links = match rumtk_web_get_config!(state).header_conf.disable_navlinks {
         true => vec![rumtk_web_render_component!(
             "title",
@@ -98,7 +109,7 @@ pub fn app_nav(_path_components: URLPath, params: URLParams, state: SharedAppSta
             )],
             state
         )?.to_string()],
-        false => get_nav_links(&nav_keys, state.clone()),
+        false => get_nav_links(&links, state.clone()),
     };
 
     let disable_logo =

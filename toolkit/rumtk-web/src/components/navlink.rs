@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET, SECTION_LINKS};
+use crate::defaults::{DEFAULT_HOME_PAGE, DEFAULT_HOME_PAGE_URL, PARAMS_TITLE};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TARGET};
 use crate::utils::types::{HTMLResult, RUMString, SharedAppState, URLParams, URLPath};
-use crate::utils::{DEFAULT_TEXT, DEFAULT_TEXTMAP};
 use crate::{
-    rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_render_template,
+    rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_render_template,
     RUMWebTemplate,
 };
 
@@ -49,15 +49,11 @@ pub struct NavLink<'a> {
 }
 
 pub fn navlink(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
-    let target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
+    let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_HOME_PAGE);
+    let url = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_HOME_PAGE_URL);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
-
-    let links_store = rumtk_web_get_config_string!(state, SECTION_LINKS);
-    let itm = rumtk_web_get_text_item!(&links_store, target, &DEFAULT_TEXTMAP());
-    let title = rumtk_web_get_text_item!(&itm, "title", &DEFAULT_TEXT());
-    let url = rumtk_web_get_text_item!(&itm, "url", &DEFAULT_TEXT());
 
     rumtk_web_render_template!(NavLink {
         target: NavItem { title, url },
