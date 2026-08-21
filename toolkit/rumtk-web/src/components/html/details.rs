@@ -20,11 +20,8 @@
 use crate::components::html::pre::{pre, Pre};
 use crate::components::html::summary::{summary, Summary};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
-use crate::utils::types::{HTMLResult, SharedAppState, URLParams, URLPath};
-use crate::{
-    rumtk_web_get_config, rumtk_web_get_text_item,
-    rumtk_web_render_template, RUMWebTemplate,
-};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -46,11 +43,11 @@ pub struct Details<'a> {
     custom_css_enabled: bool,
 }
 
-pub fn details(_path_components: URLPath, params: URLParams, state: SharedAppState) -> HTMLResult {
+pub fn details(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<Details> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    rumtk_web_render_template!(Details {
+    Ok(Details {
         summary: summary(_path_components, params, state.clone())?,
         contents: pre(_path_components, params, state)?,
         css_class,
