@@ -33,7 +33,7 @@ use crate::{rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
         {% else if typ == DEFAULT_SCRIPT_MODULE %}
             <script type='module' id={{id}}>{{script|safe}}</script>
         {% else %}
-            <script type='module' src='{{script|safe}}' id={{id}} defer></script>
+            <script type='module' src='{{script}}' id={{id}} defer></script>
         {% endif %}
     ",
     ext = "html"
