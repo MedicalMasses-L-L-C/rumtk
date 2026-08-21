@@ -17,23 +17,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-mod header;
-mod details;
-mod pre;
-mod summary;
-mod div;
-mod footer;
-mod link;
-mod script;
-mod anchor;
-mod md;
+use ammonia::clean;
+use rumtk_core::strings::RUMString;
 
-pub use header::*;
-pub use details::*;
-pub use pre::*;
-pub use summary::*;
-pub use div::*;
-pub use link::*;
-pub use footer::*;
-pub use script::*;
-pub use anchor::*;
+#[inline]
+pub fn sanitize_html(html: &str) -> RUMString {
+    clean(html)
+}

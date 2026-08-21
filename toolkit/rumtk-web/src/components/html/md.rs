@@ -17,23 +17,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-mod header;
-mod details;
-mod pre;
-mod summary;
-mod div;
-mod footer;
-mod link;
-mod script;
-mod anchor;
-mod md;
+use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_CONTENTS};
+use crate::utils::types::{SharedAppState, URLParams, URLPath};
+use crate::{rumtk_web_get_text_item, rumtk_web_render_markdown, sanitize_html, ComponentResult, RUMWebTemplate};
+use rumtk_core::strings::RUMString;
 
-pub use header::*;
-pub use details::*;
-pub use pre::*;
-pub use summary::*;
-pub use div::*;
-pub use link::*;
-pub use footer::*;
-pub use script::*;
-pub use anchor::*;
+#[derive(RUMWebTemplate, Debug, Clone)]
+#[template(
+    source = "
+        {% if custom_css_enabled %}
+            <link href='/static/components/md.css' rel='stylesheet'>
+        {% endif %}
+        <pre class='md-{{css_class}} md'>
+            {{rendered|safe}}
+        </pre>
+    ",
+    ext = "html"
+)]
+pub struct Markdown<'a> {
+    sanitized: RUMString,
+}
+
+pub fn markdown<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Markdown> {
+    let md = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);
+
+    let rendered = rumtk_web_render_markdown!(md);
+    let sanitized = sanitize_html(&rendered);
+
+    Ok(Markdown { sanitized })
+}
+
