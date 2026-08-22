@@ -17,15 +17,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use rumtk_core::base::RUMResult;
 use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::buffers::*;
-use rumtk_core::search::rumtk_search::{string_find_value, string_search};
+use rumtk_core::search::rumtk_search::string_find_value;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
-use rumtk_core::strings::{rumtk_format, string_to_buffer, RUMString, RUMStringConversions};
+use rumtk_core::strings::RUMString;
 use rumtk_web::conversions::to_data_uri;
 use rumtk_web::RUMWebTemplate;
-use std::convert::{From, TryFrom};
+use std::convert::TryFrom;
 use std::fmt::Debug;
 
 ///
@@ -48,8 +47,7 @@ impl TryFrom<&RUMBuffer> for FlamegraphBenchmarkVisualizer {
     type Error = RUMString;
     fn try_from(report: &RUMBuffer) -> Result<Self, Self::Error> {
         let report_string = buffer_to_string(report)?;
-        let s = report_string.as_str();
-        let flamegraph_html = string_find_value::<RUMString>(s, &["(?s)<\\?xml.*</svg>"]).unwrap_or_default();
+        let flamegraph_html = string_find_value::<RUMString>(&report_string, &["(?s)<\\?xml.*</svg>"]).unwrap_or_default();
         Ok(Self {
             data: to_data_uri(flamegraph_html.as_str(), "image/svg+xml")
         })

@@ -26,7 +26,7 @@ use rumtk_web::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='f24 benchmark-view-{{css_class}} md'>{{data}}</div>
+        <div class='benchmark-view-{{css_class}} md'>{{data|safe}}</div>
     ",
     ext = "html"
 )]
