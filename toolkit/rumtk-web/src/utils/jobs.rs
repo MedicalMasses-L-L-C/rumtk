@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::html::Container;
+use crate::components::sanitize::Sanitized;
 use rumtk_core::base::RUMResult;
 use rumtk_core::buffers::*;
 use rumtk_core::id::id_to_uuid;
@@ -28,7 +28,7 @@ use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
-pub type JobResult = RUMResult<Option<Container>>;
+pub type JobResult = RUMResult<Option<Sanitized>>;
 pub type Job = Task<JobResult>;
 type JobManager = TaskManager<JobResult>;
 

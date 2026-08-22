@@ -17,8 +17,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::html::Container;
 use crate::components::loader::{loader, Loader};
+use crate::components::sanitize::Sanitized;
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
 use crate::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_params_string, ComponentResult, RUMWebTemplateSafe, DEFAULT_HTMX_CHECK_TICKS, PARAMS_TICKS};
 use crate::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
@@ -42,7 +42,7 @@ use rumtk_core::strings::RUMString;
 pub struct JobLoader {
     job_id: RUMString,
     ticks: RUMString,
-    results: Option<Container>,
+    results: Option<Sanitized>,
     loader: Option<Loader>,
     params_string: RUMString,
     css_class: RUMString,
