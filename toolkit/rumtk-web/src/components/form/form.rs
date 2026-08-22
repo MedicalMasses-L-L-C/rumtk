@@ -22,7 +22,7 @@ use crate::components::form::form_node::FormNode;
 use crate::components::title::{title, Title};
 use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -72,6 +72,8 @@ pub struct Form {
     custom_css_enabled: bool,
     auto_hide_progress: bool,
 }
+
+impl RUMWebTemplateSafe for Form {}
 
 pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Form> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM).to_string();

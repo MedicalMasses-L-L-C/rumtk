@@ -20,7 +20,7 @@
  */
 use crate::components::form::form_node::{FormNode, ToFormNode};
 use crate::components::form::props::InputProps;
-use crate::{ComponentResult, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
@@ -35,6 +35,8 @@ pub struct InputElement<'a> {
     props: &'a str,
     css_class: &'a str,
 }
+
+impl RUMWebTemplateSafe for InputElement<'_> {}
 
 impl ToFormNode<InputElement<'_>> for InputElement<'_> {}
 

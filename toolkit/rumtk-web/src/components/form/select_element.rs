@@ -19,7 +19,7 @@
  */
 use crate::components::form::form_node::{FormNode, ToFormNode};
 use crate::components::form::props::InputProps;
-use crate::{ComponentResult, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 type SelectOptions<'a> = Vec<(&'a str, &'a str)>;
 
@@ -40,6 +40,8 @@ pub struct SelectElement<'a> {
     count: usize,
     css_class: &'a str
 }
+
+impl RUMWebTemplateSafe for SelectElement<'_> {}
 
 fn parse_select_data(data: &str) -> Vec<(&str, &str)> {
     let rows: Vec<&str> = data.split(",").collect();

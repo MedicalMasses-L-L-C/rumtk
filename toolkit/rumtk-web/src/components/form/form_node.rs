@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::{rumtk_web_render, RUMWebRedirect, RUMWebTemplate};
+use crate::{rumtk_web_render, RUMWebRedirect, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -30,6 +30,8 @@ use rumtk_core::strings::RUMString;
 pub struct FormNode {
     data: RUMString,
 }
+
+impl RUMWebTemplateSafe for FormNode {}
 
 pub trait ToFormNode<T: RUMWebTemplate> {
     fn to_form_node(self) -> FormNode
