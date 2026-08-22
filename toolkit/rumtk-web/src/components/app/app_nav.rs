@@ -83,6 +83,8 @@ pub struct Nav {
     css_class: RUMString,
 }
 
+impl RUMWebTemplateSafe for Nav {}
+
 fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -> RUMResult<Vec<NavLink>> {
     let mut nav_links = Vec::<NavLink>::with_capacity(itms.len());
     for (k, itm) in itms {

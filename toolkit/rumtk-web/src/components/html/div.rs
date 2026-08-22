@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, sanitize_html, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
@@ -33,16 +33,21 @@ use rumtk_core::strings::RUMString;
     ",
     ext = "html"
 )]
-pub struct Div<T: RUMWebTemplate> {
-    contents: T,
+pub struct Div {
+    contents: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn div<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Div<T>> {
+impl RUMWebTemplateSafe for Div {}
+
+pub fn div<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Div> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
+
+    let inner = contents.to_string();
+    let contents = sanitize_html(&inner);
 
     Ok(Div {
         contents,

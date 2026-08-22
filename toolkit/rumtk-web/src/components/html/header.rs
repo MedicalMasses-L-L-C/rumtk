@@ -20,7 +20,7 @@
  */
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -41,7 +41,9 @@ pub struct Header<T: RUMWebTemplate> {
     custom_css_enabled: bool,
 }
 
-pub fn header<'a, T: RUMWebTemplate>(contents: T, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Header<T>> {
+impl<T: RUMWebTemplate + RUMWebTemplateSafe> RUMWebTemplateSafe for Header<T> {}
+
+pub fn header<T: RUMWebTemplate + RUMWebTemplateSafe>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Header<T>> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;

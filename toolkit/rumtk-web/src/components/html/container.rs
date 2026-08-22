@@ -41,7 +41,7 @@
 use crate::components::html::div;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -60,6 +60,8 @@ pub struct Container {
     custom_css_enabled: bool,
 }
 
+impl RUMWebTemplateSafe for Container {}
+
 #[inline]
 pub fn container<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Container> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
@@ -67,9 +69,10 @@ pub fn container<T: RUMWebTemplate>(contents: T, params: URLParams, state: Share
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let inner = div(contents, params, state)?;
+    let contents = inner.to_string();
 
     Ok(Container {
-        contents: inner.to_string(),
+        contents,
         css_class,
         custom_css_enabled
     })
