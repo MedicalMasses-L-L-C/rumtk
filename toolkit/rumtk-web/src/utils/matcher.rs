@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::app::app_shell::app_shell;
+use crate::components::job_loader::job_loader;
 use crate::utils::defaults::DEFAULT_ROBOT_TXT;
 use crate::utils::form_data::compile_form_data;
 use crate::utils::types::SharedAppState;
@@ -51,6 +52,16 @@ pub async fn default_page_matcher(
     let page = app_shell(&path_components, &params, state)?;
 
     rumtk_web_render_template!(page)
+}
+
+pub async fn default_job_matcher(
+    path: Vec<RUMString>,
+    params: RUMWebData,
+    state: SharedAppState,
+) -> HTMLResult {
+    let loader = job_loader(&[], &params, state)?;
+
+    rumtk_web_render_template!(loader)
 }
 
 pub async fn default_api_matcher(

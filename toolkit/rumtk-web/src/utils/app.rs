@@ -120,6 +120,9 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
     let app = Router::new()
         /* Robots.txt */
         .route("/robots.txt", get(rumtk_web_fetch!(default_robots_matcher)))
+        /* Jobs Queue */
+        .route("/jobs/", get(rumtk_web_fetch!(default_job_matcher)))
+        .route("/jobs/{*page}", get(rumtk_web_fetch!(default_job_matcher)))
         /* Pages */
         .route("/", get(rumtk_web_fetch!(default_page_matcher)))
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))

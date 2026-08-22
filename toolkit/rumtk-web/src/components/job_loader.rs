@@ -30,10 +30,10 @@ use rumtk_core::strings::RUMString;
         <div id='loader-{{job_id}}' class='centered container-default job-loader-{{css_class}}-container'>
             {% if let Some(loader) = loader %}
                 <div class='centered' hx-get='/jobs/{{params_string}}' hx-trigger='every {{ticks}}' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>
-                    {{loader}}
+                    {{loader|safe}}
                 </div>
             {% elif let Some(result) = results %}
-                {{result}}
+                {{result|safe}}
             {% endif %}
         </div>
     ",
