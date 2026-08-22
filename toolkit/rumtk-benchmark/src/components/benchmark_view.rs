@@ -18,36 +18,29 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use rumtk_core::strings::RUMString;
-use rumtk_web::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS, PARAMS_ID};
-use rumtk_web::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_render_component, rumtk_web_render_markdown, rumtk_web_render_template};
-use rumtk_web::{HTMLResult, RUMWebTemplate, SharedAppState, URLParams, URLPath};
+use rumtk_web::components::job_loader::{job_loader, JobLoader};
+use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
+use rumtk_web::{rumtk_web_get_text_item, ComponentResult};
+use rumtk_web::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='f24 benchmark-view-{{css_class}} md'>{{data|safe}}</div>
+        <div class='f24 benchmark-view-{{css_class}} md'>{{data}}</div>
     ",
     ext = "html"
 )]
-pub struct BenchmarkReportView<'a> {
-    data: &'a str,
+pub struct BenchmarkReportView {
+    data: JobLoader,
     css_class: RUMString,
 }
 
-pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-    let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+#[inline]
+pub fn benchmark_view(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<BenchmarkReportView> {
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
-    let job_result = match rumtk_web_check_on_job!("benchmark_view", job_id, state) {
-        Some(result) => result?.to_string(),
-        None => RUMString::default()
-    };
-    
-    let data = rumtk_web_render_component!("container", [(PARAMS_CONTENTS, job_result)], state)?.to_string();
-
-    Ok(BenchmarkReportView {
-            data: data.as_str(),
-            css_class
-        }
-    )
+    Ok(BenchmarkReportView{
+        data: job_loader(_path_components, params, state)?,
+        css_class
+    })
 }

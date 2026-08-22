@@ -20,11 +20,13 @@
 use super::utils::{run_cpu_info, run_flamegraph, run_hyperfine, run_perf_report, FILE_SIZE_MB};
 use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::api::benchmarks::utils::run_perf_stat;
+use crate::components::benchmark_view::benchmark_view;
 use crate::utils::types::BenchmarkReport;
 use rumtk_core::strings::{AsStr, RUMString};
+use rumtk_web::components::html::container;
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
-use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents, rumtk_web_render_template};
+use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_params_map, rumtk_web_render_page_contents, DEFAULT_EMPTY_PARAMS};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
@@ -50,12 +52,15 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
     // Render the HTML result.
-    Ok(Some(Ok(&report)))
+    let renderable = container(&report, DEFAULT_EMPTY_PARAMS.get_inner(), state)?;
+    Ok(Some(renderable))
 }
 
-pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
+pub fn benchmark(_path: APIPath, _params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
     let job_id = rumtk_web_get_job_manager!()?.spawn_task(basic_processor(form, state.clone()))?;
-    let viewer = rumtk_web_render_component!("benchmark_view", [(PARAMS_ID, job_id)], state)?.to_string();
+
+    let benchmark_params = rumtk_web_params_map!([(PARAMS_ID, job_id)]);
+    let viewer = benchmark_view(&[], benchmark_params.get_inner(), state)?.to_string();
 
     rumtk_web_render_page_contents!(
         &vec![

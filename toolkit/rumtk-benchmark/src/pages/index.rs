@@ -16,22 +16,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use rumtk_web::components::form::form::form;
+use rumtk_web::components::text_card::text_card;
+use rumtk_web::components::title::title;
 use rumtk_web::defaults::*;
-use rumtk_web::rumtk_web_render_component;
 use rumtk_web::utils::*;
+use rumtk_web::rumtk_web_params_map;
 
 pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let title_intro = rumtk_web_render_component!("title", [(PARAMS_TYPE, "Intro")], app_state)?;
-    let text_card_intro = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "instructions")], app_state)?;
-    let basic_benchmark = rumtk_web_render_component!(
-        "form",
-        [
+    let title_params = rumtk_web_params_map!([(PARAMS_TYPE, "Intro")]);
+    let title_intro = title(&[], title_params.get_inner(), app_state.clone())?;
+
+    let text_card_params = rumtk_web_params_map!([(PARAMS_TYPE, "instructions")]);
+    let text_card_intro = text_card(&[], text_card_params.get_inner(), app_state.clone())?;
+    
+    let basic_benchmark_params = rumtk_web_params_map!([
             (PARAMS_TYPE, "basic_benchmark"),
             (PARAMS_TITLE, "Basic Benchmark"),
             (PARAMS_TARGET, "basic_benchmark"),
             (PARAMS_SWAP_MODE, "outerHTML"),
             (PARAMS_ENDPOINT, "/api/benchmarks/basic")
-        ],
+        ]
+    );
+    let basic_benchmark = form(
+        &[],
+        basic_benchmark_params.get_inner(),
         app_state
     )?;
 

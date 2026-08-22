@@ -35,9 +35,6 @@ fn main() {
             ("index", pages::index::index),
         ],
         vec![
-            ("benchmark_view", components::benchmark_view::benchmark_view),
-        ],
-        vec![
             ("basic_benchmark", forms::basic_benchmark::basic_benchmark),
         ],
         vec![
