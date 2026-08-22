@@ -33,13 +33,15 @@ pub mod testdata;
 pub mod types;
 pub mod conversions;
 pub mod client;
-mod sanitize_html;
+pub mod sanitize_html;
+pub mod misc;
 
 pub use defaults::*;
 pub use render::*;
 pub use types::*;
 pub use client::*;
 pub use sanitize_html::*;
+pub use misc::*;
 
 #[macro_export]
 macro_rules! rumtk_web_get_text_item {

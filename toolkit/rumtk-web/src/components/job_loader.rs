@@ -17,9 +17,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::html::Container;
 use crate::components::loader::{loader, Loader};
-use crate::defaults::{DEFAULT_JOB_LOADER_NAME, DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
-use crate::{rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult};
+use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
+use crate::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_params_string, ComponentResult, DEFAULT_HTMX_CHECK_TICKS, PARAMS_TICKS};
 use crate::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
 use rumtk_core::strings::RUMString;
 
@@ -27,33 +28,54 @@ use rumtk_core::strings::RUMString;
 #[template(
     source = "
         <div id='loader-{{job_id}}' class='centered container-default job-loader-{{css_class}}-container'>
-            <div class='centered' hx-get='/component/{{element_name}}?id={{job_id}}' hx-trigger='every 2s' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>
-                {{loader}}
-            </div>
+            {% if let Some(loader) = loader %}
+                <div class='centered' hx-get='/jobs/{{params_string}}' hx-trigger='every {{ticks}}' hx-swap='outerHTML' hx-target='#loader-{{job_id}}'>
+                    {{loader}}
+                </div>
+            {% elif let Some(result) = results %}
+                {{result}}
+            {% endif %}
         </div>
     ",
     ext = "html"
 )]
 pub struct JobLoader {
     job_id: RUMString,
-    element_name: RUMString,
-    loader: Loader,
+    ticks: RUMString,
+    results: Option<Container>,
+    loader: Option<Loader>,
+    params_string: RUMString,
     css_class: RUMString,
 }
 
 pub fn job_loader<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<JobLoader> {
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT).to_string();
-    let element_name = rumtk_web_get_text_item!(params, PARAMS_ELEMENT, DEFAULT_JOB_LOADER_NAME).to_string();
+    let ticks = rumtk_web_get_text_item!(params, PARAMS_TICKS, DEFAULT_HTMX_CHECK_TICKS).to_string();
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
+    let params_string = rumtk_web_params_string!(&params);
 
-    let loader_params = rumtk_web_params_map!([(PARAMS_CSS_CLASS, &css_class)]);
-    let loader = loader(_path_components, loader_params.get_inner(), state)?;
+    match rumtk_web_check_on_job!(&job_id, state) {
+        Some(r) => {
+            Ok(JobLoader {
+                job_id,
+                ticks,
+                results: Some(r),
+                loader: None,
+                params_string,
+                css_class
+            })
+        },
+        None => {
+            let loader = loader(_path_components, params, state)?;
 
-    Ok(JobLoader {
-            job_id,
-            element_name,
-            loader,
-            css_class
+            Ok(JobLoader {
+                job_id,
+                ticks,
+                results: None,
+                loader: Some(loader),
+                params_string,
+                css_class
+            })
         }
-    )
+    }
 }

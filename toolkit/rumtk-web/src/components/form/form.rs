@@ -18,6 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::components::form::form_node::FormNode;
 use crate::components::title::{title, Title};
 use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
@@ -37,7 +38,7 @@ use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_fo
             {{title}}
             <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
                 {% for element in elements %}
-                    {{ element|safe }}
+                    {{ element }}
                 {% endfor %}
             </form>
             <script>
@@ -59,27 +60,27 @@ use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_fo
     ",
     ext = "html"
 )]
-struct Form<'a> {
-    typ: &'a str,
+pub struct Form {
+    typ: RUMString,
     title: Title,
     module: RUMString,
     endpoint: RUMString,
-    htmx_target: &'a str,
-    htmx_swap_mode: &'a str,
-    elements: Vec<RUMString>,
+    htmx_target: RUMString,
+    htmx_swap_mode: RUMString,
+    elements: Vec<FormNode>,
     css_class: RUMString,
     custom_css_enabled: bool,
     auto_hide_progress: bool,
 }
 
-pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Form<'a>> {
-    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM);
+pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Form> {
+    let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_TEXT_ITEM).to_string();
     let title_str = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_NO_TEXT);
-    let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, typ);
-    let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, typ);
+    let module = rumtk_web_get_text_item!(params, PARAMS_MODULE, &typ);
+    let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, &typ);
     let auto_hide_progress = rumtk_web_get_text_item!(params, PARAMS_PROGRESS_MODE, DEFAULT_PROGRESS_MODE);
-    let htmx_swap_mode = rumtk_web_get_text_item!(params, PARAMS_SWAP_MODE, DEFAULT_HTMX_SWAP_MODE);
-    let htmx_target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
+    let htmx_swap_mode = rumtk_web_get_text_item!(params, PARAMS_SWAP_MODE, DEFAULT_HTMX_SWAP_MODE).to_string();
+    let htmx_target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM).to_string();
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let title_params = rumtk_web_params_map!(
@@ -95,7 +96,12 @@ pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let elements = rumtk_web_get_form!(typ)?;
+    let element_results = rumtk_web_get_form!(&typ)?;
+    let mut elements = Vec::<FormNode>::with_capacity(element_results.len());
+
+    for result in element_results {
+        elements.push(result?);
+    }
 
     Ok(Form {
         typ,

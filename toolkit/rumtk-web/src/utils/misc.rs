@@ -17,26 +17,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-mod header;
-mod details;
-mod pre;
-mod summary;
-mod div;
-mod footer;
-mod link;
-mod script;
-mod anchor;
-mod md;
-mod container;
+use crate::URLParams;
+use rumtk_core::strings::{rumtk_format, RUMString};
 
-pub use header::*;
-pub use details::*;
-pub use pre::*;
-pub use summary::*;
-pub use div::*;
-pub use link::*;
-pub use footer::*;
-pub use script::*;
-pub use anchor::*;
-pub use md::*;
-pub use container::*;
+#[inline]
+pub fn params_to_string(params: &URLParams) -> RUMString {
+    rumtk_format!("?{}", params.iter().map(|(key, value)| format!("{}={}", key, value)).collect::<Vec<String>>().join("&"))
+}
+
+///
+/// Convert [URLParams] to a [RUMString] with the format `?key1=value1&key2=value2&...`.
+///
+#[macro_export]
+macro_rules! rumtk_web_params_string {
+    ( $params:expr ) => {{
+        use $crate::utils::misc::params_to_string;
+
+        params_to_string($params)
+    }};
+}

@@ -47,6 +47,5 @@ pub mod title;
 pub mod select;
 pub mod loader;
 pub mod job_loader;
-pub mod container;
 pub mod html;
 pub mod widgets;

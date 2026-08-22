@@ -34,7 +34,7 @@ pub mod select_element;
 pub mod form;
 pub mod form_node;
 
-pub type FormElements = Vec<RUMString>;
+pub type FormElements = Vec<ComponentResult<FormNode>>;
 pub type FormCache = LazyRUMCache<RUMString, FormElements>;
 pub type FormElementBuilder =
     fn(element: &str, data: &str, props: InputProps, css: &str) -> ComponentResult<FormNode>;

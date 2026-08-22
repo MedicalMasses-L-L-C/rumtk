@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::HTMLResult;
+use crate::components::html::Container;
 use rumtk_core::base::RUMResult;
 use rumtk_core::buffers::*;
 use rumtk_core::id::id_to_uuid;
@@ -28,7 +28,7 @@ use rumtk_core::threading::threading_manager::{Task, TaskID, TaskManager};
 pub type JobID = TaskID;
 pub type JobBuffer = RUMBuffer;
 
-pub type JobResult = RUMResult<Option<HTMLResult>>;
+pub type JobResult = RUMResult<Option<Container>>;
 pub type Job = Task<JobResult>;
 type JobManager = TaskManager<JobResult>;
 
@@ -186,33 +186,21 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 #[macro_export]
 macro_rules! rumtk_web_check_on_job {
-    ( $element_name:expr, $job_id:expr, $state:expr ) => {{
-        use $crate::defaults::{DEFAULT_TEXT_ITEM};
-        rumtk_web_check_on_job!($element_name, $job_id, DEFAULT_TEXT_ITEM, $state)
-    }};
-    ( $element_name:expr, $job_id:expr, $css_class:expr, $state:expr ) => {{
+    ( $job_id:expr, $state:expr ) => {{
         use rumtk_core::id::id_to_uuid;
+        use $crate::components::job_loader::job_loader;
         use $crate::defaults::{PARAMS_CSS_CLASS, PARAMS_ELEMENT, PARAMS_ID};
-        use $crate::{rumtk_web_get_job_manager, rumtk_web_render_component};
+        use $crate::{rumtk_web_get_job_manager};
 
         let id = id_to_uuid($job_id)?;
         let job_finished = rumtk_web_get_job_manager!()?.is_finished(&id);
         let result = match job_finished {
-            true => &rumtk_web_get_job_manager!()?.wait_on(&id)?.result,
-            false => {
-                return rumtk_web_render_component!(
-                    "job_loader",
-                    [
-                        (PARAMS_ID, $job_id),
-                        (PARAMS_ELEMENT, $element_name),
-                        (PARAMS_CSS_CLASS, $css_class),
-                    ], $state
-                );
-            },
+            true => rumtk_web_get_job_manager!()?.wait_on(&id)?,
+            false => None,
         };
 
         match result {
-            Some(r) => r.clone()?,
+            Some(r) => r?,
             None => None,
         }
     }};

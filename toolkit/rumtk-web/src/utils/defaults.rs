@@ -76,6 +76,7 @@ pub const PARAMS_CONTENTS: &str = "contents";
 pub const PARAMS_MODULE: &str = "module";
 pub const PARAMS_ENDPOINT: &str = "endpoint";
 pub const PARAMS_ELEMENT: &str = "element";
+pub const PARAMS_TICKS: &str = "ticks";
 pub const PARAMS_SWAP_MODE: &str = "swap_mode";
 pub const PARAMS_PROGRESS_MODE: &str = "progress_mode";
 
@@ -155,10 +156,15 @@ pub const ELEMENT_LABEL: &str = "label";
 pub const ELEMENT_SELECT: &str = "select";
 
 /*
-   Default non static data to minimize allocations.
+   Default static data to minimize allocations.
 */
 pub static DEFAULT_TEXT: RUMString = RUMString::new();
 pub static DEFAULT_TEXTMAP: LazyLock<TextMap> = LazyLock::new(|| TextMap::default());
 pub static DEFAULT_NESTEDTEXTMAP: LazyLock<NestedTextMap> = LazyLock::new(|| NestedTextMap::default());
 pub static DEFAULT_NESTEDNESTEDTEXTMAP: LazyLock<NestedNestedTextMap> =
     LazyLock::new(|| NestedNestedTextMap::default());
+
+/*
+   Default HTMX.
+*/
+pub const DEFAULT_HTMX_CHECK_TICKS: &str = "2s";

@@ -636,37 +636,24 @@ macro_rules! rumtk_web_register_app_components {
 
         AppComponents {
             pages: Some($pages),
-            components: None,
             forms: None,
             apis: None,
         }
     }};
-    ( $pages:expr, $components:expr ) => {{
+    ( $pages:expr, $forms:expr ) => {{
         use $crate::utils::app::AppComponents;
 
         AppComponents {
             pages: Some($pages),
-            components: Some($components),
-            forms: None,
-            apis: None,
-        }
-    }};
-    ( $pages:expr, $components:expr, $forms:expr ) => {{
-        use $crate::utils::app::AppComponents;
-
-        AppComponents {
-            pages: Some($pages),
-            components: Some($components),
             forms: Some($forms),
             apis: None,
         }
     }};
-    ( $pages:expr, $components:expr, $forms:expr, $apis:expr ) => {{
+    ( $pages:expr, $forms:expr, $apis:expr ) => {{
         use $crate::utils::app::AppComponents;
 
         AppComponents {
             pages: Some($pages),
-            components: Some($components),
             forms: Some($forms),
             apis: Some($apis),
         }
