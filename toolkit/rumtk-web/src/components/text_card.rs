@@ -21,7 +21,7 @@
 use crate::components::formatted_label::{formatted_label, FormattedLabel};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_TYPE};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -41,6 +41,8 @@ pub struct TextCard {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for TextCard {}
 
 pub fn text_card<'a>(
     _path_components: URLPath<'a, 'a>,

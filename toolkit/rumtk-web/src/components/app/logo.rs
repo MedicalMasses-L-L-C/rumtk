@@ -30,7 +30,6 @@ use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
 use rumtk_core::strings::RUMString;
 
-
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "

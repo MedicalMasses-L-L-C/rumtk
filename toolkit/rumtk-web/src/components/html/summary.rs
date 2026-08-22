@@ -20,7 +20,7 @@
 use crate::defaults::PARAMS_TITLE;
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -40,6 +40,8 @@ pub struct Summary {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for Summary {}
 
 pub fn summary<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Summary> {
     let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_TEXT_ITEM).to_string();

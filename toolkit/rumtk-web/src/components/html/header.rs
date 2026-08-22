@@ -30,7 +30,7 @@ use rumtk_core::strings::RUMString;
             <link href='/static/components/header.css' rel='stylesheet'>
         {% endif %}
         <header class='header-{{ css_class }}-container header'>
-            {{contents}}
+            {{contents|safe}}
         </header>
     ",
     ext = "html"

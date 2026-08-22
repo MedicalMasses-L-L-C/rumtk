@@ -21,7 +21,7 @@
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, SECTION_SOCIALS,
 };
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::rumtk_format;
 
 #[derive(Debug, Clone)]
@@ -52,6 +52,8 @@ pub struct Socials {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for Socials {}
 
 fn get_social_list(social_list: &str, state: &SharedAppState) -> SocialsList {
     let data = social_list.to_lowercase();

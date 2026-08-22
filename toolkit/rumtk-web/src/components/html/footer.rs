@@ -30,7 +30,7 @@ use rumtk_core::strings::RUMString;
             <link href='/static/components/footer.css' rel='stylesheet'>
         {% endif %}
         <footer role='contentinfo' class='footer-{{ css_class }}-container'>
-            {{contents}}
+            {{contents|safe}}
         </footer>
     ",
     ext = "html"
@@ -41,9 +41,9 @@ pub struct Footer<T: RUMWebTemplate> {
     custom_css_enabled: bool,
 }
 
-impl<T: RUMWebTemplate + RUMWebTemplateSafe> RUMWebTemplateSafe for Footer<T> {}
+impl<T: RUMWebTemplate> RUMWebTemplateSafe for Footer<T> {}
 
-pub fn footer<T: RUMWebTemplate + RUMWebTemplateSafe>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Footer<T>> {
+pub fn footer<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Footer<T>> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;

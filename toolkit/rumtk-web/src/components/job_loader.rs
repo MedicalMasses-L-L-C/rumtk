@@ -20,7 +20,7 @@
 use crate::components::html::Container;
 use crate::components::loader::{loader, Loader};
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID};
-use crate::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_params_string, ComponentResult, DEFAULT_HTMX_CHECK_TICKS, PARAMS_TICKS};
+use crate::{rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_params_string, ComponentResult, RUMWebTemplateSafe, DEFAULT_HTMX_CHECK_TICKS, PARAMS_TICKS};
 use crate::{RUMWebTemplate, SharedAppState, URLParams, URLPath};
 use rumtk_core::strings::RUMString;
 
@@ -47,6 +47,8 @@ pub struct JobLoader {
     params_string: RUMString,
     css_class: RUMString,
 }
+
+impl RUMWebTemplateSafe for JobLoader {}
 
 pub fn job_loader<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<JobLoader> {
     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT).to_string();

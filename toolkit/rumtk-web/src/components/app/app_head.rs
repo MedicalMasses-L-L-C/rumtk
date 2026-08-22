@@ -29,10 +29,10 @@ use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 #[template(
     source = "
         <head>
-            {{meta}}
-            {{css}}
-            {{fontawesome}}
-            {{htmx}}
+            {{meta|safe}}
+            {{css|safe}}
+            {{fontawesome|safe}}
+            {{htmx|safe}}
         </head>
     ",
     ext = "html"

@@ -20,7 +20,7 @@
 
 use crate::defaults::{DEFAULT_NO_TEXT, PARAMS_SOURCE_URL, PARAMS_TYPE};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
@@ -35,6 +35,8 @@ pub struct Link<'a> {
     url: &'a str,
     file: &'a str
 }
+
+impl RUMWebTemplateSafe for Link<'_> {}
 
 pub fn link<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Link<'a>> {
     let typ = rumtk_web_get_text_item!(params, PARAMS_TYPE, DEFAULT_NO_TEXT);

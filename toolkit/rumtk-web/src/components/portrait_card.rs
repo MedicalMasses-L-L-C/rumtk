@@ -21,7 +21,7 @@
 use crate::components::contact_card::{contact_card, ContactCard};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SECTION, PARAMS_TYPE};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::base::RUMResult;
 use rumtk_core::strings::RUMString;
 
@@ -57,6 +57,8 @@ pub struct PortraitCard {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for PortraitCard {}
 
 fn get_portrait_grid<'a>(section: &'a str, typ: &'a str, app_state: &'a SharedAppState) -> RUMResult<PortraitGrid> {
     let text_conf = rumtk_web_get_config_string!(app_state, typ);

@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -40,6 +40,8 @@ pub struct YouTrack {
     theme: RUMString,
     lang: RUMString,
 }
+
+impl RUMWebTemplateSafe for YouTrack {}
 
 pub fn youtrack<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<YouTrack> {
     let portal = match rumtk_web_get_config!(state).router.get_service_route(&"youtrack".to_string()){

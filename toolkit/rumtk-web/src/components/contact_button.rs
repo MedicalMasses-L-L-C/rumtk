@@ -22,7 +22,7 @@ use crate::components::title::{title, Title};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION,
 };
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_CONTACT_FUNCTION};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_CONTACT_FUNCTION};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -53,6 +53,8 @@ pub struct ContactButton {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for ContactButton {}
 
 pub fn contact_button<'a>(
     _path_components: URLPath<'a, 'a>,

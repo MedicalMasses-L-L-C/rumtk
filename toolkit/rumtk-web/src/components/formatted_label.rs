@@ -25,7 +25,7 @@ use crate::utils::defaults::{
 };
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::utils::DEFAULT_TEXTMAP;
-use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_string, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -45,6 +45,8 @@ pub struct FormattedLabel {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for FormattedLabel {}
 
 pub fn formatted_label<'a>(
     _path_components: URLPath<'a, 'a>,

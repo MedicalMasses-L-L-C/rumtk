@@ -17,13 +17,13 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::{rumtk_web_render, RUMWebRedirect, RUMWebTemplate, RUMWebTemplateSafe};
+use crate::{RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {{data}}
+        {{data|safe}}
     ",
     ext = "html"
 )]
@@ -38,6 +38,6 @@ pub trait ToFormNode<T: RUMWebTemplate> {
     where
         Self: RUMWebTemplate + Sized,
     {
-        FormNode { data: rumtk_web_render(self, RUMWebRedirect::None).unwrap_or_default().to_string() }
+        FormNode { data: self.to_string() }
     }
 }

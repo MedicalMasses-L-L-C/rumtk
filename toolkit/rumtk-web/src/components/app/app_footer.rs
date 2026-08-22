@@ -52,9 +52,9 @@ use rumtk_core::strings::RUMString;
             {{company}} &copy; {{copyright}}
         </p>
         {% if !disable_contact_button %}
-        {{button}}
+        {{button|safe}}
         {% endif %}
-        {{socials}}
+        {{socials|safe}}
     ",
     ext = "html"
 )]

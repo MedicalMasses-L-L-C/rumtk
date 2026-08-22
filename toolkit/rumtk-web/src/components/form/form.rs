@@ -35,10 +35,10 @@ use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_fo
                 <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' defer>
                 </script>
             {% endif %}
-            {{title}}
+            {{title|safe}}
             <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
                 {% for element in elements %}
-                    {{ element }}
+                    {{ element|safe }}
                 {% endfor %}
             </form>
             <script>

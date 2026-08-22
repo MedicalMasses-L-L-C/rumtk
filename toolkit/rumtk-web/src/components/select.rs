@@ -22,7 +22,7 @@ use crate::components::form::props::InputProps;
 use crate::components::form::select_element::select_element;
 use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, ELEMENT_SELECT, PARAMS_CONTENTS, PARAMS_CSS_CLASS};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug)]
@@ -42,6 +42,8 @@ pub struct Select {
     css_class: RUMString,
     custom_css_enabled: bool,
 }
+
+impl RUMWebTemplateSafe for Select {}
 
 pub fn select<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Select> {
     let items = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_NO_TEXT);

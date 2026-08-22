@@ -54,7 +54,7 @@ use rumtk_core::base::RUMResult;
         {% if !disable_logo %}
         <div class='header-{{ css_class }}-navlogo'>
             <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
-                {{logo}}
+                {{logo|safe}}
                 <h3 class='brand-name'> {{company}}</h3>
             </a>
         </div>
@@ -62,11 +62,11 @@ use rumtk_core::base::RUMResult;
         {% if !disable_links %}
         <div class='header-{{ css_class }}-navactions gap-10'>
             {% for item in nav_links %}
-                {{item}}
+                {{item|safe}}
             {% endfor %}
         </div>
         {% else %}
-        {{title}}
+        {{title|safe}}
         {% endif %}
         <div class='header-{{ css_class }}-misc gap-10'>
         </div>
