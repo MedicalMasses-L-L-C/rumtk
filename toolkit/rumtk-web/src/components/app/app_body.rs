@@ -40,7 +40,7 @@
  */
 use crate::components::app::app_footer::{app_footer, AppFooter};
 use crate::components::app::app_nav::{app_nav, AppNav};
-use crate::components::main::{main, Main};
+use crate::components::html::{main, Main};
 use crate::utils::defaults::DEFAULT_EMPTY_PARAMS;
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};

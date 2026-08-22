@@ -24,6 +24,8 @@ pub mod app_footer;
 pub mod app_head;
 pub mod app_body;
 pub mod app_nav;
+pub mod navlink;
+pub mod logo;
 
 pub mod css;
 pub mod fontawesome;

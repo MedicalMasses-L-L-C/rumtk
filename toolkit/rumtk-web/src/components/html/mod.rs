@@ -28,6 +28,7 @@ mod script;
 mod anchor;
 mod md;
 mod container;
+mod main;
 
 pub use header::*;
 pub use details::*;
@@ -40,3 +41,4 @@ pub use script::*;
 pub use anchor::*;
 pub use md::*;
 pub use container::*;
+pub use main::*;
