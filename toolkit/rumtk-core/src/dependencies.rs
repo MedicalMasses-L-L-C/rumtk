@@ -20,3 +20,4 @@
 
 pub use clap;
 pub use tokio;
+pub use maplit;
