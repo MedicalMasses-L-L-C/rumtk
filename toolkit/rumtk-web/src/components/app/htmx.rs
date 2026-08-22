@@ -18,31 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::utils::types::SharedAppState;
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
-use rumtk_core::strings::RUMString;
+use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
-#[derive(RUMWebTemplate)]
+#[derive(Debug)]
+pub struct HTMXElement {
+    version: &'static str,
+    sha: &'static str,
+}
+
+#[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-            <meta charset='UTF-8'>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-            <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-            <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>
-            <meta name='description' content='{{description}}'>
-            <title>{{title}}</title>
-            <link rel='icon' type='image/png' href='/static/img/icon.png'>
+        <script src='https://cdn.jsdelivr.net/npm/htmx.org@{{lib.version}}/dist/htmx.min.js' integrity='{{lib.sha}}' crossorigin='anonymous'></script>
     ",
     ext = "html"
 )]
-pub struct Meta {
-    title: RUMString,
-    description: RUMString,
+pub struct HTMX {
+    lib: HTMXElement,
 }
 
-pub fn meta(state: SharedAppState) -> ComponentResult<Meta> {
-    Ok(Meta {
-        title: rumtk_web_get_config!(state).title.to_string(),
-        description: rumtk_web_get_config!(state).description.to_string()
+impl RUMWebTemplateSafe for HTMX {}
+
+#[inline]
+pub fn htmx() -> ComponentResult<HTMX> {
+    Ok(HTMX {
+        lib: HTMXElement {
+            version: "2.0.8",
+            sha: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+        }
     })
 }

@@ -27,7 +27,6 @@ pub mod api;
 pub mod components;
 pub mod css;
 pub mod pages;
-pub mod static_components;
 pub mod utils;
 pub mod js;
 

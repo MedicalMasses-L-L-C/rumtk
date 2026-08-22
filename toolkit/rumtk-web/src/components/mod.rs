@@ -20,19 +20,12 @@
  */
 
 
-//AppShell
-pub mod app_body;
-pub mod app_head;
-pub mod app_shell;
-
 // Components
 pub mod contact_button;
 pub mod contact_card;
 pub mod content_viewer;
-pub mod app_footer;
 pub mod form;
 pub mod formatted_label;
-pub mod app_nav;
 pub mod info_card;
 pub mod label;
 pub mod list;
@@ -49,3 +42,4 @@ pub mod loader;
 pub mod job_loader;
 pub mod html;
 pub mod widgets;
+pub mod app;

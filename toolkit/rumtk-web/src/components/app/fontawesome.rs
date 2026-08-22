@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, SharedAppState};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, SharedAppState};
 
 #[derive(Debug)]
 pub struct FontAwesomeCSSElement {
@@ -43,6 +43,8 @@ pub struct FontAwesome {
     elements: Vec<FontAwesomeCSSElement>,
     enable: bool
 }
+
+impl RUMWebTemplateSafe for FontAwesome {}
 
 pub fn fontawesome(state: SharedAppState) -> ComponentResult<FontAwesome> {
     let elements = vec![

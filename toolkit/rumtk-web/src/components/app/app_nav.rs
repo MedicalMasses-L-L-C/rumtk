@@ -25,7 +25,7 @@ use crate::components::title::{title, Title};
 use crate::defaults::{PARAMS_TARGET, PARAMS_TITLE};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, PageConf, RUMWebData, RUMWebTemplate};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, PageConf, RUMWebData, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::base::RUMResult;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -91,6 +91,8 @@ fn get_nav_links(itms: &Vec<(RUMString, PageConf)>, app_state: SharedAppState) -
 pub struct AppNav {
     app_nav: Header<Nav>,
 }
+
+impl RUMWebTemplateSafe for AppNav {}
 
 pub fn app_nav<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppNav> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();

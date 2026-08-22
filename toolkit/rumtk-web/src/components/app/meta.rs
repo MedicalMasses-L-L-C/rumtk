@@ -18,18 +18,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::{ComponentResult, RUMWebTemplate};
+use crate::utils::types::SharedAppState;
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]
 #[template(
     source = "
-        <link rel='preload' as='style' href='/static/css/bundle.min.css' onload='this.rel=\"stylesheet\"' onerror='this.onerror=null;this.href=\"/static/css/bundle.css\";' />
-        <noscript><link rel='stylesheet' href='/static/css/bundle.min.css'></noscript>
+            <meta charset='UTF-8'>
+            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+            <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+            <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>
+            <meta name='description' content='{{description}}'>
+            <title>{{title}}</title>
+            <link rel='icon' type='image/png' href='/static/img/icon.png'>
     ",
     ext = "html"
 )]
-pub struct CSS {}
+pub struct Meta {
+    title: RUMString,
+    description: RUMString,
+}
 
-pub fn css() -> ComponentResult<CSS> {
-    Ok(CSS {})
+impl RUMWebTemplateSafe for Meta {}
+
+#[inline]
+pub fn meta(state: SharedAppState) -> ComponentResult<Meta> {
+    Ok(Meta {
+        title: rumtk_web_get_config!(state).title.to_string(),
+        description: rumtk_web_get_config!(state).description.to_string()
+    })
 }

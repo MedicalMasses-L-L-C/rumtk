@@ -18,30 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::{ComponentResult, RUMWebTemplate};
 
-#[derive(Debug)]
-pub struct HTMXElement {
-    version: &'static str,
-    sha: &'static str,
-}
+pub mod app_shell;
+pub mod app_footer;
+pub mod app_head;
+pub mod app_body;
+pub mod app_nav;
 
-#[derive(RUMWebTemplate, Debug)]
-#[template(
-    source = "
-        <script src='https://cdn.jsdelivr.net/npm/htmx.org@{{lib.version}}/dist/htmx.min.js' integrity='{{lib.sha}}' crossorigin='anonymous'></script>
-    ",
-    ext = "html"
-)]
-pub struct HTMX {
-    lib: HTMXElement,
-}
+pub mod css;
+pub mod fontawesome;
+pub mod htmx;
+pub mod meta;
 
-pub fn htmx() -> ComponentResult<HTMX> {
-    Ok(HTMX {
-        lib: HTMXElement {
-            version: "2.0.8",
-            sha: "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
-        }
-    })
-}

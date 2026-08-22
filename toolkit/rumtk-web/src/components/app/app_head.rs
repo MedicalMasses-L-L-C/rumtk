@@ -18,13 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::static_components::css::CSS;
-use crate::static_components::fontawesome::FontAwesome;
-use crate::static_components::htmx::HTMX;
-use crate::static_components::meta::Meta;
-use crate::static_components::{css::css, fontawesome::fontawesome, htmx::htmx, meta::meta};
+use crate::components::app::css::*;
+use crate::components::app::fontawesome::*;
+use crate::components::app::htmx::*;
+use crate::components::app::meta::*;
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{ComponentResult, RUMWebTemplate};
+use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 #[derive(RUMWebTemplate)]
 #[template(
@@ -44,6 +43,8 @@ pub struct AppShellHead {
     fontawesome: FontAwesome,
     htmx: HTMX,
 }
+
+impl RUMWebTemplateSafe for AppShellHead {}
 
 ///
 ///     !!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -83,12 +83,12 @@ pub mod threading_manager {
 
     pub type SafeTask<R> = Arc<Task<R>>;
     type SafeInternalTask<R> = Arc<SyncRwLock<Task<R>>>;
-    pub type TaskTable<R> = RUMHashMap<TaskID, SafeInternalTask<R>>;
+    pub type TaskTable<R> = RUMHashMap<TaskID, Task<R>>;
     pub type SafeAsyncTaskTable<R> = SafeLock<TaskTable<R>>;
     pub type SafeSyncTaskTable<R> = Arc<SyncRwLock<TaskTable<R>>>;
     pub type TaskBatch = RUMVec<TaskID>;
     /// Type to use to define how task results are expected to be returned.
-    pub type TaskResult<R> = RUMResult<SafeTask<R>>;
+    pub type TaskResult<R> = RUMResult<Option<R>>;
     pub type TaskResults<R> = TaskItems<TaskResult<R>>;
 
     ///
@@ -264,11 +264,11 @@ pub mod threading_manager {
             F: Future<Output = R> + Send + Sync + 'static,
             F::Output: Send + Sized + 'static,
         {
-            let mut safe_task = Arc::new(SyncRwLock::new(Task::<R> {
+            let mut safe_task = Task::<R> {
                 id: id.clone(),
                 finished: false,
                 result: None,
-            }));
+            };
             tasks.write().unwrap().insert(id.clone(), safe_task.clone());
 
             let task_wrapper = async move || {
@@ -276,9 +276,12 @@ pub mod threading_manager {
                 let result = task.await;
 
                 // Cleanup task
-                let mut lock = safe_task.write().unwrap();
-                lock.result = Some(result);
-                lock.finished = true;
+                let mut lock = tasks.write().unwrap();
+                if lock.contains_key(&id) {
+                    let mut task = lock.get_mut(&id).unwrap();
+                    task.result = Some(result);
+                    task.finished = true;
+                }
             };
 
             tokio::spawn(task_wrapper());
@@ -324,17 +327,16 @@ pub mod threading_manager {
         /// this function happens to be called from the async context.
         ///
         pub fn wait_on(&mut self, task_id: &TaskID) -> TaskResult<R> {
+            while !self.is_finished(task_id) {
+                sleep(DEFAULT_SLEEP_DURATION);
+            }
+
             let task = match self.tasks.write().unwrap().remove(task_id) {
                 Some(task) => task.clone(),
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
 
-            while !task.read().unwrap().finished {
-                sleep(DEFAULT_SLEEP_DURATION);
-            }
-
-            let x = Ok(Arc::new(task.write().unwrap().clone()));
-            x
+            Ok(task.result)
         }
 
         ///
@@ -355,17 +357,16 @@ pub mod threading_manager {
         ///     tracks its own id or has a way for you to resort results.
         /// ```
         pub async fn wait_on_async(&mut self, task_id: &TaskID) -> TaskResult<R> {
+            while !self.is_finished(task_id) {
+                async_sleep(DEFAULT_SLEEP_DURATION).await;
+            }
+
             let task = match self.tasks.write().unwrap().remove(task_id) {
                 Some(task) => task.clone(),
                 None => return Err(rumtk_format!("No task with id {}", task_id)),
             };
 
-            while !task.read().unwrap().finished {
-                async_sleep(DEFAULT_SLEEP_DURATION).await;
-            }
-
-            let x = Ok(Arc::new(task.write().unwrap().clone()));
-            x
+            Ok(task.result)
         }
 
         ///
@@ -450,7 +451,7 @@ pub mod threading_manager {
 
         fn _is_all_completed_async(&self) -> bool {
             for (_, task) in self.tasks.read().unwrap().iter() {
-                if !task.read().unwrap().finished {
+                if !task.finished {
                     return false;
                 }
             }
@@ -463,15 +464,8 @@ pub mod threading_manager {
         ///
         pub fn is_finished(&self, id: &TaskID) -> bool {
             match self.tasks.read().unwrap().get(id) {
-                Some(t) => t.read().unwrap().finished,
+                Some(t) => t.finished,
                 None => false,
-            }
-        }
-
-        pub async fn is_finished_async(&self, id: &TaskID) -> bool {
-            match self.tasks.read().unwrap().get(id) {
-                Some(task) => task.read().unwrap().finished,
-                None => true,
             }
         }
 

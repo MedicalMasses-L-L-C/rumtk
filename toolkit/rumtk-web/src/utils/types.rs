@@ -66,7 +66,8 @@ pub type ConstNestedNestedTextMap = OrderedMap<&'static str, &'static ConstNeste
 
 pub type PipelineGroup = RUMHashMap<RUMString, RUMCommandLine>;
 
-pub use askama::Template as RUMWebTemplate;
+pub use askama::{Template as RUMWebTemplate, filters::HtmlSafe as RUMWebTemplateSafe};
+
 use rumtk_core::base::RUMResult;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::serde::RUMOrderedMap;

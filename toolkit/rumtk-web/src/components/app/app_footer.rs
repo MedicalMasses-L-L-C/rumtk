@@ -22,7 +22,7 @@ use crate::components::contact_button::{contact_button, ContactButton};
 use crate::components::html::{footer, Footer};
 use crate::components::socials::{socials, Socials};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -56,6 +56,8 @@ pub struct FooterContents {
 pub struct AppFooter {
     footer: Footer<FooterContents>
 }
+
+impl RUMWebTemplateSafe for AppFooter {}
 
 pub fn app_footer<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppFooter> {
     let company = rumtk_web_get_config!(state).company.clone();

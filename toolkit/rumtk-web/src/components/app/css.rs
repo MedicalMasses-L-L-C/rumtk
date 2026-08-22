@@ -18,7 +18,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-pub mod css;
-pub mod fontawesome;
-pub mod htmx;
-pub mod meta;
+use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+
+#[derive(RUMWebTemplate)]
+#[template(
+    source = "
+        <link rel='preload' as='style' href='/static/css/bundle.min.css' onload='this.rel=\"stylesheet\"' onerror='this.onerror=null;this.href=\"/static/css/bundle.css\";' />
+        <noscript><link rel='stylesheet' href='/static/css/bundle.min.css'></noscript>
+    ",
+    ext = "html"
+)]
+pub struct CSS {}
+
+impl RUMWebTemplateSafe for CSS {}
+
+#[inline]
+pub fn css() -> ComponentResult<CSS> {
+    Ok(CSS {})
+}
