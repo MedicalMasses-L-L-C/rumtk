@@ -32,7 +32,7 @@ pub struct Sanitized {
 }
 
 #[inline]
-pub fn sanitized<T: RUMWebTemplate>(contents: T) -> ComponentResult<Sanitized> {
+pub fn sanitized<T: ToString>(contents: T) -> ComponentResult<Sanitized> {
     let inner = contents.to_string();
     let contents = sanitize_html(&inner, false);
 
