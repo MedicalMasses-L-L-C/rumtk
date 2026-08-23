@@ -25,7 +25,7 @@ mod tests {
     use crate::cpu::{cpu_find, cpu_slice_to_array_padded};
     use crate::mem::constants::*;
     use crate::{as_slice_mut, direct_alloc, rumtk_arena_new, Arena};
-    use std::alloc::{alloc, Layout};
+    use std::alloc::alloc;
     use std::collections::{HashMap, VecDeque};
 
     macro_rules! rumtk_benchmark_snippet {
@@ -85,7 +85,7 @@ mod tests {
     fn test_arena_direct_allocation() {
 
         let (r, time) = rumtk_benchmark_snippet!(|| {
-            unsafe { as_slice_mut(direct_alloc(DEFAULT_GLOBAL_MB_ALLOCATION), DEFAULT_GLOBAL_MB_ALLOCATION) }
+            unsafe { as_slice_mut(direct_alloc(DEFAULT_GLOBAL_MB_ALLOCATION_LAYOUT), DEFAULT_GLOBAL_MB_ALLOCATION) }
         });
 
         assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn test_arena_basic_allocation() {
         let (r, time) = rumtk_benchmark_snippet!(|| {
-            unsafe { as_slice_mut(alloc(Layout::from_size_align_unchecked(DEFAULT_GLOBAL_MB_ALLOCATION, size_of::<u8>())), DEFAULT_GLOBAL_MB_ALLOCATION) }
+            unsafe { as_slice_mut(alloc(DEFAULT_GLOBAL_MB_ALLOCATION_LAYOUT), DEFAULT_GLOBAL_MB_ALLOCATION) }
         });
 
         assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
@@ -107,7 +107,7 @@ mod tests {
     #[test]
     fn test_arena_allocate_and_use() {
         let (r, time) = rumtk_benchmark_snippet!(|| {
-            let slice = unsafe { as_slice_mut(alloc(Layout::from_size_align_unchecked(DEFAULT_GLOBAL_MB_ALLOCATION, size_of::<u8>())), DEFAULT_GLOBAL_MB_ALLOCATION) };
+            let slice = unsafe { as_slice_mut(alloc(DEFAULT_GLOBAL_MB_ALLOCATION_LAYOUT), DEFAULT_GLOBAL_MB_ALLOCATION) };
             let v = slice.to_vec();
             let mut buffer = RUMBuffer::from(v);
             let mut chunk = buffer.freeze();
