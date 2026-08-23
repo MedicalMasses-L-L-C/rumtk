@@ -17,10 +17,219 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use ammonia::clean;
+use ammonia::Builder;
+use rumtk_core::dependencies::maplit::{hashmap, hashset};
 use rumtk_core::strings::RUMString;
+use std::collections::{HashMap, HashSet};
+use std::sync::LazyLock;
+
+type AllowedSet = LazyLock<HashSet<&'static str>>;
+type AllowedMap = LazyLock<HashMap<&'static str, HashSet<&'static str>>>;
+
+static CLEAN_CONTENT_TAGS: AllowedSet = LazyLock::new(|| hashset!["script", "style"]);
+static CLEAN_CONTENT_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![]);
+static ALLOWED_URL_SCHEMES: AllowedSet = LazyLock::new(|| hashset![
+    "https", "mailto", "data"
+]);
+static ALLOWED_URL_SCHEMES_RELAXED: AllowedSet = LazyLock::new(|| hashset![
+    "http", "https", "mailto", "data"
+]);
+const ALLOWED_LINK_POLICY: Option<&str> = Some("noopener noreferrer");
+static ALLOWED_TAGS: AllowedSet = LazyLock::new(|| hashset![
+    "svg", "xml", "object", "img", "noscript", "meta", "link",
+    "title", "form", "input", "select", "option", "textarea",
+    "button", "label", "fieldset", "legend"
+]);
+static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
+    "script", "html", "head", "body", "header", "main", "footer", "style",
+]);
+static ALLOWED_GENERIC_ATTR: AllowedSet = LazyLock::new(|| hashset![
+    "class", "open", "hidden", "alt", "type", "height", "width", "href", "id"
+]);
+static ALLOWED_GENERIC_ATTR_RELAXED: AllowedSet = LazyLock::new(|| hashset![
+    "onload", "onerror", "style", "src", "srcset", "sizes", "width", "height",
+    "fetchpriority", "defer", "role", "as", "rel", "lang",
+]);
+static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
+            "a" => hashset![
+                "href", "hreflang"
+            ],
+            "bdo" => hashset![
+                "dir"
+            ],
+            "blockquote" => hashset![
+                "cite"
+            ],
+            "col" => hashset![
+                "align", "char", "charoff", "span"
+            ],
+            "colgroup" => hashset![
+                "align", "char", "charoff", "span"
+            ],
+            "del" => hashset![
+                "cite", "datetime"
+            ],
+            "hr" => hashset![
+                "align", "size", "width"
+            ],
+            "img" => hashset![
+                "align", "alt", "height", "src", "width"
+            ],
+            "ins" => hashset![
+                "cite", "datetime"
+            ],
+            "ol" => hashset![
+                "start"
+            ],
+            "q" => hashset![
+                "cite"
+            ],
+            "table" => hashset![
+                "align", "char", "charoff", "summary"
+            ],
+            "tbody" => hashset![
+                "align", "char", "charoff"
+            ],
+            "td" => hashset![
+                "align", "char", "charoff", "colspan", "headers", "rowspan"
+            ],
+            "tfoot" => hashset![
+                "align", "char", "charoff"
+            ],
+            "th" => hashset![
+                "align", "char", "charoff", "colspan", "headers", "rowspan", "scope"
+            ],
+            "thead" => hashset![
+                "align", "char", "charoff"
+            ],
+            "tr" => hashset![
+                "align", "char", "charoff"
+            ],
+
+
+            "object" => hashset![
+                "data", "type", "img"
+            ],
+            "body" => hashset![
+                "class"
+            ],
+]);
+static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
+            "a" => hashset![
+                "href", "hreflang"
+            ],
+            "bdo" => hashset![
+                "dir"
+            ],
+            "blockquote" => hashset![
+                "cite"
+            ],
+            "col" => hashset![
+                "align", "char", "charoff", "span"
+            ],
+            "colgroup" => hashset![
+                "align", "char", "charoff", "span"
+            ],
+            "del" => hashset![
+                "cite", "datetime"
+            ],
+            "hr" => hashset![
+                "align", "size", "width"
+            ],
+            "img" => hashset![
+                "align", "alt", "height", "src", "width"
+            ],
+            "ins" => hashset![
+                "cite", "datetime"
+            ],
+            "ol" => hashset![
+                "start"
+            ],
+            "q" => hashset![
+                "cite"
+            ],
+            "table" => hashset![
+                "align", "char", "charoff", "summary"
+            ],
+            "tbody" => hashset![
+                "align", "char", "charoff"
+            ],
+            "td" => hashset![
+                "align", "char", "charoff", "colspan", "headers", "rowspan"
+            ],
+            "tfoot" => hashset![
+                "align", "char", "charoff"
+            ],
+            "th" => hashset![
+                "align", "char", "charoff", "colspan", "headers", "rowspan", "scope"
+            ],
+            "thead" => hashset![
+                "align", "char", "charoff"
+            ],
+            "tr" => hashset![
+                "align", "char", "charoff"
+            ],
+
+
+            "object" => hashset![
+                "data", "type", "img"
+            ],
+            "meta" => hashset![
+                "charset", "http-equiv", "content", "name"
+            ],
+            "style" => hashset![
+            ],
+            "script" => hashset![
+                "src", "integrity", "crossorigin"
+            ],
+]);
+static STRICT_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
+        let mut sanitizer = Builder::default();
+        default_init_sanitizer(&mut sanitizer, |sanitizer| { });
+        sanitizer
+    }
+);
+static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
+        let mut sanitizer = Builder::default();
+        default_init_sanitizer(&mut sanitizer, |sanitizer| {
+            sanitizer
+                .link_rel(None)
+                .add_tags((*ALLOWED_TAGS_RELAXED).clone())
+                .url_schemes((*ALLOWED_URL_SCHEMES_RELAXED).clone())
+                .add_generic_attributes((*ALLOWED_GENERIC_ATTR_RELAXED).clone())
+                .clean_content_tags(CLEAN_CONTENT_TAGS_RELAXED.clone());
+            }
+        );
+        sanitizer
+    }
+);
+
+fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut Builder)) {
+    builder
+        .link_rel(ALLOWED_LINK_POLICY)
+        .add_tags((*ALLOWED_TAGS).clone())
+        .tag_attributes((*ALLOWED_ATTRS).clone())
+        .add_generic_attributes((*ALLOWED_GENERIC_ATTR).clone())
+        .clean_content_tags(CLEAN_CONTENT_TAGS.clone())
+        .strip_comments(true);
+    init_closure(builder);
+}
 
 #[inline]
-pub fn sanitize_html(html: &str) -> RUMString {
-    clean(html)
+pub fn sanitize_html_strict(html: &str) -> RUMString {
+    STRICT_SANITIZER.clean(html).into()
+}
+
+#[inline]
+pub fn sanitize_html_relaxed(html: &str) -> RUMString {
+    RELAXED_SANITIZER.clean(html).into()
+}
+
+#[inline]
+pub fn sanitize_html(html: &str, relaxed: bool) -> RUMString {
+    if relaxed {
+        sanitize_html_relaxed(html)
+    } else {
+        sanitize_html_strict(html)
+    }
 }

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::types::HTMLResult;
-use crate::{RUMWebRedirect, RUMWebTemplate};
+use crate::{sanitize_html, RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::Options;
 use rumtk_core::base::RUMResult;
 use rumtk_core::search::rumtk_search::string_replace_all_matches;
@@ -92,8 +92,8 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
 
 pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
     let filtered = rumtk_web_trim_rendered_html(html)?;
-    //let sanitized = sanitize_html(&filtered);
-    Ok(url.into_web_response(Some(filtered)))
+    let sanitized = sanitize_html(&filtered, true);
+    Ok(url.into_web_response(Some(sanitized)))
 }
 
 ///

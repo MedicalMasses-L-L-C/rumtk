@@ -49,7 +49,7 @@ pub fn markdown<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, st
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let rendered = rumtk_web_render_markdown!(md);
-    let sanitized = sanitize_html(&rendered);
+    let sanitized = sanitize_html(&rendered, false);
 
     Ok(Markdown { sanitized, css_class, custom_css_enabled })
 }

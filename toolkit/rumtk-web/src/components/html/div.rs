@@ -47,7 +47,7 @@ pub fn div<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppSt
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     let inner = contents.to_string();
-    let contents = sanitize_html(&inner);
+    let contents = sanitize_html(&inner, false);
 
     Ok(Div {
         contents,
