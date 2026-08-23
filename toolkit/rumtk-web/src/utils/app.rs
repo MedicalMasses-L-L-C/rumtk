@@ -703,10 +703,16 @@ macro_rules! rumtk_web_register_app_switches {
 /// ### With Page and Component definition
 /// ```
 ///     use rumtk_core::strings::{rumtk_format};
-///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_template, rumtk_web_get_text_item, rumtk_web_register_app_switches, rumtk_web_get_config};
+///     use rumtk_web::{rumtk_web_run_app, rumtk_web_register_app_components, rumtk_web_render_component, rumtk_web_render_template, rumtk_web_get_text_item, rumtk_web_register_app_switches, rumtk_web_get_config, rumtk_web_params_map};
 ///     use rumtk_web::components::form::{FormElementBuilder, props::InputProps, FormElements};
 ///     use rumtk_web::{SharedAppState, RenderedPageComponentsResult};
 ///     use rumtk_web::{APIPath, URLPath, URLParams, HTMLResult, RUMString, RouterForm, FormData, RUMWebData, AppConf};
+///     use rumtk_web::components::portrait_card::portrait_card;
+///     use rumtk_web::components::spacer::spacer;
+///     use rumtk_web::components::text_card::text_card;
+///     use rumtk_web::components::title::title;
+///     use rumtk_web::ComponentResult;
+/// use rumtk_web::components::job_loader::JobLoader;
 ///     use rumtk_web::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CONTENTS, PARAMS_CSS_CLASS, PARAMS_TYPE};
 ///     use rumtk_web::utils::types::RUMWebTemplate;
 ///
@@ -715,15 +721,23 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///     // About page
 ///     pub fn about(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///         let title_coop = rumtk_web_render_component!("title", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
-///         let title_team = rumtk_web_render_component!("title", [(PARAMS_TYPE, "meet_the_team")], app_state)?.to_string();
-///     
-///         let text_card_story = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "story")], app_state)?.to_string();
-///         let text_card_coop = rumtk_web_render_component!("text_card", [(PARAMS_TYPE, "coop_values")], app_state)?.to_string();
-///     
-///         let portrait_card = rumtk_web_render_component!("portrait_card", [("section", "company"), (PARAMS_TYPE, "personnel")], app_state)?.to_string();
-///     
-///         let spacer_5 = rumtk_web_render_component!("spacer", [("size", "5")], app_state)?.to_string();
+///         let title_coop_params = rumtk_web_params_map!([(PARAMS_TYPE, "coop_values")]);
+///         let title_coop = title(&[], title_coop_params.get_inner(), app_state.clone())?.to_string();
+///
+///         let title_team_params = rumtk_web_params_map!([(PARAMS_TYPE, "meet_the_team")]);
+///         let title_team = title(&[], title_team_params.get_inner(), app_state.clone())?.to_string();
+///
+///         let text_card_story_params = rumtk_web_params_map!([(PARAMS_TYPE, "story")]);
+///         let text_card_story = text_card(&[], text_card_story_params.get_inner(), app_state.clone())?.to_string();
+///
+///         let text_card_coop_params = rumtk_web_params_map!([(PARAMS_TYPE, "coop_values")]);
+///         let text_card_coop = text_card(&[], text_card_coop_params.get_inner(), app_state.clone())?.to_string();
+///
+///         let portrait_card_params = rumtk_web_params_map!([("section", "company"), (PARAMS_TYPE, "personnel")]);
+///         let portrait_card = portrait_card(&[], portrait_card_params.get_inner(), app_state.clone())?.to_string();
+///
+///         let spacer_5_params = rumtk_web_params_map!([("size", "5")]);
+///         let spacer_5 = spacer(&[], spacer_5_params.get_inner(), app_state.clone())?.to_string();
 ///     
 ///         Ok(vec![
 ///             text_card_story,
@@ -753,7 +767,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         custom_css_enabled: bool,
 ///     }
 ///
-///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
+///     fn my_div(path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<MyDiv> {
 ///         let contents = rumtk_web_get_text_item!(params, PARAMS_CONTENTS, DEFAULT_TEXT_ITEM);
 ///         let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
 ///
@@ -772,7 +786,7 @@ macro_rules! rumtk_web_register_app_switches {
 ///         ]
 ///     }
 ///
-///     fn my_api_handler(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
+///     fn my_api_handler(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
 ///         Err(rumtk_format!(
 ///             "No handler registered for API endpoint => {}",
 ///             path
@@ -785,7 +799,6 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 ///     let app_components = rumtk_web_register_app_components!(
 ///         vec![("about", about)],
-///         vec![("my_div", my_div)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("my_form", my_form)], //Optional, can be omitted alongside the skip_serve flag
 ///         vec![("v2/add", my_api_handler)] //Optional, can be omitted alongside the skip_serve flag
 ///     );

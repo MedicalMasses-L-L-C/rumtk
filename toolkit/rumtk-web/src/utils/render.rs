@@ -308,12 +308,14 @@ macro_rules! rumtk_web_post_process_html {
 /// use rumtk_core::strings::RUMString;
 /// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::pages::index::index;
-/// use rumtk_web::{rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
+/// use rumtk_web::components::html::div;
+/// use rumtk_web::{rumtk_web_params_map, rumtk_web_render_component, rumtk_web_render_page_contents, SharedAppState};
 ///
 /// let app_state = SharedAppState::default();
-/// let mydiv = rumtk_web_render_component!("div", [(PARAMS_TYPE, "story")], app_state).unwrap().to_string();
+/// let params = rumtk_web_params_map!([("", "")]);
+/// let mydiv = div("story", params.get_inner(), app_state).unwrap().to_string();
 ///
-/// let expected_page = RUMString::from("<div class='div-default'>default</div>");
+/// let expected_page = RUMString::from("<div class='div-default'>story</div>");
 /// let page_response = rumtk_web_render_page_contents!(
 ///     &vec![
 ///         mydiv

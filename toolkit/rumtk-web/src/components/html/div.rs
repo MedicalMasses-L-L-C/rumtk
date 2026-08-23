@@ -41,7 +41,7 @@ pub struct Div {
 
 impl RUMWebTemplateSafe for Div {}
 
-pub fn div<T: RUMWebTemplate>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Div> {
+pub fn div<T: ToString>(contents: T, params: URLParams, state: SharedAppState) -> ComponentResult<Div> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
