@@ -17,12 +17,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use std::alloc::Layout;
 
 pub const NULL_U8_PTR: [u8;0] = [0u8;0];
 pub const KB: usize = 1024;
 pub const MB: usize = 1024 * 1024;
 pub const GB: usize = 1024 * 1024 * 1024;
 pub const DEFAULT_GLOBAL_MB_ALLOCATION: usize = 50 * MB;
+pub const DEFAULT_GLOBAL_MB_ALLOCATION_LAYOUT: Layout = unsafe { Layout::from_size_align_unchecked(DEFAULT_GLOBAL_MB_ALLOCATION, size_of::<u8>()) };
 
 #[cfg(feature = "fast_allocator_options")]
 pub mod mimalloc_constants {
