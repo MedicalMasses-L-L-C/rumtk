@@ -1125,9 +1125,12 @@ mod tests {
         let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
         let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp).unwrap();
         let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
+
+        rumtk_sleep!(1);
         let mut results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
 
         while results.is_empty() {
+            rumtk_sleep!(1);
             results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
         }
 
