@@ -98,33 +98,20 @@ macro_rules! rumtk_web_generate_job_id {
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
-/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
+/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html};
+/// use rumtk_web::components::job_loader::{job_loader, JobLoader};
+/// use rumtk_web::ComponentResult;
 ///
 /// let workers: usize = 5;
 /// rumtk_web_init_job_manager!(&workers);
-/// rumtk_web_init_components!(
-///     Some(vec![
-///         ("my_element", my_element)
-///     ])
-/// );
 ///
 /// async fn basic_processor() -> JobResult {
 ///     rumtk_async_sleep!(100).await;
 ///     Ok(None)
 /// }
 ///
-/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-///
-///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
-///
-///     let job_data = match job_result {
-///         Some(t) => t?.to_string(),
-///         _ => RUMString::from("")
-///     };
-///
-///     rumtk_web_post_process_html!(job_data)
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<JobLoader> {
+///     job_loader(_path_components, params, state)
 /// }
 ///
 /// let app_state = rumtk_new_lock!(AppState::default());
@@ -167,21 +154,17 @@ macro_rules! rumtk_web_generate_job_id {
 ///     Ok(Some(sanitized))
 /// }
 ///
-/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<JobLoader> {
-///     job_loader(_path_components, params, state)
-/// }
-///
 /// let app_state = rumtk_new_lock!(AppState::default());
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
 /// params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 ///
-/// rumtk_web_get_job_manager!().unwrap().wait_on(job_id);
+/// let results = rumtk_web_get_job_manager!().unwrap().wait_on(job_id).unwrap().unwrap().unwrap().unwrap();
 ///
 /// rumtk_sleep!(1);
-/// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
+/// let rendered = results.to_string();
 ///
-/// assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
+/// assert_eq!(&rendered, HELLO_STR, "Job returned wrong result!");
 ///
 /// ```
 ///

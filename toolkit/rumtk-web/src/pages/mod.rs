@@ -96,12 +96,12 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::defaults::{PARAMS_TYPE};
+/// use rumtk_web::defaults::{PARAMS_TITLE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_register_page, rumtk_web_get_page, rumtk_web_params_map};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let params = rumtk_web_params_map!([(PARAMS_TITLE, "welcome")]);
 ///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
@@ -121,12 +121,12 @@ macro_rules! rumtk_web_register_page {
 ///
 /// ```
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::defaults::{PARAMS_TYPE};
+/// use rumtk_web::defaults::{PARAMS_TITLE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page, rumtk_web_params_map};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let params = rumtk_web_params_map!([(PARAMS_TITLE, "welcome")]);
 ///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
@@ -171,14 +171,14 @@ macro_rules! rumtk_web_get_default_page {
 ///```
 /// use std::ops::Deref;
 /// use rumtk_core::strings::rumtk_format;
-/// use rumtk_web::defaults::{PARAMS_TYPE};
+/// use rumtk_web::defaults::{PARAMS_TITLE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
 /// use rumtk_web::{rumtk_web_init_pages, rumtk_web_get_page, rumtk_web_params_map};
 ///
 /// use rumtk_web::pages::UserPages;
 ///
 ///  fn my_page(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let params = rumtk_web_params_map!([(PARAMS_TITLE, "welcome")]);
 ///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
