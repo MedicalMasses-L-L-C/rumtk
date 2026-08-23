@@ -51,6 +51,7 @@ static ALLOWED_GENERIC_ATTR: AllowedSet = LazyLock::new(|| hashset![
     "name", "for", "value", "max", "placeholder", "accept", "alt", "pattern",
     "maxlength", "minlength", "autocapitalize",
     "autocomplete", "autocorrect", "autofocus", "disabled", "hidden", "required",
+    "content"
 ]);
 static ALLOWED_GENERIC_ATTR_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "onload", "onerror", "style", "src", "srcset", "sizes", "width", "height",
