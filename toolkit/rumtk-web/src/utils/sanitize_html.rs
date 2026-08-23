@@ -44,7 +44,7 @@ static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "script", "html", "head", "body", "header", "main", "footer", "style",
 ]);
 static ALLOWED_GENERIC_ATTR: AllowedSet = LazyLock::new(|| hashset![
-    "class", "open", "hidden", "alt", "type", "height", "width", "href", "id"
+    "class", "open", "hidden", "alt", "type", "height", "width", "href", "id", "data"
 ]);
 static ALLOWED_GENERIC_ATTR_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "onload", "onerror", "style", "src", "srcset", "sizes", "width", "height",
@@ -197,7 +197,8 @@ static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
                 .add_tags((*ALLOWED_TAGS_RELAXED).clone())
                 .url_schemes((*ALLOWED_URL_SCHEMES_RELAXED).clone())
                 .add_generic_attributes((*ALLOWED_GENERIC_ATTR_RELAXED).clone())
-                .clean_content_tags(CLEAN_CONTENT_TAGS_RELAXED.clone());
+                .clean_content_tags(CLEAN_CONTENT_TAGS_RELAXED.clone())
+                ;
             }
         );
         sanitizer
@@ -207,6 +208,7 @@ static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
 fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut Builder)) {
     builder
         .link_rel(ALLOWED_LINK_POLICY)
+        .url_schemes(ALLOWED_URL_SCHEMES.clone())
         .add_tags((*ALLOWED_TAGS).clone())
         .tag_attributes((*ALLOWED_ATTRS).clone())
         .add_generic_attributes((*ALLOWED_GENERIC_ATTR).clone())
