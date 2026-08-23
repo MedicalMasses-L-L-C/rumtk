@@ -38,12 +38,13 @@ pub use utils::*;
 ///
 #[cfg(test)]
 mod tests {
+    use crate::components::app::css::css;
     use crate::components::sanitize::sanitized;
     use crate::components::title::title;
     use crate::defaults::{PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
-    use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_post_process, rumtk_web_render, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, RUMWebData, RUMWebRedirect, SharedAppState};
+    use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_RENDER_CSS, TRIMMED_HTML_TITLE_RENDER};
+    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_post_process, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, RUMWebData, RUMWebRedirect, SharedAppState};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMString;
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
@@ -134,6 +135,13 @@ mod tests {
         assert_eq!(result, expected, "Test Div template rendered improperly!");
     }
 
+    #[test]
+    fn test_render_static_component() {
+        let rendered = rumtk_web_render_component!(css);
+        let expected = TRIMMED_HTML_RENDER_CSS;
+
+        assert_eq!(rendered, expected, "Commponent rendered improperly!");
+    }
 
     #[test]
     fn test_trim_preformatted_component() {

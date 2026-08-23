@@ -177,10 +177,11 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 /// ### Simple Component Render
 /// ```
 /// use rumtk_web::components::app::css::css;
+/// use rumtk_web::utils::testdata::data::TRIMMED_HTML_RENDER_CSS;
 /// use rumtk_web::rumtk_web_render_component;
 ///
 /// let rendered = rumtk_web_render_component!(css);
-/// let expected = "<link rel='stylesheet' href='/static/css/bundle.min.css' onerror='this.onerror=null;this.href=\"/static/css/bundle.css\";' />";
+/// let expected = TRIMMED_HTML_RENDER_CSS;
 ///
 /// assert_eq!(rendered, expected, "Commponent rendered improperly!");
 /// ```
@@ -216,16 +217,24 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 #[macro_export]
 macro_rules! rumtk_web_render_component {
     ( $component_fxn:expr ) => {{
+        use $crate::render::rumtk_web_trim_rendered_html;
         use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn() {
-            Ok(x) => x.to_string(),
+            Ok(x) => match rumtk_web_trim_rendered_html(x.to_string()) {
+                Ok(r) => r,
+                _ => RUMString::default()
+            },
             _ => RUMString::default(),
         }
     }};
     ( $component_fxn:expr, $app_state:expr ) => {{
+        use $crate::render::rumtk_web_trim_rendered_html;
         use rumtk_core::strings::{RUMString, RUMStringConversions};
         match $component_fxn($app_state.clone()) {
-            Ok(x) => x.to_string(),
+            Ok(x) => match rumtk_web_trim_rendered_html(x.to_string()) {
+                Ok(r) => r,
+                _ => RUMString::default()
+            },
             _ => RUMString::default(),
         }
     }};
@@ -234,16 +243,29 @@ macro_rules! rumtk_web_render_component {
     }};
     ( $component:expr, $path:expr, $params:expr, $app_state:expr ) => {{
         use $crate::components::html::div;
+        use $crate::render::rumtk_web_trim_rendered_html;
         use $crate::{rumtk_web_get_component, rumtk_web_params_map};
 
         let params = rumtk_web_params_map!($params);
 
         match rumtk_web_get_component!($component) {
-            Some(component) => component($path, params.get_inner(), $app_state.clone()),
+            Some(component) => match component($path, params.get_inner(), $app_state.clone()){
+                Ok(x) => match rumtk_web_trim_rendered_html(x.to_string()) {
+                    Ok(r) => r,
+                    _ => RUMString::default()
+                },
+                _ => RUMString::default(),
+            },
                 // This is tricky, but I could not decide if the correct option here was to pass an
                 // message or default to a blank div. I chose the div, but if something changes, feel
                 // free to reconsider.
-            None => div($path, params.get_inner(), $app_state.clone())
+            None => div($path, params.get_inner(), $app_state.clone()) {
+                Ok(x) => match rumtk_web_trim_rendered_html(x.to_string()) {
+                    Ok(r) => r,
+                    _ => RUMString::default()
+                },
+                _ => RUMString::default(),
+            }
         }
     }};
 }

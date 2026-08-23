@@ -145,16 +145,14 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 /// async fn basic_processor() -> JobResult {
 ///     let result = RUMString::from(HELLO_STR);
-///     let sanitized = sanitized(result);
+///     let sanitized = sanitized(result)?;
 ///     Ok(Some(sanitized))
 /// }
 ///
 /// let app_state = rumtk_new_lock!(AppState::default());
-/// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
-/// params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 ///
-/// let results = rumtk_web_get_job_manager!().unwrap().wait_on(job_id).unwrap().unwrap().unwrap().unwrap();
+/// let results = rumtk_web_get_job_manager!().unwrap().wait_on(&job_id).unwrap().unwrap().unwrap().unwrap();
 ///
 /// rumtk_sleep!(1);
 /// let rendered = results.to_string();
