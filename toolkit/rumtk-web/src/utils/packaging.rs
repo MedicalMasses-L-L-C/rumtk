@@ -38,6 +38,9 @@ pub fn minify_asset(asset: Asset) -> RUMResult<RUMString> {
         },
         Asset::HTML(html) => Ok(html::minify(html).to_string()),
         Asset::JSON(json) => Ok(json::minify(json).to_string()),
-        Asset::JS(js) => Ok(js::minify(js).to_string()),
+        Asset::JS(js) => match js::minify(js) {
+            Ok(js) => Ok(js.to_string()),
+            Err(err) => Err(err.to_string()),
+        },
     }
 }

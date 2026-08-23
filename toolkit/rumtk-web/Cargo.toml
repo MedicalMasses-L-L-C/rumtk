@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-web"
 description = "Web framework part of the RUMTK framework that attempts to simplify and expedite dashboard development in Healthcare."
-version = "0.7.9"
+version = "0.8.0"
 readme = "README.md"
 license = "LGPL-3.0"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-web"
@@ -17,14 +17,14 @@ debug = true
 strip = false
 
 [dependencies]
-rumtk-core = { version = "0.17.3", path = "../rumtk-core" }
-askama = "0.15.6"
+rumtk-core = { version = "0.17.4", path = "../rumtk-core" }
+askama = "0.16.0"
 axum = { version = "0.8.9", features = ["multipart"] }
-tower-http = { version = "0.6.7", features = ["fs", "compression-full", "cors"] }
-phf = "0.13.1"
-phf_macros = "0.13.1"
-pulldown-cmark = "0.13.3"
-minifier = { version = "0.3.6", features = ["html"] }
+tower-http = { version = "0.7.0", features = ["fs", "compression-full", "cors"] }
+phf = "0.14.0"
+phf_macros = "0.14.0"
+pulldown-cmark = "0.13.4"
+minifier = { version = "0.4.0", features = ["html"] }
 serde = { version = "1.0.228", features = ["derive", "std"] }
 reqwest = { version = "0.13.4", features = ["json"] }
 ammonia = "4.1.4"
