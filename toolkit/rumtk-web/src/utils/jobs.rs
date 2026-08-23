@@ -142,11 +142,6 @@ macro_rules! rumtk_web_generate_job_id {
 ///
 /// let workers: usize = 5;
 /// rumtk_web_init_job_manager!(&workers);
-/// rumtk_web_init_components!(
-///     Some(vec![
-///         ("my_element", my_element)
-///     ])
-/// );
 ///
 /// async fn basic_processor() -> JobResult {
 ///     let result = RUMString::from(HELLO_STR);

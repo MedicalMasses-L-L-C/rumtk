@@ -176,7 +176,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 ///
 /// ### Simple Component Render
 /// ```
-/// use rumtk_web::static_components::css::css;
+/// use rumtk_web::components::app::css::css;
 /// use rumtk_web::rumtk_web_render_component;
 ///
 /// let rendered = rumtk_web_render_component!(css);
@@ -188,7 +188,7 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 /// ### Component Render with Shared State
 /// ```
 /// use rumtk_web::SharedAppState;
-/// use rumtk_web::static_components::meta::meta;
+/// use rumtk_web::components::app::meta::meta;
 /// use rumtk_web::utils::testdata::data::TRIMMED_HTML_RENDER_META;
 /// use rumtk_web::rumtk_web_render_component;
 ///
@@ -200,19 +200,17 @@ pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
 ///
 /// ### Component Render with Standard Parameters
 /// ```
-/// use rumtk_web::SharedAppState;
+/// use rumtk_web::{rumtk_web_collect_page, rumtk_web_params_map, rumtk_web_trim_rendered_html, SharedAppState};
 /// use rumtk_web::defaults::PARAMS_TITLE;
 /// use rumtk_web::utils::testdata::data::TRIMMED_HTML_TITLE_RENDER;
-/// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_components};
+/// use rumtk_web::components::title::title;
 ///
-/// rumtk_web_init_components!(None);
-/// let params = [
-///     (PARAMS_TITLE, "Hello World!")
-/// ];
 /// let state = SharedAppState::default();
-/// let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_string();
+/// let params = rumtk_web_params_map!([(PARAMS_TITLE, "Hello World!")]);
+/// let rendered = title(&[], params.get_inner(), state).unwrap().to_string();
+/// let trimmed = rumtk_web_trim_rendered_html(rendered).unwrap();
 ///
-/// assert_eq!(rendered, TRIMMED_HTML_TITLE_RENDER, "Commponent rendered improperly!");
+/// assert_eq!(&trimmed, TRIMMED_HTML_TITLE_RENDER, "Commponent rendered improperly!");
 /// ```
 ///
 #[macro_export]
