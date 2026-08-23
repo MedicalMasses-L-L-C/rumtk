@@ -19,11 +19,11 @@
  */
 use rumtk_core::buffers::buffer_to_string;
 use rumtk_core::buffers::*;
-use rumtk_core::search::rumtk_search::{string_find_value, string_search};
+use rumtk_core::search::rumtk_search::string_find_value;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
-use rumtk_core::strings::{rumtk_format, RUMString, RUMStringConversions};
+use rumtk_core::strings::{rumtk_format, RUMString};
 use rumtk_web::RUMWebTemplate;
-use std::convert::{From, TryFrom};
+use std::convert::TryFrom;
 use std::fmt::Debug;
 
 ///
@@ -41,16 +41,18 @@ use std::fmt::Debug;
     source = "
         <table>
             <thead>
-                <th>Command</th>
-                <th>Mean</th>
-                <th>Std</th>
-                <th>Min</th>
-                <th>Max</th>
-                <th>Relative</th>
-                <th>User</th>
-                <th>Kernel</th>
-                <th>Runs</th>
-                <th>Units</th>
+                <tr>
+                    <th>Command</th>
+                    <th>Mean</th>
+                    <th>Std</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Relative</th>
+                    <th>User</th>
+                    <th>Kernel</th>
+                    <th>Runs</th>
+                    <th>Units</th>
+                </tr>
             </thead>
             <tbody>
                 <tr>

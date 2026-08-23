@@ -39,16 +39,27 @@ type ReportRawResults<'a> = (MetaData, &'a RUMBuffer, &'a RUMBuffer, &'a RUMBuff
 #[derive(Default, Debug, RUMDeJson, RUMSerJson, RUMWebTemplate)]
 #[template(
     source = "
-        <h1>META</h1>
-        {{meta|safe}}
-        <h1>BASIC</h1>
-        {{report|safe}}
-        {{visualization|safe}}
-        <h1>CPU</h1>
-        {{cpu_summary|safe}}
-        {{cpu_performance|safe}}
-        <h1>CACHE</h1>
-        {{cpu_cache_details|safe}}
+        <details>
+            <summary><strong>META</strong></summary>
+            {{meta|safe}}
+        </details>
+
+        <details open>
+            <summary><strong>BASIC</strong></summary>
+            {{report|safe}}
+            {{visualization|safe}}
+        </details>
+
+        <details>
+            <summary><strong>CPU</strong></summary>
+            {{cpu_summary|safe}}
+            {{cpu_performance|safe}}
+        </details>
+
+        <details>
+            <summary><strong>CACHE</strong></summary>
+            {{cpu_cache_details|safe}}
+        </details>
     ",
     ext = "html"
 )]

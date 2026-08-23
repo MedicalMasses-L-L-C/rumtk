@@ -22,21 +22,21 @@ use crate::api::benchmarks::utils::generate_temp_dir;
 use crate::api::benchmarks::utils::run_perf_stat;
 use crate::components::benchmark_view::benchmark_view;
 use crate::utils::types::BenchmarkReport;
-use rumtk_core::strings::{AsStr, RUMString};
-use rumtk_web::components::html::container;
+use rumtk_core::strings::{rumtk_format, AsStr};
+use rumtk_web::components::sanitize::sanitized;
 use rumtk_web::defaults::PARAMS_ID;
 use rumtk_web::jobs::JobResult;
-use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_params_map, rumtk_web_render_page_contents, DEFAULT_EMPTY_PARAMS};
+use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_params_map, rumtk_web_render_page_contents};
 use rumtk_web::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 
 async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     let choice = match form.form.get("basic_choice"){
         Some(choice) => choice,
-        None => &RUMString::default(),
+        None => return Err(rumtk_format!("Form is missing the target program choice! => {:#?}", form)),
     };
     let template = match form.form.get("basic_template"){
         Some(template) => template,
-        None => &RUMString::default(),
+        None => return Err(rumtk_format!("Form is missing the template choice! => {:#?}", form)),
     };
 
     let mut temp_data = generate_temp_dir()?;
@@ -52,7 +52,7 @@ async fn basic_processor(form: FormData, state: SharedAppState) -> JobResult {
     report.meta.test_file_sizes = temp_data.get_test_file_sizes::<FILE_SIZE_MB>()?;
 
     // Render the HTML result.
-    let renderable = container(&report, DEFAULT_EMPTY_PARAMS.get_inner(), state)?;
+    let renderable = sanitized(&report)?;
     Ok(Some(renderable))
 }
 
