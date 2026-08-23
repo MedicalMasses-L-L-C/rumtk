@@ -43,7 +43,7 @@ use crate::components::app::navlink::{navlink, NavLink};
 use crate::components::html::{header, Header};
 use crate::components::title::{title, Title};
 use crate::defaults::{PARAMS_TARGET, PARAMS_TITLE};
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL, PARAMS_TYPE};
+use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, PageConf, RUMWebData, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::base::RUMResult;
@@ -122,7 +122,7 @@ pub fn app_nav<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, sta
     let company = rumtk_web_get_config!(state).company.clone();
 
     let title_params = rumtk_web_params_map!([(
-                PARAMS_TYPE,
+                PARAMS_TITLE,
                 rumtk_web_get_config!(state).title.as_str()
             )]);
     let title = title(

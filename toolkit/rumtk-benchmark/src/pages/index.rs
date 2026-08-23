@@ -20,11 +20,11 @@ use rumtk_web::components::form::form::form;
 use rumtk_web::components::text_card::text_card;
 use rumtk_web::components::title::title;
 use rumtk_web::defaults::*;
-use rumtk_web::utils::*;
 use rumtk_web::rumtk_web_params_map;
+use rumtk_web::utils::*;
 
 pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-    let title_params = rumtk_web_params_map!([(PARAMS_TYPE, "Intro")]);
+    let title_params = rumtk_web_params_map!([(PARAMS_TITLE, "Intro")]);
     let title_intro = title(&[], title_params.get_inner(), app_state.clone())?;
 
     let text_card_params = rumtk_web_params_map!([(PARAMS_TYPE, "instructions")]);

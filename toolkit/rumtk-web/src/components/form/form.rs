@@ -86,7 +86,7 @@ pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let title_params = rumtk_web_params_map!(
-        [(PARAMS_TYPE, title_str)]
+        [(PARAMS_TITLE, title_str)]
     );
     let title_elem = title(_path_components, title_params.get_inner(), state.clone())?;
 
