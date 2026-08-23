@@ -38,17 +38,30 @@ const ALLOWED_LINK_POLICY: Option<&str> = Some("noopener noreferrer");
 static ALLOWED_TAGS: AllowedSet = LazyLock::new(|| hashset![
     "svg", "xml", "object", "img", "noscript", "meta", "link",
     "title", "form", "input", "select", "option", "textarea",
-    "button", "label", "fieldset", "legend"
+    "button", "label", "fieldset", "legend", "path", "video",
+    "animate",
 ]);
 static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
-    "script", "html", "head", "body", "header", "main", "footer", "style",
+    "script", "html", "head", "body", "header", "main", "footer", "style"
 ]);
 static ALLOWED_GENERIC_ATTR: AllowedSet = LazyLock::new(|| hashset![
-    "class", "open", "hidden", "alt", "type", "height", "width", "href", "id", "data"
+    "class", "open", "hidden", "alt", "type", "height", "width", "href", "id", "data",
+    "action", "formaction"
 ]);
 static ALLOWED_GENERIC_ATTR_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "onload", "onerror", "style", "src", "srcset", "sizes", "width", "height",
     "fetchpriority", "defer", "role", "as", "rel", "lang",
+]);
+static ALLOWED_HTMX_ATTR: AllowedSet = LazyLock::new(|| hashset![
+    //Core attributes
+    "hx-get", "hx-post", "hx-put", "hx-patch", "hx-delete", "hx-on", "hx-push-url",
+    "hx-select", "hx-select-oob", "hx-swap", "hx-swap-oob", "hx-target", "hx-trigger",
+    "hx-vals",
+    //Additional attributes
+    "hx-boost", "hx-confirm", "hx-disable", "hx-disable-elt", "hx-disinherit",
+    "hx-encoding", "hx-ext", "hx-headers", "hx-history", "hx-history-elt", "hx-include",
+    "hx-indicator", "hx-inherit", "hx-params", "hx-preserve", "hx-prompt", "hx-replace-url",
+    "hx-request", "hx-sync", "hx-validate", "hx-vars",
 ]);
 static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
             "a" => hashset![
@@ -110,8 +123,12 @@ static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
             "object" => hashset![
                 "data", "type", "img"
             ],
-            "body" => hashset![
-                "class"
+            "path" => hashset![
+                "d", "stroke-linecap", "stroke-linejoin"
+            ],
+            "svg" => hashset![
+                "fill", "height", "opacity", "stroke", "stroke-width", "viewbox",
+                "width", "version", "baseProfile"
             ],
 ]);
 static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
@@ -174,8 +191,12 @@ static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
             "object" => hashset![
                 "data", "type", "img"
             ],
-            "meta" => hashset![
-                "charset", "http-equiv", "content", "name"
+            "path" => hashset![
+                "d", "stroke-linecap", "stroke-linejoin"
+            ],
+            "svg" => hashset![
+                "fill", "height", "opacity", "stroke", "stroke-width", "viewbox",
+                "width", "version", "baseProfile"
             ],
             "style" => hashset![
             ],
@@ -205,6 +226,7 @@ static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
     }
 );
 
+#[inline]
 fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut Builder)) {
     builder
         .link_rel(ALLOWED_LINK_POLICY)
@@ -212,6 +234,7 @@ fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut 
         .add_tags((*ALLOWED_TAGS).clone())
         .tag_attributes((*ALLOWED_ATTRS).clone())
         .add_generic_attributes((*ALLOWED_GENERIC_ATTR).clone())
+        .add_generic_attributes((*ALLOWED_HTMX_ATTR).clone())
         .clean_content_tags(CLEAN_CONTENT_TAGS.clone())
         .strip_comments(true);
     init_closure(builder);

@@ -1,24 +1,4 @@
 /*
- *     rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
- *     This toolkit aims to be reliable, simple, performant, and standards compliant.
- *     Copyright (C) 2026  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
- *     Copyright (C) 2026  MedicalMasses L.L.C. <contact@medicalmasses.com>
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*
  * rumtk attempts to implement HL7 and medical protocols for interoperability in medicine.
  * This toolkit aims to be reliable, simple, performant, and standards compliant.
  * Copyright (C) 2025  Luis M. Santos, M.D. <lsantos@medicalmasses.com>
@@ -38,12 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::app::app_footer::{app_footer, AppFooter};
-use crate::components::app::app_nav::{app_nav, AppNav};
-use crate::components::html::{main, Main};
+use crate::components::app::app_footer::app_footer;
+use crate::components::app::app_nav::app_nav;
+use crate::components::html::main;
 use crate::utils::defaults::DEFAULT_EMPTY_PARAMS;
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use crate::{rumtk_web_get_config, sanitize_html, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate)]
@@ -51,18 +31,18 @@ use rumtk_core::strings::RUMString;
     source = "
         <body class='f12 fw300 theme-{{theme}}'>
             <a href='#main-content header' hidden>Skip to main content</a>
-            {{header}}
-            {{main}}
-            {{footer}}
+            {{header|safe}}
+            {{main|safe}}
+            {{footer|safe}}
         </body>
     ",
     ext = "html"
 )]
 pub struct AppBody {
     theme: RUMString,
-    header: AppNav,
-    main: Main,
-    footer: AppFooter,
+    header: RUMString,
+    main: RUMString,
+    footer: RUMString,
 }
 
 impl RUMWebTemplateSafe for AppBody {}
@@ -81,10 +61,15 @@ pub fn app_body<'a>(path_components: URLPath<'a, 'a>, params: URLParams<'a>, sta
         state
     )?;
 
+    //Prerender the body so we can do an html sanitization pass
+    let rendered_header = sanitize_html(&header.to_string(), true);
+    let rendered_main = sanitize_html(&main.to_string(), true);
+    let rendered_footer = sanitize_html(&footer.to_string(), true);
+
     Ok(AppBody {
         theme,
-        header,
-        main,
-        footer
+        header: rendered_header,
+        main: rendered_main,
+        footer: rendered_footer,
     })
 }
