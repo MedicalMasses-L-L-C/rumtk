@@ -181,13 +181,20 @@ mod tests {
     fn test_svg_sanitizer() {
         let input = "<svg><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></svg>";
         let output = sanitize_html(input, false);
-        assert!(output.to_string().contains("<svg><circle"));
+        assert!(output.to_string().contains("<svg><circle"), "SVG and circle tags filtered");
+    }
+    #[test]
+    fn test_svg_sanitizer_full() {
+        let input = "<svg><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></svg>";
+        let expected: &str = "<svg><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\"></circle></svg>";
+        let output = sanitize_html(input, false);
+        assert_eq!(&output.to_string(), expected, "Circle tag attributes filtered");
     }
 
     #[test]
-    fn test_xml_sanitizer() {
+    fn test_sanitize_invalid_tag() {
         let input = "<xml><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></xml>";
-        let output = sanitize_html(input, false);
-        assert!(output.to_string().contains("<xml><circle"));
+        let output = sanitize_html(input, true);
+        assert!(output.to_string().is_empty(), "XML and circle tags filtered");
     }
 }

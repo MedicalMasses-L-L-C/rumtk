@@ -40,7 +40,7 @@ static ALLOWED_TAGS: AllowedSet = LazyLock::new(|| hashset![
     "title", "form", "input", "select", "option", "textarea",
     "button", "label", "fieldset", "legend",
 
-    "svg", "xml", "circle", "path", "polygon"
+    "svg", "circle", "path", "polygon"
 ]);
 static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "script", "html", "head", "body", "header", "main", "footer", "style"
