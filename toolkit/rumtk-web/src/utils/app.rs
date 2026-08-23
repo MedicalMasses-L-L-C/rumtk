@@ -306,7 +306,6 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// ];
 /// let expected = AppComponents {
 ///     pages: Some(my_pages.clone()),
-///     components: None,
 ///     forms: None,
 ///     apis: None,
 ///  };
@@ -316,42 +315,13 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///
 /// ```
 ///
-/// ### With Existing Page and Component
-/// ```
-/// use rumtk_web::components::UserComponents;
-/// use rumtk_web::pages::UserPages;
-/// use rumtk_web::AppComponents;
-/// use rumtk_web::pages::index::index;
-/// use rumtk_web::components::div::div;
-/// use rumtk_web::rumtk_web_register_app_components;
-///
-/// let my_pages: UserPages = vec![
-///     ("myindex", index)
-/// ];
-/// let my_components: UserComponents = vec![
-///     ("mydiv", div)
-/// ];
-/// let expected = AppComponents {
-///     pages: Some(my_pages.clone()),
-///     components: Some(my_components.clone()),
-///     forms: None,
-///     apis: None,
-///  };
-/// let result = rumtk_web_register_app_components!(my_pages, my_components);
-///
-/// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
-///
-/// ```
-///
 /// ### With Existing Page and Component and Form
 /// ```
 /// use rumtk_core::strings::RUMString;
 /// use rumtk_web::{AppComponents, SharedAppState};
-/// use rumtk_web::components::UserComponents;
 /// use rumtk_web::pages::UserPages;
 /// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
 /// use rumtk_web::pages::index::index;
-/// use rumtk_web::components::div::div;
 /// use rumtk_web::components::form::props::InputProps;
 /// use rumtk_web::rumtk_web_register_app_components;
 ///
@@ -450,19 +420,15 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// let my_pages: UserPages = vec![
 ///     ("myindex", index)
 /// ];
-/// let my_components: UserComponents = vec![
-///     ("mydiv", div)
-/// ];
 /// let my_forms: Forms = vec![
 ///     ("myform", upload_form)
 /// ];
 /// let expected = AppComponents {
 ///     pages: Some(my_pages.clone()),
-///     components: Some(my_components.clone()),
 ///     forms: Some(my_forms.clone()),
 ///     apis: None,
 ///  };
-/// let result = rumtk_web_register_app_components!(my_pages, my_components, my_forms);
+/// let result = rumtk_web_register_app_components!(my_pages, my_forms);
 ///
 /// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
 ///
@@ -472,17 +438,18 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// ```
 /// use rumtk_core::{rumtk_pipeline_run_async, rumtk_pipeline_command};
 /// use rumtk_core::strings::{RUMString, RUMStringConversions, RUMArrayConversions};
-/// use rumtk_web::{rumtk_web_post_process_html, APIPath, AppComponents, FormData, HTMLResult, RUMWebData, RUMWebResponse, SharedAppState};
+/// use rumtk_web::{rumtk_web_params_map, rumtk_web_post_process_html, APIPath, AppComponents, FormData, HTMLResult, RUMWebData, RUMWebResponse, SharedAppState};
 /// use rumtk_web::{rumtk_web_get_job_manager, rumtk_web_render_component, rumtk_web_render_page_contents};
 /// use rumtk_web::api::UserAPIEndpoints;
-/// use rumtk_web::components::UserComponents;
 /// use rumtk_web::pages::UserPages;
 /// use rumtk_web::components::form::{FormElementBuilder, FormElements, Forms};
 /// use rumtk_web::pages::index::index;
-/// use rumtk_web::components::div::div;
 /// use rumtk_web::components::form::props::InputProps;
+/// use rumtk_web::components::job_loader::{job_loader, JobLoader};
 /// use rumtk_web::jobs::{JobResult};
-/// use rumtk_web::utils::defaults::{PARAMS_TARGET};
+/// use rumtk_web::utils::defaults::{PARAMS_TARGET, PARAMS_ID};
+/// use rumtk_web::ComponentResult;
+/// use rumtk_web::components::sanitize::sanitized;
 /// use rumtk_web::rumtk_web_register_app_components;
 ///
 /// async fn upload_processor(form: FormData) -> JobResult {
@@ -497,18 +464,22 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 ///         &file.clone()
 ///     ).await?;
 ///
-///     Ok(Some(rumtk_web_post_process_html!(result.to_vec().to_string()?)))
+///     let sanitized = sanitized(result.to_vec().to_string()?);
+///     Ok(Some(sanitized?))
 /// }
 ///
-/// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> ComponentResult<T> {
+/// pub fn process_upload(path: APIPath, params: RUMWebData, form: FormData, state: SharedAppState) -> HTMLResult {
 ///     let job_id = rumtk_web_get_job_manager!()?.spawn_task(upload_processor(form))?;
-///     let mydiv = rumtk_web_render_component!("mydiv", [(PARAMS_TARGET, job_id)], state)?.to_string();
+///
+///    let params = rumtk_web_params_map!([(PARAMS_ID, job_id)]);
+///    let viewer = job_loader(&[], params.get_inner(), state)?.to_string();
+///
 ///
 ///     rumtk_web_render_page_contents!(
-///         &vec![
-///             mydiv
-///         ]
-///     )
+///             &vec![
+///                 viewer
+///             ]
+///         )
 /// }
 ///
 /// fn upload_form(builder: FormElementBuilder, _state: &SharedAppState) -> FormElements {
@@ -606,9 +577,6 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// let my_pages: UserPages = vec![
 ///     ("myindex", index)
 /// ];
-/// let my_components: UserComponents = vec![
-///     ("mydiv", div)
-/// ];
 /// let my_forms: Forms = vec![
 ///     ("myform", upload_form)
 /// ];
@@ -617,11 +585,10 @@ pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUM
 /// ];
 /// let expected = AppComponents {
 ///     pages: Some(my_pages.clone()),
-///     components: Some(my_components.clone()),
 ///     forms: Some(my_forms.clone()),
 ///     apis: Some(my_endpoints.clone()),
 ///  };
-/// let result = rumtk_web_register_app_components!(my_pages, my_components, my_forms, my_endpoints);
+/// let result = rumtk_web_register_app_components!(my_pages, my_forms, my_endpoints);
 ///
 /// assert_eq!(result, expected, "Default macro-generated instance of AppComponents are not the same!");
 ///
