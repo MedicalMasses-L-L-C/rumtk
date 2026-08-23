@@ -23,6 +23,7 @@ use std::any::TypeId;
 pub use std::collections::HashMap as RUMHashMap;
 pub use tokio::net::TcpListener as RUMTcpListener;
 pub use uuid::Uuid as RUMID;
+pub use serde_big_array::BigArray as RUMBigArray;
 
 ///
 /// Helper for quickly checking if incoming data is of an expected type.

@@ -54,7 +54,9 @@ pub mod v2_parser {
     };
     use rumtk_core::serde::{RUMJsonDeserializer, RUMJsonSerializer, RUMSerJsonSerializeSequence};
     use rumtk_core::strings::{string_to_buffer, AsString};
+    use rumtk_core::types::RUMBigArray;
     use rumtk_core::{rumtk_cache_fetch, rumtk_mem_quick_array_init};
+
     use std::ops::{Index, IndexMut};
     use std::sync::LazyLock;
     /**************************** Globals ***************************************/
@@ -531,7 +533,8 @@ pub mod v2_parser {
         #[serde(skip)]
         data: RUMBuffer,
         sep: V2ParserCharacters,
-        sg: V2SegmentMap,
+        #[serde(with = "RUMBigArray")]
+        sg: [Option<V2SegmentGroup>; V2_TOTAL_VALID_SEGMENTS as usize],
     }
 
     impl V2Message {
@@ -539,7 +542,7 @@ pub mod v2_parser {
             Self {
                 data: RUMBuffer::new(),
                 sep: V2ParserCharacters::new(),
-                sg: rumtk_mem_quick_array_init!(Option<V2SegmentGroup>, V2_TOTAL_VALID_SEGMENTS as usize, None).into()
+                sg: rumtk_mem_quick_array_init!(Option<V2SegmentGroup>, V2_TOTAL_VALID_SEGMENTS as usize, None)
             }
         }
         ///
@@ -758,7 +761,7 @@ pub mod v2_parser {
         pub fn extract_segments(
             msg: RUMBuffer,
             parser_chars: &V2ParserCharacters,
-        ) -> V2Result<V2SegmentMap> {
+        ) -> V2Result<[Option<V2SegmentGroup>; V2_TOTAL_VALID_SEGMENTS as usize]> {
             debug_assert!(msg.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut segments = rumtk_mem_quick_array_init!(Option<V2SegmentGroup>, V2_TOTAL_VALID_SEGMENTS as usize, None);
 
@@ -772,7 +775,7 @@ pub mod v2_parser {
                 V2Message::push_to_group(&mut segments, V2Segment::from(splitter.remainder, parser_chars)?);
             }
 
-            Ok(segments.into())
+            Ok(segments)
         }
 
         #[inline(always)]

@@ -19,7 +19,6 @@
  */
 pub use crate::serde::json::*;
 pub use crate::types::RUMOrderedMap;
-use std::hash::Hash;
 use std::mem::ManuallyDrop;
 
 #[derive(Default, Debug, PartialEq, Clone)]
