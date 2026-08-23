@@ -38,10 +38,13 @@ pub use utils::*;
 ///
 #[cfg(test)]
 mod tests {
-    use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID, PARAMS_TITLE};
+    use crate::components::job_loader::{job_loader, JobLoader};
+    use crate::components::sanitize::sanitized;
+    use crate::components::title::title;
+    use crate::defaults::{PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
     use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
+    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_render, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, ComponentResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMString;
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
@@ -109,11 +112,9 @@ mod tests {
 
     #[test]
     fn test_render_standard_web_component() {
-        rumtk_web_init_components!(None);
-
-        let params = [(PARAMS_TITLE, "Hello World!")];
+        let params = rumtk_web_params_map!([(PARAMS_TITLE, "Hello World!")]);
         let state = SharedAppState::default();
-        let rendered = rumtk_web_render_component!("title", params, state).unwrap().to_string();
+        let rendered = title(&[], params.get_inner(), state).unwrap().to_string();
 
         assert_eq!(
             rendered, TRIMMED_HTML_TITLE_RENDER,
@@ -148,25 +149,18 @@ mod tests {
 
         let workers: usize = 5;
         rumtk_web_init_job_manager!(&workers);
-        rumtk_web_init_components!(
-            Some(vec![
-                ("my_element", my_element)
-            ])
-        );
 
         async fn basic_processor() -> JobResult {
-            Ok(Some(rumtk_web_post_process_html!(RUMString::from(HELLO_STR))))
+            let result = RUMString::from(HELLO_STR);
+            let rendered = sanitized(result);
+            Ok(Some(rendered?))
         }
 
-        fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-            let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-            let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
+        fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<JobLoader> {
+            // Logic below
 
-            let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
-
-            let job_data = job_result.unwrap()?;
-
-            rumtk_web_post_process_html!(job_data)
+            // Call on job loader and incorporate in your type or passthrough
+            job_loader(_path_components, params, state)
         }
 
         let app_state = rumtk_new_lock!(AppState::default());
@@ -186,14 +180,14 @@ mod tests {
     #[test]
     fn test_svg_sanitizer() {
         let input = "<svg><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></svg>";
-        let output = sanitize_html(input);
+        let output = sanitize_html(input, false);
         assert!(output.to_string().contains("<svg><circle"));
     }
 
     #[test]
     fn test_xml_sanitizer() {
         let input = "<xml><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></xml>";
-        let output = sanitize_html(input);
+        let output = sanitize_html(input, false);
         assert!(output.to_string().contains("<xml><circle"));
-    }   
+    }
 }
