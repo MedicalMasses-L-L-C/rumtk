@@ -578,15 +578,24 @@ pub mod v2_parser {
         ///
         #[inline(always)]
         pub fn to_string(&self) -> V2String {
-            let mut msg: RUMVec<V2String> = RUMVec::with_capacity(self.sg.len());
-            for (indx, group) in self.sg.iter().enumerate() {
+            let mut msg = Vec::<RUMString>::with_capacity(V2_TOTAL_VALID_SEGMENTS as usize);
+            let mut data = self.sg.clone();
+
+            //Make sure the MSH segment is the first segment to ensure that other systems that do not
+            // support segment scrambling do not fall apart if we were to scramble the segments.
+            data[0] = data[V2_MSHEADER_ID as usize].clone();
+            data[V2_MSHEADER_ID as usize] = None;
+
+            // Generate the message string using the internal state.
+            for (indx, group) in data.iter().enumerate() {
                 match group {
                     Some(segment_group) => {
                         for segment in segment_group {
                             msg.push(rumtk_format!("{}{}{}",
-                            buffer_to_str(V2_SEGMENT_NAMES((indx + 1) as u8)).unwrap_or_default(),
-                            buffer_to_str(&[self.sep.field_separator]).unwrap_or_default(),
-                            segment.to_string(&self.sep)));
+                                buffer_to_str(V2_SEGMENT_NAMES(indx as u8)).unwrap_or_default(),
+                                buffer_to_str(&[self.sep.field_separator]).unwrap_or_default(),
+                                segment.to_string(&self.sep))
+                            );
                         }
                     },
                     None => {}
@@ -652,7 +661,7 @@ pub mod v2_parser {
 
         #[inline]
         pub fn get_group(&self, segment_id: u8) -> V2Result<&V2SegmentGroup> {
-            let indx = (segment_id - 1) as usize;
+            let indx = segment_id as usize;
             match self.sg[indx].as_ref() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
@@ -664,7 +673,7 @@ pub mod v2_parser {
 
         #[inline]
         pub fn get_mut_group(&mut self, segment_id: u8) -> V2Result<&mut V2SegmentGroup> {
-            let indx = (segment_id - 1) as usize;
+            let indx = segment_id as usize;
             match self.sg[indx].as_mut() {
                 Some(segment_group) => Ok(segment_group),
                 None => Err(rumtk_format!(
@@ -780,7 +789,7 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn push_to_group(group: &mut V2SegmentArray, segment: (u8, V2Segment)) {
-            let indx = segment.0 - 1;
+            let indx = segment.0;
 
             match &mut group[indx as usize] {
                 Some(segment_set) => {

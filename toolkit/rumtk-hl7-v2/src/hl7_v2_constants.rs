@@ -22,7 +22,7 @@ use rumtk_core::buffers::buffer_slice_trim;
 pub const V2_MSHEADER_PATTERN_STR: &str = "MSH";
 pub const V2_MSHEADER_PATTERN: &[u8;3] = b"MSH";
 pub const V2_MSHEADER_ID: u8 = 88u8;
-pub const V2_TOTAL_VALID_SEGMENTS: u8 = 192u8;
+pub const V2_TOTAL_VALID_SEGMENTS: u8 = 193u8;
 pub const V2_DELETE_FIELD: &str = "\"\"";
 pub const V2_SEGMENT_TERMINATOR: u8 = '\r' as u8;
 pub const V2_SEGMENT_TERMINATORS: &str = "\r\n";
@@ -439,12 +439,9 @@ pub static V2_SEGMENT_IDS_USIZE: ElementIDUSize = |k| -> usize {
     V2_SEGMENT_IDS(k) as usize
 };
 
-pub static V2_SEGMENT_INDX: ElementID = |k| -> u8 {
-    V2_SEGMENT_IDS(k) - 1
-};
-
 pub static V2_SEGMENT_NAMES: ElementName = |k| -> &'static [u8] {
     match k {
+        0u8 => b"MSH", // Reserved for message generation to allow MSH to always be first.
         1u8 => b"ABS",
         2u8 => b"ACC",
         3u8 => b"ADD",
