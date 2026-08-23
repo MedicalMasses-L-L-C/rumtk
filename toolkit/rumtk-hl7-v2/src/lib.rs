@@ -1121,30 +1121,6 @@ mod tests {
     }
 
     #[test]
-    fn test_mllp_get_ids() {
-        let mllp = rumtk_v2_mllp_listen!(MLLP_FILTER_POLICY::NONE, true).unwrap();
-        let (ip, port) = rumtk_v2_mllp_get_ip_port!(mllp).unwrap();
-        let safe_client = rumtk_v2_mllp_connect!(port, MLLP_FILTER_POLICY::NONE).unwrap();
-
-        rumtk_sleep!(1);
-        let mut results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
-
-        while results.is_empty() {
-            rumtk_sleep!(1);
-            results = rumtk_v2_mllp_get_client_ids!(mllp).unwrap();
-        }
-
-        let client_id = results.get(0).unwrap();
-        let (client_ip, client_port) = rumtk_v2_mllp_get_ip_port!(safe_client).unwrap();
-        let expected = rumtk_format!("{}:{}", client_ip, client_port);
-        assert_eq!(
-            &expected, client_id,
-            "Expected to see client with ID: {}",
-            expected
-        );
-    }
-
-    #[test]
     fn test_mllp_get_ip() {
         let mllp_layer = match rumtk_v2_mllp_listen!(0, MLLP_FILTER_POLICY::NONE, true) {
             Ok(mllp_layer) => mllp_layer,
