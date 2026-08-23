@@ -24,6 +24,9 @@ mod api;
 mod components;
 mod utils;
 
+#[cfg(test)]
+pub mod testdata;
+
 use rumtk_web::{
     rumtk_web_register_app_components, rumtk_web_register_app_switches, rumtk_web_run_app,
     AppComponents,
@@ -43,4 +46,29 @@ fn main() {
     );
 
     rumtk_web_run_app!(app_components);
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::testdata::*;
+    #[test]
+    fn test_benchmark_report() {
+        let result = rumtk_web::sanitize_html(TEST_DATA_SAMPLE_REPORT, true);
+
+        assert_eq!(result, TEST_SAMPLE_REPORT_DATA_SANITIZED);
+    }
+    #[test]
+    fn test_benchmark_report_strict() {
+        let result = rumtk_web::sanitize_html(TEST_DATA_SAMPLE_REPORT, false);
+
+        assert_eq!(result, TEST_SAMPLE_REPORT_DATA_SANITIZED);
+    }
+
+    #[test]
+    fn test_benchmark_report_meta_filtered() {
+        let input: &str = "<meta name='description' content='test'>";
+        let result = rumtk_web::sanitize_html(input, false);
+
+        assert_eq!(result, input);
+    }
 }
