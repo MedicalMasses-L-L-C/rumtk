@@ -145,7 +145,11 @@ macro_rules! rumtk_web_generate_job_id {
 /// use rumtk_web::defaults::{PARAMS_ID, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM, DEFAULT_NO_TEXT};
 /// use rumtk_web::utils::jobs::{JobResult};
 /// use rumtk_web::{HTMLResult, SharedAppState, URLParams, URLPath, AppState, RUMWebResponse, RUMWebData};
-/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item, rumtk_web_post_process_html, rumtk_web_init_components};
+/// use rumtk_web::{rumtk_web_init_job_manager, rumtk_web_get_job_manager, rumtk_web_check_on_job, rumtk_web_get_text_item};
+///
+/// use rumtk_web::components::job_loader::{job_loader, JobLoader};
+///
+/// use rumtk_web::components::sanitize::sanitized;
 ///
 /// const HELLO_STR: &str = "Hello World";
 ///
@@ -158,24 +162,21 @@ macro_rules! rumtk_web_generate_job_id {
 /// );
 ///
 /// async fn basic_processor() -> JobResult {
-///     Ok(Some(rumtk_web_post_process_html!(RUMString::from(HELLO_STR))))
+///     let result = RUMString::from(HELLO_STR);
+///     let sanitized = sanitized(result);
+///     Ok(Some(sanitized))
 /// }
 ///
-/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<T> {
-///     let job_id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_NO_TEXT);
-///     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM);
-///
-///     let job_result = rumtk_web_check_on_job!("my_element", job_id, state);
-///
-///     let job_data = job_result.unwrap()?;
-///
-///     rumtk_web_post_process_html!(job_data)
+/// fn my_element(_path_components: URLPath, params: URLParams, state: SharedAppState) -> ComponentResult<JobLoader> {
+///     job_loader(_path_components, params, state)
 /// }
 ///
 /// let app_state = rumtk_new_lock!(AppState::default());
 /// let mut params = RUMWebData::new();
 /// let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
 /// params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
+///
+/// rumtk_web_get_job_manager!().unwrap().wait_on(job_id);
 ///
 /// rumtk_sleep!(1);
 /// let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();

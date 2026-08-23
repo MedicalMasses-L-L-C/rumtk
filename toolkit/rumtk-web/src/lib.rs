@@ -44,7 +44,7 @@ mod tests {
     use crate::defaults::{PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
     use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_render, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, ComponentResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
+    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_post_process, rumtk_web_render, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, ComponentResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMString;
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
@@ -115,9 +115,10 @@ mod tests {
         let params = rumtk_web_params_map!([(PARAMS_TITLE, "Hello World!")]);
         let state = SharedAppState::default();
         let rendered = title(&[], params.get_inner(), state).unwrap().to_string();
+        let rendered_trimmed = rumtk_web_post_process(rendered, RUMWebRedirect::None).unwrap().to_string();
 
         assert_eq!(
-            rendered, TRIMMED_HTML_TITLE_RENDER,
+            rendered_trimmed, TRIMMED_HTML_TITLE_RENDER,
             "Commponent rendered improperly!"
         );
     }
@@ -168,10 +169,12 @@ mod tests {
         let job_id = rumtk_web_get_job_manager!().unwrap().spawn_task(basic_processor()).unwrap();
         params.insert(RUMString::from(PARAMS_ID), job_id.to_string());
 
+        rumtk_web_get_job_manager!().unwrap().wait_on(&job_id).unwrap();
+
         rumtk_sleep!(1);
         let rendered = my_element(&[], &params, app_state.clone()).unwrap().to_string();
 
-        assert!(rendered.is_empty(), "Element results survived the rendering process's filtering!");
+        assert_eq!(&rendered, HELLO_STR, "Job returned the wrong result!");
     }
 
     ///////////////////////////////////Endpoint Tests/////////////////////////////////////////////////

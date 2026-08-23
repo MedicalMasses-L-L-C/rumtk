@@ -549,7 +549,7 @@ macro_rules! rumtk_web_get_pipelines {
 ///
 /// let new_lang = rumtk_web_get_config!(state).lang.clone();
 ///
-/// assert_eq!(new_lang, "", "Language field in the configuration was not empty!");
+/// assert_eq!(new_lang, "en", "Language field in the configuration was not empty!");
 /// ```
 ///
 #[macro_export]

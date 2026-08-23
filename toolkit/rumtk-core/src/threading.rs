@@ -138,7 +138,7 @@ pub mod threading_manager {
     ///
     /// let mut result_data = Vec::<RUMString>::with_capacity(5);
     /// for r in results {
-    ///     for v in r.unwrap().result.clone().unwrap().iter() {
+    ///     for v in r.unwrap().unwrap().iter() {
     ///         for value in v.iter() {
     ///             result_data.push(value.clone());
     ///         }

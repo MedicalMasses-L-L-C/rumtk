@@ -98,10 +98,11 @@ macro_rules! rumtk_web_register_page {
 /// use rumtk_core::strings::rumtk_format;
 /// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
-/// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page};
+/// use rumtk_web::{rumtk_web_register_page, rumtk_web_get_page, rumtk_web_params_map};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
+///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,
@@ -122,10 +123,11 @@ macro_rules! rumtk_web_register_page {
 /// use rumtk_core::strings::rumtk_format;
 /// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
-/// use rumtk_web::{rumtk_web_render_component, rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page};
+/// use rumtk_web::{rumtk_web_register_page, rumtk_web_get_page, rumtk_web_get_default_page, rumtk_web_params_map};
 ///
 /// pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
+///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,
@@ -171,12 +173,13 @@ macro_rules! rumtk_web_get_default_page {
 /// use rumtk_core::strings::rumtk_format;
 /// use rumtk_web::defaults::{PARAMS_TYPE};
 /// use rumtk_web::utils::{SharedAppState, RenderedPageComponentsResult};
-/// use rumtk_web::{rumtk_web_render_component, rumtk_web_init_pages, rumtk_web_get_page};
+/// use rumtk_web::{rumtk_web_init_pages, rumtk_web_get_page, rumtk_web_params_map};
 ///
 /// use rumtk_web::pages::UserPages;
 ///
 ///  fn my_page(app_state: SharedAppState) -> RenderedPageComponentsResult {
-///     let title_welcome = rumtk_web_render_component!("title", [(PARAMS_TYPE, "welcome")], app_state)?.to_string();
+///     let params = rumtk_web_params_map!([(PARAMS_TYPE, "welcome")]);
+///     let title_welcome = title(&[], params.get_inner(), app_state)?.to_string();
 ///
 ///     Ok(vec![
 ///         title_welcome,

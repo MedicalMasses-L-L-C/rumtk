@@ -70,6 +70,6 @@ mod tests {
         let expected: &str = "<meta name=\"description\" content=\"test\">";
         let result = rumtk_web::sanitize_html(input, false);
 
-        assert_eq!(result, input);
+        assert_eq!(result, expected);
     }
 }
