@@ -63,13 +63,13 @@ mod tests {
     use crate::buffers::*;
     use crate::buffers::{buffer_count, buffer_find, buffer_replace, buffer_replace_in_place, buffer_slice_trim, buffer_to_string, buffer_trim, new_random_buffer, RUMBufferIteratorExt};
     use crate::cache::RUMCache;
-    use crate::cpu::{cpu_replace_byte, u8xN, CPU_SIMD_64_SIZE};
+    use crate::cpu::cpu_replace_byte;
     use crate::search::rumtk_search::*;
     use crate::serde::{from_json, to_json, RUMDeJson, RUMSerJson};
-    use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions, StringUtils};
+    use crate::strings::{rumtk_format, AsStr, RUMArrayConversions, RUMString, RUMStringConversions};
     use std::process::Stdio;
     use std::sync::Arc;
-    use tokio::io::{split, AsyncBufReadExt};
+    use tokio::io::AsyncBufReadExt;
     use tokio::sync::RwLock;
 
     #[test]
@@ -448,9 +448,9 @@ mod tests {
 
     ///////////////////////////////////Queue Tests/////////////////////////////////////////////////
     use crate::cli::cli_utils::print_license_notice;
-    use crate::cpu::{cpu_collect, cpu_find, cpu_find_replace_simd_n, cpu_tokenize, CPU_SEARCH_WINDOW_16_SIZE};
+    use crate::cpu::{cpu_collect, cpu_find, cpu_tokenize, CPU_SEARCH_WINDOW_16_SIZE};
     use crate::net::tcp::LOCALHOST;
-    use crate::pipelines::pipeline_functions::{pipeline_add_stdin_data_to_pipeline, pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
+    use crate::pipelines::pipeline_functions::{pipeline_create_command, pipeline_patch_args, pipeline_pipe_processes, pipeline_spawn_process};
     use crate::pipelines::pipeline_types::RUMCommand;
     use crate::threading::threading_functions::block_on_task;
     use crate::threading::threading_manager::*;
@@ -489,7 +489,7 @@ mod tests {
 
         let mut result_data = Vec::<RUMString>::with_capacity(5);
         for r in results {
-            for v in r.unwrap().result.clone().unwrap().iter() {
+            for v in r.unwrap().unwrap().iter() {
                 for value in v.iter() {
                     result_data.push(value.clone());
                 }

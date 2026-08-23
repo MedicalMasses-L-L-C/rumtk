@@ -1444,12 +1444,12 @@ mod tests {
 
     #[test]
     fn test_deserialize_stdin_v2_message_basic() {
-        let expected_message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
-        let deserialized = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
-
         println!("{:?}", V2_JSON_MESSAGE_BASIC);
+        let expected_message = rumtk_v2_parse_message!(V2_JSON_MESSAGE_BASIC).unwrap();
         println!("{:?}", expected_message.to_string());
         println!("{:?}", rumtk_serialize!(&expected_message).unwrap());
+
+        let deserialized = rumtk_deserialize!(&ESCAPED_V2_JSON_MESSAGE_BASIC).unwrap();
 
         assert_eq!(
             expected_message, deserialized,
