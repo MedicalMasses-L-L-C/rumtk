@@ -46,11 +46,19 @@ static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
 ]);
 static ALLOWED_GENERIC_ATTR: AllowedSet = LazyLock::new(|| hashset![
     "class", "open", "hidden", "alt", "type", "height", "width", "href", "id", "data",
-    "action", "formaction"
+    "action", "formaction",
+    "name", "for", "value", "max", "placeholder", "accept", "alt", "pattern",
+    "maxlength", "minlength", "autocapitalize",
+    "autocomplete", "autocorrect", "autofocus", "disabled", "hidden", "required",
 ]);
 static ALLOWED_GENERIC_ATTR_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "onload", "onerror", "style", "src", "srcset", "sizes", "width", "height",
     "fetchpriority", "defer", "role", "as", "rel", "lang",
+    "onload", "onerror", "onclick", "ondblclick", "onmouseover", "onmouseout",
+    "onmousedown", "onmouseup", "onwheel", "onkeydown", "onkeyup", "onkeypress",
+    "onchange", "onfocus", "onblur", "oninput", "onsubmit", "onreset", "onunload",
+    "onresize", "onhashchange", "onplay", "onpause", "onended", "onvolumechange",
+    "ontimeupdate"
 ]);
 static ALLOWED_HTMX_ATTR: AllowedSet = LazyLock::new(|| hashset![
     //Core attributes
@@ -202,6 +210,26 @@ static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
             ],
             "script" => hashset![
                 "src", "integrity", "crossorigin"
+            ],
+            "input" => hashset![
+                "id", "name", "for", "type", "value", "max", "placeholder",
+                "accept", "alt", "pattern", "maxlength", "minlength", "autocapitalize",
+                "autocomplete", "autocorrect", "autofocus", "disabled", "hidden", "required",
+                "onload", "onerror", "onclick", "ondblclick", "onmouseover", "onmouseout",
+                "onmousedown", "onmouseup", "onwheel", "onkeydown", "onkeyup", "onkeypress",
+                "onchange", "onfocus", "onblur", "oninput", "onsubmit", "onreset", "onunload",
+                "onresize", "onhashchange", "onplay", "onpause", "onended", "onvolumechange",
+                "ontimeupdate",
+            ],
+            "select" => hashset![
+                "id", "name", "for", "type", "value", "max", "placeholder",
+                "accept", "alt", "pattern", "maxlength", "minlength", "autocapitalize",
+                "autocomplete", "autocorrect", "autofocus", "disabled", "hidden", "required",
+                "onload", "onerror", "onclick", "ondblclick", "onmouseover", "onmouseout",
+                "onmousedown", "onmouseup", "onwheel", "onkeydown", "onkeyup", "onkeypress",
+                "onchange", "onfocus", "onblur", "oninput", "onsubmit", "onreset", "onunload",
+                "onresize", "onhashchange", "onplay", "onpause", "onended", "onvolumechange",
+                "ontimeupdate",
             ],
 ]);
 static STRICT_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {

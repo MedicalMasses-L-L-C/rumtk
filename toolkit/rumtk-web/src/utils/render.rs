@@ -83,6 +83,7 @@ struct ContentBlock<'a> {
 /// assert_eq!(filtered, expected, "Template render trim failed!");
 /// ```
 ///
+#[inline]
 pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
     let filtered = html.as_grapheme_str()
         .trim(&TEMPLATE_NEWLINE_COMPONENT_PATTERN)
@@ -93,7 +94,8 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
 
 #[inline]
 pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
-    let minified = minify_asset(Asset::HTML(&html))?;
+    let filtered = rumtk_web_trim_rendered_html(html)?;
+    let minified = minify_asset(Asset::HTML(&filtered))?;
     Ok(url.into_web_response(Some(minified)))
 }
 
@@ -121,6 +123,7 @@ pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
 /// assert_eq!(result, expected, "Test Div template rendered improperly!");
 /// ```
 ///
+#[inline]
 pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> HTMLResult {
     let result = template.render();
     match result {
@@ -134,10 +137,12 @@ pub fn rumtk_web_render<T: RUMWebTemplate>(template: T, url: RUMWebRedirect) -> 
     }
 }
 
+#[inline]
 pub fn rumtk_web_render_contents(elements: &[RUMString]) -> HTMLResult {
     rumtk_web_render(ContentBlock { elements }, RUMWebRedirect::None)
 }
 
+#[inline]
 pub fn rumtk_web_redirect(url: RUMWebRedirect) -> HTMLResult {
     Ok(url.into_web_response(Some(String::default())))
 }
