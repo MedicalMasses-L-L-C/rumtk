@@ -272,6 +272,7 @@ mod tests {
         let sanitized_message = V2Message::sanitize(&mut message);
         let message = V2Message::try_from(sanitized_message.clone()).unwrap();
         let generated = rumtk_v2_generate_message!(message);
+        
         assert_eq!(
             &generated,
             EXPECTED_PARSED_TWO_SEGMENTS,
