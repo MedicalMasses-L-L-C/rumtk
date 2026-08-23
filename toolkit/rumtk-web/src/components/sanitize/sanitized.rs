@@ -22,9 +22,7 @@ use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
-    source = "
-        {{contents|safe}}
-    ",
+    source = "{{contents|safe}}",
     ext = "html"
 )]
 pub struct Sanitized {
