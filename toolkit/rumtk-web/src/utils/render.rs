@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+use crate::packaging::{minify_asset, Asset};
 use crate::types::HTMLResult;
-use crate::{sanitize_html, RUMWebRedirect, RUMWebTemplate};
+use crate::{RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::Options;
 use rumtk_core::base::RUMResult;
 use rumtk_core::search::rumtk_search::string_replace_all_matches;
@@ -90,10 +91,10 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
     string_replace_all_matches(filtered.as_str(), TEMPLATE_MIDDLE_REGEX, TEMPLATE_MIDDLE_REPLACEMENT)
 }
 
+#[inline]
 pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
-    let filtered = rumtk_web_trim_rendered_html(html)?;
-    let sanitized = sanitize_html(&filtered, true);
-    Ok(url.into_web_response(Some(sanitized)))
+    let minified = minify_asset(Asset::HTML(&html))?;
+    Ok(url.into_web_response(Some(minified)))
 }
 
 ///
