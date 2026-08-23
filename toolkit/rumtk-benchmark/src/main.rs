@@ -67,6 +67,7 @@ mod tests {
     #[test]
     fn test_benchmark_report_meta_filtered() {
         let input: &str = "<meta name='description' content='test'>";
+        let expected: &str = "<meta name=\"description\" content=\"test\">";
         let result = rumtk_web::sanitize_html(input, false);
 
         assert_eq!(result, input);

@@ -195,7 +195,7 @@ mod tests {
         let parsed_segments = V2Message::extract_segments(sanitized_message.freeze(), &encode_chars).unwrap();
 
         assert_eq!(
-            parsed_segments.len(),
+            parsed_segments.iter().filter(|&x| x.is_some()).collect::<Vec<_>>().len(),
             5,
             "Number of segments mismatching what was expected!"
         );
@@ -230,7 +230,7 @@ mod tests {
         let parsed_segments = V2Message::extract_segments(sanitized_message.freeze(), &encode_chars).unwrap();
 
         assert_eq!(
-            parsed_segments.len(),
+            parsed_segments.iter().filter(|&x| x.is_some()).collect::<Vec<_>>().len(),
             4,
             "Number of segments mismatching what was expected!"
         );
@@ -272,7 +272,7 @@ mod tests {
         let sanitized_message = V2Message::sanitize(&mut message);
         let message = V2Message::try_from(sanitized_message.clone()).unwrap();
         let generated = rumtk_v2_generate_message!(message);
-        
+
         assert_eq!(
             &generated,
             EXPECTED_PARSED_TWO_SEGMENTS,
