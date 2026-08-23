@@ -36,10 +36,11 @@ static ALLOWED_URL_SCHEMES_RELAXED: AllowedSet = LazyLock::new(|| hashset![
 ]);
 const ALLOWED_LINK_POLICY: Option<&str> = Some("noopener noreferrer");
 static ALLOWED_TAGS: AllowedSet = LazyLock::new(|| hashset![
-    "svg", "xml", "object", "img", "noscript", "meta", "link",
+    "animate", "video", "object", "img", "noscript", "meta", "link",
     "title", "form", "input", "select", "option", "textarea",
-    "button", "label", "fieldset", "legend", "path", "video",
-    "animate",
+    "button", "label", "fieldset", "legend",
+
+    "svg", "xml", "circle", "path", "polygon"
 ]);
 static ALLOWED_TAGS_RELAXED: AllowedSet = LazyLock::new(|| hashset![
     "script", "html", "head", "body", "header", "main", "footer", "style"
@@ -138,6 +139,18 @@ static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
                 "fill", "height", "opacity", "stroke", "stroke-width", "viewbox",
                 "width", "version", "baseProfile"
             ],
+            "polygon" => hashset![
+                "points", "fill", "stroke", "stroke-width"
+            ],
+            "circle" => hashset![
+                "cx", "cy", "r", "fill", "stroke", "stroke-width"
+            ],
+            "video" => hashset![
+                "src", "controls", "autoplay", "loop", "muted", "width", "height"
+            ],
+            "animate" => hashset![
+                "attributeName", "from", "to", "dur", "fill", "begin", "repeatCount"
+            ],
 ]);
 static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
             "a" => hashset![
@@ -199,13 +212,6 @@ static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
             "object" => hashset![
                 "data", "type", "img"
             ],
-            "path" => hashset![
-                "d", "stroke-linecap", "stroke-linejoin"
-            ],
-            "svg" => hashset![
-                "fill", "height", "opacity", "stroke", "stroke-width", "viewbox",
-                "width", "version", "baseProfile"
-            ],
             "style" => hashset![
             ],
             "script" => hashset![
@@ -230,6 +236,25 @@ static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
                 "onchange", "onfocus", "onblur", "oninput", "onsubmit", "onreset", "onunload",
                 "onresize", "onhashchange", "onplay", "onpause", "onended", "onvolumechange",
                 "ontimeupdate",
+            ],
+            "path" => hashset![
+                "d", "stroke-linecap", "stroke-linejoin"
+            ],
+            "svg" => hashset![
+                "fill", "height", "opacity", "stroke", "stroke-width", "viewbox",
+                "width", "version", "baseProfile"
+            ],
+            "polygon" => hashset![
+                "points", "fill", "stroke", "stroke-width"
+            ],
+            "circle" => hashset![
+                "cx", "cy", "r", "fill", "stroke", "stroke-width"
+            ],
+            "video" => hashset![
+                "src", "controls", "autoplay", "loop", "muted", "width", "height"
+            ],
+            "animate" => hashset![
+                "attributeName", "from", "to", "dur", "fill", "begin", "repeatCount"
             ],
 ]);
 static STRICT_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
