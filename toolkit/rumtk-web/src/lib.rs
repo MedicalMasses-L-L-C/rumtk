@@ -41,7 +41,7 @@ mod tests {
     use crate::defaults::{DEFAULT_NO_TEXT, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
     use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
+    use crate::{rumtk_web_check_on_job, rumtk_web_get_job_manager, rumtk_web_get_text_item, rumtk_web_init_components, rumtk_web_init_job_manager, rumtk_web_post_process_html, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, HTMLResult, RUMWebData, RUMWebRedirect, SharedAppState, URLParams, URLPath};
     use crate::{RUMWebResponse, RUMWebTemplate};
     use rumtk_core::strings::RUMString;
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
@@ -181,4 +181,19 @@ mod tests {
     }
 
     ///////////////////////////////////Endpoint Tests/////////////////////////////////////////////////
+
+    ///////////////////////////////////Sanitizer Tests///////////////////////////////////////////////
+    #[test]
+    fn test_svg_sanitizer() {
+        let input = "<svg><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></svg>";
+        let output = sanitize_html(input);
+        assert!(output.to_string().contains("<svg><circle"));
+    }
+
+    #[test]
+    fn test_xml_sanitizer() {
+        let input = "<xml><circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" /></xml>";
+        let output = sanitize_html(input);
+        assert!(output.to_string().contains("<xml><circle"));
+    }   
 }
