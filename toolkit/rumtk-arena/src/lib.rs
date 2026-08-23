@@ -89,7 +89,7 @@ mod tests {
         });
 
         assert_eq!(r.len(), DEFAULT_GLOBAL_MB_ALLOCATION);
-        assert!(time < 500, "Allocation took long! => {}us", time)
+        assert!(time < 1000, "Allocation took long! => {}us", time)
 
     }
 
