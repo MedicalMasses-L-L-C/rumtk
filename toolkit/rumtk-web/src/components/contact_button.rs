@@ -41,7 +41,7 @@ use rumtk_core::strings::RUMString;
         </script>
         <div class='contact-{{ css_class }}-button-container'>
             <button class='contact-{{ css_class }}-button' onclick='{{ send_function }}()'>
-                {{title}}
+                {{title | safe}}
             </button>
         </div>
     ",

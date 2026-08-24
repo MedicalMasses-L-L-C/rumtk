@@ -41,7 +41,7 @@ type PortraitGrid = Vec<Vec<ContactCard>>;
                     <tr class='portrait-card-{{ css_class }}-row'>
                         {% for item in row %}
                         <td class='portrait-card-{{ css_class }}-item'>
-                            {{item}}
+                            {{item | safe}}
                         </td>
                         {% endfor %}
                     </tr>
