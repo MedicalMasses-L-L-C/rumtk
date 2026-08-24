@@ -62,7 +62,7 @@ communication and automation in medicine.
     - [x] Multithreaded support
     - [ ] SQLite Bindings
     - [x] PyO3 for extending message processing
-    - [ ] SIMD support?? [Maybe]
+    - [x] SIMD support?? [Maybe]
 - [ ] Healthcare Web Dashboard Library
     - [x] Server Side Rendering.
     - [x] High Performance Web framework (see [MedicalMasses L.L.C.'s](https://www.medicalmasses.com/) website which
