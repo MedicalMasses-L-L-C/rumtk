@@ -62,6 +62,7 @@ pub mod v2_parser {
     /**************************** Globals ***************************************/
 
     static mut search_cache: LazyRUMCache<RUMString, V2SearchIndex> = new_cache();
+    const MAX_FIELD_COMPONENT_COUNT: usize = 16;
 
     /**************************** Helpers ***************************************/
     fn compile_search_index(search_pattern: &str) -> RUMResult<V2SearchIndex> {
@@ -195,7 +196,7 @@ pub mod v2_parser {
 
     impl V2PrimitiveCasting for V2Component {}
 
-    pub type ComponentList = RUMVec<V2Component>;
+    pub type ComponentList = [V2Component; MAX_FIELD_COMPONENT_COUNT];
 
     static mut EMPTY_FIELD: LazyLock<V2Field> = LazyLock::new(|| V2Field::new());
 
@@ -218,35 +219,44 @@ pub mod v2_parser {
     #[derive(Default, Debug, RUMSerJson, RUMDeJson, PartialEq, Clone)]
     pub struct V2Field {
         cs: ComponentList,
+        s: usize,
     }
 
     impl V2Field {
         #[inline(always)]
         pub fn new() -> Self {
+            let mut component_list = rumtk_mem_quick_array_init!(V2Component, MAX_FIELD_COMPONENT_COUNT);
+            component_list[0] = V2Component::new();
             Self {
-                cs: vec![V2Component::new()]
+                cs: component_list,
+                s: 1,
             }
         }
 
         #[inline(always)]
         pub fn from(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
+            let mut component_list = rumtk_mem_quick_array_init!(V2Component, MAX_FIELD_COMPONENT_COUNT);
+            let mut indx = 0;
             if buffer_contains(&field, parser_chars.component_separator) {
-                const CHUNK_SIZE: usize = 16;
-                let mut component_list = RUMVec::with_capacity(CHUNK_SIZE);
                 let mut splitter = field.split_fast(parser_chars.component_separator);
 
                 for c in &mut splitter {
-                    component_list.push(V2Component::from(c));
+                    component_list[indx] = V2Component::from(c);
+                    indx += 1;
                 }
-                component_list.push(V2Component::from(splitter.remainder));
+                component_list[indx] = V2Component::from(splitter.remainder);
+                indx += 1;
 
                 Self {
-                    cs: component_list
+                    cs: component_list,
+                    s: indx,
                 }
             } else {
+                component_list[0] = V2Component::from(field);
                 Self {
-                    cs: vec![V2Component::from(field)]
+                    cs: component_list,
+                    s: 1,
                 }
             }
 
@@ -254,16 +264,21 @@ pub mod v2_parser {
 
         #[inline(always)]
         pub fn from_single_field(field: RUMBuffer, parser_chars: &V2ParserCharacters) -> Self {
+            let mut component_list = rumtk_mem_quick_array_init!(V2Component, MAX_FIELD_COMPONENT_COUNT);
+            component_list[0] = V2Component::from(field);
             Self {
-                cs: vec![V2Component::from(field)]
+                cs: component_list,
+                s: 1,
             }
         }
 
         #[inline(always)]
         pub fn to_string(&self, parser_chars: &V2ParserCharacters) -> V2String {
-            let mut components: RUMVec<&str> = RUMVec::with_capacity(self.cs.len());
-            for component in self.cs.iter() {
-                components.push(component.as_str())
+            let mut components = rumtk_mem_quick_array_init!(&str, MAX_FIELD_COMPONENT_COUNT);
+            let mut next = 0;
+            for component in self.cs[..self.s].iter() {
+                components[0] = component.as_str();
+                next += 1;
             }
             components.join(&parser_chars.component_separator.as_string())
         }
@@ -273,7 +288,7 @@ pub mod v2_parser {
         }
 
         pub fn get(&self, indx: isize) -> V2Result<&V2Component> {
-            let component_indx = clamp_index(&indx, &(self.cs.len() as isize))? - 1;
+            let component_indx = clamp_index(&indx, &(self.s as isize))? - 1;
             match self.cs.get(component_indx) {
                 Some(component) => Ok(component),
                 None => Err(rumtk_format!("Component at index {} not found!", indx)),
@@ -281,7 +296,7 @@ pub mod v2_parser {
         }
 
         pub fn get_mut(&mut self, indx: isize) -> V2Result<&mut V2Component> {
-            let component_indx = clamp_index(&indx, &(self.cs.len() as isize))? - 1;
+            let component_indx = clamp_index(&indx, &(self.s as isize))? - 1;
             match self.cs.get_mut(component_indx) {
                 Some(component) => Ok(component),
                 None => Err(rumtk_format!("Component at index {} not found!", indx)),
@@ -309,13 +324,6 @@ pub mod v2_parser {
     impl<'a> IndexMut<isize> for V2Field {
         fn index_mut(&mut self, indx: isize) -> &mut V2Component {
             self.get_mut(indx).unwrap()
-        }
-    }
-
-    impl Drop for V2Field {
-        #[inline]
-        fn drop(&mut self) {
-            unsafe { self.cs.set_len(0) }
         }
     }
 

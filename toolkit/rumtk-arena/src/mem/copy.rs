@@ -50,11 +50,13 @@ pub fn copy_from_slice<'a>(src: &[u8], dst: &'a mut [u8]) -> &'a mut [u8] {
 #[macro_export]
 macro_rules! rumtk_mem_quick_array_init {
     ( $typ:ty, $size:expr ) => {{
+        use ::std::mem;
         const DATA_SLICE_LEN: usize = $size * size_of::<$typ>();
         let arr: [$typ; $size] = unsafe { mem::transmute([0u8; DATA_SLICE_LEN]) };
         arr
     }};
     ( $typ:ty, $size:expr, $default:expr ) => {{
+        use ::std::mem;
         let arr: [$typ; $size] = [const {$default}; $size];
         arr
     }};
