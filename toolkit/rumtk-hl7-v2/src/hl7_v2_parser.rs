@@ -238,28 +238,19 @@ pub mod v2_parser {
             debug_assert!(field.is_view(), "Somewhere you forgot to call freeze() on RUMBuffer to generate a copy in View mode!");
             let mut component_list = rumtk_mem_quick_array_init!(V2Component, MAX_FIELD_COMPONENT_COUNT);
             let mut indx = 0;
-            if buffer_contains(&field, parser_chars.component_separator) {
-                let mut splitter = field.split_fast(parser_chars.component_separator);
+            let mut splitter = field.split_fast(parser_chars.component_separator);
 
-                for c in &mut splitter {
-                    component_list[indx] = V2Component::from(c);
-                    indx += 1;
-                }
-                component_list[indx] = V2Component::from(splitter.remainder);
+            for c in &mut splitter {
+                component_list[indx] = V2Component::from(c);
                 indx += 1;
-
-                Self {
-                    cs: component_list,
-                    s: indx,
-                }
-            } else {
-                component_list[0] = V2Component::from(field);
-                Self {
-                    cs: component_list,
-                    s: 1,
-                }
             }
+            component_list[indx] = V2Component::from(splitter.remainder);
+            indx += 1;
 
+            Self {
+                cs: component_list,
+                s: indx,
+            }
         }
 
         #[inline(always)]
