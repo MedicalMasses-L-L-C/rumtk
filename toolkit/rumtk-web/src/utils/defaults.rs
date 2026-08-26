@@ -38,6 +38,7 @@ pub const DEFAULT_OUTBOUND_LISTENING_ADDRESS: &str = "0.0.0.0:3000";
    Misc
 */
 pub const DEFAULT_TEXT_ITEM: &str = "default";
+pub const DEFAULT_ALT_ITEM: &str = "";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
 pub const DEFAULT_CONTACT_TYPE: &str = "contact";
 pub const DEFAULT_CONTACT_FUNCTION: &str = "goto_contact";
@@ -79,6 +80,7 @@ pub const PARAMS_ELEMENT: &str = "element";
 pub const PARAMS_TICKS: &str = "ticks";
 pub const PARAMS_SWAP_MODE: &str = "swap_mode";
 pub const PARAMS_PROGRESS_MODE: &str = "progress_mode";
+pub const PARAMS_ALT: &str = "alt";
 
 /*
    CONF SECTIONS

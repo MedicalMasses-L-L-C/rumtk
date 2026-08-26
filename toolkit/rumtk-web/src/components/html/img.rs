@@ -27,7 +27,7 @@
 ///
 use crate::utils::defaults::{PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
 use crate::utils::types::SharedAppState;
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, DEFAULT_TEXT_ITEM};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, URLParams, DEFAULT_ALT_ITEM, DEFAULT_TEXT_ITEM, PARAMS_ALT};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -36,22 +36,26 @@ use rumtk_core::strings::RUMString;
         {% if custom_css_enabled %}
             <link href='/static/components/logo.css' rel='stylesheet'>
         {% endif %}
-        <img src='{{ source }}' alt='Logo' class='logo-{{ css_class }}' fetchpriority='high' loading='lazy' />
+        <img src='{{ source }}' alt='{{alt|capitalize}}' class='{{ css_class }}' fetchpriority='high' loading='lazy' />
     ",
     ext = "html"
 )]
 pub struct Img {
     source: RUMString,
+    alt: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn img<'a>(source: RUMString, css_class: Option<RUMString>, state: SharedAppState) -> ComponentResult<Img> {
+pub fn img<'a>(source: RUMString, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Img> {
+    let alt = rumtk_web_get_text_item!(params, PARAMS_ALT, DEFAULT_ALT_ITEM).to_string();
+    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     Ok(Img {
         source,
-        css_class: css_class.unwrap_or(DEFAULT_TEXT_ITEM.to_string()),
+        alt,
+        css_class,
         custom_css_enabled
     })
 }
