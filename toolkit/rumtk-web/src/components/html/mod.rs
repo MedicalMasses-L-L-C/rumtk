@@ -29,6 +29,7 @@ mod anchor;
 mod md;
 mod container;
 mod main;
+mod img;
 
 pub use header::*;
 pub use details::*;
@@ -42,3 +43,4 @@ pub use anchor::*;
 pub use md::*;
 pub use container::*;
 pub use main::*;
+pub use img::*;

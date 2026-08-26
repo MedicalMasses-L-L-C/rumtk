@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::html::{img, Img};
 ///
 /// Logo component module.
 ///
@@ -26,9 +25,9 @@ use crate::components::html::{img, Img};
 /// * [PARAMS_SOURCE_URL] => URL from which to obtain the logo image. Defaults to `/static/img/logo.webp`.
 /// * [PARAMS_CSS_CLASS] => Which variant of CSS styling to use. Defaults to `default` => `logo-default`.
 ///
-use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
-use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_LOGO_SOURCE};
+use crate::utils::defaults::{PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
+use crate::utils::types::SharedAppState;
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, DEFAULT_TEXT_ITEM};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -37,25 +36,22 @@ use rumtk_core::strings::RUMString;
         {% if custom_css_enabled %}
             <link href='/static/components/logo.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered logo'>{{img | safe}}</div>
+        <img src='{{ source }}' alt='Logo' class='logo-{{ css_class }}' fetchpriority='high' loading='lazy' />
     ",
     ext = "html"
 )]
-pub struct Logo {
-    img: Img,
+pub struct Img {
+    source: RUMString,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
 
-pub fn logo<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<Logo> {
-    let source = rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or(DEFAULT_LOGO_SOURCE.to_string());
-    let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
-
+pub fn img<'a>(source: RUMString, css_class: Option<RUMString>, state: SharedAppState) -> ComponentResult<Img> {
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    Ok(Logo {
-        img: img(source, Some(css_class.clone()), state)?,
-        css_class,
+    Ok(Img {
+        source,
+        css_class: css_class.unwrap_or(DEFAULT_TEXT_ITEM.to_string()),
         custom_css_enabled
     })
 }
