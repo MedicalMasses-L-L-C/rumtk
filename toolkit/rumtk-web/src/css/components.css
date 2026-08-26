@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 .item-default-container {
+    width: fit-content;
     max-width: 1000px;
     margin-inline: auto;
     padding: 10px;
@@ -29,10 +30,11 @@
 }
 
 .item-default-title:hover {
-    background-color: var(--color-darkpurple);
+    background-color: var(--color-general-hover);
 }
 
 .item-default-details {
+    text-box-trim: trim-both;
     text-align: left;
     text-wrap: wrap;
 }

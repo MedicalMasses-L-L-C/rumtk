@@ -34,12 +34,8 @@ use rumtk_core::strings::RUMString;
             {% for (item_name, item_description) in items %}
             <div>
                 <details>
-                    <summary class='f16 item-{{css_class}}-title'>
-                        {{ item_name.to_uppercase() }}
-                    </summary>
-                    <pre class='item-{{css_class}}-details'>
-                        {{ item_description }}
-                    </pre>
+                    <summary class='f18 item-{{css_class}}-title'>{{ item_name.to_uppercase() }}</summary>
+                    <pre class='f16 item-{{css_class}}-details'>{{ item_description.trim_ascii() }}</pre>
                 </details>
             </div>
             {% endfor %}

@@ -74,3 +74,22 @@ code {
     padding-right: 8px;
 }
 
+details {
+    /* Base width when collapsed, matching the summary */
+    width: fit-content;
+}
+
+::details-content {
+    /* Start with zero width */
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap; /* Prevent wrapping to keep width consistent */
+
+    /* Smooth transition */
+    transition: width 0.3s ease;
+}
+
+details[open]::details-content {
+    /* Expand to fit content when open */
+    width: auto;
+}

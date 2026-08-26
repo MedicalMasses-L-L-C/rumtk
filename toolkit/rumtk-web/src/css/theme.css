@@ -21,10 +21,11 @@
 
 .theme-light {
     --color-general-bg: #8B63B6;
+    --color-general-hover: #D6AFFF;
 
     --color-nav-bg: var(--color-general-bg);
     --color-nav-link: var(--color-general-bg);
-    --color-nav-link-hover: #D6AFFF;
+    --color-nav-link-hover: var(--color-general-hover);
 
     --color-body-bg: #D8D8D8;
     --color-body-bg-accent: #ECECEC;
