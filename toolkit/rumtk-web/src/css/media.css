@@ -18,32 +18,34 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-    @media screen
-    and (width > 700px) {
-        .portrait-card-default-row {
-            flex-direction: row;
-        }
+@media screen
+and (width > 700px) {
+    .portrait-card-default-row {
+        flex-direction: row;
+    }
+}
+
+@media (width < 700px) {
+    .info-card-default-container {
+        flex-direction: column;
+        min-height: 400px;
     }
 
-    @media (width < 700px) {
-        .info-card-default-container {
-            flex-direction: column;
-            min-height: 400px;
-        }
-
-        .info-card-default-container > :first-child {
-            transform: translate(0, 30px);
-        }
-
-        .info-card-default-titlebox {
-            z-index: var(--mid-layer);
-        }
-
-        .info-card-default-descbox {
-            margin: 0;
-        }
+    .info-card-default-container > :first-child {
+        transform: translate(0, 30px);
     }
 
-    @media print {
-      .header { display: none; }
+    .info-card-default-titlebox {
+        z-index: var(--mid-layer);
     }
+
+    .info-card-default-descbox {
+        margin: 0;
+    }
+}
+
+@media print {
+    .header {
+        display: none;
+    }
+}

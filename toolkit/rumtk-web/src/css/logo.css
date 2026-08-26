@@ -19,9 +19,9 @@
  */
 
 .logo-default-container {
-    display:flex;
-    flex-direction:row;
-    align-items:center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding-left: 2em;
     overflow: clip;
 }

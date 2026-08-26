@@ -20,45 +20,45 @@
  */
 
 
-        :root {
-            --lowest-layer: 0;
-            --mid-layer: 50;
-            --top-layer: 99;
-        }
+:root {
+    --lowest-layer: 0;
+    --mid-layer: 50;
+    --top-layer: 99;
+}
 
-        .no-decoration, .undecorated {
-            text-decoration: none;
-        }
+.no-decoration, .undecorated {
+    text-decoration: none;
+}
 
-        .no-select {
-            user-select: none;
-        }
+.no-select {
+    user-select: none;
+}
 
-        .centered {
-            max-width: fit-content;
-            margin-inline: auto;
-        }
+.centered {
+    max-width: fit-content;
+    margin-inline: auto;
+}
 
-        .twothird-width {
-            width: 66vw;
-        }
+.twothird-width {
+    width: 66vw;
+}
 
-        .threequarter-width {
-            width: 75vw;
-        }
+.threequarter-width {
+    width: 75vw;
+}
 
-        .half-width {
-            width: 50vw;
-        }
+.half-width {
+    width: 50vw;
+}
 
-        .padded-1x {
-            padding: 1em;
-        }
+.padded-1x {
+    padding: 1em;
+}
 
-        .margin-1x {
-            margin: 1em;
-        }
+.margin-1x {
+    margin: 1em;
+}
 
-        .md a {
-        }
+.md a {
+}
 

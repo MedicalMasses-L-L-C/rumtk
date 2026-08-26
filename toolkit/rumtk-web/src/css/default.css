@@ -19,58 +19,58 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-        html, body {
-          height: 100%;
-        }
+html, body {
+    height: 100%;
+}
 
-        pre {
-            font-family: 'IBM Plex Sans', sans-serif;
-            max-width: 100%;
-            white-space: pre-wrap;
-            overflow-wrap: normal;
-            text-wrap: wrap;
-            word-wrap: break-word;
-        }
-        
-        textarea {
-            max-width: 100%;
-        }
-        
-        img {
-            max-width: 100%;
-        }
+pre {
+    font-family: 'IBM Plex Sans', sans-serif;
+    max-width: 100%;
+    white-space: pre-wrap;
+    overflow-wrap: normal;
+    text-wrap: wrap;
+    word-wrap: break-word;
+}
 
-        header {
-        }
+textarea {
+    max-width: 100%;
+}
 
-        main {
-            flex: 1;
-        }
+img {
+    max-width: 100%;
+}
 
-        footer {
-        }
+header {
+}
 
-        table td, table th {
-            padding: 5px;
-        }
+main {
+    flex: 1;
+}
 
-        a {
-            color: var(--color-link);
-            font-weight: 900;
-        }
+footer {
+}
 
-        strong {
-            font-weight: bold;
-        }
+table td, table th {
+    padding: 5px;
+}
 
-        code {
-            font-size: 100%;
-            font-style: italic;
-            font-weight: 500;
-            background-color: var(--color-text-code);
+a {
+    color: var(--color-link);
+    font-weight: 900;
+}
 
-            border-radius: 8px;
-            padding-left: 8px;
-            padding-right: 8px;
-        }
+strong {
+    font-weight: bold;
+}
+
+code {
+    font-size: 100%;
+    font-style: italic;
+    font-weight: 500;
+    background-color: var(--color-text-code);
+
+    border-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
 

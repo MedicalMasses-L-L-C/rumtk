@@ -19,84 +19,84 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-            :root {
-                --white: #ffffff;
-                --tropical-green: #00755E;
-                --spanish-red: #E60026;
-            }
+:root {
+    --white: #ffffff;
+    --tropical-green: #00755E;
+    --spanish-red: #E60026;
+}
 
-            .form-default-contents {
-                display: flex;
-                flex-direction: column;
+.form-default-contents {
+    display: flex;
+    flex-direction: column;
 
-                background-color: var(--color-card-bg);
-                border-radius: 10px;
+    background-color: var(--color-card-bg);
+    border-radius: 10px;
 
-                width: 70%;
-                min-width: 200px;
-                max-width: 1000px;
+    width: 70%;
+    min-width: 200px;
+    max-width: 1000px;
 
-                justify-items: center;
-                justify-content: center;
-                align-items: center;
-                place-items: center;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    place-items: center;
 
-                padding: 20px;
-            }
+    padding: 20px;
+}
 
-            .form-default-contents > input{
-                width: 80%;
-            }
+.form-default-contents > input {
+    width: 80%;
+}
 
-            .form-default-contents > input:invalid{
-                background-color: var(--spanish-red);
-                color: var(--white);
-            }
+.form-default-contents > input:invalid {
+    background-color: var(--spanish-red);
+    color: var(--white);
+}
 
-            .form-default-contents > input:invalid::placeholder{
-                color: var(--white);
-            }
+.form-default-contents > input:invalid::placeholder {
+    color: var(--white);
+}
 
-            .form-default-contents > input:valid{
-                background-color: var(--color-submit-bg);
-                color: var(--white);
-            }
+.form-default-contents > input:valid {
+    background-color: var(--color-submit-bg);
+    color: var(--white);
+}
 
-            .form-default-contents > input:valid::placeholder{
-                color: var(--white);
-            }
+.form-default-contents > input:valid::placeholder {
+    color: var(--white);
+}
 
-            .form-default-contents > textarea{
-                min-width: 90%;
-                min-height: 300px;
-                object-fit: scale-down;
-            }
+.form-default-contents > textarea {
+    min-width: 90%;
+    min-height: 300px;
+    object-fit: scale-down;
+}
 
-            .form-default-contents > input[type='submit'] {
-                min-width: 200px;
-                width: 50%;
-                max-width: 500px;
+.form-default-contents > input[type='submit'] {
+    min-width: 200px;
+    width: 50%;
+    max-width: 500px;
 
-                border-radius: 5px;
+    border-radius: 5px;
 
-                font-weight: bolder;
+    font-weight: bolder;
 
-                padding-left: 16px;
-                padding-right: 16px;
-                padding-top: 8px;
-                padding-bottom: 8px;
-            }
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
 
-            form:valid > input[type='submit'] {
-                opacity: 1.0;
-                pointer-events: auto;
-                background-color: var(--color-submit-bg);
-                color: var(--white);
-            }
+form:valid > input[type='submit'] {
+    opacity: 1.0;
+    pointer-events: auto;
+    background-color: var(--color-submit-bg);
+    color: var(--white);
+}
 
-            form:invalid > input[type='submit'] {
-                opacity: 0.5;
-                pointer-events: none;
-                background-color: var(--spanish-red);
-                color: var(--white);
-            }
+form:invalid > input[type='submit'] {
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: var(--spanish-red);
+    color: var(--white);
+}

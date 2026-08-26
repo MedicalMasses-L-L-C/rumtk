@@ -18,206 +18,206 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-    .item-default-container {
-        max-width: 1000px;
-        margin-inline: auto;
-        padding: 10px;
-    }
+.item-default-container {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 10px;
+}
 
-    .item-default-title {
+.item-default-title {
 
-    }
+}
 
-    .item-default-title:hover {
-        background-color: var(--color-darkpurple);
-    }
+.item-default-title:hover {
+    background-color: var(--color-darkpurple);
+}
 
-    .item-default-details {
-        text-align: left;
-        text-wrap: wrap;
-    }
+.item-default-details {
+    text-align: left;
+    text-wrap: wrap;
+}
 
-    .portrait-card-default-container {
-        align-content: center;
-        align-items: center;
-        justify-items: center;
-        max-width: 100%;
-        width: fit-content;
-        padding: 10px;
-    }
+.portrait-card-default-container {
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    max-width: 100%;
+    width: fit-content;
+    padding: 10px;
+}
 
-    .portrait-card-default-container > table > tbody {
-        display: flex;
-        justify-items: center;
-        flex-wrap: wrap;
-        align-content: center;
-        justify-content: center;
-        flex-direction: column;
-        vertical-align: top;
-    }
+.portrait-card-default-container > table > tbody {
+    display: flex;
+    justify-items: center;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+    vertical-align: top;
+}
 
-    .portrait-card-default-row {
-        display: flex;
-        flex-wrap: wrap;
-        /* min-width: 200px; */
-        background-color: transparent;
-        justify-content: space-around;
-        justify-items: center;
-        align-items: flex-start;
-        flex-direction: column;
-    }
+.portrait-card-default-row {
+    display: flex;
+    flex-wrap: wrap;
+    /* min-width: 200px; */
+    background-color: transparent;
+    justify-content: space-around;
+    justify-items: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
 
-    .portrait-card-default-item {
-        width: 300px;
-        padding: 50px;
-    }
+.portrait-card-default-item {
+    width: 300px;
+    padding: 50px;
+}
 
-    .contact-card-default-portrait {
-        height: 250px;
-        border-radius: 5%;
-        border-width: 5px;
-        border-style: groove;
-        border-color: var(--color-darkpurple);
-    }
+.contact-card-default-portrait {
+    height: 250px;
+    border-radius: 5%;
+    border-width: 5px;
+    border-style: groove;
+    border-color: var(--color-darkpurple);
+}
 
-    .contact-card-default-container {
-    }
+.contact-card-default-container {
+}
 
-    .contact-card-default-container > p {
-        margin: 0;
-    }
+.contact-card-default-container > p {
+    margin: 0;
+}
 
-    .contact-card-centered-container {
-        max-width: fit-content;
-        margin-inline: auto;
-    }
+.contact-card-centered-container {
+    max-width: fit-content;
+    margin-inline: auto;
+}
 
-    .contact-card-centered-container > p {
-        margin: 0;
-    }
+.contact-card-centered-container > p {
+    margin: 0;
+}
 
-    .socials-default-container {
-        display: flex;
-        color: var(--color-bg-white);
-        padding: 1em;
-        filter: contrast(10%);
-    }
+.socials-default-container {
+    display: flex;
+    color: var(--color-bg-white);
+    padding: 1em;
+    filter: contrast(10%);
+}
 
-    .text-card-default {
-    }
+.text-card-default {
+}
 
-    .container-default {
-        min-width: 300px;
-        max-width: 1200px;
-        padding: 2em;
-        margin: 2em;
-        background-color: var(--color-card-bg);
+.container-default {
+    min-width: 300px;
+    max-width: 1200px;
+    padding: 2em;
+    margin: 2em;
+    background-color: var(--color-card-bg);
 
-        border-radius: 16px;
-        margin: auto;
-    }
+    border-radius: 16px;
+    margin: auto;
+}
 
-    .title-default-container {
-        display: block;
-        width: auto;
-        height: auto;
+.title-default-container {
+    display: block;
+    width: auto;
+    height: auto;
 
-        align-content: center;
-        margin-block: 20px 20px;
-        padding-left: 2.5em;
-        padding-right: 2.5em;
+    align-content: center;
+    margin-block: 20px 20px;
+    padding-left: 2.5em;
+    padding-right: 2.5em;
 
-        background-color: var(--color-submit-bg);
+    background-color: var(--color-submit-bg);
 
-        border-radius: 16px;
-    }
+    border-radius: 16px;
+}
 
-    .title-default {
-        display: block;
-        margin-block: 0;
+.title-default {
+    display: block;
+    margin-block: 0;
 
-        color: var(--color-text-title);
-    }
+    color: var(--color-text-title);
+}
 
-    .navlink:link, .navlink:visited {
-        color: var(--color-navlink);
-    }
+.navlink:link, .navlink:visited {
+    color: var(--color-navlink);
+}
 
-    .navlink:hover {
-        background-color: var(--color-nav-link-hover);
-        border-radius: 16px;
-    }
+.navlink:hover {
+    background-color: var(--color-nav-link-hover);
+    border-radius: 16px;
+}
 
-    .label-default {
-        text-wrap: wrap;
-        margin: auto;
-    }
+.label-default {
+    text-wrap: wrap;
+    margin: auto;
+}
 
-    .brand-name {
-        color: var(--color-text-title);
-    }
+.brand-name {
+    color: var(--color-text-title);
+}
 
-    .formatted-label-default {
-        text-wrap: wrap;
-        margin: auto;
-    }
+.formatted-label-default {
+    text-wrap: wrap;
+    margin: auto;
+}
 
-    .footer-default-container, #footer {
-        display: grid;
-        background-color: var(--color-nav-bg);
-        color: white;
-        padding: 1em;
-        justify-items: center;
-    }
+.footer-default-container, #footer {
+    display: grid;
+    background-color: var(--color-nav-bg);
+    color: white;
+    padding: 1em;
+    justify-items: center;
+}
 
-    .contact-centered-button-container {
-        max-width: fit-content;
-        margin-inline: auto;
+.contact-centered-button-container {
+    max-width: fit-content;
+    margin-inline: auto;
 
-        height: 90px;
-    }
+    height: 90px;
+}
 
-    .contact-centered-button {
-        background: radial-gradient(circle,var(--color-darkpurple) 0%, var(--color-indigo) 70%);
+.contact-centered-button {
+    background: radial-gradient(circle, var(--color-darkpurple) 0%, var(--color-indigo) 70%);
 
-        color: var(--color-bg-white);
+    color: var(--color-bg-white);
 
-        border-radius: 15px;
-    }
+    border-radius: 15px;
+}
 
-    .info-card-default-container {
-        display: flex;
-        min-height: 250px;
-        min-width: 200px;
-        width: 100%;
-        padding: 10px;
-    }
+.info-card-default-container {
+    display: flex;
+    min-height: 250px;
+    min-width: 200px;
+    width: 100%;
+    padding: 10px;
+}
 
-    .info-card-default-titlebox {
-        display: flex;
-        flex: 1;
-        background-color: var(--color-card-bg);
-        align-items: end;
-        padding: 10px;
-        justify-content: center;
+.info-card-default-titlebox {
+    display: flex;
+    flex: 1;
+    background-color: var(--color-card-bg);
+    align-items: end;
+    padding: 10px;
+    justify-content: center;
 
-        max-width: fit-content;
-    }
+    max-width: fit-content;
+}
 
-    .info-card-default-descbox {
-        display: flex;
-        flex: 2;
-        background-color: var(--color-darkpurple);
-        align-items: center;
-        padding: 10px;
-        justify-content: center;
-    }
-    
-    .loader-default {
-        border: 16px solid #f3f3f3; /* Light grey */
-        border-top: 16px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2s linear infinite;
-    }
+.info-card-default-descbox {
+    display: flex;
+    flex: 2;
+    background-color: var(--color-darkpurple);
+    align-items: center;
+    padding: 10px;
+    justify-content: center;
+}
+
+.loader-default {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
