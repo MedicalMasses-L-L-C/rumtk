@@ -18,20 +18,34 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const DEFAULT_OUT_CSS_DIR: &str = "./static/css";
-pub const DEFAULT_OUT_CSS: &str = "bundle.min.css";
-pub const DEFAULT_CSS: &str = concat!(
-    include_str!("theme.css"),
-    include_str!("animations.css"),
-    include_str!("basic.css"),
-    include_str!("components.css"),
-    include_str!("default.css"),
-    include_str!("fonts.css"),
-    include_str!("forms.css"),
-    include_str!("gap.css"),
-    include_str!("imgs.css"),
-    include_str!("index.css"),
-    include_str!("layout.css"),
-    include_str!("media.css"),
-    include_str!("logo.css"),
-);
+.logo-default-container {
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    padding-left: 2em;
+    overflow: clip;
+}
+
+.logo {
+    top: 5px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-body-bg);
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+}
+
+.logo-default {
+    height: 72px;
+}
+
+.header-default-navlogo {
+    position: relative;
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+

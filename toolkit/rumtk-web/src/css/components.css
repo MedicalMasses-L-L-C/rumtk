@@ -139,22 +139,6 @@
         color: var(--color-text-title);
     }
 
-    .title-default-overlay {
-        position: relative;
-        margin-block: 0;
-        z-index: var(--mid-layer);
-        bottom: 1.25em;
-
-        background-image: var(--img-glitch-0);
-        background-repeat: repeat;
-        background-clip: text;
-        color: transparent;
-        background-position: center;
-        filter: blur(5px);
-
-        animation: slide 30s infinite linear;
-    }
-
     .navlink:link, .navlink:visited {
         color: var(--color-navlink);
     }
@@ -199,22 +183,6 @@
         color: var(--color-bg-white);
 
         border-radius: 15px;
-    }
-
-    .logo {
-        display: flex;
-        justify-content: center;
-        padding: 2em;
-    }
-
-    .logo-default {
-        min-height: 32px;
-    }
-
-    .logo-small {
-        width: 64px;
-        min-height: 48px;
-        height: auto;
     }
 
     .info-card-default-container {

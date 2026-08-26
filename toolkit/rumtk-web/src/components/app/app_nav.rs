@@ -53,9 +53,9 @@ use rumtk_core::base::RUMResult;
     source = "
         {% if !disable_logo %}
         <div class='header-{{ css_class }}-navlogo'>
-            <a class='undecorated no-select' href='./' style='display:flex;flex-direction:row;align-items:center;'>
+            <a class='undecorated no-select logo-{{css_class}}-container' href='./'>
                 {{logo|safe}}
-                <h3 class='brand-name'> {{company}}</h3>
+                {{company|safe}}
             </a>
         </div>
         {% endif %}
@@ -74,7 +74,7 @@ use rumtk_core::base::RUMResult;
     ext = "html"
 )]
 pub struct Nav {
-    company: RUMString,
+    company: Title,
     logo: Logo,
     title: Title,
     nav_links: Vec<NavLink>,
@@ -119,7 +119,15 @@ impl RUMWebTemplateSafe for AppNav {}
 pub fn app_nav<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<AppNav> {
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
-    let company = rumtk_web_get_config!(state).company.clone();
+    let company_params = rumtk_web_params_map!([(
+        PARAMS_TITLE,
+        rumtk_web_get_config!(state).company.as_str()
+    )]);
+    let company = title(
+        _path_components,
+        company_params.get_inner(),
+        state.clone()
+    )?;
 
     let title_params = rumtk_web_params_map!([(
                 PARAMS_TITLE,
@@ -146,16 +154,13 @@ pub fn app_nav<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, sta
 
     let disable_logo =
         rumtk_web_get_config!(state).header_conf.disable_logo;
-    let logo_params = rumtk_web_params_map!([
-                    (
-                        PARAMS_SOURCE_URL,
-                        rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or_default().as_str()
-                    ),
-                    (
-                        PARAMS_CSS_CLASS,
-                        rumtk_web_get_config!(state).header_conf.logo_size.as_str()
-                    ),
-                ]
+    let logo_params = rumtk_web_params_map!(
+        [
+            (
+                PARAMS_SOURCE_URL,
+                rumtk_web_get_config!(state).header_conf.logo_source.clone().unwrap_or_default().as_str()
+            ),
+        ]
     );
     let logo = logo(_path_components, logo_params.get_inner(), state.clone())?;
 

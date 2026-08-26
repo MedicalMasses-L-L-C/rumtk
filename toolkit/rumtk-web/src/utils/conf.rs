@@ -41,7 +41,6 @@ pub struct FlagsConf {
 #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
     pub logo_source: Option<RUMString>,
-    pub logo_size: RUMString,
     pub disable_navlinks: bool,
     pub disable_logo: bool,
 }

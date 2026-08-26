@@ -44,16 +44,6 @@
                 border-radius: 16px;
             }
 
-            .header-default-navlogo {
-                position: relative;
-                left: 0;
-                min-width: 64px;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-            }
-
             .header-default-navactions {
                 position: relative;
 
