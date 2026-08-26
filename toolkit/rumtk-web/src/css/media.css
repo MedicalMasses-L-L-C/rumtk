@@ -28,7 +28,6 @@ and (width > 700px) {
 @media (width < 700px) {
     .info-card-default-container {
         flex-direction: column;
-        min-height: 400px;
     }
 
     .info-card-default-container > :first-child {
@@ -41,6 +40,10 @@ and (width > 700px) {
 
     .info-card-default-descbox {
         margin: 0;
+    }
+
+    .header-default-navactions {
+        padding-left: 32px;
     }
 }
 

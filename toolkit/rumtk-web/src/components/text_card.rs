@@ -30,9 +30,7 @@ use rumtk_core::strings::RUMString;
         {% if custom_css_enabled %}
             <link href='/static/components/text_card.css' rel='stylesheet'>
         {% endif %}
-        <div class='centered container-default text-card-{{css_class}}'>
-          {{formatted_label}}
-        </div>
+        <div class='centered container-default text-card-{{css_class}}'>{{formatted_label}}</div>
     ",
     ext = "html"
 )]

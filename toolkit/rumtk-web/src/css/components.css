@@ -37,6 +37,10 @@
     text-box-trim: trim-both;
     text-align: left;
     text-wrap: wrap;
+
+    padding: 1em;
+
+    background-color: var(--color-general-bg);
 }
 
 .portrait-card-default-container {
@@ -191,7 +195,7 @@
     display: flex;
     min-height: 250px;
     min-width: 200px;
-    width: 100%;
+    width: 99%;
     padding: 10px;
     color: var(--color-text-title);
 }
@@ -212,7 +216,7 @@
     flex: 2;
     background-color: var(--color-card-descbox-bg);
     align-items: center;
-    padding: 10px;
+    padding: 32px;
     justify-content: center;
 }
 

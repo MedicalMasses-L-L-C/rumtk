@@ -35,19 +35,11 @@ use rumtk_core::strings::RUMString;
         {% endif %}
         <div class='info-card-{{ css_class }}-container'>
             {% if inverted %}
-                <pre class='f18 info-card-{{ css_class }}-descbox'>
-                    {{ description }}
-                </pre>
-                <div class='f22 info-card-{{ css_class }}-titlebox'>
-                    {{ title }}
-                </div>
+                <pre class='f18 info-card-{{ css_class }}-descbox'>{{ description }}</pre>
+                <div class='f22 info-card-{{ css_class }}-titlebox'>{{ title }}</div>
             {% else %}
-                <div class='f22 info-card-{{ css_class }}-titlebox'>
-                    {{ title }}
-                </div>
-                <pre class='f18 info-card-{{ css_class }}-descbox'>
-                    {{ description }}
-                </pre>
+                <div class='f22 info-card-{{ css_class }}-titlebox'>{{ title }}</div>
+                <pre class='f18 info-card-{{ css_class }}-descbox'>{{ description }}</pre>
             {% endif %}
         </div>
     ",
