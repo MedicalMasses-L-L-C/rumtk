@@ -191,12 +191,13 @@
     min-width: 200px;
     width: 100%;
     padding: 10px;
+    color: var(--color-text-title);
 }
 
 .info-card-default-titlebox {
     display: flex;
     flex: 1;
-    background-color: var(--color-card-bg);
+    background-color: var(--color-card-title-bg);
     align-items: end;
     padding: 10px;
     justify-content: center;
@@ -207,7 +208,7 @@
 .info-card-default-descbox {
     display: flex;
     flex: 2;
-    background-color: var(--color-darkpurple);
+    background-color: var(--color-card-descbox-bg);
     align-items: center;
     padding: 10px;
     justify-content: center;

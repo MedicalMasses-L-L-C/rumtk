@@ -20,8 +20,10 @@
  */
 
 .theme-light {
-    --color-nav-bg: #8B63B6;
-    --color-nav-link: #8B63B6;
+    --color-general-bg: #8B63B6;
+
+    --color-nav-bg: var(--color-general-bg);
+    --color-nav-link: var(--color-general-bg);
     --color-nav-link-hover: #D6AFFF;
 
     --color-body-bg: #D8D8D8;
@@ -32,7 +34,9 @@
     --color-text-code: #E2E2E2;
 
     --color-card-bg: #FDFDFD;
+    --color-card-title-bg: #93268F;
+    --color-card-descbox-bg: var(--color-general-bg);
 
-    --color-submit-bg: #8B63B6;
+    --color-submit-bg: var(--color-general-bg);
     --color-link: #1A95AB;
 }

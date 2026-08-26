@@ -27,21 +27,20 @@ use rumtk_core::search::rumtk_search::string_replace_all_matches;
 use rumtk_core::strings::{
     rumtk_format, AsStr, GraphemePatternPair, RUMString,
 };
-use std::sync::OnceLock;
+use std::sync::LazyLock;
 
-pub static MARKDOWN_OPTIONS: OnceLock<Options> = OnceLock::new();
+pub static MARKDOWN_OPTIONS: LazyLock<Options> = LazyLock::new(|| -> Options {
+        let mut options = Options::empty();
 
-pub static MARKDOWN_OPTIONS_INIT: fn() -> Options = || -> Options {
-    let mut options = Options::empty();
+        options.insert(Options::ENABLE_STRIKETHROUGH);
+        options.insert(Options::ENABLE_TASKLISTS);
+        options.insert(Options::ENABLE_MATH);
+        options.insert(Options::ENABLE_TABLES);
+        options.insert(Options::ENABLE_WIKILINKS);
 
-    options.insert(Options::ENABLE_STRIKETHROUGH);
-    options.insert(Options::ENABLE_TASKLISTS);
-    options.insert(Options::ENABLE_MATH);
-    options.insert(Options::ENABLE_TABLES);
-    options.insert(Options::ENABLE_WIKILINKS);
-
-    options
-};
+        options
+    }
+);
 
 const TEMPLATE_NEWLINE_COMPONENT_PATTERN: GraphemePatternPair<'static> = (&["<"], &[">"]);
 const TEMPLATE_NEWLINE_COMPONENT_INNER_PATTERN: GraphemePatternPair<'static> =
@@ -388,12 +387,10 @@ macro_rules! rumtk_web_render_markdown {
     ( $md:expr ) => {{
         use pulldown_cmark::{Options, Parser};
         use rumtk_core::strings::RUMStringConversions;
-        use $crate::utils::render::{MARKDOWN_OPTIONS, MARKDOWN_OPTIONS_INIT};
-
-        let mut options = MARKDOWN_OPTIONS.get_or_init(MARKDOWN_OPTIONS_INIT);
+        use $crate::utils::render::{MARKDOWN_OPTIONS};
 
         let input = String::from($md);
-        let parser = Parser::new_ext(&input, *options);
+        let parser = Parser::new_ext(&input, unsafe {(*MARKDOWN_OPTIONS).clone()});
         let mut html_output = String::new();
         pulldown_cmark::html::push_html(&mut html_output, parser);
 
