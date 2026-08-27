@@ -200,4 +200,39 @@ mod tests {
         let output = sanitize_html(input, true);
         assert!(output.to_string().is_empty(), "XML and circle tags filtered");
     }
+
+    #[test]
+    fn test_sanitize_script_tag() {
+        let input = r#"<script type="text/javascript">alert('hi');</script>"#;;
+        let output = sanitize_html(input, false);
+        assert!(output.is_empty(), "Script tag was not filtered as expected!");
+    }
+
+    #[test]
+    fn test_sanitize_script_tag_relaxed() {
+        let input = r#"<script type="text/javascript">alert('hi');</script>"#;;
+        let output = sanitize_html(input, true);
+        assert_eq!(input, &output, "Script tag was filtered when it shouldn't have or attributes were stripped!");
+    }
+
+    #[test]
+    fn test_sanitize_consecutive_script_tag_relaxed() {
+        let input = r#"<script type="text/javascript">alert('hi');</script><script type="text/javascript">alert('hi2');</script>"#;;
+        let output = sanitize_html(input, true);
+        assert_eq!(input, &output, "Script tag was filtered when it shouldn't have or attributes were stripped!");
+    }
+
+    #[test]
+    fn test_sanitize_module_script_tag_relaxed() {
+        let input = r#"<script type="module">alert('hi');</script><script type="text/javascript">alert('hi2');</script>"#;;
+        let output = sanitize_html(input, true);
+        assert_eq!(input, &output, "Script tag was filtered when it shouldn't have or attributes were stripped!");
+    }
+
+    #[test]
+    fn test_sanitize_consecutive_module_script_tag_relaxed() {
+        let input = r#"<script type="module">alert('hi');</script><script type="module">alert('hi2');</script>"#;;
+        let output = sanitize_html(input, true);
+        assert_eq!(input, &output, "Script tag was filtered when it shouldn't have or attributes were stripped!");
+    }
 }

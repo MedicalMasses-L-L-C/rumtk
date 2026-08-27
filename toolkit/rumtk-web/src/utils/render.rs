@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::packaging::{minify_asset, Asset};
 use crate::types::HTMLResult;
 use crate::{RUMWebRedirect, RUMWebTemplate};
 use pulldown_cmark::Options;
@@ -94,8 +93,7 @@ pub fn rumtk_web_trim_rendered_html(html: String) -> RUMResult<String> {
 #[inline]
 pub fn rumtk_web_post_process(html: String, url: RUMWebRedirect) -> HTMLResult {
     let filtered = rumtk_web_trim_rendered_html(html)?;
-    let minified = minify_asset(Asset::HTML(&filtered))?;
-    Ok(url.into_web_response(Some(minified)))
+    Ok(url.into_web_response(Some(filtered)))
 }
 
 ///

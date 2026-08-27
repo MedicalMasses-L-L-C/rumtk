@@ -27,8 +27,8 @@ use crate::{ComponentResult, RUMWebTemplate};
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        {% if typ.is_empty() || typ == DEFAULT_SCRIPT %}
-            <script>{{script|safe}}</script>
+        {% if typ == DEFAULT_SCRIPT %}
+            <script type='text/javascript'>{{script|safe}}</script>
         {% else if typ == DEFAULT_SCRIPT_MODULE %}
             <script type='module'>{{script|safe}}</script>
         {% else %}
