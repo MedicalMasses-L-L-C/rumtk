@@ -74,6 +74,11 @@ code {
     padding-right: 8px;
 }
 
+summary {
+    display: flex;
+    gap: 10px; /* Space between image and text */
+}
+
 details {
     /* Base width when collapsed, matching the summary */
     width: fit-content;
@@ -93,3 +98,29 @@ details[open]::details-content {
     /* Expand to fit content when open */
     width: auto;
 }
+
+details > summary::before {
+    content: "▶";
+    color: var(--color-bullet-text);
+    display: inline-block;
+    width: 20px; /* Adjust to match image width */
+    height: 20px; /* Adjust to match image height */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+details[open] > summary::before {
+    content: "▼";
+    color: var(--color-bullet-text);
+    display: inline-block;
+    width: 20px; /* Adjust to match image width */
+    height: 20px; /* Adjust to match image height */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+li::marker {
+    color: var(--color-bullet-text);
+}
+
+
