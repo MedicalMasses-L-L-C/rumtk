@@ -41,4 +41,6 @@
 
     --color-submit-bg: var(--color-general-content-bg);
     --color-link: #1A95AB;
+
+    --color-footer-bg: var(--color-general-content-bg);
 }

@@ -32,7 +32,7 @@ use rumtk_core::strings::RUMString;
             <link href='/static/components/contact_button.css' rel='stylesheet'>
         {% endif %}
         <script type='module' id='contact_button'>
-            export function goto_contact() {
+            function goto_contact() {
                 window.location.href = './contact';
             }
 

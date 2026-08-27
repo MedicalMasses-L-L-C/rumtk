@@ -22,7 +22,7 @@ use crate::components::contact_button::{contact_button, ContactButton};
 use crate::components::html::{footer, Footer};
 use crate::components::socials::{socials, Socials};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use crate::{rumtk_web_get_config, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, PARAMS_TITLE};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -66,11 +66,13 @@ pub fn app_footer<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, 
     let copyright = rumtk_web_get_config!(state).copyright.clone();
 
     let disable_contact_button = rumtk_web_get_config!(state).footer_conf.disable_contact_button;
+
+    let contact_button_params = rumtk_web_params_map!([(PARAMS_TITLE, "Contact")]);
     let contact_button = contact_button(
-                _path_components,
-                params,
-                state.clone()
-            )?;
+        _path_components,
+        contact_button_params.get_inner(),
+        state.clone()
+    )?;
 
     let socials = socials(_path_components, params, state.clone())?;
 

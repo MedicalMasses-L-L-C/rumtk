@@ -152,6 +152,21 @@
 }
 
 /* End Google fonts */
+/* ForkAwesome font for extending iconography set */
+@font-face {
+    font-family: ForkAwesome;
+    src: url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.eot?v=1.2.0);
+    src: url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.eot?#iefix&v=1.2.0) format('embedded-opentype'),url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.woff2?v=1.2.0) format('woff2'),url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.woff?v=1.2.0) format('woff'),url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.ttf?v=1.2.0) format('truetype'),url(https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/fonts/forkawesome-webfont.svg?v=1.2.0#forkawesomeregular) format('svg');
+    font-weight: 400;
+    font-style: normal;
+    font-display: block
+}
+
+.fa-opencollective {
+    --fa-family: ForkAwesome !important;
+    --fa: "\f336";
+}
+/* End of ForkAwesome */
 
 body {
     font-family: 'IBM Plex Sans', sans-serif;

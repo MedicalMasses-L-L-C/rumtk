@@ -104,9 +104,12 @@
 
 .socials-default-container {
     display: flex;
-    color: var(--color-bg-white);
+    color: var(--color-general-bg);
     padding: 1em;
-    filter: contrast(10%);
+}
+
+.socials-default-container a {
+    text-decoration: none;
 }
 
 .text-card-default {
@@ -170,22 +173,26 @@
     margin: auto;
 }
 
-.footer-default-container, #footer {
+.footer-default-container {
     display: grid;
-    background-color: var(--color-nav-bg);
-    color: white;
+    background-color: var(--color-footer-bg);
+    color: var(--color-text-title);
     padding: 1em;
     justify-items: center;
 }
 
-.contact-centered-button-container {
+.footer-default-container  a {
+    color: var(--color-text-title);
+}
+
+.contact-default-button-container {
     max-width: fit-content;
     margin-inline: auto;
 
     height: 90px;
 }
 
-.contact-centered-button {
+.contact-default-button {
     background: radial-gradient(circle, var(--color-darkpurple) 0%, var(--color-indigo) 70%);
 
     color: var(--color-bg-white);
