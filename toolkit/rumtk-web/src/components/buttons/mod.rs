@@ -17,32 +17,5 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-mod header;
-mod details;
-mod pre;
-mod summary;
-mod div;
-mod footer;
-mod link;
-mod script;
-mod anchor;
-mod md;
-mod container;
-mod main;
-mod img;
-mod button;
 
-pub use header::*;
-pub use details::*;
-pub use pre::*;
-pub use summary::*;
-pub use div::*;
-pub use link::*;
-pub use footer::*;
-pub use script::*;
-pub use anchor::*;
-pub use md::*;
-pub use container::*;
-pub use main::*;
-pub use img::*;
-pub use button::*;
+pub mod contact_button;

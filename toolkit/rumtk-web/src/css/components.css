@@ -192,7 +192,7 @@
     height: 90px;
 }
 
-.contact-default-button {
+.contact-default-button-container > button {
     background: radial-gradient(circle, var(--color-darkpurple) 0%, var(--color-indigo) 70%);
 
     color: var(--color-bg-white);

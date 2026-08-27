@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::title::{title, Title};
+use crate::components::html::{button, Button};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION,
 };
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_CONTACT_FUNCTION};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_CONTACT_FUNCTION, PARAMS_TITLE};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -40,16 +40,13 @@ use rumtk_core::strings::RUMString;
             window.goto_contact = goto_contact;
         </script>
         <div class='contact-{{ css_class }}-button-container'>
-            <button class='contact-{{ css_class }}-button' onclick='{{ send_function }}()'>
-                {{title | safe}}
-            </button>
+            {{button|safe}}
         </div>
     ",
     ext = "html"
 )]
 pub struct ContactButton {
-    title: Title,
-    send_function: RUMString,
+    button: Button,
     css_class: RUMString,
     custom_css_enabled: bool,
 }
@@ -61,16 +58,16 @@ pub fn contact_button<'a>(
     params: URLParams<'a>,
     state: SharedAppState,
 ) -> ComponentResult<ContactButton> {
-    let send_function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_FUNCTION).to_string();
+    let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_CONTACT_FUNCTION);
+    let function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_CONTACT_FUNCTION);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let title = title(_path_components, params, state)?;
+    let button = button(title, function, state)?;
 
     Ok(ContactButton {
-        title,
-        send_function,
+        button,
         css_class,
         custom_css_enabled
     })

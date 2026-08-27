@@ -17,32 +17,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-mod header;
-mod details;
-mod pre;
-mod summary;
-mod div;
-mod footer;
-mod link;
-mod script;
-mod anchor;
-mod md;
-mod container;
-mod main;
-mod img;
-mod button;
+use crate::components::title::{title, Title};
+use crate::utils::types::SharedAppState;
+use crate::{rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, PARAMS_TITLE};
+use rumtk_core::strings::RUMString;
 
-pub use header::*;
-pub use details::*;
-pub use pre::*;
-pub use summary::*;
-pub use div::*;
-pub use link::*;
-pub use footer::*;
-pub use script::*;
-pub use anchor::*;
-pub use md::*;
-pub use container::*;
-pub use main::*;
-pub use img::*;
-pub use button::*;
+#[derive(RUMWebTemplate, Debug, Clone)]
+#[template(
+    source = "
+        <button onclick='{{ function }}()'>
+            {{title | safe}}
+        </button>
+    ",
+    ext = "html"
+)]
+pub struct Button {
+    title: Title,
+    function: RUMString,
+}
+
+impl RUMWebTemplateSafe for Button {}
+
+pub fn button<'a>(text: &str, function: &str, state: SharedAppState) -> ComponentResult<Button> {
+    let params = rumtk_web_params_map!([(PARAMS_TITLE, text)]);
+    let title = title(&[], params.get_inner(), state)?;
+
+    Ok(Button {
+        title,
+        function: function.to_string()
+    })
+}

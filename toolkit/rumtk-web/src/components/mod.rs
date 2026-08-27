@@ -21,7 +21,6 @@
 
 
 // Components
-pub mod contact_button;
 pub mod contact_card;
 pub mod content_viewer;
 pub mod form;
@@ -41,3 +40,4 @@ pub mod html;
 pub mod widgets;
 pub mod app;
 pub mod sanitize;
+pub mod buttons;

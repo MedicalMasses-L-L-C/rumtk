@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::contact_button::{contact_button, ContactButton};
+use crate::components::buttons::contact_button::{contact_button, ContactButton};
 use crate::components::html::{footer, Footer};
 use crate::components::socials::{socials, Socials};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
