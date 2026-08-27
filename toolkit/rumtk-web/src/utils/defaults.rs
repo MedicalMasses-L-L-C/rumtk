@@ -157,6 +157,7 @@ pub static DEFAULT_EMPTY_PARAMS: LazyLock<RUMWebDataProxy> = LazyLock::new( || r
 pub const ELEMENT_INPUT: &str = "input";
 pub const ELEMENT_LABEL: &str = "label";
 pub const ELEMENT_SELECT: &str = "select";
+pub const ELEMENT_TEXTAREA: &str = "textarea";
 
 /*
    Default static data to minimize allocations.

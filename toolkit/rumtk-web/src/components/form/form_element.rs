@@ -21,13 +21,13 @@ use crate::components::form::form_node::FormNode;
 use crate::components::form::input_element::input_element;
 use crate::components::form::props::InputProps;
 use crate::components::form::select_element::select_element;
-use crate::defaults::{ELEMENT_INPUT, ELEMENT_LABEL, ELEMENT_SELECT};
+use crate::defaults::{ELEMENT_INPUT, ELEMENT_LABEL, ELEMENT_SELECT, ELEMENT_TEXTAREA};
 use crate::ComponentResult;
 use rumtk_core::strings::rumtk_format;
 
 pub fn form_element(element: &str, data: &str, props: InputProps, css_class: &str) -> ComponentResult<FormNode> {
     match element {
-        ELEMENT_INPUT | ELEMENT_LABEL => input_element(element, data, props, css_class),
+        ELEMENT_INPUT | ELEMENT_LABEL | ELEMENT_TEXTAREA => input_element(element, data, props, css_class),
         ELEMENT_SELECT => select_element(element, data, props, css_class),
         _ => Err(rumtk_format!("Element of type {} not supported!", element))
     }
