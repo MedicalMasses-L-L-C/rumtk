@@ -80,10 +80,10 @@
 
 .contact-card-default-portrait {
     height: 250px;
-    border-radius: 5%;
+    border-radius: 16px;
     border-width: 5px;
     border-style: groove;
-    border-color: var(--color-darkpurple);
+    border-color: var(--color-general-content-bg);
 }
 
 .contact-card-default-container {
@@ -146,12 +146,14 @@
 }
 
 .navlink:link, .navlink:visited {
-    color: var(--color-navlink);
+    color: var(--color-text-title);
+    padding: 2px;
 }
 
 .navlink:hover {
+    color: var(--color-nav-link);
     background-color: var(--color-nav-link-hover);
-    border-radius: 16px;
+    border-radius: 5px;
 }
 
 .label-default {
