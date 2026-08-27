@@ -22,6 +22,7 @@
 .theme-light {
     --color-general-bg: #D8D8D8;
     --color-general-content-bg: #8B63B6;
+    --color-general-content-accent-bg: #93268F;
     --color-general-hover: #D6AFFF;
 
     --color-nav-bg: var(--color-general-content-bg);
@@ -36,7 +37,7 @@
     --color-text-code: #E2E2E2;
 
     --color-card-bg: #FDFDFD;
-    --color-card-title-bg: #93268F;
+    --color-card-title-bg: var(--color-general-content-accent-bg);
     --color-card-descbox-bg: var(--color-general-content-bg);
 
     --color-submit-bg: var(--color-general-content-bg);

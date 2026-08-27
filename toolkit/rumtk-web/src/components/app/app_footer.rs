@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::components::buttons::contact_button::{contact_button, ContactButton};
+use crate::components::buttons::goto_button::{goto_button, GotoButton};
 use crate::components::html::{footer, Footer};
 use crate::components::socials::{socials, Socials};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, PARAMS_TITLE};
+use crate::{rumtk_web_get_config, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, PARAMS_ID, PARAMS_TARGET, PARAMS_TITLE};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -41,7 +41,7 @@ use rumtk_core::strings::RUMString;
 pub struct FooterContents {
     company: RUMString,
     copyright: RUMString,
-    button: ContactButton,
+    button: GotoButton,
     socials: Socials,
     disable_contact_button: bool
 }
@@ -67,8 +67,12 @@ pub fn app_footer<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, 
 
     let disable_contact_button = rumtk_web_get_config!(state).footer_conf.disable_contact_button;
 
-    let contact_button_params = rumtk_web_params_map!([(PARAMS_TITLE, "Contact")]);
-    let contact_button = contact_button(
+    let contact_button_params = rumtk_web_params_map!([
+        (PARAMS_ID, "contact_button"),
+        (PARAMS_TITLE, "Contact"),
+        (PARAMS_TARGET, "./contact")
+    ]);
+    let contact_button = goto_button(
         _path_components,
         contact_button_params.get_inner(),
         state.clone()

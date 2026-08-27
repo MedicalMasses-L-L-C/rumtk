@@ -18,4 +18,4 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod contact_button;
+pub mod goto_button;

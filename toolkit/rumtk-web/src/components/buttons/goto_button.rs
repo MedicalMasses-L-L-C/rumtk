@@ -22,23 +22,23 @@ use crate::components::html::{button, script, Button, Script};
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_FUNCTION,
 };
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_GOTO_FUNCTION, DEFAULT_SCRIPT_IMPORT, PARAMS_TITLE};
-use rumtk_core::strings::RUMString;
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_GOTO_FUNCTION, DEFAULT_SCRIPT_IMPORT, PARAMS_ID, PARAMS_TARGET, PARAMS_TITLE};
+use rumtk_core::strings::{rumtk_format, RUMString};
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
         {% if custom_css_enabled %}
-            <link href='/static/components/contact_button.css' rel='stylesheet'>
+            <link href='/static/components/goto_button.css' rel='stylesheet'>
         {% endif %}
         {{script|safe}}
-        <div id={{id}} class='contact-{{ css_class }}-button-container'>
+        <div id={{id}} class='goto-{{ css_class }}-button-container'>
             {{button|safe}}
         </div>
     ",
     ext = "html"
 )]
-pub struct ContactButton {
+pub struct GotoButton {
     id: RUMString,
     button: Button,
     script: Script,
@@ -46,24 +46,26 @@ pub struct ContactButton {
     custom_css_enabled: bool,
 }
 
-impl RUMWebTemplateSafe for ContactButton {}
+impl RUMWebTemplateSafe for GotoButton {}
 
-pub fn contact_button<'a>(
+pub fn goto_button<'a>(
     _path_components: URLPath<'a, 'a>,
     params: URLParams<'a>,
     state: SharedAppState,
-) -> ComponentResult<ContactButton> {
+) -> ComponentResult<GotoButton> {
+    let id = rumtk_web_get_text_item!(params, PARAMS_ID, DEFAULT_TEXT_ITEM).to_string();
     let title = rumtk_web_get_text_item!(params, PARAMS_TITLE, DEFAULT_TEXT_ITEM);
     let function = rumtk_web_get_text_item!(params, PARAMS_FUNCTION, DEFAULT_GOTO_FUNCTION);
+    let url = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM);
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let button = button(title, function, "'./contact'", state.clone())?;
+    let button = button(title, function, &rumtk_format!("'{url}'"), state.clone())?;
     let script = script(DEFAULT_SCRIPT_IMPORT, "goto", true)?;
 
-    Ok(ContactButton {
-        id: RUMString::from("contact_button"),
+    Ok(GotoButton {
+        id,
         button,
         script,
         css_class,
