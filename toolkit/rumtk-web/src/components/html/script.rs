@@ -43,9 +43,7 @@ pub struct Script {
 }
 
 pub fn script<'a>(typ: &str, contents: &str, global: bool) -> ComponentResult<Script> {
-    println!("typ: {}", typ);
     if !typ.is_empty() || typ != DEFAULT_SCRIPT_MODULE {
-        println!("typ: ??{}", global);
         Ok(Script {
             typ: typ.to_string(),
             script: match global {
