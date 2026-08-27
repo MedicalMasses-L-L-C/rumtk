@@ -25,7 +25,7 @@ use rumtk_core::strings::RUMString;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <button onclick='{{ function }}()'>
+        <button onclick='{{ function }}({{args}})'>
             {{title | safe}}
         </button>
     ",
@@ -34,16 +34,18 @@ use rumtk_core::strings::RUMString;
 pub struct Button {
     title: Title,
     function: RUMString,
+    args: RUMString,
 }
 
 impl RUMWebTemplateSafe for Button {}
 
-pub fn button<'a>(text: &str, function: &str, state: SharedAppState) -> ComponentResult<Button> {
+pub fn button<'a>(text: &str, function: &str, args: &str, state: SharedAppState) -> ComponentResult<Button> {
     let params = rumtk_web_params_map!([(PARAMS_TITLE, text)]);
     let title = title(&[], params.get_inner(), state)?;
 
     Ok(Button {
         title,
-        function: function.to_string()
+        function: function.to_string(),
+        args: args.to_string(),
     })
 }

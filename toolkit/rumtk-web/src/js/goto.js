@@ -17,6 +17,9 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+function goto(location) {
+    window.location.href = './' + location;
+}
 
-pub const JS_FILE_CACHE: &str = include_str!("file_cache.js");
-pub const JS_GOTO: &str = include_str!("goto.js");
+// @ts-ignore
+window.goto = goto;

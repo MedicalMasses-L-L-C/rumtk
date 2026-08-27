@@ -28,11 +28,16 @@ pub const DEFAULT_OUT_JS_DIR: &str = "./static/js";
 fn select_from_library(item_name: &str) -> &'static str {
     match item_name {
         "file_cache" => default_library::JS_FILE_CACHE,
+        "goto" => default_library::JS_GOTO,
         _ => "",
     }
 }
 
 pub fn rumtk_web_js_get_item(item_name: &str) -> RUMResult<RUMString> {
+    match fs::create_dir_all(DEFAULT_OUT_JS_DIR) {
+        Ok(_) => (),
+        Err(e) => return Err(rumtk_format!("Failed to create JS directory: {} => because {}", DEFAULT_OUT_JS_DIR, e)),
+    };
     let path = path::Path::new(DEFAULT_OUT_JS_DIR)
         .join(item_name)
         .with_extension("js");

@@ -42,6 +42,7 @@ pub const DEFAULT_ALT_ITEM: &str = "";
 pub const DEFAULT_CONTACT_ITEM: &str = "company";
 pub const DEFAULT_CONTACT_TYPE: &str = "contact";
 pub const DEFAULT_CONTACT_FUNCTION: &str = "goto_contact";
+pub const DEFAULT_GOTO_FUNCTION: &str = "goto";
 pub const DEFAULT_CONTACT_CSS: &str = "centered";
 pub const DEFAULT_NO_TEXT: &str = "";
 pub const DEFAULT_JOB_LOADER_NAME: &str = "job_loader";
