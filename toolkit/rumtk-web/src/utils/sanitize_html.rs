@@ -329,9 +329,11 @@ pub fn sanitizers_update_attributes<T: 'static + ?Sized + Borrow<str>, I: IntoIt
 }
 
 #[inline]
-pub fn sanitizers_update_tag_attributes<T: 'static + ?Sized + Borrow<str>, U: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T> + Clone>(tag: &'static U, it: I) {
+pub fn sanitizers_update_tag_attributes<T: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T> + Clone>(tag: &'static str, it: I) {
     select_sanitizer_mut(false).add_tag_attributes(tag, it.clone());
+    select_sanitizer_mut(false).rm_clean_content_tags(&[tag]);
     select_sanitizer_mut(true).add_tag_attributes(tag, it);
+    select_sanitizer_mut(true).rm_clean_content_tags(&[tag]);
 }
 
 #[inline]
