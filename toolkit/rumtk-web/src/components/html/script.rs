@@ -18,8 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-use crate::defaults::{DEFAULT_SCRIPT, DEFAULT_SCRIPT_MODULE,
-};
+use crate::defaults::{DEFAULT_SCRIPT, DEFAULT_SCRIPT_MODULE};
 use crate::js::rumtk_web_js_get_item;
 use crate::utils::types::RUMString;
 use crate::{ComponentResult, RUMWebTemplate};
