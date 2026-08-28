@@ -28,7 +28,7 @@ use crate::components::html::{img, Img};
 ///
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, DEFAULT_LOGO_SOURCE, PARAMS_ALT};
+use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_LOGO_SOURCE};
 use rumtk_core::strings::RUMString;
 
 #[derive(RUMWebTemplate, Debug, Clone)]
@@ -53,10 +53,8 @@ pub fn logo<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
 
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
-    let params = rumtk_web_params_map!([(PARAMS_CSS_CLASS, "logo-default"),(PARAMS_ALT, "Logo")]);
-
     Ok(Logo {
-        img: img(source, params.get_inner(), state)?,
+        img: img(source, 64, 64, "Logo".to_string(), "logo-default".to_string())?,
         css_class,
         custom_css_enabled
     })
