@@ -193,7 +193,7 @@
 }
 
 .goto-default-button-container > button {
-    background: radial-gradient(circle, var(--color-general-content-bg) 0%, var(--color-general-content-accent-bg) 70%);
+    background-color: var(--color-submit-bg);
 
     color: var(--color-bg-white);
 

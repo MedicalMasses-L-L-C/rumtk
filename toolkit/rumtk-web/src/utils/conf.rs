@@ -136,7 +136,7 @@ pub type PageMap = RUMOrderedMap<RUMString, PageConf>;
 pub struct RouterConf {
     pub pages: Option<PageMap>,
     pub redirect: Option<TextMap>,
-    pub service_routes: Option<TextMap>,
+    pub service_routes: Option<NestedTextMap>,
 }
 
 impl RouterConf {
@@ -154,9 +154,9 @@ impl RouterConf {
         }
     }
 
-    pub fn get_service_route(&self, name: &RUMString) -> Option<&RUMString> {
+    pub fn get_service_route(&self, name: &RUMString) -> Option<TextMap> {
         match &self.service_routes {
-            Some(service_routes) => service_routes.get(name),
+            Some(service_routes) => Some(service_routes.get(name)?.clone()),
             None => None
         }
     }

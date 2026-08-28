@@ -18,25 +18,32 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, DEFAULT_TEXTMAP};
 use rumtk_core::strings::RUMString;
+
+pub const YOUTRACK_SANITIZER_TAGS: &str = "script";
+pub const YOUTRACK_SANITIZER_ATTRIBUTES: &[&str] = &[
+    "data-yt-url",
+    "data-theme",
+    "data-lang",
+];
 
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <script src='https://{{portal}}.youtrack.cloud/static/simplified/form/form-entry.js?auto=false'></script>
-        <div style='position: fixed; bottom: 20px; right: 20px;'></div>
-        <script>
-        YTFeedbackForm.renderFeedbackButton(
-        document.currentScript.previousElementSibling,
-        {backendURL: 'https://{{portal}}.youtrack.cloud', formUUID: '2cf86344-cf91-4511-a292-de40ae00fc19', theme: '{{theme}}', language: '{{lang}}'}
-        );
+        <script
+            id='2cf86344-cf91-4511-a292-de40ae00fc19'
+            data-yt-url='https://{{portal}}.youtrack.cloud'
+            src='https://{{portal}}.youtrack.cloud/static/simplified/form/form-entry.js'
+            data-theme='{{theme}}'
+            data-lang='{{lang}}'>
         </script>
     ",
     ext = "html"
 )]
 pub struct YouTrack {
     portal: RUMString,
+    uuid: RUMString,
     theme: RUMString,
     lang: RUMString,
 }
@@ -44,15 +51,18 @@ pub struct YouTrack {
 impl RUMWebTemplateSafe for YouTrack {}
 
 pub fn youtrack<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state: SharedAppState) -> ComponentResult<YouTrack> {
-    let portal = match rumtk_web_get_config!(state).router.get_service_route(&"youtrack".to_string()){
+    let route_info = match rumtk_web_get_config!(state).router.get_service_route(&"youtrack".to_string()){
         Some(portal) => portal.clone(),
-        None => RUMString::default(),
+        None => DEFAULT_TEXTMAP.clone(),
     };
+    let portal = route_info.get("portal").unwrap().clone();
+    let uuid = route_info.get("uuid").unwrap().clone();
     let theme = rumtk_web_get_config!(state).theme.clone();
     let lang = rumtk_web_get_config!(state).lang.clone();
 
     Ok(YouTrack {
         portal,
+        uuid,
         theme,
         lang,
     })
