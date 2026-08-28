@@ -21,6 +21,7 @@
 #![feature(once_cell_get_mut)]
 #![feature(macro_metavar_expr)]
 #![feature(str_as_str)]
+#![feature(random)]
 extern crate core;
 
 pub mod api;
@@ -44,10 +45,13 @@ mod tests {
     use crate::defaults::{PARAMS_ID, PARAMS_TITLE};
     use crate::jobs::JobResult;
     use crate::testdata::data::{create_test_form, RAW_HTML_PREFORMATTED, TESTDATA_EXPECTED_FORMDATA, TESTDATA_EXPECTED_FORMDATA_EMPTY, TESTDATA_FORMDATA_EMPTY_REQUEST, TESTDATA_FORMDATA_EMPTY_REQUEST_WITH_BOUNDARIES, TESTDATA_FORMDATA_REQUEST, TRIMMED_HTML_PREFORMATTED, TRIMMED_HTML_RENDER_CSS, TRIMMED_HTML_TITLE_RENDER};
-    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_post_process, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_trim_rendered_html, sanitize_html, AppState, RUMWebData, RUMWebRedirect, SharedAppState};
+    use crate::{rumtk_web_get_job_manager, rumtk_web_init_job_manager, rumtk_web_params_map, rumtk_web_post_process, rumtk_web_register_app_components, rumtk_web_register_app_switches, rumtk_web_render, rumtk_web_render_component, rumtk_web_render_redirect, rumtk_web_run_app, rumtk_web_sync_get, rumtk_web_trim_rendered_html, sanitize_html, AppState, RUMWebData, RUMWebRedirect, RenderedPageComponentsResult, SharedAppState};
     use crate::{RUMWebResponse, RUMWebTemplate};
-    use rumtk_core::strings::RUMString;
+    use rand::random;
+    use rumtk_core::buffers::buffer_to_str;
+    use rumtk_core::strings::{rumtk_format, RUMString};
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
+    use std::thread::spawn;
 
     ///////////////////////////////////FormData/////////////////////////////////////////////////
     #[test]
@@ -178,6 +182,61 @@ mod tests {
     }
 
     ///////////////////////////////////Endpoint Tests/////////////////////////////////////////////////
+    #[test]
+    fn test_run_app() {
+        pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+            let title_params = rumtk_web_params_map!([("title", "Hello World!")]);
+            let title = title(&[], title_params.get_inner(), app_state.clone())?.to_string();
+            Ok(vec![title])
+        }
+
+        let app_components = rumtk_web_register_app_components!(
+            vec![
+                ("index", index),
+            ]
+        );
+        let app_switches = rumtk_web_register_app_switches!(
+            true,
+            true,
+            true
+        );
+        rumtk_web_run_app!(
+            app_components,
+            app_switches
+        );
+    }
+    #[test]
+    fn test_request_get() {
+        let port = random::<u16>();
+        let port_copy = port.clone();
+        spawn(move || {
+            pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+                let title_params = rumtk_web_params_map!([("title", "Hello World!")]);
+                let title = title(&[], title_params.get_inner(), app_state.clone())?.to_string();
+                Ok(vec![title])
+            }
+
+            let app_components = rumtk_web_register_app_components!(
+                vec![
+                    ("index", index),
+                ]
+            );
+            let app_switches = rumtk_web_register_app_switches!(
+                false,
+                true,
+                true
+            );
+            rumtk_web_run_app!(
+                app_components,
+                app_switches,
+                Some(port)
+            );
+        });
+        let output = rumtk_web_sync_get(&rumtk_format!("http://127.0.0.1:{port_copy}/")).unwrap();
+        let output_str = buffer_to_str(&output).unwrap();
+        println!("Output: {}", output_str);
+        assert!(output_str.contains(">Hello World!</h1>"), "SVG and circle tags filtered");
+    }
 
     ///////////////////////////////////Sanitizer Tests///////////////////////////////////////////////
     #[test]

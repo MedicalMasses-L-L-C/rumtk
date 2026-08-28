@@ -28,3 +28,4 @@ minifier = { version = "0.4.0", features = ["html"] }
 serde = { version = "1.0.228", features = ["derive", "std"] }
 reqwest = { version = "0.13.4", features = ["json"] }
 ammonia = "4.1.4"
+rand = "0.10.1"

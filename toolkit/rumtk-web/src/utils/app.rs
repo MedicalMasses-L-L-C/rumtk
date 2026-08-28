@@ -25,11 +25,12 @@ use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
+use std::random;
 
 use rumtk_core::base::RUMResult;
 use rumtk_core::dependencies::clap;
 use rumtk_core::rumtk_resolve_task;
-use rumtk_core::strings::RUMString;
+use rumtk_core::strings::{rumtk_format, RUMString};
 use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
 
@@ -44,7 +45,7 @@ const DEFAULT_UPLOAD_LIMIT: usize = 10240;
 ///
 /// RUMTK WebApp CLI Args
 ///
-#[derive(RUMCLIParser, Debug)]
+#[derive(RUMCLIParser, Default, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     ///
@@ -233,6 +234,41 @@ pub struct AppComponents<'a> {
 pub struct AppSwitches {
     pub skip_serve: bool,
     pub skip_default_css: bool,
+    pub skip_cli_args: bool,
+}
+
+impl AppSwitches {
+    pub fn from_slice(switches: &[bool]) -> Self {
+        match switches.len() {
+            0 => AppSwitches::default(),
+            1 => AppSwitches {
+                skip_serve: switches[0],
+                ..Default::default()
+            },
+            2 => AppSwitches {
+                skip_serve: switches[0],
+                skip_default_css: switches[1],
+                ..Default::default()
+            },
+            _ => AppSwitches {
+                skip_serve: switches[0],
+                skip_default_css: switches[1],
+                skip_cli_args: switches[2],
+            },
+        }
+    }
+}
+
+impl From<&[bool]> for AppSwitches {
+    fn from(switches: &[bool]) -> Self {
+        AppSwitches::from_slice(switches)
+    }
+}
+
+impl<const N: usize> From<[bool; N]> for AppSwitches {
+    fn from(switches: [bool; N]) -> Self {
+        AppSwitches::from_slice(&switches)
+    }
 }
 
 ///
@@ -256,8 +292,18 @@ pub struct AppSwitches {
 /// ).expect("Issue occurred while running the app");
 /// ```
 ///
-pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches) -> RUMResult<()> {
-    let args = Args::parse();
+pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches, port: Option<u16>) -> RUMResult<()> {
+    let args = match switches.skip_cli_args {
+        true => {
+            let port = port.unwrap_or_else(|| random::random::<u16>(..));
+            let ip = rumtk_format!("127.0.0.1:{port}");
+            Args {
+                ip,
+                ..Default::default()
+            }
+        },
+        false => Args::parse()
+    };
     let state = rumtk_web_load_conf!(&args);
 
     rumtk_web_init_pages!(app_components.pages);
@@ -655,21 +701,10 @@ macro_rules! rumtk_web_register_app_switches {
 
         AppSwitches::default()
     }};
-    ( $skip_serve:expr ) => {{
+    ( $($switch:expr),+ ) => {{
         use $crate::utils::app::AppSwitches;
 
-        AppSwitches {
-            skip_serve: $skip_serve,
-            skip_default_css: false,
-        }
-    }};
-    ( $skip_serve:expr, $skip_default_css:expr ) => {{
-        use $crate::utils::app::AppSwitches;
-
-        AppSwitches {
-            skip_serve: $skip_serve,
-            skip_default_css: $skip_default_css,
-        }
+        AppSwitches::from([$($switch),+])
     }};
 }
 
@@ -818,20 +853,22 @@ macro_rules! rumtk_web_run_app {
         use $crate::utils::app::app_main;
         use $crate::{rumtk_web_register_app_components, rumtk_web_register_app_switches};
 
-        app_main(
+        rumtk_web_run_app!(
             rumtk_web_register_app_components!(),
             rumtk_web_register_app_switches!(),
         )
     }};
     ( $app_components:expr ) => {{
         use $crate::rumtk_web_register_app_switches;
-        use $crate::utils::app::app_main;
-
-        app_main($app_components, rumtk_web_register_app_switches!())
+        let switches = rumtk_web_register_app_switches!();
+        rumtk_web_run_app!($app_components, switches, None)
     }};
     ( $app_components:expr, $switches:expr ) => {{
+        rumtk_web_run_app!($app_components, $switches, None)
+    }};
+    ( $app_components:expr, $switches:expr, $port:expr ) => {{
         use $crate::utils::app::app_main;
 
-        app_main($app_components, $switches)
+        app_main($app_components, $switches, $port)
     }};
 }
