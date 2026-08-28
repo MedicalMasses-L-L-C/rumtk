@@ -54,7 +54,7 @@ pub fn logo<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
     let custom_css_enabled = rumtk_web_get_config!(state).flags.custom_css;
 
     Ok(Logo {
-        img: img(source, 64, 64, "Logo".to_string(), "logo-default".to_string())?,
+        img: img(source, 72, 72, "Logo".to_string(), "logo-default".to_string())?,
         css_class,
         custom_css_enabled
     })
