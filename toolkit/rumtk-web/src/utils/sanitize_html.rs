@@ -20,7 +20,9 @@
 use ammonia::Builder;
 use rumtk_core::dependencies::maplit::{hashmap, hashset};
 use rumtk_core::strings::RUMString;
+use std::borrow::Borrow;
 use std::collections::{HashMap, HashSet};
+use std::iter::IntoIterator;
 use std::sync::LazyLock;
 
 type AllowedSet = LazyLock<HashSet<&'static str>>;
@@ -73,7 +75,7 @@ static ALLOWED_HTMX_ATTR: AllowedSet = LazyLock::new(|| hashset![
     "hx-indicator", "hx-inherit", "hx-params", "hx-preserve", "hx-prompt", "hx-replace-url",
     "hx-request", "hx-sync", "hx-validate", "hx-vars",
 ]);
-static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
+static mut ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
             "a" => hashset![
                 "href", "hreflang"
             ],
@@ -153,7 +155,7 @@ static ALLOWED_ATTRS: AllowedMap = LazyLock::new(|| hashmap![
                 "attributeName", "from", "to", "dur", "fill", "begin", "repeatCount"
             ],
 ]);
-static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
+static mut ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
             "a" => hashset![
                 "href", "hreflang"
             ],
@@ -258,13 +260,13 @@ static ALLOWED_ATTRS_RELAXED: AllowedMap = LazyLock::new(|| hashmap![
                 "attributeName", "from", "to", "dur", "fill", "begin", "repeatCount"
             ],
 ]);
-static STRICT_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
+static mut STRICT_SANITIZER: LazyLock<Builder> = LazyLock::new(|| unsafe {
         let mut sanitizer = Builder::default();
         default_init_sanitizer(&mut sanitizer, |sanitizer| { });
         sanitizer
     }
 );
-static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
+static mut RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| unsafe {
         let mut sanitizer = Builder::default();
         default_init_sanitizer(&mut sanitizer, |sanitizer| {
             sanitizer
@@ -281,7 +283,7 @@ static RELAXED_SANITIZER: LazyLock<Builder> = LazyLock::new(|| {
 );
 
 #[inline]
-fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut Builder)) {
+unsafe fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut Builder)) {
     builder
         .link_rel(ALLOWED_LINK_POLICY)
         .url_schemes(ALLOWED_URL_SCHEMES.clone())
@@ -295,20 +297,54 @@ fn default_init_sanitizer(builder: &mut Builder, init_closure: impl FnOnce(&mut 
 }
 
 #[inline]
+pub fn select_sanitizer<'a>(relaxed: bool) -> &'a Builder<'static> {
+    match relaxed {
+        true => unsafe {&*RELAXED_SANITIZER},
+        false => unsafe {&*STRICT_SANITIZER},
+    }
+}
+
+#[inline]
+pub fn select_sanitizer_mut<'a>(relaxed: bool) -> &'a mut Builder<'static> {
+    match relaxed {
+        true => unsafe {&mut *RELAXED_SANITIZER},
+        false => unsafe {&mut *STRICT_SANITIZER},
+    }
+}
+
+#[inline]
+pub fn sanitizer_update_attributes<T: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T>>(it: I, relaxed: bool) {
+    select_sanitizer_mut(relaxed).add_generic_attributes(it);
+}
+
+#[inline]
+pub fn sanitizer_update_tag_attributes<T: 'static + ?Sized + Borrow<str>, U: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T>>(tag: &'static U, it: I, relaxed: bool) {
+    select_sanitizer_mut(relaxed).add_tag_attributes(tag, it);
+}
+
+#[inline]
+pub fn sanitizers_update_attributes<T: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T> + Clone>(it: I) {
+    select_sanitizer_mut(false).add_generic_attributes(it.clone());
+    select_sanitizer_mut(true).add_generic_attributes(it);
+}
+
+#[inline]
+pub fn sanitizers_update_tag_attributes<T: 'static + ?Sized + Borrow<str>, U: 'static + ?Sized + Borrow<str>, I: IntoIterator<Item = &'static T> + Clone>(tag: &'static U, it: I) {
+    select_sanitizer_mut(false).add_tag_attributes(tag, it.clone());
+    select_sanitizer_mut(true).add_tag_attributes(tag, it);
+}
+
+#[inline]
 pub fn sanitize_html_strict(html: &str) -> RUMString {
-    STRICT_SANITIZER.clean(html).into()
+    select_sanitizer(false).clean(html).into()
 }
 
 #[inline]
 pub fn sanitize_html_relaxed(html: &str) -> RUMString {
-    RELAXED_SANITIZER.clean(html).into()
+    select_sanitizer(true).clean(html).into()
 }
 
 #[inline]
 pub fn sanitize_html(html: &str, relaxed: bool) -> RUMString {
-    if relaxed {
-        sanitize_html_relaxed(html)
-    } else {
-        sanitize_html_strict(html)
-    }
+    select_sanitizer(relaxed).clean(html).into()
 }
