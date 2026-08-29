@@ -53,6 +53,9 @@ mod tests {
     use rumtk_core::{rumtk_new_lock, rumtk_sleep};
     use std::thread::spawn;
 
+
+    const EXPECTED_RESPONSE_SIZE: usize = 2012;
+
     ///////////////////////////////////FormData/////////////////////////////////////////////////
     #[test]
     fn test_compile_form() {
@@ -232,10 +235,106 @@ mod tests {
                 Some(port)
             );
         });
-        let output = rumtk_web_sync_get(&rumtk_format!("http://127.0.0.1:{port_copy}/")).unwrap();
+        let (code, output) = rumtk_web_sync_get(&rumtk_format!("http://127.0.0.1:{port_copy}/")).unwrap();
         let output_str = buffer_to_str(&output).unwrap();
         println!("Output: {}", output_str);
-        assert!(output_str.contains(">Hello World!</h1>"), "SVG and circle tags filtered");
+        //%Abz
+        assert!(output_str.contains(">Hello World!</h1>"), "Applet responded improperly with wrong response content!");
+    }
+    #[test]
+    fn test_fuzzed_request_get() {
+        let port = random::<u16>();
+        let port_copy = port.clone();
+        spawn(move || {
+            pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+                let title_params = rumtk_web_params_map!([("title", "Hello World!")]);
+                let title = title(&[], title_params.get_inner(), app_state.clone())?.to_string();
+                Ok(vec![title])
+            }
+
+            let app_components = rumtk_web_register_app_components!(
+                vec![
+                    ("index", index),
+                ]
+            );
+            let app_switches = rumtk_web_register_app_switches!(
+                false,
+                true,
+                true
+            );
+            rumtk_web_run_app!(
+                app_components,
+                app_switches,
+                Some(port)
+            );
+        });
+
+        let fuzz_get_tests = vec![
+            "%Abz"
+        ];
+
+        for fuzz_itm in fuzz_get_tests {
+            let (code, output) = rumtk_web_sync_get(&rumtk_format!("http://127.0.0.1:{port_copy}/{fuzz_itm}")).unwrap();
+            if output.len() != EXPECTED_RESPONSE_SIZE {
+                match code {
+                    200 => panic!("Applet responded with wrong response size! => {}", output.len()),
+                    _ => {
+                        println!("Applet responded with handled error message!");
+                        continue;
+                    }
+                }
+            }
+            let output_str = buffer_to_str(&output).unwrap();
+            println!("Output: {}", output_str);
+            assert!(output_str.contains(">Hello World!</h1>"), "Applet responded improperly with wrong response content!");
+        }
+    }
+    #[test]
+    fn test_fuzzed_request_get_kills_axum() {
+        let port = random::<u16>();
+        let port_copy = port.clone();
+        spawn(move || {
+            pub fn index(app_state: SharedAppState) -> RenderedPageComponentsResult {
+                let title_params = rumtk_web_params_map!([("title", "Hello World!")]);
+                let title = title(&[], title_params.get_inner(), app_state.clone())?.to_string();
+                Ok(vec![title])
+            }
+
+            let app_components = rumtk_web_register_app_components!(
+                vec![
+                    ("index", index),
+                ]
+            );
+            let app_switches = rumtk_web_register_app_switches!(
+                false,
+                true,
+                true
+            );
+            rumtk_web_run_app!(
+                app_components,
+                app_switches,
+                Some(port)
+            );
+        });
+
+        let fuzz_get_tests = vec![
+            "%Abz"
+        ];
+
+        for fuzz_itm in fuzz_get_tests {
+            let request = rumtk_format!("http://127.0.0.1:{port_copy}/{fuzz_itm}");
+            let (code, output) = rumtk_web_sync_get(&request).unwrap();
+            if output.len() != EXPECTED_RESPONSE_SIZE {
+                match rumtk_web_sync_get(&request) {
+                    Ok((c,r)) => {
+                        println!("Request[{}] Does not kill axum listener or tokio runtime so allowing... Output: {}", &request,buffer_to_str(&r).unwrap());
+                    }
+                    Err(e) => {
+                        println!("Request[{}] killed axum listener or tokio runtime... Error: {:?}", &request, &e);
+                    }
+                }
+            }
+        }
     }
 
     ///////////////////////////////////Sanitizer Tests///////////////////////////////////////////////
