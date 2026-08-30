@@ -25,7 +25,7 @@ use rumtk_core::strings::RUMString;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <link rel='icon' type='{{typ}}' href='{{source}}'>
+        <link rel='icon' type='{{typ}}' href='{{src}}'>
     ",
     ext = "html"
 )]
