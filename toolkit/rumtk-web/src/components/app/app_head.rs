@@ -19,6 +19,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::app::css::*;
+use crate::components::app::favicon::{favicon, FavIcon};
 use crate::components::app::fontawesome::*;
 use crate::components::app::htmx::*;
 use crate::components::app::meta::*;
@@ -30,6 +31,7 @@ use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
     source = "
         <head>
             {{meta|safe}}
+            {{favicon|safe}}
             {{css|safe}}
             {{fontawesome|safe}}
             {{htmx|safe}}
@@ -39,6 +41,7 @@ use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 )]
 pub struct AppShellHead {
     meta: Meta,
+    favicon: FavIcon,
     css: CSS,
     fontawesome: FontAwesome,
     htmx: HTMX,
@@ -63,6 +66,7 @@ pub fn app_head<'a>(
 ) -> ComponentResult<AppShellHead> {
     Ok(AppShellHead {
         meta: meta(state.clone())?,
+        favicon: favicon(state.clone())?,
         css: css()?,
         fontawesome: fontawesome(state.clone())?,
         htmx: htmx()?

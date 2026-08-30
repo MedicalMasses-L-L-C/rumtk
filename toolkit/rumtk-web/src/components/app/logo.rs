@@ -18,14 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//!
+//! Logo component module.
+//!
+//! ## Accepts Parameters
+//! * [PARAMS_SOURCE_URL] => URL from which to obtain the logo image. Defaults to `/static/img/logo.webp`.
+//! * [PARAMS_CSS_CLASS] => Which variant of CSS styling to use. Defaults to `default` => `logo-default`.
+//!
 use crate::components::html::{img, Img};
-///
-/// Logo component module.
-///
-/// ## Accepts Parameters
-/// * [PARAMS_SOURCE_URL] => URL from which to obtain the logo image. Defaults to `/static/img/logo.webp`.
-/// * [PARAMS_CSS_CLASS] => Which variant of CSS styling to use. Defaults to `default` => `logo-default`.
-///
 use crate::utils::defaults::{DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_SOURCE_URL};
 use crate::utils::types::{SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, DEFAULT_LOGO_SOURCE};
