@@ -16,8 +16,7 @@ Cargo.lock
 # Project files
 /toolkit/rumtk-web/static/css/bundle.min.css
 /toolkit/rumtk-web/static/js
-*.json
-*.css
+/toolkit/rumtk-web/static/
 *.log
 *.v2
 perf.*
