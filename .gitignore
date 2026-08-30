@@ -14,9 +14,15 @@ Cargo.lock
 *.pdb
 
 # Project files
+/app.json
+/static/
 /toolkit/rumtk-web/static/css/bundle.min.css
 /toolkit/rumtk-web/static/js
+/toolkit/rumtk-web/static/css
 /toolkit/rumtk-web/static/
+/toolkit/rumtk-web/*.json
+/demo
+/examples/*.json
 *.log
 *.v2
 perf.*
