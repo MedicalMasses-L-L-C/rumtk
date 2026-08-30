@@ -10,7 +10,9 @@
     "enable_icons": false
   },
   "header_conf": {
-    "logo_source": "https://www.medicalmasses.com/static/img/logo.webp",
+    "logo_source": "https://www.medicalmasses.com/static/img/logo.svg",
+    "icon_source": "https://www.medicalmasses.com/static/img/logo.svg",
+    "icon_type": "image/svg+xml",
     "disable_navlinks": true,
     "disable_logo": false
   },
