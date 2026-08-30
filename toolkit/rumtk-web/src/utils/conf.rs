@@ -23,9 +23,12 @@ use crate::utils::defaults::DEFAULT_TEXT_ITEM;
 use crate::utils::types::RUMString;
 use askama::PrimitiveType;
 use axum::extract::State;
+use tower_http::cors::CorsLayer;
 pub use phf_macros::phf_ordered_map as rumtk_create_const_ordered_map;
 use crate::defaults::{DEFAULT_LANG_ITEM, DEFAULT_THEME_ITEM};
 use crate::{NestedNestedTextMap, NestedTextMap, PipelineGroup, RootNestedNestedTextMap, TextMap};
+use reqwest::header;
+use rumtk_core::base::RUMVec;
 use rumtk_core::net::tcp::SafeLock;
 use rumtk_core::pipelines::pipeline_types::RUMCommandLine;
 use rumtk_core::serde::{RUMDeJson, RUMSerJson};
@@ -164,6 +167,51 @@ impl RouterConf {
     }
 }
 
+#[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
+pub struct CORSConf {
+    pub origins: Option<RUMVec<RUMString>>,
+    pub methods: Option<RUMVec<RUMString>>,
+    pub headers: Option<RUMVec<RUMString>>,
+    pub allow_credentials: bool,
+}
+
+impl CORSConf {
+    pub fn build_cors_layer(&self) -> CorsLayer {
+        use axum::http::HeaderValue;
+        use axum::http::{header, method};
+
+        let mut cors = CorsLayer::new();
+        match &self.origins {
+            Some(origins) => {
+                for origin in origins {
+                    let o = origin.parse::<HeaderValue>().unwrap();
+                    cors = cors.allow_origin(o);
+                }
+            },
+            None => {},
+        }
+        match &self.methods {
+            Some(methods) => {
+                let m: RUMVec<method::Method> = methods.iter().map(|method| method.parse::<method::Method>().unwrap()).collect();
+                cors = cors.allow_methods(m);
+            },
+            None => {}
+        }
+        match &self.headers {
+            Some(headers) => {
+                let h: RUMVec<header::HeaderName> = headers.iter().map(|header| header.parse::<header::HeaderName>().unwrap()).collect();
+                cors = cors.allow_headers(h);
+            },
+            None => {}
+        }
+        cors = cors.allow_credentials(self.allow_credentials);
+        if self.allow_credentials {
+            cors = cors.allow_headers([header::AUTHORIZATION, header::ACCEPT]);
+        }
+        cors
+    }
+}
+
 ///
 /// This is a core structure in a web project using the RUMTK framework. This structure contains
 /// a series of fields that represent the web app initial state or configuration. The idea is that
@@ -187,6 +235,7 @@ pub struct AppConf {
     config: NestedNestedTextMap,
     pipelines: PipelineConf,
     pub router: RouterConf,
+    pub cors: Option<CORSConf>,
     //pub opts: TextMap,
 }
 
@@ -263,6 +312,7 @@ impl Default for AppConf {
             config: NestedNestedTextMap::default(),
             pipelines: PipelineConf::default(),
             router: RouterConf::default(),
+            cors: Some(CORSConf::default()),
         }
     }
 }
