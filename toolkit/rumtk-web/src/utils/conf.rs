@@ -173,6 +173,7 @@ pub struct CORSConf {
     pub methods: Option<RUMVec<RUMString>>,
     pub headers: Option<RUMVec<RUMString>>,
     pub allow_credentials: bool,
+    pub allow_private_network: bool,
 }
 
 impl CORSConf {
@@ -208,6 +209,7 @@ impl CORSConf {
         if self.allow_credentials {
             cors = cors.allow_headers([header::AUTHORIZATION, header::ACCEPT]);
         }
+        cors = cors.allow_private_network(self.allow_private_network);
         cors
     }
 }

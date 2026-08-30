@@ -23,7 +23,7 @@ use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
 use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_init_api_endpoints, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
+use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_get_config, rumtk_web_init_api_endpoints, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
 use crate::{rumtk_web_fetch, rumtk_web_load_conf};
 use std::random;
 
@@ -127,6 +127,7 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
         /* Pages */
         .route("/", get(rumtk_web_fetch!(default_page_matcher)))
         .route("/{*page}", get(rumtk_web_fetch!(default_page_matcher)))
+        .layer(rumtk_web_get_config!(state).cors.clone().unwrap_or_default().build_cors_layer())
         /* Post Handling */
         .route("/api/", post(rumtk_web_api_process!(default_api_matcher)))
         //.layer(DefaultBodyLimit::max(args.upload_limit))
