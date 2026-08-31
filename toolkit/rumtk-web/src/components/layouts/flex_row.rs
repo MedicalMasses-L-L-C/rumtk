@@ -24,9 +24,9 @@ use rumtk_core::base::RUMVec;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <div id='{{id}}' class='flex-row-{{css_class}}'>
+        <div id='{{id}}' class='flex-row'>
             {% for e in contents %}
-                <span style='width:{{width}}%'>{{e|safe}}</span>
+                <span>{{e|safe}}</span>
             {% endfor %}
         </div>
     ",
@@ -35,16 +35,11 @@ use rumtk_core::base::RUMVec;
 pub struct FlexRow {
     id: RUMString,
     contents: RUMVec<RUMString>,
-    width: usize,
-    css_class: RUMString,
 }
 
-pub fn flex_row<'a>(id: &str, contents: RUMVec<RUMString>, css_class: RUMString) -> ComponentResult<FlexRow> {
-    let width = 100 / contents.len();
+pub fn flex_row<'a>(id: &str, contents: RUMVec<RUMString>) -> ComponentResult<FlexRow> {
     Ok(FlexRow {
         id: id.to_string(),
         contents,
-        width,
-        css_class,
     })
 }

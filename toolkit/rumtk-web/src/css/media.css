@@ -45,6 +45,10 @@ and (width > 700px) {
     .header-default-navactions {
         padding-left: 5px;
     }
+
+    .flex-row {
+        flex-direction: column;
+    }
 }
 
 @media print {

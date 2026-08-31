@@ -69,10 +69,15 @@
     width: 17.5%;
 }
 
-.flex-row-default {
+.flex-row {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+}
+
+.flex-row > span {
+    width: fit-content;
+    margin-inline: auto;
 }
 
 .w10 { width: 10%; }

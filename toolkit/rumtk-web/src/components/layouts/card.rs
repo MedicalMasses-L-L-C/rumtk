@@ -24,7 +24,7 @@ use rumtk_core::base::RUMVec;
 #[derive(RUMWebTemplate, Debug, Clone)]
 #[template(
     source = "
-        <div id='card-{{id}}' class='{{ css_class }}'>
+        <div id='card-{{id}}' class='card-{{ css_class }}'>
             {% for e in contents %}
                 {{ e|safe }}
             {% endfor %}

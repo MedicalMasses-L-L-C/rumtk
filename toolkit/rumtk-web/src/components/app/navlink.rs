@@ -35,7 +35,7 @@ struct NavItem {
         {% if custom_css_enabled %}
             <link href='/static/components/navlink.css' rel='stylesheet'>
         {% endif %}
-        <a class='undecorated navlink f18 navlink-{{css_class}}' href='{{target.url}}'>{{target.title|capitalize}}</a>
+        <a class='undecorated navlink f16 navlink-{{css_class}}' href='{{target.url}}'>{{target.title|capitalize}}</a>
     ",
     ext = "html"
 )]

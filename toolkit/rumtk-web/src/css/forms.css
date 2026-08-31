@@ -25,6 +25,11 @@
     --spanish-red: #E60026;
 }
 
+.form-default-box {
+    min-width: 700px;
+    max-width: 100%;
+}
+
 .form-default-contents {
     display: flex;
     flex-direction: column;
@@ -33,7 +38,7 @@
     border-radius: 10px;
 
     width: 70%;
-    min-width: 200px;
+    min-width: 500px;
     max-width: 1000px;
 
     justify-items: center;
