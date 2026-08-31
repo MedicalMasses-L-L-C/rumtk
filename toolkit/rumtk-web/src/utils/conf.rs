@@ -40,6 +40,7 @@ use rumtk_core::{rumtk_generate_id, rumtk_new_lock};
 pub struct FlagsConf {
     pub custom_css: bool,
     pub enable_icons: bool,
+    pub enable_captcha: bool,
 }
 #[derive(RUMSerJson, RUMDeJson, PartialEq, Debug, Clone, Default)]
 pub struct HeaderConf {
@@ -233,11 +234,12 @@ pub struct AppConf {
     pub header_conf: HeaderConf,
     pub footer_conf: FooterConf,
 
-    strings: RootNestedNestedTextMap,
-    config: NestedNestedTextMap,
-    pipelines: PipelineConf,
+    pub strings: RootNestedNestedTextMap,
+    pub config: NestedNestedTextMap,
+    pub pipelines: PipelineConf,
     pub router: RouterConf,
     pub cors: Option<CORSConf>,
+    pub captcha: Option<TextMap>,
     //pub opts: TextMap,
 }
 
@@ -315,6 +317,7 @@ impl Default for AppConf {
             pipelines: PipelineConf::default(),
             router: RouterConf::default(),
             cors: Some(CORSConf::default()),
+            captcha: None
         }
     }
 }

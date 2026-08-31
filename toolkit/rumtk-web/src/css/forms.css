@@ -100,12 +100,17 @@
     color: var(--color-text-title);
 }
 
-form:valid > input[type='submit'] {
+form:valid > input[type='submit']:not:disabled {
     opacity: 1.0;
     pointer-events: auto;
 }
 
 form:invalid > input[type='submit'] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+form:valid > input[disabled] {
     opacity: 0.5;
     pointer-events: none;
 }

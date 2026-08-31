@@ -19,19 +19,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::form::form_node::FormNode;
-use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
+use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
 use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use rumtk_core::rumtk_generate_id;
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='form-{{htmx_target}}-box'>
+        <div class='form-{{css_class}}-box'>
             {% if custom_css_enabled %}
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
             {% if !module.is_empty() %}
-                <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' defer>
+                <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' async defer>
                 </script>
             {% endif %}
             <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
@@ -81,7 +82,7 @@ pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
     let endpoint = rumtk_web_get_text_item!(params, PARAMS_ENDPOINT, &typ);
     let auto_hide_progress = rumtk_web_get_text_item!(params, PARAMS_PROGRESS_MODE, DEFAULT_PROGRESS_MODE);
     let htmx_swap_mode = rumtk_web_get_text_item!(params, PARAMS_SWAP_MODE, DEFAULT_HTMX_SWAP_MODE).to_string();
-    let htmx_target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM).to_string();
+    let htmx_target = rumtk_generate_id!().to_string();
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
     let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);

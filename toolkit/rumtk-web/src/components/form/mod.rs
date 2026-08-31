@@ -21,7 +21,7 @@
 use crate::components::form::form_element::form_element;
 use crate::components::form::form_node::FormNode;
 use crate::components::form::props::InputProps;
-use crate::{ComponentResult, SharedAppState};
+use crate::{rumtk_web_get_config, sanitizer_update_tag_attributes, ComponentResult, SharedAppState};
 use rumtk_core::base::RUMResult;
 use rumtk_core::cache::{new_cache, LazyRUMCache};
 use rumtk_core::strings::RUMString;
@@ -33,6 +33,7 @@ pub mod input_element;
 pub mod select_element;
 pub mod form;
 pub mod form_node;
+pub mod captchas;
 
 pub type FormElements = Vec<ComponentResult<FormNode>>;
 pub type FormCache = LazyRUMCache<RUMString, FormElements>;
@@ -45,6 +46,14 @@ pub type FormCacheItem = FormElements;
 
 static mut FORM_CACHE: FormCache = new_cache();
 static DEFAULT_FORMELEMENTS: FormElements = vec![];
+
+pub const CAPTCHA_SANITIZER_TAG: &str = "div";
+pub const CAPTCHA_SANITIZER_ATTRIBUTES: &[&str] = &[
+    "data-sitekey",
+    "data-action",
+    "data-callback",
+    "data-expired-callback",
+];
 
 fn new_form_entry() -> RUMResult<FormElements> {
     Ok(DEFAULT_FORMELEMENTS.clone())
@@ -63,6 +72,10 @@ pub fn register_form_elements(name: &str, element_builder: &FormBuilderFunction,
 }
 
 pub fn register_forms(forms: Option<Forms>, state: &SharedAppState) {
+    if rumtk_web_get_config!(state).flags.enable_captcha {
+        sanitizer_update_tag_attributes(CAPTCHA_SANITIZER_TAG, CAPTCHA_SANITIZER_ATTRIBUTES, true);
+    }
+
     for (form_name, form_builder) in forms.unwrap_or_default() {
         register_form_elements(form_name, &form_builder, &state);
     }

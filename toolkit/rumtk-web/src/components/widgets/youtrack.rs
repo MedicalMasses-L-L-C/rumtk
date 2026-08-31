@@ -36,7 +36,10 @@ pub const YOUTRACK_SANITIZER_ATTRIBUTES: &[&str] = &[
             data-yt-url='https://{{portal}}.youtrack.cloud'
             src='https://{{portal}}.youtrack.cloud/static/simplified/form/form-entry.js'
             data-theme='{{theme}}'
-            data-lang='{{lang}}'>
+            data-lang='{{lang}}'
+            async
+            defer
+            >
         </script>
     ",
     ext = "html"

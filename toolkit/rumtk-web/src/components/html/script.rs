@@ -31,7 +31,7 @@ use crate::{ComponentResult, RUMWebTemplate};
         {% else if typ == DEFAULT_SCRIPT_MODULE %}
             <script type='module'>{{script|safe}}</script>
         {% else %}
-            <script type='module' src='{{script}}' defer></script>
+            <script type='module' src='{{script}}' async defer></script>
         {% endif %}
     ",
     ext = "html"
