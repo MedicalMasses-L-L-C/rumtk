@@ -177,7 +177,10 @@
     display: grid;
     background-color: var(--color-footer-bg);
     color: var(--color-text-title);
-    padding: 1em;
+
+    width: 100%;
+
+    padding: 10px;
     justify-items: center;
 }
 

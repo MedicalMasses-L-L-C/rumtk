@@ -18,69 +18,74 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-:root {
-    --white: #ffffff;
-    --tropical-green: #00755E;
-    --spanish-red: #E60026;
-}
-
 .form-default-box {
-    min-width: 500px;
-    max-width: 100%;
-}
-
-.form-default-contents {
     display: flex;
     flex-direction: column;
 
-    background-color: var(--color-card-bg);
+    max-width: 450px;
+
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.form-default-contents {
     border-radius: 10px;
 
-    width: 70%;
-    min-width: 500px;
-    max-width: 1000px;
+    width: 100%;
 
-    justify-items: center;
-    justify-content: center;
-    align-items: center;
-    place-items: center;
-
-    padding: 20px;
+    padding: 16px;
 }
 
-.form-default-contents > input {
-    width: 80%;
+.form-default-contents > h1 {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 600;
+
+    word-break: break-word;
+    margin: 0 0 8px;
 }
 
-.form-default-contents > input:invalid {
-    background-color: var(--spanish-red);
-    color: var(--white);
+.form-default-contents > input,textarea {
+    color: var(--color-text-default);
+    background-color: var(--color-card-bg);
+
+    outline: none;
+    width: 100%;
+    margin: 0;
+
+    padding: 1px 8px;
+
+    border: 1px solid var(--color-general-bg);
+    border-radius: 4px;
+
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+
+    caret-color: var(--color-general-content-bg);
+    line-height: 20px;
 }
 
-.form-default-contents > input:invalid::placeholder {
-    color: var(--white);
+.form-default-contents > input:focus, textarea:focus {
+    border-color: var(--color-general-content-bg);
 }
 
-.form-default-contents > input:valid {
-    background-color: var(--color-submit-bg);
-    color: var(--white);
-}
-
-.form-default-contents > input:valid::placeholder {
-    color: var(--white);
+.form-default-contents > input:hover, textarea:hover {
+    border-color: var(--color-general-content-accent-bg);
 }
 
 .form-default-contents > textarea {
-    min-width: 90%;
-    min-height: 300px;
-    object-fit: scale-down;
+    min-height: 100px;
+    height: 80px;
+    max-height: 80px;
+
+    margin-top: 10px;
+    padding-top: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    resize: none;
 }
 
 .form-default-contents > input[type='submit'] {
-    min-width: 200px;
-    width: 50%;
-    max-width: 500px;
+    width: fit-content;
 
     border-radius: 5px;
 
@@ -90,18 +95,17 @@
     padding-right: 16px;
     padding-top: 8px;
     padding-bottom: 8px;
+
+    background-color: var(--color-submit-bg);
+    color: var(--color-text-title);
 }
 
 form:valid > input[type='submit'] {
     opacity: 1.0;
     pointer-events: auto;
-    background-color: var(--color-submit-bg);
-    color: var(--white);
 }
 
 form:invalid > input[type='submit'] {
     opacity: 0.5;
     pointer-events: none;
-    background-color: var(--spanish-red);
-    color: var(--white);
 }

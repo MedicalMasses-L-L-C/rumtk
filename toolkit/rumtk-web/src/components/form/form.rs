@@ -19,15 +19,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::form::form_node::FormNode;
-use crate::components::title::{title, Title};
 use crate::defaults::{DEFAULT_HTMX_SWAP_MODE, DEFAULT_NO_TEXT, DEFAULT_PROGRESS_MODE, DEFAULT_TEXT_ITEM, PARAMS_CSS_CLASS, PARAMS_ENDPOINT, PARAMS_MODULE, PARAMS_PROGRESS_MODE, PARAMS_SWAP_MODE, PARAMS_TARGET, PARAMS_TITLE, PARAMS_TYPE, SECTION_ENDPOINTS, SECTION_MODULES};
 use crate::utils::types::{RUMString, SharedAppState, URLParams, URLPath};
-use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item, rumtk_web_params_map, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
+use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_form, rumtk_web_get_text_item, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe};
 
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div id='form-{{htmx_target}}-box'>
+        <div class='form-{{htmx_target}}-box'>
             {% if custom_css_enabled %}
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
@@ -35,8 +34,8 @@ use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_fo
                 <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' defer>
                 </script>
             {% endif %}
-            {{title|safe}}
             <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
+                <h1>{{ title }}</h1>
                 {% for element in elements %}
                     {{ element|safe }}
                 {% endfor %}
@@ -62,7 +61,7 @@ use crate::{rumtk_web_get_config, rumtk_web_get_config_section, rumtk_web_get_fo
 )]
 pub struct Form {
     typ: RUMString,
-    title: Title,
+    title: RUMString,
     module: RUMString,
     endpoint: RUMString,
     htmx_target: RUMString,
@@ -85,11 +84,6 @@ pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
     let htmx_target = rumtk_web_get_text_item!(params, PARAMS_TARGET, DEFAULT_TEXT_ITEM).to_string();
     let css_class = rumtk_web_get_text_item!(params, PARAMS_CSS_CLASS, DEFAULT_TEXT_ITEM).to_string();
 
-    let title_params = rumtk_web_params_map!(
-        [(PARAMS_TITLE, title_str)]
-    );
-    let title_elem = title(_path_components, title_params.get_inner(), state.clone())?;
-
     let module_store = rumtk_web_get_config_section!(state, SECTION_MODULES);
     let module_name = rumtk_web_get_text_item!(&module_store, module, DEFAULT_NO_TEXT).to_string();
 
@@ -107,7 +101,7 @@ pub fn form<'a>(_path_components: URLPath<'a, 'a>, params: URLParams<'a>, state:
 
     Ok(Form {
         typ,
-        title: title_elem,
+        title: title_str.to_string(),
         module: module_name,
         endpoint: endpoint_url,
         htmx_target,
