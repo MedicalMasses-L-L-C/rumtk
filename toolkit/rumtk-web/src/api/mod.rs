@@ -18,6 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+mod email;
+
 use crate::utils::APIFunction;
 use crate::{APIPath, FormData, HTMLResult, RUMWebData, SharedAppState};
 use rumtk_core::cache::{new_cache, LazyRUMCache};

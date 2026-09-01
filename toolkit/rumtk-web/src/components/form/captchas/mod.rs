@@ -51,7 +51,7 @@ pub fn captcha<'a>(widget_id: &str, state: SharedAppState) -> ComponentResult<Fo
     };
     match captcha_type {
         "gcaptcha" => {
-            let rendered_captcha = gcaptcha(widget_id, &captcha_config)?;
+            let rendered_captcha = gcaptcha(widget_id, &captcha_config, state.clone())?;
             Ok(Captcha {
                 captcha: rendered_captcha.to_string()
             }.to_form_node())

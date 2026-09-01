@@ -18,7 +18,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::html::{script, Script};
-use crate::{ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, TextMap, DEFAULT_SCRIPT_IMPORT, DEFAULT_TEXT};
+use crate::{rumtk_web_get_config, ComponentResult, RUMWebTemplate, RUMWebTemplateSafe, SharedAppState, TextMap, DEFAULT_SCRIPT_IMPORT, DEFAULT_TEXT};
 use rumtk_core::strings::RUMString;
 use std::sync::LazyLock;
 
@@ -32,6 +32,7 @@ static DEFAULT_GCAPTCHA_JS_URL: LazyLock<RUMString> = LazyLock::new(|| "https://
             class='g-recaptcha'
             data-sitekey='{{site_key}}'
             data-action='LOGIN'
+            data-theme='{{theme}}'
             data-callback='enableSubmitButton'
             data-expired-callback='disableSubmitButton'
             >
@@ -50,6 +51,7 @@ static DEFAULT_GCAPTCHA_JS_URL: LazyLock<RUMString> = LazyLock::new(|| "https://
     ext = "html"
 )]
 pub struct GoogleCaptcha {
+    theme: RUMString,
     widget_id: RUMString,
     import: Script,
     site_key: RUMString,
@@ -57,7 +59,8 @@ pub struct GoogleCaptcha {
 
 impl RUMWebTemplateSafe for GoogleCaptcha {}
 
-pub fn gcaptcha<'a>(widget_id: &str, captcha_config: &TextMap) -> ComponentResult<GoogleCaptcha> {
+pub fn gcaptcha<'a>(widget_id: &str, captcha_config: &TextMap, state: SharedAppState) -> ComponentResult<GoogleCaptcha> {
+    let theme = rumtk_web_get_config!(state).theme.clone();
     let site_key = match captcha_config.get("site-key") {
         Some(key_site) => key_site.clone(),
         None => DEFAULT_TEXT.to_string()
@@ -69,6 +72,7 @@ pub fn gcaptcha<'a>(widget_id: &str, captcha_config: &TextMap) -> ComponentResul
     let import = script(DEFAULT_SCRIPT_IMPORT, &import_url, false)?;
 
     Ok(GoogleCaptcha {
+        theme,
         widget_id: widget_id.to_string(),
         import,
         site_key,
