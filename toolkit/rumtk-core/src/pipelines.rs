@@ -22,7 +22,7 @@ pub mod pipeline_types {
     use crate::base::{RUMResult, RUMVec};
     use crate::buffers::*;
     use crate::serde::json::{RUMDeJson, RUMSerJson};
-    use crate::strings::{RUMString, RUMStringConversions};
+    use crate::strings::RUMString;
     use crate::types::RUMHashMap;
     use std::process::{Child, Command};
 
@@ -65,9 +65,8 @@ pub mod pipeline_types {
 pub mod pipeline_functions {
     use super::pipeline_types::*;
     use crate::base::RUMResult;
-    use crate::strings::{rumtk_format, string_format, RUMArrayConversions, RUMString, StringReplacementPair};
+    use crate::strings::{rumtk_format, string_format, RUMString, StringReplacementPair};
     use std::io::{Read, Write};
-    use std::os::unix::ffi::OsStrExt;
 
     use crate::buffers::*;
     use crate::rumtk_resolve_sync_task;
@@ -141,7 +140,7 @@ pub mod pipeline_functions {
     pub fn pipeline_spawn_process(cmd: &mut RUMPipelineCommand) -> RUMResult<RUMPipelineProcess> {
         match cmd.spawn() {
             Ok(process) => {
-                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().as_bytes().to_string()?, cmd.get_args());
+                println!("Spawned process {} => {} with args {:?}", process.id(), cmd.get_program().to_str().unwrap_or("program name missing"), cmd.get_args());
                 Ok(process)
             },
             Err(e) => Err(rumtk_format!(

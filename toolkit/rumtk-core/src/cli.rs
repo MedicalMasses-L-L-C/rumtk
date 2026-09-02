@@ -46,6 +46,7 @@ pub mod cli_utils {
     use crate::cpu::CPU_PAGE_SIZE;
     use crate::strings::rumtk_format;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
+    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
 
     const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
