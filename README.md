@@ -134,10 +134,15 @@ communication and automation in medicine.
     - [ ] HL7 FHIR Client utility
     - [ ] HL7 FHIR Tests
 - [ ] HIFLAMES utility => HL7 Interface - FHIR Loader And Message Exporter System
+- [ ] OS
+    - [x] Linux
+    - [x] Windows
+    - [ ] Docker
 - [ ] Package [Maybe]
     - [ ] Fedora
     - [ ] Ubuntu
     - [ ] Arch
+    - [ ] Windows
     - [ ] Docker
 
 # Awards
