@@ -7,7 +7,8 @@
   "theme": "light",
   "flags": {
     "custom_css": false,
-    "enable_icons": false
+    "enable_icons": false,
+    "enable_captcha": false
   },
   "header_conf": {
     "logo_source": "https://www.medicalmasses.com/static/img/logo.svg",
