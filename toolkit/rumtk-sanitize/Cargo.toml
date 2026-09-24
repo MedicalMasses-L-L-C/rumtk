@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 rumtk-core = { version = "0.17.4", path = "../rumtk-core" }
 rumtk-web = { version = "0.9.3", path = "../rumtk-web" }
+clap = { version = "4.5.38", features = ["derive"] }
