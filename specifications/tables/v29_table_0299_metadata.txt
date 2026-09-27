@@ -1,0 +1,8 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                  0299
+  Description                                                                            HL7-defined table of codes identifying the type of encoding used to represent
+                                                                                         successive octets of binary data as displayable ASCII characters.  These are
+                                                                                         defined by IETF; more information may be found at
+                                                                                         https://www.ietf.org/rfc/rfc1521.txt
+  Type                                                                                   HL7
+  HL7 Version  Introduced                                                                2.3

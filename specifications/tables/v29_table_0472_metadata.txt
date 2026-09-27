@@ -1,0 +1,8 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0472
+  Description                                                                            HL7-defined table of codes specifying that a second timing specification is to
+                                                                                         follow using the repeat delimiter.
+  Type                                                                                   HL7
+  Steward                                                                                OO
+  where used                                                                             TQ1-12
+  HL7 Version Introduced                                                                 2.4

@@ -1,0 +1,10 @@
+                                                                                                               Table 0406Coded Content
+  Value                                    Display Name                                         Definition                                                                                                                                          Comment/                                Status
+                                                                                                                                                                                                                                                    Usage Note
+  H                                        Home
+  O                                        Office
+  1                                        Hospital
+  2                                        Physician Clinic
+  3                                       Long Term Care
+  4                                       Acute Care
+  5                                       Other

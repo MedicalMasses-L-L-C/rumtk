@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0163
+  Description                                                                                           HL7-defined table of codes that specify a body site from which a specimen is
+                                                                                                        obtained.
+  Type                                                                                                  HL7
+  Steward                                                                                               OO
+  where used                                                                                            OBX-20, CH7
+  HL7 Version Introduced                                                                                2.2

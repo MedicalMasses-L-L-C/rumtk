@@ -1,0 +1,8 @@
+                                                                                                                                   Table 0790Coded Content
+   Value                                           Display Name                                                   Definition                                                                                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                  Usage Note
+   FDA                                             Food and Drug
+                                                   Administration
+   AMA                                             American
+                                                   Medical
+                                                   Association

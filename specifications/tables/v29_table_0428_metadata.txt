@@ -1,0 +1,7 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0428
+  Description                                                                                           Table of codes specifying a classification of the incident type.
+  Type                                                                                                  User
+  Steward                                                                                               FM
+  where used                                                                                            RMI-3
+  HL7 Version Introduced                                                                                2.4

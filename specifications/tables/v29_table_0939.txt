@@ -1,0 +1,29 @@
+                                                                                                          Table 0939Coded Content
+  Value                                 Display Name                                                                  Definition                                                      Comment/ Usage Note                                                                       Status
+  OBR-OBX                               OBX segment following an                                                                                                                      For responses related to the test
+                                        OBR segment                                                                                                                                   order
+  SPM-OBX                               OBX segment following an                                                                                                                      For responses related to the
+                                        SPM segment                                                                                                                                   specimen
+  DG1-3                                 Diagnosis Code
+  NK1-11                                Next of Kin / Associated                                                                                                                      Used to convey patient's or next
+                                        Parties Job Code/Cla ss                                                                                                                       of kin's employment job class
+                                                                                                                                                                                      code
+  NK1-13                                Organization Name - NK1                                                                                                                       Next of kin's organization name
+  NK1-28                                Ethnic Group                                                                                                                                  Next of kin's ethnicity
+  NK1-35                                Race                                                                                                                                          Next of kin's race
+  OBR-16                                Ordering Provider
+  OBR-13                                Relevant Clinical                                                                                                                             The purpose varies based on the
+                                        Information                                                                                                                                   AOE referencing this field.
+  OBR-49                                Result Handling                                                                                                                               This was used for call or fax
+                                                                                                                                                                                      results back
+  PID-11                                Patient Address                                                                                                                               Applies to patient
+  PID-3                                 Patient Identifier List                                                                                                                       Applies to patient
+  PID-5                                 Patient Name                                                                                                                                  Applies to patient
+  PID-6                                 Mother's Maiden Name                                                                                                                          Applies to patient
+  PID-7                                 Date/Time of Birth                                                                                                                            Applies to patient
+  PID-13                                Phone Number - Home                                                                                                                           deprecated field as  of v2.7
+  PID-14                                Phone Number - Business                                                                                                                       deprecated field as  of v2.7
+  PID-40                                Phone Number                                                                                                                                  New field in V2.7
+  PRT-5                                 Participation Person
+  SPM-4                                 Specimen Type
+  SPM-8                                 Specimen Source Site

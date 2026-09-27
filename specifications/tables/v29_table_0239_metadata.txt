@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                               0239
+  Description                                                                                         HL7-defined table of codes used to communicate whether an event has been
+                                                                                                      judged to be expected or unexpected.
+  Type                                                                                                HL7
+  Steward                                                                                             OO
+  where used                                                                                          PEO-10
+  HL7 Version  Introduced                                                                             2.3

@@ -1,0 +1,12 @@
+                                                                                                                           Table 0548Coded Content
+   Value                                Display Name                                                                                                                                                 Definition                                                  Comment/ Usage                                              Status
+                                                                                                                                                                                                                                                                 Note
+   1                                    Self
+   2                                    Parent
+   3                                    Next of Kin
+   4                                    Durable Power of Attorney in Healthcare Affairs
+   5                                    Conservator
+   6                                    Emergent Practitioner (practitioner judging case
+                                        as emergency requiring care without a consent)
+   7                                    Non-Emergent Practitioner (i.e. medical ethics
+                                        committee)

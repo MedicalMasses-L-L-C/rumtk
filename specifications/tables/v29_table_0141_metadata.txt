@@ -1,0 +1,20 @@
+                                                                                                                             Table Metadata
+  Table                                                                               0141
+  Description                                                                         Table of codes which specify the military rank/grade of the patient.
+                                                                                      Australia: https://en.wikipedia.org/wiki/Australian_Defence_Force_ranks
+                                                                                      Canada: http://www.forces.gc.ca/en/honours-history-badges-insignia/rank.page
+                                                                                      United States: published in the Defense Travel Administrator's Manual,
+                                                                                      Appendix M: Military Rank/Civilian Pay Grade Abbreviations and Service
+                                                                                      Agency Names,
+                                                                                      http://www.defensetravel.dod.mil/Docs/Training/DTA_App_M.pdf
+  Type                                                                                User
+
+
+
+
+
+
+
+  Steward                                                                             PA
+  where used                                                                          PD1-20
+  HL7 Version  Introduced                                                                         2.2

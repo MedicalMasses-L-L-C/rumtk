@@ -1,0 +1,8 @@
+                                                                                                                    Table 0749Coded Content
+  Value                                      Display Name                                                                                                                                               Definition                                              Comment/                                  Status
+                                                                                                                                                                                                                                                                Usage Note
+  0                                          Valid code; not used for grouping   Value                                      Display Name                                                                                                                                                     Definition                                                 Comment/                                    Status
+                                                                                                                                                                                                                                                                          Usage Note
+   1                                          Valid code; used for grouping
+   2                                          Invalid code; not used for grouping
+   3                                          Invalid code; code is relevant for grouping

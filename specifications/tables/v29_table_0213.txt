@@ -1,0 +1,9 @@
+                                                                                                                     Table 0213Coded Content
+  Value                               Display Name                                                                                                                                         Definition                                                      Comment/                                         Status
+                                                                                                                                                                                                                                                           Usage Note
+  P                                   Marked for purge.  User is no longer able to update the
+                                      visit.
+  D                                   The visit is marked for deletion and the user
+                                      cannot enter new data against it.
+  I                                   The visit is marked inactive and the user cannot
+                                      enter new data against it.

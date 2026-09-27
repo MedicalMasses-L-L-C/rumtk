@@ -1,0 +1,8 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                  0144
+  Description                                                                                            Table of codes which specify the source of information about the insured's
+                                                                                                         eligibility for benefits.
+  Type                                                                                                   User
+  Steward                                                                                                FM
+  where used                                                                                             IN2-27
+  HL7 Version  Introduced                                                                                2.2

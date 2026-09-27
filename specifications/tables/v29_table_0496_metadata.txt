@@ -1,0 +1,8 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0496
+  Description                                                                              Table of codes specifying to what the subject is consenting, i.e. what type of
+                                                                                           service, surgical procedure, information access/release or other event.
+  Type                                                                                     User
+  Steward                                                                                  StrucDoc
+  where used                                                                               TXA:2; CON:2
+  HL7 Version  Introduced                                                                  2.5

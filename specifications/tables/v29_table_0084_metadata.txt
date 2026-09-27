@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0084
+  Description                                                                              Table of codes specifying a composite number/name of a person/group that
+                                                                                           performed a test/procedure/transaction, etc.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  FM
+  where used                                                                               FT1-20
+  HL7 Version  Introduced                                                                  2.1

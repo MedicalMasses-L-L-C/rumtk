@@ -1,0 +1,7 @@
+                                                                                                                                  Table 0215Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                              Usage Note
+   F                                              Family only
+   N                                              No Publicity
+   O                                              Other
+   U                                              Unknown

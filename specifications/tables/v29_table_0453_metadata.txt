@@ -1,0 +1,10 @@
+                                                                                                                          Table Metadata
+  Table                                                                             0453
+  Description                                                                       Table of codes specifying the more specific service or occupation within the
+                                                                                    healthcare provider type of the practitioner at a specific organization unit.
+                                                                                    Health Care Provider Classific ationIn the US, it is suggested to use ANSI ASC
+                                                                                    X12 Health Care Provider Taxonomy, Level 2 -                                         Classificatio n
+  Type                                                                              User
+  Steward                                                                           PA
+  where used                                                                        ORG-7
+  HL7 Version  Introduced                                                           2.4

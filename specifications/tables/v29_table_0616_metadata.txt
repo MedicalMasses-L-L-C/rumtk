@@ -1,0 +1,7 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0616
+  Description                                                                                             Table of codes specifying the reason this address was marked as "ended".
+  Type                                                                                                    User
+  Steward                                                                                                 InM
+  where used                                                                                              XAD.15
+  HL7 Version  Introduced                                                                                 2.6

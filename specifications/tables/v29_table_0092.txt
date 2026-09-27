@@ -1,0 +1,4 @@
+                                                                                                                                      Table 0092Coded Content
+   Value                                            Display Name                                                    Definition                                                                                                                                                                         Comment/                                        Status
+                                                                                                                                                                                                                                                                                                       Usage Note
+   R                                                Re-admission

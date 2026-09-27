@@ -1,0 +1,7 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0499
+  Description                                                                                    Table of codes specifying the reason the subject's consent was not sought.
+  Type                                                                                           User
+  Steward                                                                                        StrucDoc
+  where used                                                                                     CON:20
+  HL7 Version Introduced                                                                         2.5

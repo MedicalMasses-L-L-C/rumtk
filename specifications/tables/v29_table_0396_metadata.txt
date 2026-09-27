@@ -1,0 +1,16 @@
+                                                                                                                         Table Metadata
+  Table                                                                             0396
+  Description                                                                       HL7-defined table of specifying the coding system.  This table is maintained
+                                                                                    outside of the published Version 2 standards; the content is not listed here; the
+                                                                                    content is maintained outside of the Version 2 Product Family maintenance
+                                                                                    process.  For the list of codes in the table, see the HL7 Webpage rendering, at
+                                                                                    http://www.hl7.org/Special/committees/vocab/table_0396/index.cfm.
+  Type                                                                              HL7-EXT
+  Steward                                                                           Vo     c     abulary
+
+
+
+
+
+ where used                                                                         CWE.3, CWE.6, CWE, and numerous places
+ HL7 Version  Introduced                                                    2.4

@@ -1,0 +1,9 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0208
+  Description                                                                               HL7-defined table of codes defining precise response status concepts in support
+                                                                                            of HL7 Version 2 query messaging.  It is commonly used to indicate no data is
+                                                                                            found that matches the query parameters, but no error.
+  Type                                                                                      HL7
+  Steward                                                                                   InM
+  where used                                                                                QAK.2
+  HL7 Version  Introduced                                                                   2.3

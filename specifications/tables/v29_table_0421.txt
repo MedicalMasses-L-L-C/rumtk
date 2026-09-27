@@ -1,0 +1,6 @@
+                                                                                                                                    Table 0421Coded Content
+   Value                                           Display Name                                                    Definition                                                                                                                                                                     Comment/                                        Status
+                                                                                                                                                                                                                                                                                                  Usage Note
+   MI                                              Mild
+   MO                                              Moderate
+   SE                                              Severe

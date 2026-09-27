@@ -1,0 +1,67 @@
+                                                                                                                Table 0200Coded Content
+  Value                             Display Name                                           Definition                                            Comment/ Usage Note                                                                                                                             Status
+  A                                 Assigned                                                                                                     A name assigned to a person. Reasons some
+                                                                                                                                                 organizations assign alternate names may include not
+                                                                                                                                                 knowing the person's name, or to maintain anonymity.
+                                                                                                                                                 Some, but not necessarily all, of the name types that
+                                                                                                                                                 people call "alias" may fit into this category.
+  B                                 Birth name                                                                                                   A name that a person had shortly after being born.
+                                                                                                                                                 Usually for family names but may be used to
+                                                                                                                                                 mark given names at birth that may have changed
+                                                                                                                                                 later.
+                                                                                                                                                 This is not for temporary names assigned at birth
+                                                                                                                                                 while a newborn is not yet named
+  BAD                               Bad Name                                                                                                     A name that was wrongly used in the past and is
+                                                                                                                                                 now  maintained only for the purposes of
+                                                                                                                                                 searching
+  C                                 Adopted Name                                                                                                 A name acquired by adoption  Value                        Display Name                                  Definition                                     Comment/ Usage Note                                                                                                      Status
+  D                            Customary Name                                                                               Known as/conventional/the one you use.  May
+                                                                                                                            also be known asa preferred name.
+  F                            Fathers Name                                                                                 Fathers Name ( Patronymic Name)
+  I                            Licensing Name
+  K                            Business name                                                                                A name used in a Professional or Business
+                                                                                                                            context. Also includes writer’s pseudonym,
+                                                                                                                            artist’s name, stage name, street name, etc.
+
+                                                                                                                            An example of use is where a person with
+                                                                                                                            multiple proper names (i.e. married) uses one of
+                                                                                                                            the particular names in a professional
+  L                            Official Registry                                                                            The formal name as registered in an official
+                               Name                                                                                         (government) registry, but which name might not
+                                                                                                                            be commonly used. May correspond to legal name
+                                                                                                                            For many people, customary name is also their
+                                                                                                                            official name
+  M                            Maiden Name                                                                                  A name you had just before you got married
+  MSK                          Masked                                                                                       There is information on this item available but it
+                                                                                                                            has not been provided by the sender due to
+                                                                                                                            security, privacy or other reasons. There may be
+                                                                                                                            an alternate mechanism for gaining access to this
+                                                                                                                            information.
+
+                                                                                                                            Note: using this null flavor does provide
+                                                                                                                            information that may be a breach of
+                                                                                                                            confidentiality, even though no detail data is
+                                                                                                                            provided. Its primary purpose is for those
+                                                                                                                            circumstances where it is necessary to inform the
+                                                                                                                            receiver that the information does exist without
+                                                                                                                            providing any detail.
+  N                            Nickname                                                                                     Nickname /"Call me" Name/Street Name
+  NAV                          Temporarily                                                                                  Information is not available at this time but it is
+                               Unavailable                                                                                  expected that it will be available later.
+                                                                                                                            Includes John or Jane Doe situations
+  NB                           Newborn Name                                                                                 A name assigned on a temporary basis at birth. i.e.
+                                                                                                                            "Baby of Smith"
+  NOUSE                        No Longer To Be                                                                              Name not to be used anymore for personal reasons
+                               Used
+  P                            Name of                                                                                      Retained for backward compatibility only as of
+                               Partner/Spouse                                                                               v2.7.
+  R                            Registered Name                                                                              (animals only)
+                                                                                                                            Retained for backwards compatibility only as of
+                                                                                                                            v2.7. Use "L" instead - has same meaning
+  REL                          Religious                                                                                    e.g. Sister Mary Francis, Brother John
+  S                            Pseudonym                                                                                    Coded Pseudo-Name to ensure anonymity
+  T                            Indigenous/Tribal                                                                            Indigenous/Tribal/Community Name  e.g. Chief
+                                                                                                                            Red Cloud
+  TEMP                         Temporary Name                                                                               A temporary name. Note that a name valid time
+                                                                                                                            can provide more detailed information.
+  U                            Unknown                                                                                      Unknown

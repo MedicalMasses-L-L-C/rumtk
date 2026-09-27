@@ -1,0 +1,7 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0186
+  Description                                                                                               Table of codes specifying the category of practitioner.  No suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   PA
+  where used                                                                                                PRA-3
+  HL7 Version Introduced                                                                                    2.2

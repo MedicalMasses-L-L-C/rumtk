@@ -1,0 +1,5 @@
+                                                                                                                                                                 Table Metadata
+  Table                                                                                                        0686
+  Description                                                                                                  9999
+  Type                                                                                                         undefined
+  where used                                                                                                   RQD-4

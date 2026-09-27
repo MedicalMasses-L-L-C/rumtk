@@ -1,0 +1,6 @@
+                                                                                                                          Table 0547Coded Content
+   Value                                       Display Name                                               Definition                                                                                                                                                        Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+   C                                           County/Parish
+   S                                           State/Province
+   N                                           Country

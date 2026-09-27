@@ -1,0 +1,6 @@
+                                                                                                                                  Table 0437Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                               Usage Note
+   B                                              Bracelet
+   N                                              Necklace
+   W                                              Wallet Card

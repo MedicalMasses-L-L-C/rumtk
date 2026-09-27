@@ -1,0 +1,7 @@
+                                                                                                                                            Table 0187Coded Content
+   Value                                              Display Name                                                        Definition                                                                                                                                                                                 Comment/                                           Status
+                                                                                                                                                                                                                                                                                                                     Usage Note
+   I                                                  Institution bills for
+                                                      provider
+   P                                                  Provider does
+                                                      own billing

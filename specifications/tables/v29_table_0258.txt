@@ -1,0 +1,8 @@
+                                                                                                                              Table 0258Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                              Comment/                                     Status
+                                                                                                                                                                                                                                                                                     Usage Note
+  CONTROL                                       Control
+  PATIENT                                       Patient
+  DONOR                                         Donor
+  BPU                                           Blood product
+                                                unit

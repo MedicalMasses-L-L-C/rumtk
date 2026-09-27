@@ -1,0 +1,9 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0401
+  Description                                                                                       Table of codes which specify codes that indicate an agency that the practitioner
+                                                                                                    is authorized to bill for medical services.  Existing codes only for use in the
+                                                                                                    United States.
+  Type                                                                                              User
+  Steward                                                                                           PA
+  where used                                                                                        PRA-11
+  HL7 Version  Introduced                                                                           2.4

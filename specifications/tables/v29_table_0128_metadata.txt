@@ -1,0 +1,7 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0128
+  Description                                                                                               Table of codes which specify the general severity of an allergy.
+  Type                                                                                                      User
+  Steward                                                                                                   PA
+  where used                                                                                                AL1-4
+  HL7 Version  Introduced                                                                                   2.2

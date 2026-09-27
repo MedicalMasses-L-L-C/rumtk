@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0363
+  Description                                                                                  Table of codes specifying a unique name of the system (or organization or
+                                                                                               agency or department) that creates the data.  No suggested values.
+  Type                                                                                         User
+  Steward                                                                                      InM
+  where used                                                                                   CX.4, EI.2, PL.11, PPN.9, XCN.9, XON.6
+  HL7 Version  Introduced                                                                      2.3.1

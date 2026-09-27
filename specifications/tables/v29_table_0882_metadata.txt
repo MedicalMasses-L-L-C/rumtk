@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0882
+  Description                                                                                         Table of codes specifying the role of the physician ("self-employed" or
+                                                                                                      "employed").
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          PSL-32
+  HL7 Version  Introduced                                                                             2.6

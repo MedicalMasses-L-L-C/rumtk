@@ -1,0 +1,11 @@
+                                                                                                                    Table 0742Coded Content
+  Value                               Display Name                                                                                                                                               Definition                                                     Comment/                                  Status
+                                                                                                                                                                                                                                                                Usage Note
+  00                                  Effective weight calculated
+  01                                  Hospital specific contract
+  03                                  Eeffective weight for transfer/referral calculated
+  04                                  Referral from other hospital based on a cooperation
+                                      (no DRG reimbursement)
+  05                                  Invalid length of stay
+   10                                    No information/entry in cost data for this DRG
+   11                                    No relative weight found for department (type)

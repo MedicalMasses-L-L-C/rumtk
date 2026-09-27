@@ -1,0 +1,16 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0309
+  Description                                                                           Table of codes specifying the type of insurance coverage or what types of
+                                                                                        services are covered for the purposes of a billing system.  For example, a
+                                                                                        physician billing system will only want to receive insurance information for
+                                                                                        plans that cover physician/professional charges.
+  Type                                                                                  User
+  Steward                                                                               FM
+
+
+
+
+
+
+  where used                                                                            IN1-47
+  HL7 Version  Introduced                                                                            2.3

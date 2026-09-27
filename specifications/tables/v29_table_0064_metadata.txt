@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0064
+  Description                                                                                      Table of codes specifying the financial class assigned to a person.  No suggested
+                                                                                                   values.
+  Type                                                                                             User
+  Steward                                                                                          InM/FM
+  where used                                                                                       FC.1, PV1-20
+  HL7 Version Introduced                                                                           2.1

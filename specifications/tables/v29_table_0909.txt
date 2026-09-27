@@ -1,0 +1,24 @@
+                                                                                                                    Table 0909Coded Content
+  Value                              Display Name                                                                                                                                                                    Definition                                 Comment/                                  Status
+                                                                                                                                                                                                                                                                Usage Note
+  STBD                               Share To Be Determined -                                                                                                                                                                                                   NA
+                                     Category to be determined
+  SIMM                               Share Immediately -                                                                                                                                                                                                        Immediate
+                                     Share result with patient immediately
+  SWNL                               Share Within Normal Limits -                                                                                                                                                                                               immediate
+                                     Share result in reference/therapeutic range with patient                                                                                                                                                                   1 day
+                                     immediately
+                                     Share result out of reference/therapeutic ranges with patient
+                                     after 1 or more business day as agreed to by the systems in
+                                     play.
+  SID                                Share In1 Day -                                                                                                                                                                                                            1 day
+                                     Share result regardless of reference/therapeutic range after 1
+                                     or more business day as agreed to by the systems in play.
+  SIDC                               Share in 1 Day Conditionally -                                                                                                                                                                                             1 day
+                                     Share result in reference ranges/therapeutic with patient                                                                                                                                                                  Withhold
+                                     after 1 or more business day as agreed to by the systems in
+                                     play.
+                                     Withhold result out of reference/therapeutic range until
+                                     physician release
+  SWTH                               Share Withhold -                                                                                                                                                                                                           Withhold
+                                     Withhold result regardless of reference/therapeutic ranges

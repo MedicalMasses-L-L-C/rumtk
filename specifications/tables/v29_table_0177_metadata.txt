@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0177
+  Description                                                                                        Table of codes specifying the degree to which special confidentiality protection
+                                                                                                     should be applied to the observation.
+  Type                                                                                               User
+  Steward                                                                                            InM
+  where used                                                                                         OM1-30, ORC-28
+  HL7 Version  Introduced                                                                            2.2

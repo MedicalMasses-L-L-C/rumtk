@@ -1,0 +1,7 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0061
+  Description                                                                                          HL7-defined table of codes specifying the check digit scheme employed.
+  Type                                                                                                 HL7
+  Steward                                                                                              InM
+  where used                                                                                           CX.3, PPN.12, XCN.12, XON.5
+  HL7 Version  Introduced                                                                              2.1

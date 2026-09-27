@@ -1,0 +1,6 @@
+                                                                                                                                      Table 0280Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                        Comment/                                         Status
+                                                                                                                                                                                                                                                                                                       Usage Note
+   S                                                STAT
+   A                                                ASAP
+   R                                                Routine

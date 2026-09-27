@@ -1,0 +1,11 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0353
+  Description                                                                                HL7-defined table of codes that represent an exception identifier code; that is, a
+                                                                                             code that is not defined in the value set (either model or site          -extended).   These
+                                                                                             are occationsally referred to a 'flavors of null' although this set of concepts is
+                                                                                             specific to the CWE datatype used in Version 2 messaging, and the codes may
+                                                                                             be used in the 'identifier' component of the 'triplets' in that datatype.
+  Type                                                                                       HL7
+  Steward                                                                                    Vocab
+  where used                                                                                 CWE.1
+  HL7 Version  Introduced                                                                    2.3.1

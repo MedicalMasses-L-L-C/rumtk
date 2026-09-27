@@ -1,0 +1,10 @@
+                                                                                                                         Table Metadata
+  Table                                                                             0371
+  Description                                                                       HL7-defined table of codes specifying any additive introduced to the specimen
+                                                                                    before or at the time of collection.  These additives may be introduced in order
+                                                                                    to preserve, maintain or enhance the particular nature or component of the
+                                                                                    specimen.
+  Type                                                                              HL7
+  Steward                                                                           OO
+  where used                                                                        SPM-6, SAC-27
+  HL7 Version  Introduced                                                           2.4

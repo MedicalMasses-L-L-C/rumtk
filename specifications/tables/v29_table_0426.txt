@@ -1,0 +1,18 @@
+                                                                                                                             Table 0426Coded Content
+   Value                                        Display Name                                                                                                                                           Definition                                                                  Comment/                                     Status
+                                                                                                                                                                                                                                                                                   Usage Note
+   CRYO                                         Cryoprecipitated AHF
+   CRY OP                                       Pooled Cryoprecipitate
+   FFP                                          Fresh Frozen Plasma
+   FFPTH                                        Fresh Frozen Plasma - T h awed
+   PC                                           Packed Cells
+   PCA                                          Autologous Packed Cells
+   PCNEO                                        Packed Cells - Neonatal
+   PCW                                          Washed Packed Cells
+   PLT                                          Platelet Concentrate
+   PLTNEO                                       Reduced Volume Platelets
+   PLTP                                         Pooled Platelets
+   PLTPH                                        Platelet Pheresis
+   PLTPHLR                                      Leukoreduced Platelet Pheresis
+   RWB                                          Reconstituted Whole Blood
+   WBA                                          Autologous Whole Blood

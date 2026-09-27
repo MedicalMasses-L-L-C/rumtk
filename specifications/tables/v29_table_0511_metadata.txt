@@ -1,0 +1,18 @@
+                                                                                                                 Table Metadata
+  Table                                                                       0511
+  Description                                                                 HL7-defined table of codes used to specify the interpretation for the blood
+                                                                              product observation status codes.  A status is considered preliminary until a
+                                                                              blood product has reached a final disposition for the patient. For example, when
+                                                                              the product is first cross-matched and a status message is sent, it would be
+                                                                              considered preliminary. When the product is dispensed to the patient, that status
+                                                                              would also be considered preliminary.  However, once the product is transfused,
+                                                                              the status would be considered final.
+  Type                                                                        HL7
+  Steward                                                                     OO
+  where used                                                                  BPX-3, BTX-12
+
+
+
+
+
+  HL7 Version  Introduced                                                            2.5

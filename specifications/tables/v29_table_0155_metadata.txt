@@ -1,0 +1,9 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0155
+  Description                                                                                      HL7-defined table of codes which identify conditions under which accept
+                                                                                                   acknowledgments are required to be returned in response to a message, and
+                                                                                                   required for enhanced acknowledgment mode.
+  Type                                                                                             HL7
+  Steward                                                                                          InM
+  where used                                                                                       MSH-15, MSH-16
+  HL7 Version  Introduced                                                                          2.2

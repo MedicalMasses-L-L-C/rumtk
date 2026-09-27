@@ -1,0 +1,10 @@
+                                                                                                                 Table 0207Coded Content
+  Value                                    Display Name                                                                                                                             Definition                                                          Comment/                                 Status
+                                                                                                                                                                                                                                                        Usage Note
+  A                                        Archive
+  R                                        Restore from archive
+  I                                        Initial load
+  T                                        Current processing, transmitted at intervals
+                                           (scheduled or on demand)
+  Not present                              Not present (the default, meaning current                                                                                                                                                                                                             D
+                                           processing)

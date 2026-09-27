@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0250
+  Description                                                                                   HL7-defined table of codes used to provide an estimate of whether an issue with
+                                                                                                a  product was the cause of an event.
+  Type                                                                                          HL7
+  Steward                                                                                       OO
+  where used                                                                                    PCR-20
+  HL7 Version Introduced                                                                        2.3

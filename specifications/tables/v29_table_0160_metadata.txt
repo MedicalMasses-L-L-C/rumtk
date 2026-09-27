@@ -1,0 +1,7 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0160
+  Description                                                                                         HL7-defined table of codes which specify the type of dietary tray.
+  Type                                                                                                HL7
+  Steward                                                                                             OO
+  where used                                                                                          ODT-1
+  HL7 Version  Introduced                                                                             2.2

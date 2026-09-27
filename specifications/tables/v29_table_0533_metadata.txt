@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0533
+  Description                                                                                    Table of codes that specify the application specific code identifying the specific
+                                                                                                 error that occurred.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        InM
+  where used                                                                                     ERR-                                                     5
+  HL7 Version  Introduced                                                                        2.5

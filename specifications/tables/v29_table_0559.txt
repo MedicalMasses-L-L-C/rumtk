@@ -1,0 +1,6 @@
+                                                                                                                                          Table 0559Coded Content
+   Value                                             Display Name                                                       Definition                                                                                                                                                                              Comment/                                          Status
+                                                                                                                                                                                                                                                                                                                Usage Note
+   P                                                 Processed
+   D                                                 Denied
+   R                                                 Rejected

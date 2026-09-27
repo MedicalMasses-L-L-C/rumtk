@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0139
+  Description                                                                                       Table of codes specifying the required employer information data for UB82
+                                                                                                    form locator 71.  No suggested values.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        IN1-50, IN2-                    4
+  HL7 Version  Introduced                                                                           2.2

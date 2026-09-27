@@ -1,0 +1,9 @@
+                                                                                                                                    Table 0330Coded Content
+  Value                                            Display Name                                                                                                                    Definition                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                   Usage Note
+  510K                                             510 (K)
+  510E                                             510 (K) exempt
+  PMA                                              Premarketing authorization
+  PRE                                              Preamendment
+  TXN                                              Transitional
+  522S                                             Post marketing study (522)

@@ -1,0 +1,7 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0357
+  Description                                                                                 HL7-defined table of codes specifying the HL7 (communications) error code.
+  Type                                                                                        HL7
+  Steward                                                                                     InM
+  where used                                                                                  ERR-                                                     3
+  HL7 Version  Introduced                                                                     2.3.1

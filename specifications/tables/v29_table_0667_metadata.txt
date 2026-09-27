@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0667
+  Description                                                                                           Table of codes specifying the state of the data as provided from a device.
+  Type                                                                                                  User
+  Steward                                                                                               OO
+  where used                                                                                            SDD-4
+  HL7 Version  Introduced                                                                               2.6

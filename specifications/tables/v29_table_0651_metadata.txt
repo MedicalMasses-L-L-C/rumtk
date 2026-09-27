@@ -1,0 +1,8 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                      0651
+  Description                                                                                                Table of codes specifying the method used to calculate employee labor and
+                                                                                                             measure employee productivity.
+  Type                                                                                                       User
+  Steward                                                                                                    OO
+  where used                                                                                                 SCP-2
+  HL7 Version  Introduced                                                                                    2.6

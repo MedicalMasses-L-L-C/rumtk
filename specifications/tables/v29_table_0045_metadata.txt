@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0045
+  Description                                                                                          Table of codes specifying whether the patient will be extended certain special
+                                                                                                       courtesies.  No suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           PV1-22
+  HL7 Version Introduced                                                                               2.1

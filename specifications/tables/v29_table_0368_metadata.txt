@@ -1,0 +1,7 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0368
+  Description                                                                                            Table of codes that identify the comment the component is to initiate.
+  Type                                                                                                   User
+  Steward                                                                                                OO
+  where used                                                                                             ECD-2, ISD-2
+  HL7 Version  Introduced                                                                                2.4

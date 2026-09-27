@@ -1,0 +1,15 @@
+                                                                                                                          Table Metadata
+  Table                                                                                  0487
+
+
+
+
+
+  Description                                                                            HL7-defined table of codes that describe the precise nature of an entity that may
+                                                                                         be used as the source material for an observation.  This is one of two code
+                                                                                         systems that are used instead of table 0070 (code system
+                                                                                         2.16.840.1.113883.18.28) which conflated specimen types and specimen
+                                                                                         collection methods.
+  Type                                                                                   HL7
+  where used                                                                             SPM-4
+  HL7 Version  Introduced                                                                2.5

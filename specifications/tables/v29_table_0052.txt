@@ -1,0 +1,6 @@
+                                                                                                                                     Table 0052Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                        Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   A                                               Admitting
+   W                                               Working
+   F                                               Final

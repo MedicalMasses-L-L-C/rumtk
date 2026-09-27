@@ -1,0 +1,8 @@
+                                                                                                                                                              Table Metadata
+  Table                                                                                                      0433
+  Description                                                                                                Table of codes specifying non-clincal precautions that need to be taken with the
+                                                                                                             patient.
+  Type                                                                                                       User
+  Steward                                                                                                    PA
+  where used                                                                                                 PV2-41
+  HL7 Version  Introduced                                                                                    2.4

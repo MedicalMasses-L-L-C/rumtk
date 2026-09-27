@@ -1,0 +1,17 @@
+                                                                                                                 Table Metadata
+  Table                                                                       0174
+  Description                                                                 Table of codes specifying an identification of a test battery, an entire functional
+                                                                              procedure or study, a single test value (observation), multiple test batteries or
+                                                                              functional procedures as an orderable unit (profile), or a single test value
+                                                                              (observation) calculated from other independent observations, typically used as
+                                                                              an indicator for Master Files.
+
+
+
+
+
+
+  Type                                                                        User
+  Steward                                                                     InM/OO
+  where used                                                                  OM1-18
+  HL7 Version  Introduced                                                      2.2

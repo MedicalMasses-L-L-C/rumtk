@@ -1,0 +1,211 @@
+                                                                                                                    Table 0076Coded Content
+  Value                                     Display Name                                                                                                                    Definition                                Comment/ Usage Note                                                                  Status
+  ACK                                       General acknowledgment message                                                                                                                                            2
+  ADR                                       ADT response                                                                                                                                                              3 - Deprecated
+  ADT                                       ADT message                                                                                                                                                               3
+  BAR                                       Add/change billing account                                                                                                                                                6
+  BPS                                       Blood product dispense status message                                                                                                                                     4
+  BRP                                       Blood product dispense status                                                                                                                                             4
+                                            acknowledgement message
+  BRT                                       Blood product transfusion/disposition                                                                                                                                     4
+                                            acknowledgement message
+  BTS                                       Blood product transfusion/disposition                                                                                                                                     4
+                                            message
+  CCF                                       Collaborative Care Fetch                                                                                                                                                  7
+  CCI                                       Collaborative Care Information                                                                                                                                            7
+  CCM                                       Collaborative Care Message                                                                                                                                                7
+  CCQ                                       Collaborative Care Referral                                                                                                                                               7
+  CCU                                       Collaborative Care Referral                                                                                                                                               7
+  CQU                                       Collaborative Care Referral                                                                                                                                               7
+  CRM                                       Clinical study registration message                                                                                                                                       7
+  CSU                                       Unsolicited study data message                                                                                                                                            7
+  DBC                                       Create Donor Record                                                                                                                                                       4
+  DBU                                       Update Donor Record                                                                                                                                                       4
+  DEL                                       Donor Eligibility                                                                                                                                                         4
+  DEO                                       Donor Eligibility Observation                                                                                                                                             4
+  DER                                       Donor Eligibility Request                                                                                                                                                 4
+  DFT                                       Detail financial transactions                                                                                                                                             6  Value                              Display Name                                                                                                Definition                          Comment/ Usage Note                                                    Status
+  DOC                                Document response                                                                                                                               9 - Deprecated
+  DPR                                Donation Procedure                                                                                                                              4
+  DRC                                Donor Request to Collect                                                                                                                        4
+  DSR                                Display response                                                                                                                                5 - Deprecated
+  EAC                                Automated equipment command message                                                                                                             13
+  EAN                                Automated equipment notification                                                                                                                13
+                                     message
+  EAR                                Automated equipment response message                                                                                                            13
+  EHC                                Health Care Invoice                                                                                                                             16
+  ESR                                Automated equipment status update                                                                                                               13
+                                     acknowledgment message
+  ESU                                Automated equipment status update                                                                                                               13
+                                     message
+  INR                                Automated equipment inventory request                                                                                                           13
+                                     message
+  INU                                Automated equipment inventory update                                                                                                            13
+                                     message
+  LSR                                Automated equipment log/service request                                                                                                         13
+                                     message
+  LSU                                Automated equipment log/service update                                                                                                          13
+                                     message
+  MDM                                Medical document management                                                                                                                     9
+  MFD                                Master files delayed application                                                                                                                8 - Deprecated
+                                     acknowledgment
+  MFK                                Master files application acknowledgment                                                                                                         8
+  MFN                                Master files notification                                                                                                                       8
+  MFQ                                Master files query                                                                                                                              8 - Deprecated
+  MFR                                Master files response                                                                                                                           8 - Deprecated
+  NMD                                Application management data message                                                                                                             14
+  NMQ                                Application management query message                                                                                                            14 - Deprecated
+  NMR                                Application management response                                                                                                                 14 - Deprecated
+                                     message
+  OMB                                Blood product order message                                                                                                                     4
+  OMD                                Dietary order                                                                                                                                   4
+  OMG                                General clinical order message                                                                                                                  4
+  OMI                                Imaging order                                                                                                                                   4
+  OML                                Laboratory order message                                                                                                                        4
+  OMN                                Non-stock requisition order message                                                                                                             4
+  OMP                                Pharmacy/treatment order message                                                                                                                4
+  OMQ                                General order message with document                                                                                                             4
+                                     payload
+  OMS                                Stock requisition order message                                                                                                                 4
+  OPL                                Population/Location-Based Laboratory                                                                                                            4
+                                     Order Message
+  OPR                                Population/Location-Based Laboratory                                                                                                            4
+                                     Order Acknowledgment Message
+  OPU                                Unsolicited Population/Location-Based                                                                                                           7
+                                     Laboratory Observation Message
+  ORA                                Observation Report Acknowledgment                                                                                                               7
+  ORB                                Blood product order acknowledgement                                                                                                             4
+                                     message
+  ORD                                Dietary order acknowledgment message                                                                                                            4
+  ORF                                Query for results of observation                                                                                                                7 - Deprecated
+  ORG                                 General clinical order acknowledgment                                                                                                             4
+                                      message
+  ORI                                 Imaging order acknowledgement message                                                                                                             4
+  ORL                                 Laboratory acknowledgment message                                                                                                                 7
+                                      (unsolicited)
+  ORM                                 Pharmacy/treatment order message                                                                                                                  4 - Deprecated
+  ORN                                 Non-stock requisition - General order                                                                                                             4
+                                      acknowledgment message
+  ORP                                 Pharmacy/treatment order                                                                                                                          4
+                                      acknowledgment message
+  ORR                                 General order response message response                                                                                                           4 - Deprecated
+                                      to any ORM
+  ORS                                 Stock requisition - Order acknowledgment                                                                                                          4
+                                      message
+  ORU                                 Unsolicited transmission of an observation                                                                                                        7
+                                      message
+  ORX                                 General Order Message with Document                                                                                                               4
+                                      Payload Acknowledgement
+  OSM                                 Specimen Shipment Message                                                                                                                         7
+  OSQ                                 Query response for order status                                                                                                                   4 - Deprecated
+  OSR                                 Query response for order status                                                                                                                   4 - Deprecated
+  OSU                                 Order status update                                                                                                                               4
+  OUL                                 Unsolicited laboratory observation                                                                                                                7
+                                      message
+  PEX                                 Product experience message                                                                                                                        7
+  PGL                                 Patient goal message                                                                                                                              12
+  PIN                                 Patient insurance information                                                                                                                     11
+  PMU                                 Add personnel record                                                                                                                              15
+  PPG                                 Patient pathway message (goal-oriented)                                                                                                           12
+  PPP                                 Patient pathway message (problem-                                                                                                                 12
+                                      oriented)
+  PPR                                 Patient problem message                                                                                                                           12
+  PPT                                 Patient pathway goal-oriented response                                                                                                            Deprecated
+  PPV                                 Patient goal response                                                                                                                             Deprecated
+  PRR                                 Patient problem response                                                                                                                          Deprecated
+  PTR                                 Patient pathway problem-oriented                                                                                                                  Deprecated
+                                      response
+  QBP                                 Query by parameter                                                                                                                                5
+  QCK                                 Query general acknowledgment                                                                                  Deferred                            5 - Deprecated
+                                                                                                                                                    query
+  QCN                                 Cancel query                                                                                                                                      5
+  QRY                                 Query, original mode                                                                                                                              3
+  QSB                                 Create subscription                                                                                                                               5
+  QSX                                 Cancel subscription/acknowledge message                                                                                                           5
+  QVR                                 Query for previous events                                                                                                                         5
+  RAR                                 Pharmacy/treatment administration                                                                                                                 4 - Deprecated
+                                      information
+  RAS                                 Pharmacy/treatment administration                                                                                                                 4
+                                      message
+  RCI                                 Return clinical information                                                                                                                       11
+  RCL                                 Return clinical list                                                                                                                              11
+  RDE                                 Pharmacy/treatment encoded order                                                                                                                  4
+                                      message  Value                                    Display Name                                                                                                                Definition                               Comment/ Usage Note                                                                Status
+  RDR                                      Pharmacy/treatment dispense information                                                                                                                              4
+  RDS                                      Pharmacy/treatment dispense message                                                                                                                                  4
+  RDY                                      Display based response                                                                                                                                               5
+  REF                                      Patient referral                                                                                                                                                     11
+  RER                                      Pharmacy/treatment encoded order                                                                                                                                     4 - Deprecated
+                                           information
+  RGR                                      Pharmacy/treatment dose information                                                                                                                                  4 - Deprecated
+  RGV                                      Pharmacy/treatment give message                                                                                                                                      4
+  ROR                                      Pharmacy/treatment order response                                                                                                                                    4 - Deprecated
+  RPA                                      Return patient authorization                                                                                                                                         11
+  RPI                                      Return patient information                                                                                                                                           11
+  RPL                                      Return patient display list                                                                                                                                          11
+  RP R                                     Return patient list                                                                                                                                                  11
+  RQA                                      Request patient authorization                                                                                                                                        11
+  RQC                                      Request clinical information                                                                                                                                         11
+  RQI                                      Request patient information                                                                                                                                          11
+  RQP                                      Request patient demographics                                                                                                                                         11
+  RRA                                      Pharmacy/treatment administration                                                                                                                                    4
+                                           acknowledgment message
+  RRD                                      Pharmacy/treatment dispense                                                                                                                                          4
+                                           acknowledgment message
+  RRE                                      Pharmacy/treatment encoded order                                                                                                                                     4
+                                           acknowledgment message
+  RRG                                      Pharmacy/treatment give acknowledgment                                                                                                                               4
+                                           message
+  RRI                                      Return referral information                                                                                                                                          11
+  RSP                                      Segment pattern response                                                                                                                                             5
+  RTB                                      Tabular response                                                                                                                                                     5
+  SCN                                      Notification of Anti-Microbial Device                                                                                                                                17
+                                           Cycle Data
+  SDN                                      Notification of Anti-Microbial Device                                                                                                                                17
+                                           Data
+  SDR                                      Sterilization anti-microbial device data                                                                                                                             17
+                                           request
+  SET                                      Specimen Event Tracking                                                                                                     This                                                                                                                        N
+                                                                                                                                                                       message
+                                                                                                                                                                       type is used
+                                                                                                                                                                       to report
+                                                                                                                                                                       how the
+                                                                                                                                                                       specimen
+                                                                                                                                                                       moves
+                                                                                                                                                                       through its
+                                                                                                                                                                       lifecycle
+                                                                                                                                                                       from
+                                                                                                                                                                       collection,
+                                                                                                                                                                       identificatio
+                                                                                                                                                                       n, transport,
+                                                                                                                                                                       acceptance
+                                                                                                                                                                       or rejection,
+                                                                                                                                                                       processing
+                                                                                                                                                                       to storage
+                                                                                                                                                                       and
+                                                                                                                                                                       disposition.
+  SIU                                      Schedule  information unsolicited                                                                                                                                    10
+  SLN                               Notification of New Sterilization Lot                                                                                                      17
+  SLR                               Sterilization lot request                                                                                                                  17
+  SMD                               Sterilization anti-microbial device cycle                                                                                                  17
+                                    data request
+  SQM                               Schedule query message                                                                                                                     10 - Deprecated
+  SQR                               Schedule query response                                                                                                                    10 - Deprecated
+  SRM                               Schedule request message                                                                                                                   10
+  SRR                               Scheduled request response                                                                                                                 10
+  SSR                               Specimen status request message                                                                                                            13
+  SSU                               Specimen status update message                                                                                                             13
+  STC                               Notification of Sterilization Configuration                                                                                                17
+  STI                               Sterilization item request                                                                                                                 17
+  SUR                               Summary product experience report                                                                                                          7 - Deprecated
+  TBR                               Tabular  data response                                                                                                                     5 - Deprecated
+  TCR                               Automated equipment test code settings                                                                                                     13
+                                    request message
+  TCU                               Automated equipment test code settings                                                                                                     13
+                                    update message
+  UDM                               Unsolicited display update message                                                                                                         5
+  VXQ                               Query for vaccination record                                                                                                               4 - Deprecated
+  VXR                               Vaccination record response                                                                                                                4 - Deprecated
+  VXU                               Unsolicited vaccination record update                                                                                                      4
+  VXX                               Response for vaccination query with                                                                                                        4 -Deprecated
+                                    multiple PID matches

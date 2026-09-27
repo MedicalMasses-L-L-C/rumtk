@@ -1,0 +1,8 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0022
+  Description                                                                                            Table of codes specifying whether the particular insurance has been billed and,
+                                                                                                         if so, the type of bill.  No suggested values.
+  Type                                                                                                   User
+  Steward                                                                                                FM
+  where used                                                                                             IN1-32
+  HL7 Version  Introduced                                                                                2.1

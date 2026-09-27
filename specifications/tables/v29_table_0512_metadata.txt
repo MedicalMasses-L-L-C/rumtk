@@ -1,0 +1,10 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0512
+  Description                                                                        Table of codes that specify a commercial product.  Examples of commercial
+                                                                                     products are blood derivatives such as Rh Immune Globulin and Factor VIII
+                                                                                     concentrate, Leukoreduction filters and blood administration sets.  No suggested
+                                                                                     values.
+  Type                                                                               User
+  Steward                                                                            OO
+  where used                                                                         BPX-8, BTX-5
+  HL7 Version Introduced                                                             2.5

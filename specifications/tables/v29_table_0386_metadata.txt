@@ -1,0 +1,7 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0386
+  Description                                                                                   Table of codes that identify a supplier of a substance.  No suggested values.
+  Type                                                                                          User
+  Steward                                                                                       OO
+  where used                                                                                    INV-18
+  HL7 Version  Introduced                                                                       2.4

@@ -1,0 +1,8 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0436
+  Description                                                                                      Table of codes specifying the reason the patient should not be exposed to a
+                                                                                                   substance.
+  Type                                                                                             User
+  Steward                                                                                          PA
+  where used                                                                                       IAM-9
+  HL7 Version  Introduced                                                                          2.4

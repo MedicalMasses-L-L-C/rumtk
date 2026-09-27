@@ -1,0 +1,7 @@
+                                                                                                                           Table 0397Coded Content
+  Value                                        Display Name                                                                                                                          Definition                                                  Comment/ Usage Note                                                        Status
+  A                                            Ascending
+  AN                                           Ascending, case insensitive
+  D                                            Descending
+  DN                                           Descending, case insensitive
+  N                                            None

@@ -1,0 +1,7 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0002
+  Description                                                                                             Table of codes specifying a person's marital (civil/legal) status.
+  Type                                                                                                    User
+  Steward                                                                                                 PA
+  where used                                                                                              PID-16
+  HL7 Version  Introduced                                                                                 2.1

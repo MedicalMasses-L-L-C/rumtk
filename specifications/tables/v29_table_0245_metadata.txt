@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0245
+  Description                                                                                    Table of codes used to indicate if a product problem would exist if a product
+                                                                                                 malfunction could lead to death or serious injury.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        OO
+  where used                                                                                     PCR-11
+  HL7 Version Introduced                                                                         2.3

@@ -1,0 +1,7 @@
+                                                                                                                        Table 0124Coded Content
+  Value                                       Display Name                                                                                                                                     Definition                                                               Comment/                                   Status
+                                                                                                                                                                                                                                                                        Usage Note
+  CART                                        Cart - patient travels on cart or gurney
+  PORT                                        The examining device goes to patient's location
+  WALK                                        Patient walks to diagnostic service
+  WHLC                                        Wheelchair

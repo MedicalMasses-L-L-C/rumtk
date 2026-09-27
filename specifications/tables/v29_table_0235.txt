@@ -1,0 +1,21 @@
+                                                                                                                                          Table 0235Coded Content
+   Value                                             Display Name                                                      Definition                                                                                                                                                                              Comment/                                          Status
+                                                                                                                                                                                                                                                                                                               Usage Note
+   C                                                 Clinical trial
+   L                                                 Literature
+   H                                                 Health
+                                                     professional
+   R                                                 Regulatory
+                                                     agency
+   D                                                 Database/registry/
+                                                     poison control
+                                                     center
+   N                                                 Non-healthcare
+                                                     professional
+   P                                                 Patient
+   M                                                 Manufacturer/mar
+                                                     keting authority
+                                                     holder  Value                                        Display Name                                                Definition                                                                                                                                                            Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+  E                                            Distributor
+  O                                            Other

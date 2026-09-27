@@ -1,0 +1,7 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0469
+  Description                                                                                       Table of codes specifying the packaging status of the service.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        GP2-10
+  HL7 Version  Introduced                                                                           2.4

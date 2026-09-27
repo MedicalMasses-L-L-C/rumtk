@@ -1,0 +1,13 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0565
+  Description                                                                                  Table of codes used to specify the reason for this adjustment.
+  Type                                                                                         User
+  Steward                                                                                      FM
+
+
+
+
+
+
+  where used                                                                                   ADJ-7
+  HL7 Version  Introduced                                                                            2.6

@@ -1,0 +1,7 @@
+                                                                                                                                                                         Table Metadata
+   Table                                                                                                             0734
+   Description                                                                                                       Table of codes specifying the status of a grouper in general. US Realm.
+   Type                                                                                                              User
+   Steward                                                                                                           FM
+   where used                                                                                                        DRG-13
+   HL7 Version  Introduced                                                                                           2.6

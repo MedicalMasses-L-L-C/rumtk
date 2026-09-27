@@ -1,0 +1,8 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0078
+  Description                                                                        HL7-defined table of codes which specify a categorical assessment of an
+                                                                                     observation value.
+  Type                                                                               HL7-EXT
+  Steward                                                                            OO
+  where used                                                                         OBX-8
+  HL7 Version  Introduced                                                            2.1

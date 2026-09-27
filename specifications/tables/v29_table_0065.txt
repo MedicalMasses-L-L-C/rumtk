@@ -1,0 +1,10 @@
+                                                                                                                  Table 0065Coded Content
+  Value                                     Display Name                                                                                                                                            Definition                                             Comment/                                  Status
+                                                                                                                                                                                                                                                           Usage Note
+  A                                         Add ordered tests to the existing specimen
+  G                                         Generated order; reflex order
+  L                                         Lab to obtain specimen from patient
+  O                                         Specimen obtained by service other than Lab
+  P                                         Pending specimen; Order sent prior to delivery
+  R                                         Revised order
+  S                                         Schedule the tests specified below

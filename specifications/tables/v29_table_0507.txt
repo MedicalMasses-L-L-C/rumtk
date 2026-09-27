@@ -1,0 +1,8 @@
+                                                                                                         Table 0507Coded Content
+  Value                                 Display Name                                                                                    Definition                                                                         Comment/ Usage                                     Status
+                                                                                                                                                                                                                           Note
+  F                                     Film-with-patient
+  N                                     Notify provider when ready
+  A                                     Alert provider when abnormal
+  CC                                    Copies requested
+  BCC                                   Blind copy

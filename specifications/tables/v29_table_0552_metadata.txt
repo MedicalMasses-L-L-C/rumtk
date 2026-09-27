@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0552
+  Description                                                                                        Table of codes that specify the reason the patient did not sign an Advanced
+                                                                                                     Beneficiary Notice.  No suggested values.
+  Type                                                                                               HL7
+  Steward                                                                                            OO
+  where used                                                                                         ORC-                                                     26
+  HL7 Version Introduced                                                                             2.5

@@ -1,0 +1,8 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0115
+  Description                                                                                Table of codes specifying the healthcare facility with which this visit is
+                                                                                             associated in a multiple facility environment.  No suggested values.
+  Type                                                                                       User
+  Steward                                                                                    I    n    M    /   PA
+  where used                                                                                 DLD.1. PV1-39
+  HL7 Version Introduced                                                                     2.1

@@ -1,0 +1,6 @@
+                                                                                                                                Table 0217Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                 Comment/                                      Status
+                                                                                                                                                                                                                                                                                          Usage Note
+   1                                             Emergency
+   2                                             Urgent
+   3                                             Elective

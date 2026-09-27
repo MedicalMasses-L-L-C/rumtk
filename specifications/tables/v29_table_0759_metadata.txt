@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0759
+  Description                                                                                          Table of codes specifying the admission status for the diagnosis related group
+                                                                                                       (DRG) determination. US Realm.
+  Type                                                                                                 User
+  Steward                                                                                              FM
+  where used                                                                                           DRG-33
+  HL7 Version  Introduced                                                                              2.6

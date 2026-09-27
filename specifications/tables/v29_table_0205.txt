@@ -1,0 +1,11 @@
+                                                                                                                                 Table 0205Coded Content
+  Value                                          Display Name                                                                                                                                 Definition                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                            Usage Note
+  AP                                             administrative price or handling fee
+  DC                                             direct unit cost
+  IC                                             indirect unit cost
+  PF                                             professional fee for performing provider
+  TF                                             technology fee for use of equipment
+  TP                                             total price
+  UP                                             unit price, may be based on length of
+                                                 procedure or service

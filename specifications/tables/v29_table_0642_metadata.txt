@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0642
+  Description                                                                                 Table of codes specifying the calculation method used to determine the resupply
+                                                                                              schedule.
+  Type                                                                                        User
+  Steward                                                                                     OO
+  where used                                                                                  IVT-21
+  HL7 Version  Introduced                                                                     2.6

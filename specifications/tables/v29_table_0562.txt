@@ -1,0 +1,14 @@
+                                                                                                                        Table 0562Coded Content
+   Value                                      Display Name                                                             Definition                                                 Comment/ Usage Note                                                                                                                Status
+   PAPER                                      Paper documentation to
+                                              follow
+   EFORM                                      Electronic form to                                                                                                                  E30 transaction to follow
+                                              follow
+   FAX                                        Fax to follow
+   RTADJ                                      Real Time                                                                                                                           If permitted by Payer
+                                              Adjudication
+                                              Processing
+   DFADJ                                      Deferred Adjudication                                                                                                               If permitted by Payer
+                                              Processing
+   PYRDELA                                    Delayed by a Previous                                                                                                               Allows Provider to explain lateness of
+   Y                                          Payer                                                                                                                               Invoice to a subsequent Payer

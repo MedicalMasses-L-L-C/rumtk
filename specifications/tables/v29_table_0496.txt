@@ -1,0 +1,175 @@
+                                                                                                                 Table 0496Coded Content
+  Value                              Display Name                                                                                   Definition                                             Comment/ Usage Note                                                                                   Status
+  001                                Release of Information/MR /                                                                                                                           Release of Info/ Disclosure
+                                     Authorization to Disclosure Protected
+                                     Health Information
+  002                                Medical Procedure (invasive)                                                                                                                          Medical Treatment/ Procedure
+  003                                Acknowledge Receipt of Privacy                                                                                                                        Acknowledgement/ Notification
+                                     Notice
+  004                                Abortion                                                                                                                                              Medical Treatment/ Procedure
+  005                                Abortion/Laminaria                                                                                                                                    Medical Treatment/ Procedure
+  006                                Accutane - Information                                                                                                                                Medical Treatment/ Procedure
+  007                       Accutane - Woman                                                                                                     Medical Treatment/ Procedure
+  008                       Advanced Beneficiary Notice                                                                                          Acknowledgement/ Notification
+  009                       AFP (Alpha Fetoprotein)                                                                                              Medical Treatment/ Procedure
+                            Screening
+  010                       Amniocentesis (consent &                                                                                             Medical Treatment/ Procedure
+                            refusal)
+  011                       Anatomical Gift (organ                                                                                               Administrative
+                            donation)
+  012                       Anesthesia - Complications                                                                                           Medical Treatment/ Procedure
+  013                       Anesthesia - Questionnaire                                                                                           Medical Treatment/ Procedure
+  014                       Angiogram                                                                                                            Medical Treatment/ Procedure
+  015                       Angioplasty                                                                                                          Medical Treatment/ Procedure
+  016                       Anticancer Drugs                                                                                                     Medical Treatment/ Procedure
+  017                       Antipsychotic Medications                                                                                            Medical Treatment/ Procedure
+  018                       Arthrogram                                                                                                           Medical Treatment/ Procedure
+  019                       Autopsy                                                                                                              Administrative
+  020                       AZT Therapy                                                                                                          Medical Treatment/ Procedure
+  021                       Biliary Drainage                                                                                                     Medical Treatment/ Procedure
+  022                       Biliary Stone Extraction                                                                                             Medical Treatment/ Procedure
+  023                       Biopsy                                                                                                               Medical Treatment/ Procedure
+  024                       Bleeding Time Test                                                                                                   Medical Treatment/ Procedure
+  025                       Bronchogram                                                                                                          Medical Treatment/ Procedure
+  026                       Cardiac Catheterization                                                                                              Medical Treatment/ Procedure
+  027                       Coronary Angiography                                                                                                 Medical Treatment/ Procedure
+  028                       Coronary Angiography w/o                                                  ""      "" w/o                             Medical Treatment/ Procedure
+                            Surgery Capability                                                        Surgery
+                                                                                                      Capability
+  029                       Cataract Op/Implant of FDA                                                                                           Medical Treatment/ Procedure
+                            Aprvd Lens
+  030                       Cataract Op/Implant of                                                                                               Medical Treatment/ Procedure
+                            Investigational Lens
+  031                       Cataract Surgery                                                                                                     Medical Treatment/ Procedure
+  032                       Cholera Immunization                                                                                                 Medical Treatment/ Procedure
+  033                       Cholesterol Screening                                                                                                Medical Treatment/ Procedure
+  034                       Circumcision - Newborn                                                                                               Medical Treatment/ Procedure
+  035                       Colonoscopy                                                                                                          Medical Treatment/ Procedure
+  036                       Contact Lenses                                                                                                       Medical Treatment/ Procedure
+  037                       CT Scan - Cervical & Lumbar                                                                                          Medical Treatment/ Procedure
+  038                       CT Scan w/ IV Contrast Media                                                                                         Medical Treatment/ Procedure
+                            into Vein
+  039                       CVS (Chorionic Villus)                                                                                               Medical Treatment/ Procedure
+                            Sampling
+  040                       Cystospy                                                                                                             Medical Treatment/ Procedure
+  041                       Disclosure of Protected Health                                                                                       Release of Info/ Disclosure
+                            Information to Family/Friends
+  042                       D & C and Conization                                                                                                 Medical Treatment/ Procedure
+  043                       Dacryocystogram                                                                                                      Medical Treatment/ Procedure
+  044                       Diagnostic Isotope                                                                                                   Medical Treatment/ Procedure
+  045                       Drainage of an Abscess                                                                                               Medical Treatment/ Procedure
+  046                       Drug Screening                                                                                                       Medical Treatment/ Procedure
+  047                       Electronic Monitoring of Labor                                       -                                               Medical Treatment/ Procedure
+                            Refusal
+  048                       Endometrial Biopsy                                                                                                   Medical Treatment/ Procedure  Value                     Display Name                                                               Definition                                 Comment/ Usage Note                                                            Status
+  049                       Endoscopy/Sclerosis of                                                                                                Medical Treatment/ Procedure
+                            Esophageal Varices
+  050                       ERCP                                                                                                                  Medical Treatment/ Procedure
+  051                       Exposure to reportable                                                                                                Medical Treatment/ Procedure
+                            Communicable Disease
+  052                       External Version                                                                                                      Medical Treatment/ Procedure
+  053                       Fluorescein Angioscopy                                                                                                Medical Treatment/ Procedure
+  054                       Hepatitis B -                                                                                                         Medical Treatment/ Procedure
+                            Consent/Declination
+  055                       Herniogram                                                                                                            Medical Treatment/ Procedure
+  056                       HIV Test - Consent Refusal                                                                                            Medical Treatment/ Procedure
+  057                       HIV Test - Disclosure                                                                                                 Medical Treatment/ Procedure
+  058                       HIV Test - Prenatal                                                                                                   Medical Treatment/ Procedure
+  059                       Home IV Treatment Program                                                                                             Medical Treatment/ Procedure
+  060                       Home Parenteral Treatment                                                                                             Medical Treatment/ Procedure
+                            Program
+  061                       Hysterectomy                                                                                                          Medical Treatment/ Procedure
+  062                       Hysterosalpingogram                                                                                                   Medical Treatment/ Procedure
+  063                       Injection Slip/ Consent                                                                                               Medical Treatment/ Procedure
+  064                       Intrauterine Device                                                                                                   Medical Treatment/ Procedure
+  065                       Intrauterine Device/Sterilization                                                                                     Medical Treatment/ Procedure
+  066                       Intravascular Infusion of                                                                                             Medical Treatment/ Procedure
+                            Streptokinase/Urokinase
+  067                       Intravenous Cholangiogram                                                                                             Medical Treatment/ Procedure
+  068                       Intravenous Digital Angiography                                                                                       Medical Treatment/ Procedure
+  069                       Iodine Administration                                                                                                 Medical Treatment/ Procedure
+  070                       ISG                                                                                                                   Medical Treatment/ Procedure
+  071                       IVP                                                                                                                   Medical Treatment/ Procedure
+  072                       Laser Photocoagulation                                                                                                Medical Treatment/ Procedure
+  073                       Laser treatment                                                                                                       Medical Treatment/ Procedure
+  074                       Lithium Carbonate                                                                                                     Medical Treatment/ Procedure
+  075                       Liver Biopsy                                                                                                          Medical Treatment/ Procedure
+  076                       Lumbar Puncture                                                                                                       Medical Treatment/ Procedure
+  077                       Lymphangiogram                                                                                                        Medical Treatment/ Procedure
+  078                       MAO Inhibitors                                                                                                        Medical Treatment/ Procedure
+  079                       Med, Psych, and/or                                                                                                    Release of Info/ Disclosure
+                            Drug/Alcohol
+  080                       Medical Treatment - Refusal                                                                                           Administrative
+  081                       Morning-after Pill                                                                                                    Medical Treatment/ Procedure
+  082                       MRI - Adult                                                                                                           Medical Treatment/ Procedure
+  083                       MRI - Pediatric                                                                                                       Medical Treatment/ Procedure
+  084                       Myelogram                                                                                                             Medical Treatment/ Procedure
+  085                       Needle Biopsy                                                                                                         Medical Treatment/ Procedure
+  086                       Needle Biopsy of Lung                                                                                                 Medical Treatment/ Procedure
+  087                       Newborn Treatment and Release                                                                                         Medical Treatment/ Procedure
+  088                       Norplant Subdermal Birth                                                                                              Medical Treatment/ Procedure
+                            Control Implant
+  089                       Operations, Anesthesia,                                                                                               Medical Treatment/ Procedure
+                            Transfusions
+  090                       Oral Contraceptives                                                                                                   Medical Treatment/ Procedure
+  091                       Organ Donation                                                                                                        Administrative
+  092                       Patient Permits, Consents                                                                                             Administrative
+  093                        Patient Treatment Permit,                                                                                               Administrative
+                             Release & Admission
+  094                        Penile Injections                                                                                                       Medical Treatment/ Procedure
+  095                        Percutaneous Nephrostomy                                                                                                Medical Treatment/ Procedure
+  096                        Percutaneous Transhepatic                                                                                               Medical Treatment/ Procedure
+                             Cholangiogram
+  097                        Photographs                                                                                                             Release of Info/ Disclosure
+  098                        Photographs - Employee                                                                                                  Release of Info/ Disclosure
+  099                        Photographs - Medical Research                                                                                          Release of Info/ Disclosure
+  100                        Photographs - news Media                                                                                                Release of Info/ Disclosure
+  101                        Psychiatric Admission - Next of                                                                                         Medical Treatment/ Procedure
+                             Kin
+  102                        Psychiatric Information During                                                                                          Release of Info/ Disclosure
+                             Hospital Stay
+  103                        Public Release of Information                                                                                           Release of Info/ Disclosure
+  104                        Radiologic Procedure                                                                                                    Medical Treatment/ Procedure
+  105                        Refusal of Treatment                                                                                                    Administrative
+  106                        Release of Body                                                                                                         Administrative
+  107                        Release of Limb                                                                                                         Administrative
+  108                        Rh Immune Globulin                                                                                                      Medical Treatment/ Procedure
+  109                        Rights of Medical Research                                                                                              Administrative
+                             Participants
+  110                        Request to Restrict                                                                                                     Release of Info/ Disclosure
+                             Access/Disclosure to Medical
+                             Record/Protected Health
+                             Information
+  111                        Request for Remain Anonymous                                                                                            Release of Info/ Disclosure
+  112                        Seat Belt Exemption                                                                                                     Administrative
+  113                        Sialogram                                                                                                               Medical Treatment/ Procedure
+  114                        Sigmoidoscopy                                                                                                           Medical Treatment/ Procedure
+  115                        Sterilization - Anesthesia &                                                                                            Medical Treatment/ Procedure
+                             Medical Services
+  116                        Sterilization -Federally Funded                                                                                         Medical Treatment/ Procedure
+  117                        Sterilization - Female                                                                                                  Medical Treatment/ Procedure
+  118                        Sterilization -                                                                                                         Medical Treatment/ Procedure
+                             Laparoscopy/Pomeroy
+  119                        Sterilization - Non-Federally                                                                                           Medical Treatment/ Procedure
+                             Funded
+  120                        Sterilization - Secondary                                                                                               Medical Treatment/ Procedure
+  121                        Tranquilizers                                                                                                           Medical Treatment/ Procedure
+  122                        Transfer - Acknowledgement                                                                                              Medical Treatment/ Procedure
+  123                        Transfer - Authorization                                                                                                Medical Treatment/ Procedure
+  124                        Transfer Certification -                                                                                                Medical Treatment/ Procedure
+                             Physician
+  125                        Transfer/Discharge Request                                                                                              Medical Treatment/ Procedure
+  126                        Transfer for Non-Medical                                                                                                Medical Treatment/ Procedure
+                             Reasons
+  127                        Transfer - Interfaculty Neonatal                                                                                        Medical Treatment/ Procedure
+  128                        Transfer Refusal                                                                                                        Medical Treatment/ Procedure
+  129                        Transfer Refusal of Further                                                                                             Medical Treatment/ Procedure
+                             Treatment
+  130                        Treadmill & EKG                                                                                                         Medical Treatment/ Procedure
+  131                        Treadmill, Thallium-201                                                                                                 Medical Treatment/ Procedure  Value                              Display Name                                                                                      Definition                                             Comment/ Usage Note                                                                                      Status
+  132                                Typhoid                                                                                                                                                  Medical Treatment/ Procedure
+  133                                Use of Investigational Device                                                                                                                            Medical Treatment/ Procedure
+  134                                Use of Investigational Drug                                                                                                                              Medical Treatment/ Procedure
+  135                                Venogram                                                                                                                                                 Medical Treatment/ Procedure
+  136                                Videotape                                                                                                                                                Release of Info/ Disclosure
+  1137                               Voiding Cystogram                                                                                                                                        Medical Treatment/ Procedure

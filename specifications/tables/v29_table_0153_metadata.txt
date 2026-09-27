@@ -1,0 +1,9 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0153
+  Description                                                                        Note that information for the external code system on which this table is built
+                                                                                     (NUBC) is still pending from the FM Work Group.  In the US, code system
+                                                                                     2.16.840.1.113883.6.301.6 nubc-ValueCode-cs may be used for values.
+  Type                                                                               External
+  Steward                                                                            InM/FM
+  where used                                                                         UVC.1
+  HL7 Version  Introduced                                                            2.2

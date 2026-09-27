@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0165
+  Description                                                                                           Table of codes which specify the specific method requested for the
+                                                                                                        administration of the drug or treatment to the patient.
+  Type                                                                                                  User
+  Steward                                                                                               OO
+  where used                                                                                            RXR-                           4
+  HL7 Version  Introduced                                                                               2.2

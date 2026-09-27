@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0329
+  Description                                                                                        HL7-defined table of codes used to specify the method by which the quantity
+                                                                                                     distributed is measured.
+  Type                                                                                               HL7
+  Steward                                                                                            OO
+  where used                                                                                         PSH-8, PSH-11
+  HL7 Version  Introduced                                                                            2.3

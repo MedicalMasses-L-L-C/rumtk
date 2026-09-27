@@ -1,0 +1,6 @@
+                                                                                                                             Table 0556Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   AMB                                          AMBULATORY
+                                                CARE
+   DENT                                         DENTAL

@@ -1,0 +1,7 @@
+                                                                                                                              Table 0494Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                              Comment/                                      Status
+                                                                                                                                                                                                                                                                                     Usage Note
+  A                                             Aliquot
+  C                                             Component
+  M                                             Modified from
+                                                original specimen

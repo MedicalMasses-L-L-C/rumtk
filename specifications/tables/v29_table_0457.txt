@@ -1,0 +1,11 @@
+                                                                                                                           Table 0457Coded Content
+   Value                            Display Name                                                                                                                                                    Definition                                       Comment/ Usage Note                                                   Status
+   0                                No edits present on claim
+   1                                Only edits present are for line item denial or
+                                    rejection
+   2                                Multiple-day claim with one or more days denied
+                                    or rejected
+   3                                Claim denied, rejected, suspended or returned to
+                                    provider with only post payment edits
+   4                                Claim denied, rejected, suspended or returned to
+                                    provider with only pre payment edits

@@ -1,0 +1,15 @@
+                                                                                                                  Table 0208Coded Content
+  Value                                     Display Name                                           Definition                                                                                                                                              Comment/                                  Status
+                                                                                                                                                                                                                                                           Usage Note
+  OK                                        Data found, no
+                                            errors (this is the
+                                            default)
+  NF                                        No data found, no
+                                            errors
+  AE                                        Application error
+  AR                                        Application reject
+  TM                                        Too much data                                          The response would exceed the maximum length                                                                                                                                                      N
+                                            found                                                  designated in RCP-2 of the query message.
+  PD                                        Protected data                                         Data matching the query parameters was found but                                                                                                                                                  N
+                                                                                                   could not be shared with the querying system for
+                                                                                                   reasons including local policy or legal restrictions.

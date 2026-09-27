@@ -1,0 +1,15 @@
+                                                                                                                           Table 0493Coded Content
+   Value                                        Display Name                                               Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                Usage Note
+   AUT                                          Autolyzed
+   CLOT                                         Clotted
+   CON                                          Contaminated
+   COOL                                         Cool
+   FROZ                                         Frozen
+   HEM                                          Hemolyzed
+   LIVE                                         Live
+   ROOM                                         Room
+                                                temperature
+   SNR                                          Sample not                                                                                                                                                                                                                      Deprecated
+                                                received                                                                                                                                                                                                                        in v 2.8
+   CFU                                          Centrifuged

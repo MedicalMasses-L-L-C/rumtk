@@ -1,0 +1,23 @@
+                                                                                                                                           Table 0470Coded Content
+   Value                                              Display Name                                                       Definition                                                                                                                                                                                Comment/                                           Status
+                                                                                                                                                                                                                                                                                                                   Usage Note
+   OPPS                                               Outpatient
+                                                      Prospective
+                                                      Payment System
+   Pckg                                               Packaged APC
+   Lab                                                Clinical
+                                                      Laboratory APC
+   Thrpy                                              Therapy APC
+   DME                                                Durable Medical
+                                                      Equipment
+   EPO                                                Epotein
+   Mamm                                               Screening
+                                                      Mammography
+                                                      APC
+   PartH                                              Partial
+                                                      Hospitalization
+                                                      APC
+   Crnl                                               Corneal Tissue
+                                                      APC
+   NoPay                                              This APC i s not
+                                                      paid

@@ -1,0 +1,9 @@
+                                                                                                                                        Table 0116Coded Content
+   Value                                             Display Name                                                      Definition                                                                                                                                                                            Comment/                                         Status
+                                                                                                                                                                                                                                                                                                             Usage Note
+   C                                                 Closed
+   H                                                 Housekeeping
+   O                                                 Occupied
+   U                                                 Unoccupied
+   K                                                 Contaminated
+   I                                                 Isolated

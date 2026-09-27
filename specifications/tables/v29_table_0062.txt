@@ -1,0 +1,8 @@
+                                                                                                                              Table 0062Coded Content
+   Value                                        Display Name                                                                                                                                                            Definition                                                   Comment/                                      Status
+                                                                                                                                                                                                                                                                                     Usage Note
+   01                                           Patient request
+   02                                           Physician/health practitioner order
+   03                                           Census management
+   O                                            Other
+   U                                            Unknown

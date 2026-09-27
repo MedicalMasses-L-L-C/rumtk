@@ -1,0 +1,82 @@
+                                                                                                                    Table 0357Coded Content
+  Value                              Display Name                                             Definition                                                      Comment/ Usage Note                                                                                                                          Status
+  0                                  Message accepted                                                                                                         Success. Optional, as the AA conveys success. Used
+                                                                                                                                                              for systems that must always return a status code.
+  100                                Segment                                                                                                                  Error: The message segments were not in the
+                                     sequence error                                                                                                           proper order, or required segments are missing.
+  101                                Required field                                                                                                           Error: A required field is missing from a
+                                     missing                                                                                                                  segment
+  102                                Data type error                                                                                                          Error: The field contained data of the wrong
+                                                                                                                                                              data type, e.g., an NM field contained "FOO".  Value                            Display Name                                         Definition                                                 Comment/ Usage Note                                                                                                                Status
+  103                              Table value not                                                                                                 Error: A field of data type ID or IS was
+                                   found                                                                                                           compared against the corresponding table, and
+                                                                                                                                                   no match was found.
+  104                              Value too long                                                                                                  Error: a value exceeded the normative length,
+                                                                                                                                                   or the length that the application is able to
+                                                                                                                                                   safely handle.
+  198                              Non-Conformant                                       An error has been                                          Error: Cardinality is listed as [0..3] and more                                                                                    N
+                                   Cardinality                                          encountered related                                        than 3 of the identified element are present in
+                                                                                        to HL7 message                                             the message.
+                                                                                        content. Message is
+                                                                                        not -conformant
+                                                                                        with the applicable
+                                                                                        specification’s (base
+                                                                                        standard,
+                                                                                        conformance profile
+                                                                                        or implementation
+                                                                                        profile)  cardinality.
+  199                              Other HL7 Error                                      Any other error with                                       Error                                                                                                                              N
+                                                                                        the HL7 syntax that
+                                                                                        is not captured in
+                                                                                        any of the other
+                                                                                        error codes in this
+                                                                                        set.
+  200                              Unsupported                                                                                                     Rejection: The Message Type is not supported.
+                                   message type
+  201                              Unsupported                                                                                                     Rejection: The Event Code is not supported.
+                                   event code
+  202                              Unsupported                                                                                                     Rejection: The Processing ID is not supported.
+                                   processing id
+  203                              Unsupported                                                                                                     Rejection:  The Version ID is not supported.
+                                   version id
+  204                              Unknown key                                          Retained for                                               ERR-3 (HL7 Error Code) should be used to                                                                                           B
+                                   identifier                                           backwards                                                  convey errors at the structural level and this is
+                                                                                        compatibility only:                                        an application level error, which should be
+                                                                                        This situation                                             reported in ERR-                                                                                  5 (Application Error Code).
+                                                                                        should be reported
+                                                                                        in ERR-                                                     5
+                                                                                        (Application Error
+                                                                                        Code) using code
+                                                                                        101 (Unknown Key
+                                                                                        Identifier) from
+                                                                                        code system
+                                                                                        HL70533.
+  205                              Duplicate key                                        Retained for                                               ERR-3 (HL7 Error Code) should be used to                                                                                           B
+                                   identifier                                           backwards                                                  convey errors at the structural level and this is
+                                                                                        compatibility only:                                        an application level error, which should be
+                                                                                        This situation                                             reported in ERR-5 (Application Error Code).
+                                                                                        should be reported
+                                                                                        in ERR-                                                     5
+                                                                                        (Application Error
+                                                                                        Code) using code
+                                                                                        102 (Duplicate Key
+                                                                                        Identifier) from
+                                                                                    code system
+                                                                                    HL70533.
+  206                             Application                                       Retained for                                              ERR-3 (HL7 Error Code) should be used to                                                                                       B
+                                  record locked                                     backwards                                                 convey errors at the structural level and this is
+                                                                                    compatibility only:                                       an application level error, which should be
+                                                                                    This situation                                            reported in ERR-5 (Application Error Code).
+                                                                                    should be reported
+                                                                                    in ERR-                                                     5
+                                                                                    (Application Error
+                                                                                    Code) using code
+                                                                                    103 (Application
+                                                                                    record locked) from
+                                                                                    code system
+                                                                                    HL70533.
+  207                             Application error                                 An application level                                      This value is used when no other value in this
+                                                                                    error has occurred                                        list is applicable and there is an application
+                                                                                    and the detail for                                        error reported in ERR-5. It is applicable when
+                                                                                    that error is                                             ERR-                                                    3 is required in an implementation guide.
+                                                                                    identified in ERR-5.

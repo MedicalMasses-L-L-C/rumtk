@@ -1,0 +1,14 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0517
+  Description                                                                                  Table of codes used to specify who (if anyone) should be informed of the error.
+                                                                                               This field may also be used to indicate that a particular person should NOT be
+                                                                                               informed of the error (e.g. do not inform patient.)
+  Type                                                                                         User
+  Steward                                                                                      InM
+  where used                                                                                   ERR-                                                     9
+
+
+
+
+
+  HL7 Version  Introduced                                                                        2.5

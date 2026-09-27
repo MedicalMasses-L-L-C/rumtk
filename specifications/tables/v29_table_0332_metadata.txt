@@ -1,0 +1,8 @@
+                                                                                                                                                               Table Metadata
+  Table                                                                                                       0332
+  Description                                                                                                 HL7-defined table of codes used to indicate (in certain systems) whether a lower
+                                                                                                              level source identifier is an initiate or accept type.
+  Type                                                                                                        HL7
+  Steward                                                                                                     InM
+  where used                                                                                                  NST-3
+  HL7 Version  Introduced                                                                                     2.3

@@ -1,0 +1,11 @@
+                                                                                                                    Table 0242Coded Content
+  Value                              Display Name                                                                                                     Definition                                                                          Comment/ Usage                                                 Status
+                                                                                                                                                                                                                                          Note
+  P                                  Physician (osteopath, homeopath)
+  R                                  Pharmacist
+  M                                  Mid-level professional (nurse, nurse
+                                     practitioner, physician's assistant)
+  H                                  Other health professional
+  C                                  Health care consumer/patient
+  L                                  Lawyer/attorney
+  O                                  Other non-health professional

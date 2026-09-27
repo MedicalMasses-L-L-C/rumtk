@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0879
+  Description                                                                              Table of codes specifying what service was delivered/received.  No suggested
+                                                                                           values.
+  Type                                                                                     User
+  Steward                                                                                  FM
+  where used                                                                               PSL-7, PSL-22
+  HL7 Version  Introduced                                                                  2.6

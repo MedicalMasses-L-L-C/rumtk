@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0110
+  Description                                                                              Table of codes specifying that the account was transferred to bad debts and
+                                                                                           gives the reason.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  PA
+  where used                                                                               PV1-29
+  HL7 Version  Introduced                                                                  2.1

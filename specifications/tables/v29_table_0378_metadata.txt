@@ -1,0 +1,11 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0378
+  Description                                                                                Table of codes that identify a type of carrier.  Because the geometry can be
+                                                                                             different, the carrier type should, if possible, express the number of positions in
+                                                                                             the carrier.  The definition assumes hierarchical nesting using the following
+                                                                                             phrases: container is located in a carrier, carrier is located in a tray.  No
+                                                                                             suggested values.
+  Type                                                                                       User
+  Steward                                                                                    OO
+  where used                                                                                 SAC-9
+  HL7 Version  Introduced                                                                    2.4

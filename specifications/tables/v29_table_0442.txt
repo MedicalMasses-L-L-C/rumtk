@@ -1,0 +1,9 @@
+                                                                                                                             Table 0442Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                     Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   D                                            Diagnostic
+   T                                            Therapeutic
+   P                                            Primary Care  Value                                    Display Name                                          Definition                                                                                                                                          Comment/                                Status
+                                                                                                                                                                                                                                                     Usage Note
+  E                                        Emergency Room
+                                           Casualty

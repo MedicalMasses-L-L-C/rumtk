@@ -1,0 +1,11 @@
+                                                                                                                        Table Metadata
+  Table                                                                            0941
+  Description                                                                      Table of codes specifying procedure codes that may impact payer coverage
+                                                                                   requirements, for example procedure code 1234 is not covered by a payer
+                                                                                   ABCD or may be covered in conjunction with a specific diagnosis code which
+                                                                                   can be identifeid in DPS-1 Diagnosis Code. The procedure codes should be
+                                                                                   drawn from appropriate externally defined procedure codes, for example in the
+                                                                                   US Realm these include CPT- 4 codes defined by the American Medical
+                                                                                   Association and ICD codes published by CMS.  No suggested values.
+  Type                                                                             User
+  HL7 Version  Introduced                                                          2.8.2

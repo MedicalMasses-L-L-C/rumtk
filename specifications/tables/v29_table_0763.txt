@@ -1,0 +1,7 @@
+                                                                                                                         Table 0763Coded Content
+   Value                                       Display Name                                                                                                                                                     Definition                                                 Comment/                                    Status
+                                                                                                                                                                                                                                                                           Usage Note
+   0                                           Neither operation relevant nor non-operation relevant
+                                               procedure
+   1                                           Operation relevant procedure
+   2                                           Non-operation relevant procedure

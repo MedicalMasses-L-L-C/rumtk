@@ -1,0 +1,14 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0225
+  Description                                                                                       HL7-defined table of codes indicating whether a patient must be accompanied
+                                                                                                    while travelling to a diagnostic service department.
+  Type                                                                                              HL7
+  Steward                                                                                           OO
+  where used                                                                                        OBR-                                                     42
+
+
+
+
+
+
+ HL7 Version  Introduced                                                   2.3

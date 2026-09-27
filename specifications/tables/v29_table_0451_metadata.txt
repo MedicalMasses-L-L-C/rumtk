@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0451
+  Description                                                                                               Table of codes specifying the substance that is in inventory.  No suggested
+                                                                                                            values.
+  Type                                                                                                      User
+  Steward                                                                                                   OO
+  where used                                                                                                INV-1
+  HL7 Version  Introduced                                                                                   2.4

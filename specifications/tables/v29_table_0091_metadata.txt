@@ -1,0 +1,14 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                     0091
+
+
+
+
+
+
+  Description                                                                               HL7-defined table of codes which specify a time frame in which a querry
+                                                                                            response is expected.
+  Type                                                                                      HL7
+  Steward                                                                                   InM
+  where used                                                                                RCP.1
+  HL7 Version  Introduced                                                                   2.1

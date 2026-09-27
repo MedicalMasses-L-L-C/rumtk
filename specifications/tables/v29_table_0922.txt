@@ -1,0 +1,6 @@
+                                                                                                                 Table 0922Coded Content
+  Value                                     Display Name                                                                                                                             Definition                                                           Comment/                                 Status
+                                                                                                                                                                                                                                                          Usage Note
+  IR                                        Initial Request
+  RA                                        Request for Appeal
+  RE                                        Request for Extension

@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0271
+  Description                                                                                   HL7-defined table of codes used to record the state of a document in a
+                                                                                                workflow.
+  Type                                                                                          HL7
+  Steward                                                                                       StrucDoc
+  where used                                                                                    TXA-                                                          17
+  HL7 Version  Introduced                                                                       2.3

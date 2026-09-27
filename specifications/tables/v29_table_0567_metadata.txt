@@ -1,0 +1,12 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0567
+  Description                                                                                               Weight Units.  Note this table has been deprecated and is replacaced by table
+                                                                                                            0929.
+  Type                                                                                                      HL7
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                                     2.8.2

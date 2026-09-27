@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                  0947
+  Description                                                                                            Table of codes specifying the purchasing channel with which the contract is
+                                                                                                         associated  such as Hospital, Retail, etc.  No suggested values.
+  Type                                                                                                   User
+  Steward                                                                                                OO
+  where used                                                                                             CTR-                           20
+  HL7 Version  Introduced                                                                                2.9

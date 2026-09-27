@@ -1,0 +1,7 @@
+                                                                                                                                                                       Table Metadata
+   Table                                                                                                            0932
+   Description                                                                                                      HL7-defined table of codes specifying  the units of donation duration.
+   Type                                                                                                             User
+   Steward                                                                                                          OO
+   where used                                                                                                       DON-                                                                                       6
+   HL7 Version  Introduced                                                                                          2.8

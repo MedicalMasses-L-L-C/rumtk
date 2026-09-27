@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0088
+  Description                                                                                        Table of codes specifying a unique identifier assigned to a procedure, if any,
+                                                                                                     associated with a charge.
+  Type                                                                                               User
+  Steward                                                                                            FM
+  where used                                                                                         FT1-25, OBR-44, CDM-7 , FT1 -25
+  HL7 Version  Introduced                                                                            2.1

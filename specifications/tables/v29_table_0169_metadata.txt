@@ -1,0 +1,9 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0169
+  Description                                                                             HL7-defined table of codes which specify the available priorities reporting the
+                                                                                          test results when the user is asked to specify the reporting priority independent
+                                                                                          of the processing priority.
+  Type                                                                                    HL7
+  Steward                                                                                 InM
+  where used                                                                              OM1-26
+  HL7 Version  Introduced                                                                 2.2

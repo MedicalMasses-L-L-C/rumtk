@@ -1,0 +1,6 @@
+                                                                                                                    Table 0367Coded Content
+  Value                              Display Name                                             Definition                                              Comment/ Usage Note                                                                                                                                  Status
+  N                                  Normal                                                                                                           No Corrective Action Needed
+  W                                  Warning                                                                                                          Corrective Action Anticipated
+  S                                  Serious                                                                                                          Corrective Action Required
+  C                                  Critical                                                                                                         Shut Down, Fix Problem and Re-init

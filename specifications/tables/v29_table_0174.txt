@@ -1,0 +1,52 @@
+                                                                                                 Table 0174Coded Content
+  Value                         Display Name                                                           Definition                                                             Comment/ Usage Note                                                          Status
+  P                             Profile or battery consisting of                                                                                                              can be associated with one or
+                                many independent atomic                                                                                                                       more OM4 (specimen) segments
+                                observations (e.g., SMA12,                                                                                                                    See comment for value S
+                                electrolytes), usually done at
+                                one instrument on one
+                                specimen
+  F                             Functional procedure that                                                                                                                     can be associated with one or
+                                may consist of one or more                                                                                                                    more OM4 (specimen)
+                                interrelated measures (e.g.,                                                                                                                  segments
+                                glucose tolerance test,                                                                                                                       See comment for value S
+                                creatinine clearance),
+                                usually done at different
+                                times and/or on different
+                                specimens
+  A                             Atomic                                                                                                                                        can be associated with one or
+                                service/test/observation                                                                                                                      more OM4 (specimen)
+                                (test code or treatment                                                                                                                       segments
+                                code)                                                                                                                                         a single direct observation and
+                                                                                                                                                                              would usually be associated
+                                                                                                                                                                              with an OM2 and/or OM3
+                                                                                                                                                                              segments
+  S                             Superset-a set of batteries                                            Superset—                 a set of batteries                           can be associated with one or
+                                or procedures ordered                                                  or procedures ordered                                                  more OM4 (specimen)
+                                under a single code unit but                                           under a single code unit but                                           segments
+                                processed as separate                                                  processed as separate                                                  Codes P, F, and S identify sets
+                                batteries (e.g., routines =                                            batteries (e.g., routines =                                            (batteries) and should be
+                                CBC, UA, electrolytes)                                                 CBC, UA, electrolytes)                                                 associated with an OM5
+                                This set indicates that the                                            This set indicates that the                                            segment that defines the list of
+                                code being described is                                                code being described is                                                elements.  The definitions for
+                                used to order multiple                                                 used to order multiple                                                 the contained elements would
+                                service/test/observation b                                             service/test/observation                                               have to be sent in other
+                                                                                                       batteries.  For example, a                                             independent OMx segments,
+                                                                                                       client who routinely orders                                            one for each contained
+                                                                                                       a CBC, a differential, and a                                           element.  In the ASTM
+                                                                                                       thyroxine as an outpatient                                             context, most text reports –
+                                                                                                       profile might use a single,                                            such as discharge summaries,
+                                                                                                       special code to order all                                              admission H&Ps, and chest
+                                                                                                       three test batteries, instead                                          X-ray reports –           are considered
+                                                                                                       of having to submit three                                              as sets, in which each section
+                                                                                                       separate order codes.                                                  of the report (e.g., description,
+                                                                                                                                                                              impression, and
+                                                                                                                                                                              recommendation of an X-ray
+                                                                                                                                                                              report) is considered a
+                                                                                                                                                                              separate observation
+  C                             Single observation                                                                                                                            can be associated with one or
+                                calculated via a rule or                                                                                                                      more OM4 (specimen)
+                                formula from other                                                                                                                            segments
+                                     independent observations                                                                                                                                                a derived quantity and would
+                                     (e.g., Alveolar-arterial ratio,                                                                                                                                         usually be associated with an
+                                     cardiac output)                                                                                                                                                         OM6 segment

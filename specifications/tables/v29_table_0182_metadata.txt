@@ -1,0 +1,7 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0182
+  Description                                                                                           Table of codes specifying the staff person's sex.  No suggested values.
+  Type                                                                                                  User
+  Steward                                                                                               PA
+  where used                                                                                            STF-                      4
+  HL7 Version  Introduced                                                                               2.2

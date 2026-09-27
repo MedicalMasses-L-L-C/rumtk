@@ -1,0 +1,7 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                               0894
+  Description                                                                                         Table of codes specifying the side of the body ("left" or "right").
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          PSL-33
+  HL7 Version  Introduced                                                                             2.6

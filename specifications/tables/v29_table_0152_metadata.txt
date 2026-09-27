@@ -1,0 +1,8 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0152
+  Description                                                                                Table of codes specifying if accompanying documentation has been received by
+                                                                                             the provider.  No suggested values.
+  Type                                                                                       User
+  Steward                                                                                    FM
+  where used                                                                                 IN3-24
+  HL7 Version  Introduced                                                                    2.2

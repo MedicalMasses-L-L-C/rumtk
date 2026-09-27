@@ -1,0 +1,12 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0311
+  Description                                                                                        Table of codes specifying a next of kin/associated party's job status.
+
+
+
+
+
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         NK1-34
+  HL7 Version  Introduced                                                                                   2.3

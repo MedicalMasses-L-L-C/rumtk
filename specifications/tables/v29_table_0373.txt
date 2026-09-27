@@ -1,0 +1,11 @@
+                                                                                                                               Table 0373Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                Comment/                                      Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   LDLP                                          LDL Precipitation
+   RECA                                          Recalification
+   DEFB                                          Defibrination
+   ACID                                          Acidification
+   NEUT                                          Neutralization
+   ALK                                           Alkalization
+   FILT                                          Filtration
+   UFIL                                          Ultrafiltration

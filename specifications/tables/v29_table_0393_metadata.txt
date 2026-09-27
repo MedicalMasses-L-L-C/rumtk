@@ -1,0 +1,9 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0393
+  Description                                                                                     Table of codes identifying the name or identity of the specific search algorithm
+                                                                                                  to which the RCP-5 Search Confidence Threshold and the QRI-1 Candidate
+                                                                                                  Confidence refer.
+  Type                                                                                            User
+  Steward                                                                                         InM
+  where used                                                                                      QRI.3
+  HL7 Version  Introduced                                                                         2.4

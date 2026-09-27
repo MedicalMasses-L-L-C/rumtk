@@ -1,0 +1,8 @@
+                                                                                                                           Table 0560Coded Content
+   Value                                       Display Name                                                Definition                                                                                                                                                          Comment/                                    Status
+                                                                                                                                                                                                                                                                               Usage Note
+   FL                                          Units
+   HS                                          Hours
+   DY                                          Days
+   MN                                          Month
+   YY                                          Years

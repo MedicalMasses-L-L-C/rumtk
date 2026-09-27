@@ -1,0 +1,31 @@
+                                                                                                      Table 0489Coded Content
+  Value                          Display Name                                     Definition                                 Comment/ Usage Note                                                                                                                     Status
+  BIO                            Biological                                                                                  The dangers associated with normal biological materials.
+                                                                                                                             I.e. potential risk of unknown infections.  Routine biological
+                                                                                                                             materials from living subjects.
+  COR                            Corrosive                                                                                   Material is corrosive and may cause severe injury to
+                                                                                                                             skin, mucous membranes and eyes. Avoid any
+                                                                                                                             unprotected contact.
+  ESC                            Escape Risk                                                                                 The entity is at risk for escaping from containment
+                                                                                                                             or control.
+  AGG                            Aggressive                                                                                  A danger that can be associated with certain living
+                                                                                                                             subjects,  including humans.
+  IFL                            MaterialDangerIn                                                                            Material is highly inflammable and in certain
+                                 flammable                                                                                   mixtures (with air) may lead to explosions.  Keep
+                                                                                                                             away from fire, sparks and excessive heat.
+  EXP                            Explosive                                                                                   Material is an explosive mixture.  Keep away from
+                                                                                                                             fire, sparks, and heat.
+  INF                            MaterialDangerIn                                                                            Material known to be infectious with human
+                                 fectious                                                                                    pathogenic microorganisms.  Those who handle this
+                                                                                                                             material must take precautions for their protection.
+  BHZ                            Biohazard                                                                                   Material contains microorganisms that are an
+                                                                                                                             environmental hazard.  Must be handled with special
+                                                                                                                             care.
+  INJ                            Injury Hazard                                                                               Material is solid and sharp (e.g., cannulas.)  Dispose
+                                                                                                                             in hard container.
+  POI                            Poison                                                                                      Material is poisonous to humans and/or animals.
+                                                                                                                             Special care must be taken to avoid incorporation,
+                                                                                                                             even of small amounts.
+  RAD                            Radioactive                                                                                 Material is a source for ionizing radiation and must
+                                                                                                                             be handled with special care to avoid injury of those
+                                                                                                                             who handle it and to avoid environmental hazards.

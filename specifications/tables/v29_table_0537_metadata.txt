@@ -1,0 +1,14 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                    0537
+
+
+
+
+
+  Description                                                                              Table of codes that specify the institution the practitioner began or intends to
+                                                                                           begin practicing at (e.g., at hospital, at physician organization, at managed care
+                                                                                           network).  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  PA
+  where used                                                                               PRA-9, STF-                      12
+  HL7 Version Introduced                                                                   2.5

@@ -1,0 +1,16 @@
+                                                                                                                                                              Table Metadata
+  Table                                                                                        0264
+
+
+
+
+
+
+
+
+  Description                                                                                  Table of codes used to specify the institution’s department to which a location
+                                                                                               belongs, or its cost center.
+  Type                                                                                         User
+  Steward                                                                                      I    n    M    /   PA
+  where used                                                                                   LDP-2
+  HL7 Version  Introduced                                                                      2.3

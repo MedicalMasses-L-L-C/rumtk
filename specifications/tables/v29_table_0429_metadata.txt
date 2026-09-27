@@ -1,0 +1,15 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0429
+  Description                                                                                    Table of codes specifying the code and/or text indicating the primary use for
+                                                                                                 which the living subject was bred or grown.
+  Type                                                                                           User
+  Steward                                                                                        PA
+
+
+
+
+
+
+
+  where used                                                                                     PID-38
+  HL7 Version  Introduced                                                                            2.4

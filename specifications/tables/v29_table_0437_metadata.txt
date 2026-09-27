@@ -1,0 +1,14 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0437
+  Description                                                                                     Table of codes specifying any type of allergy alert device the patient may be
+                                                                                                  carrying or wearing.
+
+
+
+
+
+
+  Type                                                                                            User
+  Steward                                                                                         PA
+  where used                                                                                      IAM-16
+  HL7 Version  Introduced                                                                                2.4

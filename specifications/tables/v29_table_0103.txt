@@ -1,0 +1,15 @@
+                                                                                                                   Table 0103Coded Content
+  Value                                     Display Name                                                          Definition                                                                                                                                 Comment/                                  Status
+                                                                                                                                                                                                                                                             Usage Note
+  D                                         Debugging                                                             Messages used for identification and correction of
+                                                                                                                  software errors.
+  P                                         Production                                                            Messages used for communication of live
+                                                                                                                  production data.
+  T                                         Training                                                              Messages used for training, where new/updated
+                                                                                                                  configurations are utilized to prepare users
+                                                                                                                  outside of a production setting.
+  N                                         Non-Production                                                        Messages used for testing of an interface for
+                                            Testing                                                               structure, content, and conformance between
+                                                                                                                  trading partners, using non-production data.
+  V                                         Validation                                                            Messages used for conformance testing by a
+                                                                                                                  third party; for example, as part of certification.

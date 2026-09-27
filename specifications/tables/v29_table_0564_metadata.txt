@@ -1,0 +1,13 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0564
+  Description                                                                                 Table of codes used to specify the category of adjustment and is used to assist in
+                                                                                              determining which table is used for Adjustment Reason.
+  Type                                                                                        User
+  Steward                                                                                     FM
+
+
+
+
+
+  where used                                                                                  ADJ-4
+  HL7 Version  Introduced                                                                      2.6

@@ -1,0 +1,13 @@
+                                                                                                                       Table Metadata
+  Table                                                                           0952
+  Description                                                                     Table of codes that specify the security classification; the codes are non-
+                                                                                  overlapping n the following  hierarchical order:
+                                                                                   Very Restricted > Restricted > Normal > Moderate > Low > Unrestricted
+                                                                                  More information may be found the HL7 Healthcare Privacy and Security
+                                                                                  Classification System (HCS), Release 1 (see:
+                                                                                  http://www.hl7.org/implement/standards/product_brief.cfm?product_id=345)
+                                                                                  For the list of codes in the table, see the HL7 Webpage rendering.
+  Type                                                                            External
+  Steward                                                                         InM
+  where used                                                                      MSH-26, ARV-7
+  HL7 Version  Introduced                                                         2.9

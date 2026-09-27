@@ -1,0 +1,7 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0092
+  Description                                                                                               Table of codes which are used to specify that a patient is being re-                  admitted to a
+                                                                                                            healthcare facility from which they were discharged, and indicates the
+                                                                                                            circumstances around such re-                 admission.
+  Type                                                                                                      User
+  HL7 Version  Introduced                                                                                   2.1

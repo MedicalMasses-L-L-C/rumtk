@@ -1,0 +1,18 @@
+                                                                                                                          Table Metadata
+  Table                                                                             0454
+  Description                                                                       Table of codes specifying the segment of the population that a health care
+                                                                                    provider chooses to service, a specific medical service, a specialization in
+                                                                                    treating a specific disease, or any other descriptive characteristic about the
+
+
+
+
+
+                                                                                      provider  ’s practice relating to the services rendered of the practitioner at a
+                                                                                      specific organization unit.Health Care Provider Area of Specialization.  In the
+                                                                                      US it is suggested to use ANSI ASC X12 Health Care Provider Taxonomy,
+                                                                                      Level 2 -           Classification.
+  Type                                                                              User
+  Steward                                                                           PA
+  where used                                                                        ORG-8
+  HL7 Version  Introduced                                                             2.4

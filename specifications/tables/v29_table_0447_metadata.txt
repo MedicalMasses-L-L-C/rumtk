@@ -1,0 +1,7 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0447
+  Description                                                                                             Table of codes specifying the specific breed of animal.  No suggested values.
+  Type                                                                                                    User
+  Steward                                                                                                 PA
+  where used                                                                                              PID-36
+  HL7 Version Introduced                                                                                  2.4

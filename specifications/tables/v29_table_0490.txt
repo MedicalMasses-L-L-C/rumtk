@@ -1,0 +1,18 @@
+                                                                                                                          Table 0490Coded Content
+  Value                                        Display Name                                                                                                          Definition                                                                                             Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+  EX                                           Expired
+  QS                                           Quantity not sufficient
+  RB                                           Broken container
+  RC                                           Clotting
+  RD                                           Missing collection date
+  RA                                           Missing patient ID number
+  RE                                           Missing patient name
+  RH                                           Hemolysis
+  RI                                           Identification problem
+  RM                                           Labeling
+  RN                                           Contamination  Value                                       Display Name                                                                                                           Definition                                                                                             Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+  RP                                          Missing phlebotomist ID
+  RR                                          Improper storage
+  RS                                          Name misspelling

@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0300
+  Description                                                                                 Table of codes which specify the unique name of the system that stores the data.
+                                                                                              It was previously named the Application ID.  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     InM
+  where used                                                                                  HD.1
+  HL7 Version  Introduced                                                                     2.3

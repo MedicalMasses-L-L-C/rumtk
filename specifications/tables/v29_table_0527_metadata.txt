@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0527
+  Description                                                                                 HL7-defined table of codes used to specify an alignment of the repetition to a
+                                                                                              calendar (e.g., to distinguish every  30 days from "the 5th of every month").
+  Type                                                                                        HL7
+  Steward                                                                                     InM/OO
+  where used                                                                                  R   P   T.   2
+  HL7 Version Introduced                                                                      2.5

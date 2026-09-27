@@ -1,0 +1,8 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0273
+  Description                                                                                     HL7-defined table of codes used to define whether a patient document is
+                                                                                                  appropriate or available for use in patient care.
+  Type                                                                                            HL7
+  Steward                                                                                         StrucDoc
+  where used                                                                                      TXA-                                                          19
+  HL7 Version  Introduced                                                                         2.3

@@ -1,0 +1,7 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0387
+  Description                                                                                       Table of codes identifying the response of the previously issued command.
+  Type                                                                                              User
+  Steward                                                                                           OO
+  where used                                                                                        ECR-                                                    1, ISD-3
+  HL7 Version  Introduced                                                                           2.4

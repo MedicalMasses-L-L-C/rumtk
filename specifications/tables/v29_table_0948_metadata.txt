@@ -1,0 +1,7 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0948
+  Description                                                                            HL7-defined table of codes specifying the type of relationship identified by
+                                                                                         Relationship Instance Identifier (REL-3) that is established between the Source
+                                                                                         Information Instance (REL-4)  and the Target Information Instance (REL-5).
+  Type                                                                                   User
+  HL7 Version Introduced                                                                 2.9

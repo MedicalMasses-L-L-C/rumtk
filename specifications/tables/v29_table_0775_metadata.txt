@@ -1,0 +1,5 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0775
+  Description                                                                                        9999
+  Type                                                                                               undefined
+  where used                                                                                         SAC-20

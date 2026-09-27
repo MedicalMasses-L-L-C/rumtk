@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0553
+  Description                                                                                       Table of codes used to specify what invoice action is being performed by this
+                                                                                                    message.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        IVC-4
+  HL7 Version  Introduced                                                                           2.6

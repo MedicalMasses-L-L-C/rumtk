@@ -1,0 +1,8 @@
+                                                                                                                      Table 0728Coded Content
+  Value                                      Display Name                                              Definition                                                                                                                                                   Comment/                                   Status
+                                                                                                                                                                                                                                                                    Usage Note
+  0                                          Nothing obvious
+  1                                          Low
+  2                                           Moderate
+  3                                           High
+  4                                           Very high

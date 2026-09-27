@@ -1,0 +1,8 @@
+                                                                                                                                                                Table Metadata
+  Table                                                                                                       0229
+  Description                                                                                                 Table of codes used to identify a Diagnostic Resource Group Payor.  US Realm.
+                                                                                                              No suggested values.
+  Type                                                                                                        User
+  Steward                                                                                                     FM
+  where used                                                                                                  IN3-12
+  HL7 Version  Introduced                                                                                     2.3

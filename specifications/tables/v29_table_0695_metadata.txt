@@ -1,0 +1,5 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0695
+  Description                                                                                           9999
+  Type                                                                                                  undefined
+  where used                                                                                            RXA-24

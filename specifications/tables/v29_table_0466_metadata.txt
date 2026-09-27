@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0466
+  Description                                                                                         Table of codes specifying the derived Ambulatory Payment Classification
+                                                                                                      (APC) code.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          GP2-7
+  HL7 Version  Introduced                                                                             2.4

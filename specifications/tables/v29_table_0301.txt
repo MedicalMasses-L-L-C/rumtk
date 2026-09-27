@@ -1,0 +1,115 @@
+                                                                                            Table 0301Coded Content
+  Value                       Display Name                                 Definition                                                                          Comment/ Usage Note                                                            Status
+  CAP                         College of American                          Allows for the ability to designate                                                 Use to identify assigning authority                                            N
+                              Pathologist                                  organization identifier as a "CAP"                                                  IDs, when an OID is not available.
+                              Accreditation                                assigned number (for labs)
+                              Number
+  CLIA                        Clinical                                     Clinical Laboratory Improvement                                                     Allows for the ability to
+                              Laboratory                                   Amendments. Allows for the                                                          designate organization identifier
+                              Improvement                                  ability to designate organization                                                   as a “CLIA” assigned number
+                              Amendments                                   identifier as a "CLIA" assigned                                                     (for labs)
+                                                                           number (for labs)
+  CLIP                        Clinical                                     Clinical laboratory Improvement                                                     Allows for the ability to
+                              laboratory                                   Program. Allows for the ability to                                                  designate organization identifier
+                              Improvement                                  designate organization identifier as                                                as a “CLIP” assigned number
+                              Program                                      a "CLIP" assigned number (for                                                       (for labs).  Used by US
+                                                                           labs).Â  Used by US Department                                                      Department of Defense.
+                                                                           of Defense.
+  DNS                         Domain Name                                  An Internet host name, in                                                           An Internet host name, in
+                              System                                       accordance with RFC 1035; or an                                                     accordance with RFC 1035; or
+                                                                           IP address. Either in ASCII or as                                                   an IP address. Either in ASCII or
+                                                                           integers, with periods between                                                      as integers, with periods
+                                                                           components  ("dotted" notation).                                                    between components (“dotted”
+                                                                                                                                                               notation).
+  EUI64                       IEEE 64-bit                                  IEEE 64-bit Extended Unique                                                         IEEE 64-bit Extended Unique
+                              Extended Unique                              Identifier is comprised of a  24-                    bit                            Identifier is comprised of a  24-
+                              Identifier                                   company identifier and a 40-                                        bit             bit company identifier and a 40-
+                                                                           instance identifier.  The value shall                                               bit instance identifier.  The value
+                                                                           be formatted as 16 ASCII HEX                                                        shall be formatted as 16 ASCII
+                                                                           digits, for example,                                                                HEX digits, for example,
+                                                                           “AABBCC1122334455”.  The 24-                                                        “AABBCC1122334455”.  The
+                                                                           bit company identifier, formally                                                    24-                                        bit company identifier,
+                                                                           known as Organizationally Unique                                                    formally known as
+                                                                           Identifier (OUI-             24), is guaranteed                                     Organizationally Unique
+                                                                           to be globally unique.  The 40                              -bit                    Identifier (OUI-             24), is
+                                                                           extensions are assigned by                                                          guaranteed to be globally
+                                                                      manufacturers.  This identifier is                                             unique.  The 40-bit extensions
+                                                                      often used in equipment interfaces                                             are assigned by manufacturers.
+                                                                      (e.g., “MAC” address format for                                                This identifier is often used in
+                                                                      IPv4 & IPv6).  [See                                                            equipment interfaces (e.g.,
+                                                                      http://standards.ieee.org/regauth/ou                                           “MAC” address format for IPv4
+                                                                      i/tutorials/EUI64.html for a                                                   & IPv6).  [See
+                                                                      detailed explanation of th e form at.]                                         http://standards.ieee.org/regauth/
+                                                                                                                                                     oui/tutorials/EUI64.htmlfor a
+                                                                                                                                                     detailed explanation of the
+                                                                                                                                                     format.]OUI-              24 values are
+                                                                                                                                                     administered by the IEEE
+                                                                                                                                                     Registration Authority.
+ GUID                       globally unique                           Same as UUID.                                                                  Same as UUID. Retained for
+                            identifier                                                                                                               backward compatibility only as
+                                                                                                                                                     of v2.7; use UUID instead
+ HCD                        CEN Healthcare                            The CEN Healthcare Coding                                                      The CEN Healthcare Coding
+                            Coding Identifier                         Scheme Designator                                                              Scheme Designator. Retained for
+                                                                                                                                                     backward compatibility only as
+                                                                                                                                                     of v2.7; does not identify
+                                                                                                                                                     Assigning Authorities
+ HL7                        HL7 registration                                                                                                         Retained for backward
+                            schemes                                                                                                                  compatibility only as of v2.7;
+                                                                                                                                                     HL7 assigns ISO OIDs for
+                                                                                                                                                     Assigning Authorities
+ ISO                        ISO Object                                An International Standards                                                     An International Standards
+                            Identifier                                Organization Object Identifier                                                 Organization Object Identifier
+                                                                      (OID), in accordance with ISO/IEC                                              (OID), in accordance with
+                                                                      8824.  Formatted as decimal digits                                             ISO/IEC 8824.  Formatted as
+                                                                      separated by periods;                                                          decimal digits separated by
+                                                                      recommended limit of 64                                                        periods; recommended limit of
+                                                                      characters                                                                     64 characters
+ L                          Local                                     These are reserved for locally                                                 Locally defined coding entity
+                                                                      defined coding schemes.                                                        identifier.Retained for backward
+                                                                                                                                                     compatibility only as of v 2.8
+ L,M,N                      Local                                     These are reserved for locally                                                 Locally defined coding entity                                             D
+                                                                      defined coding schemes.                                                        identifier.Retained for backward
+                                                                                                                                                     compatibility only as of v 2.8
+ M                          Local                                     These are reserved for locally                                                 Locally defined coding entity
+                                                                      defined coding schemes.                                                        identifier.Retained for backward
+                                                                                                                                                     compatibility only as of v 2.8
+ N                          Local                                     These are reserved for locally                                                 Locally defined coding entity
+                                                                      defined coding schemes.                                                        identifier.Retained for backward
+                                                                                                                                                     compatibility only as of v 2.8
+ NPI                        US National                               Allows for the ability to designate                                            Use to identify assigning                                                 N
+                            Provider                                  organization identifier as a "NPI"                                             authority IDs, when an OID is
+                            Identifier                                assigned number (lab, any medical                                              not available.  Especially
+                                                                      provider, can be a person or an                                                important in the CNN datatype.
+                                                                      organization)                                                                  Namespace maintained and
+                                                                                                                                                     published in the US.
+ Random                     Random                                    Usually a base64 encoded string of                                             Usually a base64 encoded string
+                                                                      random bits.                                                                   of random bits.Retained for
+                                                                      Note: Random IDs are typically                                                 backward compatibility only as
+                                                                      used for instance identifiers, rather                                          of v2.7; equivalent to a locally
+                                                                      than an identifier of an Assigning                                             defined entity identifier scheme;  Value                            Display Name                                         Definition                                                                                          Comment/ Usage Note                                                                          Status
+                                                                                        Authority that issues instance                                                                      use L. M, or N instead. Note:
+                                                                                        identifiers                                                                                         Random IDs are typically used
+                                                                                                                                                                                            for instance identifiers, rather
+                                                                                                                                                                                            than an identifier of an
+                                                                                                                                                                                            Assigning Authority that issues
+                                                                                                                                                                                            instance identifiers
+
+                                                                                                                                                                                            Usage Note: Retained for
+                                                                                                                                                                                            backward compatibility only as
+                                                                                                                                                                                            of v2.7; equivalent to a locally
+                                                                                                                                                                                            defined entity identifier scheme;
+                                                                                                                                                                                            use L. M, or N instead.
+  URI                              Uniform
+                                   Resource
+                                   Identifier
+  UUID                             Universal Unique                                     The DCE Universal Unique                                                                            The DCE Universal Unique
+                                   Identifier                                           Identifier, in accordance with RFC                                                                  Identifier, in accordance with
+                                                                                        4122. Recommended format is 32                                                                      RFC 4122. Recommended
+                                                                                        hexadecimal digits separated by                                                                     format is 32 hexadecimal digits
+                                                                                        hyphens, in the digit grouping 8-                    4-                                             separated by hyphens, in the
+                                                                                        4-4-12                                                                                              digit grouping 8-4-4-4-12
+  x400                             X.400 MHS                                            An X.400 MHS identifier.                                                                            Recommended format is in
+                                   identifier                                           Recommended format is in                                                                            accordance with RFC 1649
+                                                                                        accordance with RFC 1649
+  x500                             X500 directory                                       An X.500 directory name
+                                   Name

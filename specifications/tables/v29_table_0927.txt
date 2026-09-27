@@ -1,0 +1,6 @@
+                                                                                                                                          Table 0927Coded Content
+   Value                                             Display Name                                                      Definition                                                                                                                                                                              Comment/                                          Status
+                                                                                                                                                                                                                                                                                                               Usage Note
+   L                                                 Left Arm
+   R                                                 Right Arm
+   B                                                 Both Arms

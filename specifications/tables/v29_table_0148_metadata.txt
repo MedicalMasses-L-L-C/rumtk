@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0148
+  Description                                                                                         HL7-defined table of codes which specify whether the amount is currency or a
+                                                                                                      percentage.
+  Type                                                                                                HL7
+  Steward                                                                                             InM/FM
+  where used                                                                                          M    O    P.    1
+  HL7 Version  Introduced                                                                             2.2

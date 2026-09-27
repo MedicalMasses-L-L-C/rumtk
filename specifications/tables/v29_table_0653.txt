@@ -1,0 +1,8 @@
+                                                                                                                        Table 0653Coded Content
+   Value                                      Display Name                                               Definition                                                               Comment/ Usage Note                                                                                                                Status
+   1                                          mm/dd/yy                                                                                                                            USA standard
+   2                                          yy.mm.dd                                                                                                                            ANSI standard
+   3                                          dd/mm/yy                                                                                                                            Britain/France standard
+   4                                          dd.mm.yy                                                                                                                            Germany standard
+   5                                          yy/mm/dd                                                                                                                            Japan standard
+   6                                          Yymmdd                                                                                                                              ISO standard

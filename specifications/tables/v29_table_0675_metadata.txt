@@ -1,0 +1,5 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0675
+  Description                                                                                              9999
+  Type                                                                                                     undefined
+  where used                                                                                               PDC-2

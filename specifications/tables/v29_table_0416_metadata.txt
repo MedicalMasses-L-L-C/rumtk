@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0416
+  Description                                                                                         HL7-defined table of codes that specify a procedure's priority ranking relative to
+                                                                                                      its DRG.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          PR1-17
+  HL7 Version  Introduced                                                                             2.4

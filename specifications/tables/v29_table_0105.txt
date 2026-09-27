@@ -1,0 +1,7 @@
+                                                                                                                                 Table 0105Coded Content
+  Value                                          Display Name                                                                                                                 Definition                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                           Usage Note
+  L                                              Ancillary (filler) department is source of
+                                                 comment
+  P                                              Orderer (placer) is source of comment
+  O                                              Other system is source of comment

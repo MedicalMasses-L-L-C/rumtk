@@ -1,0 +1,19 @@
+                                                                                                                         Table Metadata
+  Table                                                                            0543
+  Description                                                                      Table of codes that specify the modifying or qualifying description(s) about the
+                                                                                   specimen collection site.  This field differs from Specimen Source Site in those
+                                                                                   cases where the source site must be approached via a particular site (e.g.,
+                                                                                   anatomic location). For example, in the case where a liver biopsy is obtained via
+                                                                                   a percutaneous needle, the collection site would be the point of entry of the
+                                                                                   needle. For venous blood collected from the left radial vein, the collection site
+                                                                                   could be “antecubital fossa”.  No suggested values.
+  Type                                                                             User
+
+
+
+
+
+
+  Steward                                                                          OO
+  where used                                                                       SPM-10
+  HL7 Version  Introduced                                                            2.5

@@ -1,0 +1,9 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0218
+  Description                                                                                          Table of codes used to indicate which adjustments should be made to a
+                                                                                                       guarantor ’s charges.  For example, when a hospital agrees to adjust a
+                                                                                                       guarantor  ’s charges to a sliding scale.  No  suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           GT1-26
+  HL7 Version  Introduced                                                                              2.3

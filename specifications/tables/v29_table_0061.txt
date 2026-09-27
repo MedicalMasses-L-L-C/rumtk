@@ -1,0 +1,13 @@
+                                                                                                                                Table 0061Coded Content
+  Value                                          Display Name                                                                                                                                               Definition                                     Comment/ Usage Note                                                          Status
+  BCV                                            Bank Card Validation Number                                                                                                                                                                               A non-embossed number
+                                                                                                                                                                                                                                                           included on bank cards
+                                                                                                                                                                                                                                                           and used to validate
+                                                                                                                                                                                                                                                           authenticity of the card
+                                                                                                                                                                                                                                                           and the person presenting
+                                                                                                                                                                                                                                                           the card
+  NPI                                            Check digit algorithm in the US National
+                                                 Provider Identifier
+  ISO                                            ISO 7064: 1983
+  M10                                            Mod 10 algorithm
+  M11                                            Mod 11 algorithm

@@ -1,0 +1,5 @@
+                                                                                                                                      Table 0450Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                         Comment/                                         Status
+                                                                                                                                                                                                                                                                                                       Usage Note
+   LOG                                             Log Event
+   SER                                             Service Event

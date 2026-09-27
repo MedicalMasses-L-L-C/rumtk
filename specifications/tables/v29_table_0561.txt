@@ -1,0 +1,16 @@
+                                                                                                                     Table 0561Coded Content
+  Value                                      Display Name                                             Definition                                               Comment/ Usage Note                                                                                                                           Status
+  DTCTR                                      Data Center                                                                                                       MSP: Data Center Number associated with the
+                                             Number                                                                                                            Provider's Network Application ID
+  SEQ                                        Sequence                                                                                                          MSP: Must be sequential by Data Center
+                                             Number                                                                                                            Number
+  DGAPP                                      Diagnostic                                                                                                        MSP: assigned by MSP
+                                             Approval
+                                             Number
+  CLCT R                                     Claim Center
+  ENC                                        Encounter
+                                             Number
+  OOP                                        Out of Province
+                                             Indicator
+  GFTH                                       Good Faith
+                                             Indicator

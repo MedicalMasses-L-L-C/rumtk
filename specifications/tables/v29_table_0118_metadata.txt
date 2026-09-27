@@ -1,0 +1,7 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0118
+  Description                                                                              Table of codes specifying the major diagnostic category.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  InM/FM
+  where used                                                                               DMI-2
+  HL7 Version  Introduced                                                                  2.1

@@ -1,0 +1,8 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0191
+  Description                                                                                     HL7-defined table of codes declaring the general type of media data that is
+                                                                                                  encoded.
+  Type                                                                                            HL7
+  Steward                                                                                         InM/FM
+  where used                                                                                      TXA-                                                          3
+  HL7 Version  Introduced                                                                         2.2

@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                         0124
+  Description                                                                                   HL7-defined table of codes which specify how (or whether) to transport a
+                                                                                                patient, when applicable, for an ordered service.
+  Type                                                                                          HL7
+  Steward                                                                                       OO
+  where used                                                                                    OBR-                                                     30
+  HL7 Version  Introduced                                                                       2.1

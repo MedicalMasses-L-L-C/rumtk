@@ -1,0 +1,16 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                          0404
+
+
+
+
+
+
+
+
+  Description                                                                                    HL7-defined table of codes which specify the level of knowledge a person
+                                                                                                 possesses with respect to a language ability identified.
+  Type                                                                                           User
+  Steward                                                                                        PA
+  where used                                                                                     LAN-                                                          4
+  HL7 Version  Introduced                                                                        2.4

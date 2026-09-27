@@ -1,0 +1,14 @@
+                                                                                                                                  Table 0127Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                              Usage Note
+   DA                                             Drug allergy
+   FA                                             Food allergy
+   MA                                             Miscellaneous
+                                                  allergy
+   MC                                             Miscellaneous
+                                                  contraindication
+   EA                                             Environmental
+                                                  Allergy
+   AA                                             Animal Allergy
+   PA                                             Plant Allergy
+   LA                                             Pollen Allergy

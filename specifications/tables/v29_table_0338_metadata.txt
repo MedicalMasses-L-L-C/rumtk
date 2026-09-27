@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0338
+  Description                                                                                              Table of codes specifying the type of number used for the practitioner
+                                                                                                           identification.
+  Type                                                                                                     User
+  Steward                                                                                                  InM
+  where used                                                                                               PLN.2, PRD-7, CTD-7
+  HL7 Version  Introduced                                                                                  2.3

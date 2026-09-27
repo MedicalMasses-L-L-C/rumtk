@@ -1,0 +1,8 @@
+                                                                                                                             Table Metadata
+  Table                                                                                0294
+  Description                                                                          Table of codes used to describe acceptable start and end times, as well as days
+                                                                                       of the week, for appointment or resource scheduling.
+  Type                                                                                 User
+  Steward                                                                              InM/S&L
+  where used                                                                           SCV.1, APR-1, APR-2
+  HL7 Version  Introduced                                                              2.3

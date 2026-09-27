@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0306
+  Description                                                                                               Table of codes specifying the status or availability of the location, such as the
+                                                                                                            bed status.   No suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   I    n    M    /   PA
+  where used                                                                                                PL.5, NDL.8
+  HL7 Version  Introduced                                                                                   2.3

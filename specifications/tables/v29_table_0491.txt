@@ -1,0 +1,7 @@
+                                                                                                                         Table 0491Coded Content
+   Value                                      Display Name                                               Definition                                                                                                                                                       Comment/                                    Status
+                                                                                                                                                                                                                                                                          Usage Note
+   E                                          Excellent
+   G                                          Good
+   F                                          Fair
+   P                                          Poor

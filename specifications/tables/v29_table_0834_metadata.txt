@@ -1,0 +1,12 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0834
+  Description                                                                                           Table of codes specifying the general type of data.
+  Type                                                                                                  Imported
+
+
+
+
+
+  Steward                                                                                               InM
+  where used                                                                                            RP.3, ED.2
+  HL7 Version  Introduced                                                                                 2.6

@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0269
+  Description                                                                                      Table of codes used to define the event upon which a charge should be
+                                                                                                   generated.
+  Type                                                                                             User
+  Steward                                                                                          InM/FM
+  where used                                                                                       PRC-18
+  HL7 Version  Introduced                                                                          2.3

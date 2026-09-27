@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0569
+  Description                                                                                       Table of codes used to specify the action requested of a party that receives an
+                                                                                                    adjustment.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        ADJ-11
+  HL7 Version  Introduced                                                                           2.6

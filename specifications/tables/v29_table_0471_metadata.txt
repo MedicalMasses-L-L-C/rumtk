@@ -1,0 +1,7 @@
+                                                                                                                                                                  Table Metadata
+  Table                                                                                                         0471
+  Description                                                                                                   Table of codes specifying the name of the query.  No suggested values.
+  Type                                                                                                          User
+  Steward                                                                                                       InM
+  where used                                                                                                    QPD-1, QAK-                                                                                                3, QID-                             2
+  HL7 Version  Introduced                                                                                       2.4

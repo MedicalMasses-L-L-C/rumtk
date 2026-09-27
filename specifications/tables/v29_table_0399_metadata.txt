@@ -1,0 +1,11 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0399
+  Description                                                                           Table of codes that identifies a country of origin for a message.  It will be used
+                                                                                        primarily to specify default elements, such as currency denominations. The
+                                                                                        values to be used are those of ISO 3166. The ISO 3166 table has three separate
+                                                                                        forms of the country code: HL7 specifies that the 3-                                character (alphabetic) fo rm
+                                                                                        be used for the country code.
+  Type                                                                                  External
+  Steward                                                                               InM
+  where used                                                                            MSH-17, CX.9, PPN.23,VID.2, XAD.6, XCN.22
+  HL7 Version  Introduced                                                               2.4

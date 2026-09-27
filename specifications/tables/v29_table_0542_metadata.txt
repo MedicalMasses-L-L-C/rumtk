@@ -1,0 +1,8 @@
+                                                                                                                         Table Metadata
+  Table                                                                            0542
+  Description                                                                      Table of codes that specify the modifying or qualifying description(s) about the
+                                                                                   specimen source site.  No suggested values.
+  Type                                                                             User
+  Steward                                                                          OO
+  where used                                                                       SPM-9
+  HL7 Version  Introduced                                                          2.5

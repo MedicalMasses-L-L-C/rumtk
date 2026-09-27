@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0944
+  Description                                                                                  Table of codes that identify the route for transport of a specific container.    No
+                                                                                               suggested values.
+  Type                                                                                         User
+  Steward                                                                                      OO
+  where used                                                                                   DST-2
+  HL7 Version  Introduced                                                                      2.9

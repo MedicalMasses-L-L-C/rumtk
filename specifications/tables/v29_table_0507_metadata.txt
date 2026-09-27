@@ -1,0 +1,9 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0507
+  Description                                                                               Table of codes regarding the handling of a result.  For example, an order may
+                                                                                            specify that the result (e.g., an x-ray film) should be given to the patient for
+                                                                                            return to the requestor.
+  Type                                                                                      User
+  Steward                                                                                   OO
+  where used                                                                                OBR-                                                     49
+  HL7 Version  Introduced                                                                   2.5

@@ -1,0 +1,7 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0240
+  Description                                                                                       HL7-defined table of codes used to describe the impact of an event on a patient.
+  Type                                                                                              HL7
+  Steward                                                                                           OO
+  where used                                                                                        PEO-11
+  HL7 Version Introduced                                                                            2.3

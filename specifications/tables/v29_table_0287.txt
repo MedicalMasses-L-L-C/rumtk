@@ -1,0 +1,23 @@
+                                                                                                                          Table 0287Coded Content
+  Value                                        Display Name                                               Definition                                                 Comment/ Usage Note                                                                                                                                 Status
+  AD                                           ADD
+  CO                                           CORRECT
+  DE                                           DELETE
+  LI                                           LINK
+  SP                                           Used in Snapshot                                           Declares when                                              Snapshot mode is the expected default; use this                                                                                                     N
+                                               mode                                                       segment falls                                              code to explicitly state that.
+                                                                                                          under snapshot
+                                                                                                          mode handling,
+                                                                                                          i.e. all elements
+                                                                                                          that were
+                                                                                                          previously sent
+                                                                                                          will be sent, not
+                                                                                                          just any changes
+  UC                                           UNCHANGED                                                  UNCHANGED *                                                The UNCHANGED action code is used to
+                                                                                                                                                                     signify to the applications programs that this
+                                                                                                                                                                     particular segment includes no information to
+                                                                                                                                                                     be modified.  It is supplied in order to identify
+                                                                                                                                                                     the correct record for which the following
+                                                                                                                                                                     modification is intended
+  UN                                           UNLINK
+  UP                                           UPDATE

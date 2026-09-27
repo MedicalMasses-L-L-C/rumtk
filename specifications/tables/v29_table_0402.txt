@@ -1,0 +1,7 @@
+                                                                                                                             Table 0402Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                              Comment/                                     Status
+                                                                                                                                                                                                                                                                                     Usage Note
+   D                                            Dental
+   G                                          Graduate
+   M                                          Medical
+   U                                          Undergraduate

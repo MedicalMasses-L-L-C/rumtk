@@ -1,0 +1,14 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0474
+  Description                                                                                    Table of codes specifying the classification of the organization unit.
+  Type                                                                                           User
+
+
+
+
+
+
+
+  Steward                                                                                        PA
+  where used                                                                                     ORG-3
+  HL7 Version  Introduced                                                                           2.4

@@ -1,0 +1,11 @@
+                                                                                                                Table 0315Coded Content
+  Value                             Display Name                                                                                                               Definition                                                                Comment/ Usage                                         Status
+                                                                                                                                                                                                                                         Note
+  Y                                 Yes, patient has a living will
+  F                                 Yes, patient has a living will but it is not
+                                    on file
+  N                                 No, patient does not have a living will and
+                                    no information was provided
+  I                                 No, patient does not have a living will but
+                                    information was provided
+  U                                 Unknown

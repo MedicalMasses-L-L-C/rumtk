@@ -1,0 +1,7 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0280
+  Description                                                                                               Table of codes used to designate the urgency of a  referral.
+  Type                                                                                                      User
+  Steward                                                                                                   OO
+  where used                                                                                                RF1-2
+  HL7 Version  Introduced                                                                                   2.3

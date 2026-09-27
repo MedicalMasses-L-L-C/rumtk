@@ -1,0 +1,7 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                  0270
+  Description                                                                                            Table of codes used to identify the kind of patient document.
+  Type                                                                                                   User
+  Steward                                                                                                StrucDoc
+  where used                                                                                             TXA-                                                          2
+  HL7 Version  Introduced                                                                                2.3

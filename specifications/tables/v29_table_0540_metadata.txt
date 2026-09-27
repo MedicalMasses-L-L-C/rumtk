@@ -1,0 +1,7 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0540
+  Description                                                                                              Table of codes used to specify the reason the staff member is inactive.
+  Type                                                                                                     User
+  Steward                                                                                                  PA
+  where used                                                                                               STF-                      38
+  HL7 Version  Introduced                                                                                  2.5

@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0282
+  Description                                                                                           Table of codes used to identify the expected response from the healthcare
+                                                                                                        professional receiving a referral.
+  Type                                                                                                  User
+  Steward                                                                                               OO
+  where used                                                                                            RF1-4
+  HL7 Version Introduced                                                                                2.3

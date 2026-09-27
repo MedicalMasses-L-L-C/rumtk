@@ -1,0 +1,9 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0919
+  Description                                                                              HL7-defined table of codes that define if a test should be a specific event with
+                                                                                           no other tests to be performed with this test, or not, or other special
+                                                                                           circumstances.
+  Type                                                                                     HL7
+  Steward                                                                                  OO
+  where used                                                                               OM1-48
+  HL7 Version  Introduced                                                                  2.8

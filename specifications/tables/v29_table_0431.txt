@@ -1,0 +1,12 @@
+                                                                                                                               Table 0431Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   A                                             Alcohol
+   K                                             Kava
+   M                                             Marijuana
+   T                                             Tobacco -
+                                                 smoked
+   C                                             Tobacco -
+                                                 chewed
+   O                                             Other
+   U                                             Unknown

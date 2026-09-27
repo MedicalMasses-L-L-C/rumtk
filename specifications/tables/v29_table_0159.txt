@@ -1,0 +1,6 @@
+                                                                                                                                       Table 0159Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                          Comment/                                          Status
+                                                                                                                                                                                                                                                                                                         Usage Note
+   D                                                Diet
+   S                                                Supplement
+   P                                                Preference

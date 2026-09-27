@@ -1,0 +1,8 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                          0653
+  Description                                                                                    Table of codes specifying the date format for a decontamination/sterilization
+                                                                                                 instance.
+  Type                                                                                           User
+  Steward                                                                                        OO
+  where used                                                                                     SCP-3
+  HL7 Version  Introduced                                                                        2.6

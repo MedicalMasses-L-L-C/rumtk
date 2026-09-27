@@ -1,0 +1,67 @@
+                                                                                                        Table 0371Coded Content
+  Value                          Display Name                                                                                         Definition                                         Comment/ Usage Note                                                               Status
+  F10                            10% Formalin                                                                                                                                            Tissue preservative
+  C32                            3.2%  Citrate                                                                                                                                           Blue top tube
+  C38                            3.8% Citrate                                                                                                                                            Blue top tube
+  HCL6                           6N HCL                                                                                                                                                  24 HR Urine Additive
+  ACDA                           ACD Solution A                                                                                                                                          Yellow top tube
+  ACD B                          ACD Solution B                                                                                                                                          Yellow top tube
+  ACET                           Acetic Acid                                                                                                                                             Urine preservative
+  AMIES                          Amies transport medium                                                                                                                                  Protozoa
+  HEPA                           Ammonium heparin                                                                                                                                        Green top tube
+  BACTM                          Bacterial Transport medium                                                                                                                              Microbiological culture
+  BOR                            Borate Boric Acid                                                                                                                                       24HR Urine Additive  Value                      Display Name                                                                             Definition                                  Comment/ Usage Note                                                      Status
+  BOUIN                      Bouin's solution                                                                                                                     Tissue
+  BF10                       Buffered 10% formalin                                                                                                                Tissue
+  WEST                       Buffered Citrate (Westergren                                                                                                         Black top tube
+                             Sedimentation Rate)
+  BSKM                       Buffered skim milk                                                                                                                   Viral isolation
+  CARS                       Carson's Modified 10% formalin                                                                                                       Tissue
+  CARY                       Cary Blair Medium                                                                                                                    Stool Cultures
+  CHLTM                      Chlamydia transport medium                                                                                                           Chlamydia culture
+  CTAD                       CTAD (this should be spelled out if                                                                                                  Blue top tube
+                             not universally understood)
+  ENT                        Enteric bacteria transport medium                                                                                                    Bacterial culture
+  ENT+                       Enteric plus                                                                                                                         Stool Cultures
+  JKM                        Jones Kendrick Medium                                                                                                                Bordetella pertussis
+  KARN                       Karnovsky's fixative                                                                                                                 Tissue
+  LIA                        Lithium iodoacetate                                                                                                                  Gray top tube
+  HEPL                       Lithium/Li  Heparin                                                                                                                  Green top tube
+  M4                         M4                                                                                                                                   Microbiological culture
+  M4RT                       M4-RT                                                                                                                                Microbiological culture
+  M5                         M5                                                                                                                                   Microbiological culture
+  MICHTM                     Michel's transport medium                                                                                                            IF tests
+  MMDTM                      MMD transport medium                                                                                                                 Immunofluorescence
+  HNO3                       Nitric Acid                                                                                                                          Urine
+  NONE                       None                                                                                                                                 Red or Pink top tube
+  PAGE                       Pages's Saline                                                                                                                       Acanthaoemba
+  PHENOL                     Phenol                                                                                                                               24 Hr Urine Additive
+  KOX                        Potassium Oxalate                                                                                                                    Gray top tube
+  EDTK                       Potassium/K EDTA                                                                                                                     Deprecated. Replaced by
+                                                                                                                                                                  EDTK15 and EDTK75
+  EDTK15                     Potassium/K EDTA 15%                                                                                                                 Purple top tube
+  EDTK75                     Potassium/K EDTA 7.5%                                                                                                                Purple top tube
+  PVA                        PVA (polyvinylalcohol)                                                                                                               O&P
+  RLM                        Reagan Lowe Medium                                                                                                                   Bordetella pertussis cultures
+  SST                        Serum Separator Tube (Polymer  Gel)                                                                                                  'Tiger' Top tube
+  SILICA                     Siliceous earth, 12 mg                                                                                                               Gray top tube
+  NAF                        Sodium Fluoride                                                                                                                      Gray top tube
+  FL100                      Sodium Fluoride, 100mg                                                                                                               Urine
+  FL10                       Sodium Fluoride, 10mg                                                                                                                Urine
+  NAPS                       Sodium polyanethol sulfonate 0.35%                                                                                                   Yellow (Blood Culture)
+                             in 0.85% sodium chloride
+  HEPN                       Sodium/Na  Heparin                                                                                                                   Green top tube
+  EDTN                       Sodium/Na EDTA                                                                                                                       Dark Blue top tube
+  SPS                        SPS(this should be spelled out if not                                                                                                Anticoagulant w/o
+                             universally understood)                                                                                                              bacteriocidal properties
+  STUTM                      Stuart transport medium                                                                                                              Bacterial culture
+  THROM                      Thrombin                                                                                                                             Orange or Grey/Yellow
+                                                                                                                                                                  (STAT Chem)
+  FDP                        Thrombin NIH; soybean trypsin                                                                                                        Dark Blue top tube
+                             inhibitor (Fibrin Degradation
+                             Products)
+  THYMOL                     Thymol                                                                                                                               24 Hr Urine Additive
+  THYO                       Thyoglycollate broth                                                                                                                 Bacterial Isolation
+  TOLU                       Toluene                                                                                                                              24 Hr Urine Additive
+  URETM                      Ureaplasma transport medium                                                                                                          Ureaplasma culture
+  VIRTM                               Viral Transport medium                                                                                                                                                      Virus cultures

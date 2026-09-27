@@ -1,0 +1,9 @@
+                                                                                                                            Table 0459Coded Content
+  Va    l    u    e                 Display Name                                                                                                                                                              Definition                                                          Comment/                                     Status
+                                                                                                                                                                                                                                                                                  Usage Note
+  0                                 OCE line item denial or rejection is not ignored
+  1                                 OCE line item denial or rejection is ignored
+  2                                 External line item denial. Line item is denied even if
+                                    no OCE edits
+  3                                 External line item rejection. Line item is rejected even
+                                    if no OCE edits

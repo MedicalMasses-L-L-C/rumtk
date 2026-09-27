@@ -1,0 +1,5 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0133
+  Description                                                                              Procedure practitioner identifier code type (include definition, but  PA wants to
+                                                                                           publish)
+  Type                                                                                     undefined

@@ -1,0 +1,8 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0234
+  Description                                                                                              HL7-defined table of codes used to identify the time span of a report or the
+                                                                                                           reason for a report sent to a regulatory agency.
+  Type                                                                                                     HL7
+  Steward                                                                                                  OO
+  where used                                                                                               PES-                      11
+  HL7 Version  Introduced                                                                                  2.3

@@ -1,0 +1,9 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0562
+  Description                                                                                    Table of codes used to specify special processing requested of Payer for this
+                                                                                                 Product/Service Line Item (e.g., hold until paper supporting documentation is
+                                                                                                 received by Payer).
+  Type                                                                                           User
+  Steward                                                                                        FM
+  where used                                                                                     PSL-20
+  HL7 Version  Introduced                                                                        2.6

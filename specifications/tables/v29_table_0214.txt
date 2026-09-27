@@ -1,0 +1,10 @@
+                                                                                                                                Table 0214Coded Content
+   Value                                          Display Name                                                  Definition                                                                                                                                                                 Comment/                                       Status
+                                                                                                                                                                                                                                                                                           Usage Note
+   CH                                             Child Health
+                                                  Assistance
+   ES                                             Elective Surgery
+                                                  Program
+   FP                                             Family Planning
+   O                                              Other
+   U                                              Unknown

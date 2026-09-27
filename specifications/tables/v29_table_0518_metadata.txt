@@ -1,0 +1,14 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0518
+  Description                                                                                    Table of codes used to specify what type of override can be used to override the
+                                                                                                 specific error identified.
+
+
+
+
+
+
+  Type                                                                                           User
+  Steward                                                                                        InM
+  where used                                                                                     ERR-                                                    10, OVR-1
+  HL7 Version  Introduced                                                                    2.5

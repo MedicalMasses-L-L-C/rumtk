@@ -1,0 +1,13 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0114
+  Description                                                                                        Table of codes specifying a special diet type for a patient.  No suggested values.
+  Type                                                                                               User
+  Steward                                                                                            I    n    M    /   PA
+
+
+
+
+
+
+  where used                                                                                         DLD.1. PV1-38
+  HL7 Version  Introduced                                                                    2.1

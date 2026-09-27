@@ -1,0 +1,46 @@
+                                                                                                             Table 0443Coded Content
+  Value                            Display Name                                                                                                            Definition                                           Comment/ Usage Note                                                      Status
+  AD                               Admitting                                                                                                                                                                    PV1-17 Admitting doctor
+  AP                               Administering Provider                                                                                                                                                       RXA-10 Administering
+                                                                                                                                                                                                                Provider
+  AT                               Attending                                                                                                                                                                    PV1-7  Attending doctor
+  CLP                              Collecting Provider                                                                                                                                                          OBR-10 Collector
+                                                                                                                                                                                                                Identifier
+  CP                               Consulting Provider
+  DP                               Dispensing Provider                                                                                                                                                          RXD-10 Dispensing
+                                                                                                                                                                                                                Provider
+  EP                               Entering Provider (probably not the same                                                                                                                                     ORC-10 Entered By
+                                   as transcriptionist?)
+  FHCP                             Family Health Care Professional
+  IP                               Initiating Provider (as in action by)                                                                                                                                        ORC-19 Action By
+  MDIR                             Medical Director                                                                                                                                                             OBX-25 Performing
+                                                                                                                                                                                                                Organization Medical
+                                                                                                                                                                                                                Director
+  OP                               Ordering Provider                                                                                                                                                            ORC-12 Ordering
+                                                                                                                                                                                                                Provider, OBR-16
+                                                                                                                                                                                                                Ordering Provider, RXO-
+                                                                                                                                                                                                                14 Ordering Provider's
+                                                                                                                                                                                                                DEA Number, RXE-13
+                                                                                                                                                                                                                Ordering Provider's DEA
+                                                                                                                                                                                                                Number, ORC-24
+                                                                                                                                                                                                                Ordering Provider
+                                                                                                                                                                                                                Address
+  PH                               Pharmacist   (not sure how  to dissect                                                                                                                                       RXE-14
+                                   Pharmacist/Treatment Supplier's Verifier                                                                                                                                     Pharmacist/Treatment
+                                   ID)                                                                                                                                                                          Supplier's Verifier ID
+  PP                               Primary Care Provider
+  RO                               Responsible Observer                                                                                                                                                         OBX-16 Responsible
+                                                                                                                                                                                                                Observer
+  RP                               Referring Provider                                                                                                                                                           PV1-8  Referring doctor
+  RT                               Referred to Provider
+  TR                               Transcriptionist
+  PI                               Primary Interpreter
+  AI                               Assistant/Alternate Interpreter
+  TN                               Technician
+  VP                               Verifying Provider                                                                                                                                                           ORC-11 Verified By
+  VPS                              Verifying Pharmaceutical Supplier   (not                                                                                                                                     RXE-14
+                                   sure how to dissect Pharmacist/Treatment                                                                                                                                     Pharmacist/Treatment
+                                   Supplier's Verifier ID)                                                                                                                                                      Supplier's Verifier ID
+  VTS                              Verifying Treatment Supplier   (not sure                                                                                                                                     RXE-14
+                                   how to dissect Pharmacist/Treatment                                                                                                                                          Pharmacist/Treatment
+                                   Supplier's Verifier ID)                                                                                                                                                      Supplier's Verifier ID

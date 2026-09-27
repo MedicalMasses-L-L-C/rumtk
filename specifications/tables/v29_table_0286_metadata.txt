@@ -1,0 +1,13 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0286
+  Description                                                                               Table of codes used to define the relationship between a referral recipient and a
+                                                                                            patient or between a referral initiator and a patient.
+  Type                                                                                      User
+
+
+
+
+
+  Steward                                                                                   OO
+  where used                                                                                PRD-1
+  HL7 Version  Introduced                                                                            2.3

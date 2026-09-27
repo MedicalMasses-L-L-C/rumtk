@@ -1,0 +1,8 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                           0375
+  Description                                                                                     Table of codes that identify the artificial blood identifier associated with the
+                                                                                                  specimen.
+  Type                                                                                            User
+  Steward                                                                                         OO
+  where used                                                                                      SAC-42
+  HL7 Version Introduced                                                                          2.4

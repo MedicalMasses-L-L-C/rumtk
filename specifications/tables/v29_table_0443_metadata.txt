@@ -1,0 +1,15 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                  0443
+  Description                                                                            Table of codes specifying the functional involvement with the activity being
+                                                                                         transmitted (e.g., Case Manager, Evaluator, Transcriber, Nurse Care Practitioner,
+                                                                                         Midwife, Physician Assistant, etc.).
+  Type                                                                                   User
+
+
+
+
+
+
+  Steward                                                                                PA
+  where used                                                                             ROL-3
+  HL7 Version  Introduced                                                               2.4

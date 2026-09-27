@@ -1,0 +1,15 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                         0261
+
+
+
+
+
+
+
+  Description                                                                                   Table of codes used to identify the equipment available in a location definition
+                                                                                                identified as a room or bed.
+  Type                                                                                          User
+  Steward                                                                                       I    n    M    /   PA
+  where used                                                                                    LOC-8
+  HL7 Version  Introduced                                                                       2.3

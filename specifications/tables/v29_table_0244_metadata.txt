@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0244
+  Description                                                                                    Table of codes that indicate whether a product is designed for a single use.  No
+                                                                                                 suggested values.
+  Type                                                                                           User
+  Steward                                                                                        OO
+  where used                                                                                     PCR-9
+  HL7 Version  Introduced                                                                        2.3

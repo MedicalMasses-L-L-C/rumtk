@@ -1,0 +1,7 @@
+                                                                                                                                        Table 0567Coded Content
+   Value                                            Display Name                                                      Definition                                                                                                                                                                            Comment/                                         Status
+                                                                                                                                                                                                                                                                                                            Usage Note
+   [lb_av]                                          Pound
+   [oz_av]                                          Ounce
+   kg                                               Kilogram
+   g                                                Gram

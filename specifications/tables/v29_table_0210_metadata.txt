@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0210
+  Description                                                                                          HL7-defined table of codes used with relational operator values to group more
+                                                                                                       than one segment field name.
+  Type                                                                                                 HL7
+  Steward                                                                                              InM
+  where used                                                                                           QSC.4
+  HL7 Version  Introduced                                                                              2.3

@@ -1,0 +1,13 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0251
+  Description                                                                                     HL7-defined table of codes used to define the action taken as a result of an
+                                                                                                  event related to a product issue.
+
+
+
+
+
+  Type                                                                                            HL7
+  Steward                                                                                         OO
+  where used                                                                                      PCR-21
+  HL7 Version  Introduced                                                                               2.3

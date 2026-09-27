@@ -1,0 +1,37 @@
+                                                                                                                                            Table 0265Coded Content
+   Value                                              Display Name                                                        Definition                                                                                                                                                                                Comment/                                           Status
+                                                                                                                                                                                                                                                                                                                    Usage Note
+   AMB                                                Ambulatory
+   PSY                                                Psychiatric
+   PPS                                                Pediatric
+                                                      psychiatric
+   REH                                                Rehabilitation
+   PRE                                                Pediatric
+                                                      rehabilitation
+   ISO                                                Isolation
+   OBG                                                Obstetrics,
+                                                      gynecology
+   PIN                                                Pediatric/neonatal
+                                                      intensive care
+   INT                                                Intensive care
+   SUR                                                Surgery
+   PSI                                                Psychiatric
+                                                      intensive care
+   EDI                                                Education
+   CAR                                                Coronary/cardiac
+                                                      care
+   NBI                                                Newborn,
+                                                      nursery, infants
+   CCR                                                Critical care
+   PED                                                Pediatrics
+   EMR                                                Emergency
+   OBS                                                Observation
+   WIC                                                Walk-in clinic
+   PHY                                                General/family
+                                                      practice
+   ALC                                                Allergy
+   FPC                                                Family planning
+   CHI                                                Chiropractic
+   CAN                                                Cancer
+   NAT                                                Naturopathic
+   OTH                                                Other specialty

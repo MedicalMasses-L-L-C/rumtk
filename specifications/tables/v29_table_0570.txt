@@ -1,0 +1,21 @@
+                                                                                                                            Table 0570Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+   CASH                                         Cash
+   CCCA                                         Credit Card
+   CCH K                                        Cashier 's Check
+   CDA C                                        Credit/Debit
+                                                Account
+   CHCK                                         Check
+   DDPO                                         Direct Deposit                                                                                                                                                                                                                   EFT
+   DEBC                                         Debit Card
+   SWFT                                         Society for
+                                                Worldwide
+                                                Interbank
+                                                Financial
+                                                Telecommunicati
+                                                ons (S.W.I.F.T.)
+   TRAC                                         Traveler's Check
+   VISN                                         VISA Special
+                                                Electronic Funds
+                                                Transfer Network

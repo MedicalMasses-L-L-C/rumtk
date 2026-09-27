@@ -1,0 +1,5 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0577
+  Description                                                                                              9999
+  Type                                                                                                     undefined
+  where used                                                                                               BPX-6

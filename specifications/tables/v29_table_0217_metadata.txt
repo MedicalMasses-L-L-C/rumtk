@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0217
+  Description                                                                                          Table of codes used to define a relative level of urgency applied to a patient
+                                                                                                       visit.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           PV2-25
+  HL7 Version  Introduced                                                                              2.3

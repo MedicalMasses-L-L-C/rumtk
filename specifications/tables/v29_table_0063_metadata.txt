@@ -1,0 +1,8 @@
+                                                                                                                                                                  Table Metadata
+  Table                                                                                                         0063
+  Description                                                                                                   Table of codes specifying an actual personal relationship that the next of
+                                                                                                                kin/associated party has to a patient.
+  Type                                                                                                          User
+  Steward                                                                                                       PA
+  where used                                                                                                    NK1-3, IN1-17
+  HL7 Version  Introduced                                                                                       2.1

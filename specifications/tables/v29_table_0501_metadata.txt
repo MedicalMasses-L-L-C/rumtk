@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0501
+  Description                                                                                         Table of codes used to specify a reason the subject did not receive full
+                                                                                                      disclosure.
+  Type                                                                                                User
+  Steward                                                                                             StrucDoc
+  where used                                                                                          CON:22
+  HL7 Version  Introduced                                                                             2.5

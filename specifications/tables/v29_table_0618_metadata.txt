@@ -1,0 +1,8 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                      0618
+  Description                                                                                                Table of codes specifying that an address needs to be treated with special care or
+                                                                                                             sensitivity.
+  Type                                                                                                       User
+  Steward                                                                                                    InM
+  where used                                                                                                 XAD.22, XTN.16
+  HL7 Version  Introduced                                                                                    2.6

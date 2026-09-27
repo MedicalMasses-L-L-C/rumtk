@@ -1,0 +1,6 @@
+                                                                                                                                    Table 0394Coded Content
+  Value                                    Display Name                                                                                                                                            Definition                                                      Comment/ Usage Note                                                             Status
+  R                                        Real Time
+  T                                        Bolus (a series of responses sent at the same
+                                           time without use of batch formatting)
+  B                                        Batch

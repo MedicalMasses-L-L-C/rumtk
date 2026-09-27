@@ -1,0 +1,8 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0509
+  Description                                                                                              Table of codes that specify the reason the blood product was ordered.  No
+                                                                                                           suggested values.
+  Type                                                                                                     User
+  Steward                                                                                                  OO
+  where used                                                                                               BPO-13
+  HL7 Version  Introduced                                                                                  2.5

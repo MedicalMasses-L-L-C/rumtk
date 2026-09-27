@@ -1,0 +1,8 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0871
+  Description                                                                             Table of codes specifying any known or suspected hazard associated with this
+                                                                                          material item.
+  Type                                                                                    User
+  Steward                                                                                 OO
+  where used                                                                              ITM-15
+  HL7 Version  Introduced                                                                 2.6

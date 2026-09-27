@@ -1,0 +1,7 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0147
+  Description                                                                                            Table of codes which specify the policy type.
+  Type                                                                                                   User
+  Steward                                                                                                InM/FM
+  where used                                                                                             P   TA   .   1
+  HL7 Version  Introduced                                                                                2.2

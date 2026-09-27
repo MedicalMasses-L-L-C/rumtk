@@ -1,0 +1,9 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0519
+  Description                                                                                Table of codes that specify the override codes that can be used to override
+                                                                                             enforcement of the application rule that generated an error.  No suggested
+                                                                                             values.
+  Type                                                                                       User
+  Steward                                                                                    InM
+  where used                                                                                 ERR-                                                     11
+  HL7 Version Introduced                                                                     2.5

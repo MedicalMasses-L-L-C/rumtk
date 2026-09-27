@@ -1,0 +1,11 @@
+                                                                                                                                         Table 0122Coded Content
+   Value                                             Display Name                                                      Definition                                                                                                                                                                             Comment/                                          Status
+                                                                                                                                                                                                                                                                                                              Usage Note
+   CH                                                Charge
+   CO                                                Contract
+   CR                                                Credit
+   DP                                                Department
+   GR                                                Grant
+   NC                                                No Charge
+   PC                                                Professional
+   RS                                                Research

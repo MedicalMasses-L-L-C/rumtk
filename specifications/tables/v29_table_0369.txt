@@ -1,0 +1,53 @@
+                                                                                                                Table 0369Coded Content
+  Value                       Display Name                                                        Definition                                                                                      Comment/ Usage Note                                                                            Status
+  B                           Blind Sample                                                        Used to test the validity of the
+                                                                                                  measurement process, where the
+                                                                                                  composition of the sample is
+                                                                                                  unknown except to the person
+                                                                                                  submitting it.
+  C                           Calibrator                                                          Used for initial setting of
+                                                                                                  calibration of the instrument.
+  E                           Electronic QC                                                       Used with manufactured
+                                                                                                  reference providing signals that
+                                                                                                  simulate QC results
+  F                           Filler Organization                                                 Specimen used for testing
+                              Proficiency                                                         proficiency of the organization
+                                                                                                  performing the testing (Filler).
+  G                           Group                                                               Used when solid specimens
+                                                                                                  consist of multiple individual
+                                                                                                  elements that are not
+                                                                                                  individually identified but can be
+                                                                                                  separated again into the original
+                                                                                                  specimens.  The identifiers of
+                                                                                                  the original specimens may be
+                                                                                                  tracked.
+  H                           Historical Specimen                                                 This identifies a parent specimen                                                               The order of specimen                                                                          N
+                                                                                                  to the specimen that is submitted                                                               processing can be derived from
+                                                                                                  for testing                                                                                     the SPM-3 value in all SPM
+                                                                                                                                                                                                  segments in the message.  More
+                                                                                                                                                                                                  than one historical SPM can be
+                                                                                                                                                                                                  submitted, each SPM describes
+                                                                                                                                                                                                  one step in the derivation
+                                                                                                                                                                                                  process of the specimen
+                                                                                                                                                                                                  submitted for testing.
+  L                           Pool                                                                Used when aliquots of liquid
+                                                                                                  individual specimens are
+                                                                                                  combined to form a single
+                                                                                                  specimen representing all of the
+                                                                                                  components that are not
+                                                                                                  individually identified.  The
+                                                                                                  identifiers of the original
+                                                                                                  specimens may be tracked.
+  O                           Operator Proficiency                                                Specimen used for testing
+                                                                                                  Operator Proficiency.
+  P                           Patient                                                             Used for any patient sample.                                                                    If the component is not valued
+                                                                                                                                                                                                  (blank) this represents the
+                                                                                                                                                                                                  default meaning.
+  Q                           Control specimen                                                    Used when specimen is the
+                                                                                                  control specimen (either positive
+                                                                                                  or negative).
+  R                          Replicate (of patient                                              Used when a patient sample is
+                             sample as a control)                                               re-run as a control for a repeat
+                                                                                                test.
+  V                          Verifying Calibrator                                               Used for periodic calibration
+                                                                                                checks.

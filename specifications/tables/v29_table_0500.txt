@@ -1,0 +1,6 @@
+                                                                                                                            Table 0500Coded Content
+  Value                                        Display Name                                                 Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+  F                                            Full Disclosure
+  P                                            Partial Disclosure
+  N                                            No Disclosure

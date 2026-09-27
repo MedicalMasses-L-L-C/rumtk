@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0397
+  Description                                                                                      HL7-defined table of codes identifying how the field or parameter will be sorted
+                                                                                                   and, if sorted, whether the sort will be case sensitive (the default) or not.
+  Type                                                                                             HL7
+  Steward                                                                                          InM
+  where used                                                                                       S   RT.   2
+  HL7 Version  Introduced                                                                          2.4

@@ -1,0 +1,12 @@
+                                                                                                                                    Table 0241Coded Content
+  Value                                            Display Name                                                    Definition                                                                                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                   Usage Note
+  D                                                Died
+  R                                                Recovering
+  N                                                Not
+                                                   recovering/uncha
+                                                   nged
+  W                                                Worsening
+  S                                                Sequelae
+  F                                                Fully recovered
+  U                                                Unknown

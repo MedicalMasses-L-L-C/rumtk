@@ -1,0 +1,10 @@
+                                                                                                                      Table 0504Coded Content
+  Value                               Display Name                                                                                                                                                         Definition                                               Comment/                                   Status
+                                                                                                                                                                                                                                                                    Usage Note
+  EE                                  End related service request(s), end current service request.
+  ES                                  End related service request(s), start current service
+                                      request.
+  SS                                  Start related service request(s), start current service
+                                      request.
+  SE                                Start related service request(s), end current service
+                                    request.

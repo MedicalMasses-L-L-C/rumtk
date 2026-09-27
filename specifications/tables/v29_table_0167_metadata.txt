@@ -1,0 +1,7 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0167
+  Description                                                                                            HL7-defined table of codes which specify the substitution status.
+  Type                                                                                                   HL7
+  Steward                                                                                                OO
+  where used                                                                                             RXE-9, RXD-11  ,   R X  G  -10
+  HL7 Version  Introduced                                                                                2.2

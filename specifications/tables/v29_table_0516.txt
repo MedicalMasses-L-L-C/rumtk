@@ -1,0 +1,16 @@
+                                                                                                                  Table 0516Coded Content
+  Value                                     Display Name                                           Definition                                              Comment/ Usage Note                                                                                                                        Status
+  W                                         Warning                                                Transaction                                             Use this severity when parts of the message may not
+                                                                                                   successful, but                                         have been stored.
+                                                                                                   there may be issues
+  I                                         Information                                            Transaction was                                         e.g.,  inform patient
+                                                                                                   successful but
+                                                                                                   includes
+                                                                                                   information
+  E                                         Error                                                  Transaction was
+                                                                                                   unsuccessful  Value                                      Display Name                                             Definition                                                Comment/ Usage Note                                                                                                                            Status
+  F                                          Fatal Error                                              Message not
+                                                                                                      processed due to
+                                                                                                      application or
+                                                                                                      network failure
+                                                                                                      condition

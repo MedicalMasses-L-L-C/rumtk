@@ -1,0 +1,7 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0942
+  Description                                                                                     HL7-defined table of codes that specify the type of measurement of the state of
+                                                                                                  an automated laboratory instrument.
+  Type                                                                                            HL7
+  where used                                                                                      INV-21
+  HL7 Version  Introduced                                                                         2.9

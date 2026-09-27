@@ -1,0 +1,6 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0277
+  Description                                                                                     Table of codes used in an appointment request to describe the kind of
+                                                                                                  appointment.
+  Type                                                                                            User
+  HL7 Version Introduced                                                                          2.3

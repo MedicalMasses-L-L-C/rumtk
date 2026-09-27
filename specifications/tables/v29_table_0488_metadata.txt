@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0488
+  Description                                                                                 HL7-defined table of codes specifying the specimen collection method.   Used
+                                                                                              in Version 2 messaging in the SPM segment.
+  Type                                                                                        HL7
+  Steward                                                                                     OO
+  where used                                                                                  SPM-7
+  HL7 Version  Introduced                                                                     2.5

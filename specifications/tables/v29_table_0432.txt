@@ -1,0 +1,9 @@
+                                                                                                                                         Table 0432Coded Content
+   Value                                             Display Name                                                      Definition                                                                                                                                                                             Comment/                                          Status
+                                                                                                                                                                                                                                                                                                              Usage Note
+   AC                                                A c ut e
+   CH                                                Chronic
+   CO                                                Comatose
+   CR                                                Critical
+   IM                                                Improved
+   MO                                                Moribund

@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0337
+  Description                                                                                           HL7-defined table of codes used to specify the status of the practitioner's
+                                                                                                        speciality certification.
+  Type                                                                                                  HL7
+  Steward                                                                                               I    n    M    /   PA
+  where used                                                                                            SPD.3, PRA-5
+  HL7 Version Introduced                                                                                2.3

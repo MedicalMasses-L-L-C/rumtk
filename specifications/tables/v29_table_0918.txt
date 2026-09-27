@@ -1,0 +1,7 @@
+                                                                                                                                       Table 0918Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                           Comment/                                         Status
+                                                                                                                                                                                                                                                                                                          Usage Note
+   C                                                Continuous
+   P                                                PCA Only
+   PC                                               PCA +
+                                                    Continuous

@@ -1,0 +1,5 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                               0643
+  Description                                                                                         9999
+  Type                                                                                                undefined
+  where used                                                                                          OM1-36

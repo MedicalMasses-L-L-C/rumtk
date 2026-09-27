@@ -1,0 +1,15 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0259
+  Description                                                                                        Ta   ble of codes used to define the imaging apparatus expected to be used to
+                                                                                                     acquire an observation.  This table has been removed from the standard as of 2.7
+                                                                                                     in favor of table 0910.
+  Type                                                                                               User
+  Steward                                                                                            InM/OO
+
+
+
+
+
+
+  where used                                                                                         OM1-47
+  HL7 Version Introduced                                                                             2.3

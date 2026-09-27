@@ -1,0 +1,23 @@
+                                                                                                             Table 0356Coded Content
+  Value                                   Display Name                                                                         Definition                                           Comment/ Usage Note                                                                                Status
+  ISO 2022-                               This standard is titled "Information                                                                                                      Note that the escape sequences used in
+  1994                                    Technology - Character Code                                                                                                               this mode do not use the ASCII “esc”
+                                          Structure and Extension                                                                                                                   character, as defined in ISO 2022-                                                                        1994.
+                                          Technique". .                                                                                                                             They are “HL7 escape sequences” as
+                                                                                                                                                                                    first defined in HL7 2.3, sec. 2.9.2.
+                                                                                                                                                                                    (Also, note that sections 2.8.28.6.1and
+                                                                                                                                                                                    2.9.2 in HL7 2.3 correspond to sections
+                                                                                                                                                                                    2.16.93 and 2.7.2 in HL7 2. 5.)
+  2.3                                     The character set switching                                                                                                               Note that the escape sequences
+                                          mode specified in HL7 2.5,                                                                                                                used in this mode do not use the
+                                          section 2.7.2 and section                                                                                                                 ASCII “esc” character, as defined
+                                          2.A.46, "XPN -                                        extended                                                                            in ISO 2022-                    1994. They are “HL7
+                                          person name".                                                                                                                             escape sequences” as first defined
+                                                                                                                                                                                    in HL7 2.3, sec. 2.9.2. (Also, note
+                                                                                                                                                                                    that sections 2.8.28.6.1and 2.9.2 in
+                                                                                                                                                                                    HL7 2.3 correspond to sections
+                                                                                                                                                                                    2.16.93 and 2.7.2 in HL7 2. 5.)
+  <null>                                  This is the default, indicating                                                                                                           This is the default.                                                                               D
+                                          that there is no character set
+                                          switching occurring in this
+                                          message.

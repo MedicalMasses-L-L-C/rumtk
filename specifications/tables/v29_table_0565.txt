@@ -1,0 +1,10 @@
+                                                                                                                              Table 0565Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                     Usage Note
+   PST                                           Provincial Sales Tax
+   GST                                           Goods and
+                                                 Services Tax
+   HST                                           Harmonized
+                                                 Sales Tax
+   DISP                                          Dispensing Fee
+   MKUP                                          Mark up Fee

@@ -1,0 +1,5 @@
+                                                                                                                   Table 0366Coded Content
+  Value                                     Display Name                                            Definition                                                                                                                                               Comment/                                  Status
+                                                                                                                                                                                                                                                             Usage Note
+  L                                         Local
+  R                                         Remote

@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0046
+  Description                                                                                          Table of codes specifying past credit experience.  No suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           PV1-23
+  HL7 Version  Introduced                                                                              2.1

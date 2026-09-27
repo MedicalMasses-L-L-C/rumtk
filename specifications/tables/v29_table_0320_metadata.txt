@@ -1,0 +1,8 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                           0320
+  Description                                                                                     Table of codes identifying an item in order to charge for the item.  No suggested
+                                                                                                  values.
+  Type                                                                                            User
+  Steward                                                                                         OO
+  where used                                                                                      RQD-8
+  HL7 Version  Introduced                                                                         2.3

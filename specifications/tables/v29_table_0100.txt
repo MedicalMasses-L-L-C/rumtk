@@ -1,0 +1,8 @@
+                                                                                                                         Table 0100Coded Content
+  Value                                       Display Name                                                                                                                        Definition                                                                              Comment/                                    Status
+                                                                                                                                                                                                                                                                          Usage Note
+  D                                           On discharge
+  O                                           On receipt of order
+  R                                           At time service is completed
+  S                                           At time service is started
+  T                                           At a designated date/time

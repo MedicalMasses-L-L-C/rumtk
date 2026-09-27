@@ -1,0 +1,5 @@
+                                                                                                                                                                   Table Metadata
+  Table                                                                                                         0582
+  Description                                                                                                   9999
+  Type                                                                                                          undefined
+  where used                                                                                                    BTX-3

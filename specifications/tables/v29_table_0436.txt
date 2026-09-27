@@ -1,0 +1,10 @@
+                                                                                                                          Table 0436Coded Content
+   Value                                       Display Name                                               Definition                                                                                                                                                         Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+   AD                                          Adverse Reaction
+                                               (Not otherwise
+                                               classified)
+   AL                                          Allergy
+   CT                                          Contraindication
+   IN                                          Intolerance
+   SE                                          Side Effect

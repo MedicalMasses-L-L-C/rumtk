@@ -1,0 +1,13 @@
+                                                                                                                      Table 0168Coded Content
+  Value                               Display Name                                                                                                                                                        Definition                                               Comment/                                   Status
+                                                                                                                                                                                                                                                                   Usage Note
+  S                                   Stat (do immediately)
+  A                                   As soon as possible (a priority lower than stat)
+  R                                   Routine
+  P                                   Preoperative (to be done prior to surgery)
+  T                                   Timing critical (do as near as possible to requested
+                                      time)
+  C                                   Measure continuously (e.g., arterial line blood
+                                      pressure)
+  B                                   Do at bedside or portable (may be used with other
+                                      codes)

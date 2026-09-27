@@ -1,0 +1,7 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0907
+  Description                                                                                   HL7-defined table of codes specifying the confidentiality for the shipment.
+  Type                                                                                          User
+  Steward                                                                                       OO
+  where used                                                                                    SHP-                      7
+  HL7 Version  Introduced                                                                       2.7

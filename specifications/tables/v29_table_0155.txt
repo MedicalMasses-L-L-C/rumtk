@@ -1,0 +1,9 @@
+                                                                                                                           Table 0155Coded Content
+  Value                                        Display Name                                               Definition                                                                                                                                                          Comment/                                     Status
+                                                                                                                                                                                                                                                                              Usage Note
+  AL                                           Always
+  NE                                           Never
+  ER                                           Error/reject
+                                               conditions only
+  SU                                           Successful
+                                               completion only

@@ -1,0 +1,8 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0491
+  Description                                                                                     Table of codes specifying the degree or grade of excellence of the specimen at
+                                                                                                  receipt.
+  Type                                                                                            User
+  Steward                                                                                         OO
+  where used                                                                                      SPM-22
+  HL7 Version  Introduced                                                                         2.5

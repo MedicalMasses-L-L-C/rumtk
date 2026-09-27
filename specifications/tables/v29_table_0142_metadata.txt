@@ -1,0 +1,15 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0142
+  Description                                                                                     Table of codes which specify the military status of the patient.  This field is
+                                                                                                  defined by CMS or other regulatory agencies.
+  Type                                                                                            User
+  Steward                                                                                         PA
+  where used                                                                                      PD1-21
+
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                           2.2

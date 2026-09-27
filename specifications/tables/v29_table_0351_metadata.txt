@@ -1,0 +1,19 @@
+                                                                                                                               Table Metadata
+  Table                                                                       0351
+
+
+
+
+
+
+  Description                                                                 Externally defined table of codes specifying a National Uniform Billing
+                                                                              Committee (NUBC) code that identifies an event that relates to the payment of a
+                                                                              claim.  In the US, NUBC codes generally used, see code system
+                                                                              2.16.840.1.113883.6.301.8; more information may be found at
+                                                                              http://www.nubc.org/become.html.  The UB-04 Data Specifications Manual
+                                                                              with the codes is available by subscription from NUBC at
+                                                                              http://www.nubc.org/become.html.
+  Type                                                                        External
+  Steward                                                                     InM/FM
+  where used                                                                  O    S    P.    1
+  HL7 Version  Introduced                                                     2.3.1

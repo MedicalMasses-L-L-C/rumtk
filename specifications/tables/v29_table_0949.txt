@@ -1,0 +1,18 @@
+                                                                                                                Table 0949Coded Content
+  Value                             Display Name                             Definition                                                                        Comment/ Usage Note                                                                                                              Status
+  CO                                Cost                                     Order changed based on cost                                                       In an order replacement context, this would                                                                                      N
+                                                                                                                                                               accompany proposal of a similar but lower cost
+                                                                                                                                                               order
+  ST                                Specimen                                 Incorrect specimen type                                                           Order placer may accept, cancel and replace,                                                                                     N
+                                    Type                                     submitted for the requested                                                       or choose other testing.
+                                                                             test
+                                                                                                                                                               Usage Note: Recommend testing that can use
+                                                                                                                                                               the submitted specimen type
+  SV                                Specimen                                 Provided specimen volume                                                          The question is how to use the available                                                                                         N
+                                    Volume                                   inadequate for testing                                                            specimen. The Order Placer may choose a
+                                                                                                                                                               different subset of tests.
+
+                                                                                                                                                               Usage Note: Recommend a subset of ordered
+                                                                                                                                                               tests appropriate for volume
+  UN                                Unavailable                              Requested test not available                                                      In an order replacement context, an                                                                                              N
+                                    test                                                                                                                       alternative might be proposed.

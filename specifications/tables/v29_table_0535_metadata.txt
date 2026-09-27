@@ -1,0 +1,8 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0535
+  Description                                                                               Table of codes that indicate how a patient/subscriber authorization signature is
+                                                                                            obtained and how it is being retained by a provider.
+  Type                                                                                      User
+  Steward                                                                                   FM
+  where used                                                                                IN1-50
+  HL7 Version  Introduced                                                                   2.5

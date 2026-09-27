@@ -1,0 +1,5 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0836
+  Description                                                                                             Table of codes specifying the severity of the problem.  No suggested values.
+  Type                                                                                                    User
+  HL7 Version  Introduced                                                                                 2.6

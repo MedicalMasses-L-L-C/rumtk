@@ -1,0 +1,10 @@
+                                                                                                                                Table Metadata
+  Table                                                                                  0380
+  Description                                                                            Table of codes that identify a type of separator being used (e.g., a gel separator
+                                                                                         in a container -           not to be confused with the communication separators).  It is
+                                                                                         recommended the first table entry be "NO" meaning "No Separator".  No
+                                                                                         suggested values.
+  Type                                                                                   User
+  Steward                                                                                OO
+  where used                                                                             SAC-25
+  HL7 Version  Introduced                                                                2.4

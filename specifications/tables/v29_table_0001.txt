@@ -1,0 +1,16 @@
+                                                                                                                                 Table 0001Coded Content
+   Value                                  Display Name                                                                  Definition                                                                                            Comment/ Usage Note                                                                                           Status
+   F                                      Female
+   M                                      Male
+   O                                      Other
+   U                                      Unknown
+   A                                      Ambiguous
+   N                                      Not applicable
+   X                                      Non-Binary                                                                    Intended for situations where                                                                         A universally agreed upon single                                                                              N
+                                                                                                                        the gender or sex                                                                                     definition for non-                                           binary does
+                                                                                                                        representation of the                                                                                 not exist. Non-                                          binary should be
+                                                                                                                        individual is not strictly male,                                                                      used in jurisdictions which have
+                                                                                                                        or strictly female, and is                                                                            implemented an option to
+                                                                                                                        driven by  jurisdictional                                                                             declare a gender of “non-binary”
+                                                                                                                        requirements, personal needs,
+                                                                                                                        or legal boundaries.

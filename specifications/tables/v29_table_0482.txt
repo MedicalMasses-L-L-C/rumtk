@@ -1,0 +1,5 @@
+                                                                                                                          Table 0482Coded Content
+  Value                                        Display Name                                               Definition                                                                                                                                                         Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+  I                                            Inpatient Order
+  O                                            Outpatient Order

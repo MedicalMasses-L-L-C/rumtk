@@ -1,0 +1,101 @@
+                                                                                                                   Table 0211Coded Content
+  Value                                     Display Name                                                                                            Definition                                Comment/ Usage Note                                                                                     Status
+  ASCII                                     The printable 7-bit ASCII character set.                                                                                                          (This is the default if this field is omitted)
+  8859/1                                    The printable characters from the
+                                            ISO 8859/1 Character set
+  8859/2                                    The printable characters from the
+                                            ISO 8859/2 Character set
+  8859/3                                    The printable characters from the
+                                            ISO 8859/3 Character set
+  8859/4                                    The printable characters from the
+                                            ISO 8859/4 Character set
+  8859/5                                    The printable characters from the
+                                            ISO 8859/5 Character set  Value                              Display Name                                                                             Definition                          Comment/ Usage Note                                                                      Status
+  8859/6                             The printable characters from the
+                                     ISO 8859/6 Character set
+  8859/7                             The printable characters from the
+                                     ISO 8859/7 Character set
+  8859/8                             The printable characters from the
+                                     ISO 8859/8 Character set
+  8859/9                             The printable characters from the
+                                     ISO 8859/9 Character set
+  8859/15                            The printable characters from the
+                                     ISO 8859/15 (Latin-15)
+  ISO IR6                            ASCII graphic character set                                                                                                  http://www.itscj.ipsj.or.jp/ISO-
+                                     consisting of 94 characters.                                                                                                 IR/006.pdf
+  ISO IR14                           Code for Information Exchange                                                                                                Note that the code contains a space,
+                                     (one byte)(JIS X 0201-1976).                                                                                                 i.e., "ISO IR14".
+  ISO IR87                           Code for the Japanese Graphic                                                                                                Note that the code contains a space,
+                                     Character set for information                                                                                                i.e., “ISO IR87”.
+                                     interchange (JIS X 0208-                    1990),
+                                                                                                                                                                  The JIS X 0208 needs an escape
+                                                                                                                                                                  sequence. In Japan, the escape
+                                                                                                                                                                  technique is ISO 2022. From basic
+                                                                                                                                                                  ASCII, escape sequence “escape” $
+                                                                                                                                                                  B (in HEX, 1B 24 42) lets the
+                                                                                                                                                                  parser know that following bytes
+                                                                                                                                                                  should be handled 2-                                                  byte wise.
+                                                                                                                                                                  Back to ASCII is 1B 28 42.
+  ISO IR159                          Code of the supplementary                                                                                                    Note that the code contains a space,
+                                     Japanese Graphic Character set for                                                                                           i.e., "ISO IR159".
+                                     information interchange (JIS X
+                                     0212-1990).
+  GB 18030-                          Code for Chinese Character Set                                                                                               Does not need an escape sequence.
+  2000                               (GB 18030-2000)
+  KS X 1001                          Code for Korean Character Set (KS
+                                     X 1001)
+  CNS 11643-                         Code for Taiwanese Character Set                                                                                             Does not need an escape sequence.
+  1992                               (CNS 11643-1992)
+  BIG-5                              Code for Taiwanese Character Set                                                                                             Does not need an escape sequence.
+                                     (BIG-5)
+                                                                                                                                                                  BIG-5 does not need an escape
+                                                                                                                                                                  sequence. ASCII is a 7 bit
+                                                                                                                                                                  character set, which means that the
+                                                                                                                                                                  top bit of the byte is “0”. The
+                                                                                                                                                                  parser knows that when the top bit
+                                                                                                                                                                  of the byte is “0”, the character set
+                                                                                                                                                                  is ASCII. When it is “1”, the
+                                                                                                                                                                  following bytes should be handled
+                                                                                                                                                                  as 2 bytes (or more). No escape
+                                                                                                                                                                  technique is needed. However,
+                                                                                                                                                                  since some servers do not correctly
+                                                                                                                                                                  interpret when they receive a top
+                                                                                                                                                                  bit “1”, it is advised, in internet
+                                                                                                                                                                  RFC, to not use these kind of non-
+                                                                                                                                                                  safe non-escape extension.
+  UNICODE                            The world wide character standard                                                                                            Deprecated. Retained for backward
+                                     from ISO/IEC 10646-1-1993                                                                                                    compatibility only as v 2.5.
+                                                                                                                                                                               Replaced by specific Unicode
+                                                                                                                                                                               encoding codes.
+
+                                                                                                                                                                               Usage Note: Available from The
+                                                                                                                                                                               Unicode Consortium, P.O. Box
+                                                                                                                                                                               700519, San Jose, CA  95170-
+                                                                                                                                                                               0519.  See
+                                                                                                                                                                               http://www.unicode.org/unicode/co
+                                                                                                                                                                               nsortium/consort.html
+  UNICODE                               UCS Transformation Format, 8-bit                                                                                                       UTF-8 is a variable-length
+  UTF-8                                 form                                                                                                                                   encoding, each code value is
+                                                                                                                                                                               represented by 1,2 or 3 bytes,
+                                                                                                                                                                               depending on the code value. 7 bit
+                                                                                                                                                                               ASCII is a proper subset of UTF-8.
+                                                                                                                                                                               Note that the code contains a space
+                                                                                                                                                                               before UTF but not before and
+                                                                                                                                                                               after the hyphen. Since UTF-8
+                                                                                                                                                                               represents the full UNICODE
+                                                                                                                                                                               character set, the following
+                                                                                                                                                                               restriction apply to its use:
+                                                                                                                                                                               1. UTF-8 must be the default
+                                                                                                                                                                               encoding of the message, UTF-8
+                                                                                                                                                                               cannot be specified as an additional
+                                                                                                                                                                               character set in MSH-18
+                                                                                                                                                                               2. There are no other character sets
+                                                                                                                                                                               allowed in a message where UTF          -8
+                                                                                                                                                                               is the default encoding in the
+                                                                                                                                                                               message.
+                                                                                                                                                                               In other words, UNICODE UTF-8
+                                                                                                                                                                               can only be specified as a single
+                                                                                                                                                                               value in MSH-18
+                                                                                                                                                                               3. A message encoded in UTF-8
+                                                                                                                                                                               must not use a Byte Order Mark
+                                                                                                                                                                               (BOM).

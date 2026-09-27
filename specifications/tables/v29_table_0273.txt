@@ -1,0 +1,7 @@
+                                                                                                                         Table 0273Coded Content
+  Value                                       Display Name                                                                                                                         Definition                                                                               Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+  AV                                          Available for patient care
+  CA                                          Deleted
+  OB                                          Obsolete
+  UN                                          Unavailable for patient care

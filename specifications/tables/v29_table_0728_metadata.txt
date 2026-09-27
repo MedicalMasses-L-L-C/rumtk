@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0728
+  Description                                                                                  Table of codes specifying the clinical complexity level (CCL) value for the
+                                                                                               determined diagnosis related group (DRG) for this diagnosis.  US Realm.
+  Type                                                                                         HL7
+  Steward                                                                                      FM
+  where used                                                                                   DG1-23
+  HL7 Version  Introduced                                                                      2.6

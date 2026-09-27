@@ -1,0 +1,12 @@
+                                                                                                                         Table 0942Coded Content
+  Value                                       Display Name                                                                             Definition                                                                                                                           Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+  TA                                          Current test availability
+  OB                                          Output buffer current                                                                    Current capacity of an output specimen
+                                              capacity                                                                                 buffer
+  IC                                          Instrument current                                                                       Current processing capacity of the
+                                              processing capacity                                                                      instrument
+  IB                                          Input buffer current                                                                     Current capacity of a regular input
+                                              capacity                                                                                 specimen buffer
+  EB                                          Emergency input buffer                                                                   Current capacity of an emergency input
+                                              current capacity                                                                         specimen buffer

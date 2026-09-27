@@ -1,0 +1,5 @@
+                                                                                                                                                                  Table Metadata
+  Table                                                                                                         0716
+  Description                                                                                                   9999
+  Type                                                                                                          undefined
+  where used                                                                                                    RXE-6

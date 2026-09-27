@@ -1,0 +1,9 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0126
+  Description                                                                                        HL7-defined table of codes which specify the maximum length of a query
+                                                                                                     response that can be accepted by a requesting system, and are expressed as units
+                                                                                                     of mesaure of query response objects.
+  Type                                                                                               HL7
+  Steward                                                                                            InM
+  where used                                                                                         RCP.2
+  HL7 Version  Introduced                                                                            2.1

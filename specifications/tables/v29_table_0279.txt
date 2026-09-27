@@ -1,0 +1,10 @@
+                                                                                                                    Table 0279Coded Content
+  Value                                      Display Name                                                                                                                   Definition                                                                          Comment/                                   Status
+                                                                                                                                                                                                                                                                Usage Note
+  No                                         Substitution of this resource is not allowed
+  Confirm                                    Contact the Placer Contact Person prior to
+                                             making any substitutions of this resource
+  Notify                                     Notify the Placer Contact Person, through
+                                             normal institutional procedures, that a
+                                             substitution of this resource has been made
+  Yes                                        Substitution of this resource is allowed

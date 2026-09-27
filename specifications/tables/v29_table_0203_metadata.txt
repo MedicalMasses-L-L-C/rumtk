@@ -1,0 +1,7 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0203
+  Description                                                                             HL7-defined table of codes specifying the type of identififier.
+  Type                                                                                    HL7
+  Steward                                                                                 InM
+  where used                                                                              CX.5, PPN.13, XCN.13, XON.7
+  HL7 Version  Introduced                                                                 2.3

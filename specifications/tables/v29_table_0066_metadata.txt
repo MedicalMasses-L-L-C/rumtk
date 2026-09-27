@@ -1,0 +1,7 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0066
+  Description                                                                                     Table of codes specifying the guarantor's employment status.
+  Type                                                                                            User
+  Steward                                                                                         FM
+  where used                                                                                      GT1-20
+  HL7 Version  Introduced                                                                         2.1

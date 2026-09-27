@@ -1,0 +1,13 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                       0475
+
+
+
+
+
+  Description                                                                                 Table of codes specifying the choice of, and providing the clinical rationale for,
+                                                                                              a selected charge type.
+  Type                                                                                        User
+  Steward                                                                                     OO
+  where used                                                                                  BLG-4
+  HL7 Version  Introduced                                                                     2.5

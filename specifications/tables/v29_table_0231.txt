@@ -1,0 +1,6 @@
+                                                                                                                           Table 0231Coded Content
+   Value                                        Display Name                                               Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                Usage Note
+   F                                            Full-time student
+   P                                            Part-time student
+   N                                            Not a student

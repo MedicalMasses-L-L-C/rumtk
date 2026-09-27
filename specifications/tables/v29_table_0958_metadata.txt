@@ -1,0 +1,17 @@
+                                                                                                                 Table Metadata
+  Table                                                                       0958
+  Description                                                                 The occupation in which an individual is engaged.  In the US, references
+                                                                              External Vocabulary code system:  Occupation CDC Census 2010
+                                                                              https://phinvads.cdc.gov/vads/ViewCodeSystem.action?id=2.16.840.1.114222.4.
+                                                                              5.314#
+  Type                                                                        External
+  Steward                                                                     PA
+
+
+
+
+
+
+
+  where used                                                                  OH2-4, OH3-3
+  HL7 Version  Introduced                                                               2.9

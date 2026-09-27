@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0252
+  Description                                                                                  HL7-defined table of codes used to record event observations regarding what
+                                                                                               may have caused a product related event.
+  Type                                                                                         HL7
+  Steward                                                                                      OO
+  where used                                                                                   PCR-22
+  HL7 Version  Introduced                                                                      2.3

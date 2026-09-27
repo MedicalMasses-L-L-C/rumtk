@@ -1,0 +1,7 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0431
+  Description                                                                                         Table of codes specifying what recreational drugs the patient uses.
+  Type                                                                                                User
+  Steward                                                                                             PA
+  where used                                                                                          PV2-39
+  HL7 Version Introduced                                                                              2.4

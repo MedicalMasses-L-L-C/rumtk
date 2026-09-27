@@ -1,0 +1,7 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0963
+  Description                                                                                             Contains codes used to identify medical devices safety characteristics.
+  Type                                                                                                    HL7-EXT
+  Steward                                                                                                 OO
+  where used                                                                                              DEV-14
+  HL7 Version  Introduced                                                                                 2.9

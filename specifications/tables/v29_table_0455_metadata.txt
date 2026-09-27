@@ -1,0 +1,9 @@
+                                                                                                                             Table Metadata
+  Table                                                                               0455
+  Description                                                                         Table of codes specifying the specific type of bill with digit 1 showing type of
+                                                                                      facility, digit 2 showing bill classification and digit 3 showing frequency.  No
+                                                                                      suggested values.
+  Type                                                                                User
+  Steward                                                                             FM
+  where used                                                                          GP1-1
+  HL7 Version  Introduced                                                             2.4

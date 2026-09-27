@@ -1,0 +1,7 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0961
+  Description                                                                                        Contains codes used to identify medical devices.
+  Type                                                                                               HL7-EXT
+  Steward                                                                                            OO
+  where used                                                                                         DEV-3
+  HL7 Version  Introduced                                                                            2.9

@@ -1,0 +1,7 @@
+                                                                                                                                                                     Table Metadata
+  Table                                                                                                           0794
+  Description                                                                                                     9999
+  Type                                                                                                            undefined
+  Steward                                                                                                         InM
+  where used                                                                                                      CQ.2
+  HL7 Version  Introduced                                                                                         2.9

@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0465
+  Description                                                                                  HL7-defined table of codes specifying an indication of the representation
+                                                                                               provided by the data item.
+  Type                                                                                         HL7
+  Steward                                                                                      InM
+  where used                                                                                   PPN.16, XAD.11, XCN.15, XON.9
+  HL7 Version  Introduced                                                                      2.4

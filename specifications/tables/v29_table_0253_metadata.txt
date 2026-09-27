@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0253
+  Description                                                                                 HL7-defined table of codes used to identify the mechanism of product
+                                                                                              transmission when the product has not been directly applied to the patient.
+  Type                                                                                        HL7
+  Steward                                                                                     OO
+  where used                                                                                  PCR-23
+  HL7 Version  Introduced                                                                     2.3

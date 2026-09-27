@@ -1,0 +1,12 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0566
+  Description                                                                                        HL7-defined table of codes used to specify the type of blood unit
+
+
+
+
+
+  Type                                                                                               HL7
+  Steward                                                                                            OO
+  where used                                                                                         BUI-3
+  HL7 Version  Introduced                                                                                   2.8

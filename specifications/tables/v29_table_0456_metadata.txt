@@ -1,0 +1,13 @@
+                                                                                                                         Table Metadata
+  Table                                                                            0456
+  Description                                                                      Externally defined table of codes specifying a service line revenue code.  These
+                                                                                   are claim codes indicating the identifying number for the product or service
+                                                                                   provided.  In the US, NUBC codes generally used, see code system
+                                                                                   2.16.840.1.113883.6.301.3; more information may be found at
+                                                                                   http://www.nubc.org/become.html. The  UB-04 Data Specifications Manual with
+                                                                                   the codes is available by subscription from NUBC at
+                                                                                   http://www.nubc.org/become.html, UB form locater 42.
+  Type                                                                             User
+  Steward                                                                          FM
+  where used                                                                       GP1-2, FT1-41
+  HL7 Version  Introduced                                                          2.4

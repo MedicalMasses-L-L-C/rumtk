@@ -1,0 +1,13 @@
+                                                                                                                                                                    Table Metadata
+  Table                                                                                                          0931
+  Description                                                                                                    HL7-defined table of codes specifying  the units of transport temperature.
+  Type                                                                                                           HL7
+  Steward                                                                                                        OO
+
+
+
+
+
+
+   where used                                                                                                    BUI -12
+   HL7 Version Introduced                                                                                           2.8

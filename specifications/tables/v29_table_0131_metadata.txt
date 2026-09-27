@@ -1,0 +1,10 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0131
+  Description                                                                                    Table of codes which specify a relationship role that the next of kin/associated
+                                                                                                 parties plays with regard to a patient. Also used in referrals, for example, it may
+                                                                                                 be necessary to identify the contact representative at the clinic that issued a
+                                                                                                 referral.
+  Type                                                                                           User
+  Steward                                                                                        PA
+  where used                                                                                     NK1-7, CTD-1
+  HL7 Version  Introduced                                                                        2.2

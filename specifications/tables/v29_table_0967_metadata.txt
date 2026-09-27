@@ -1,0 +1,7 @@
+                                                                                                                                                                      Table Metadata
+   Table                                                                                                           0967
+   Description                                                                                                     Values describing the shape or type of the container.  No suggested values.
+   Type                                                                                                            User
+   Steward                                                                                                         OO
+   where used                                                                                                      SAC-47
+   HL7 Version  Introduced                                                                                         2.9

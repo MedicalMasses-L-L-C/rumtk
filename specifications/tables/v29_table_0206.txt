@@ -1,0 +1,12 @@
+                                                                                                               Table 0206Coded Content
+  Value                                    Display Name                                          Definition                                                                       Comment/ Usage Note                                                 Status
+  A                                        Add/Insert
+  D                                        Delete  Value                                      Display Name                                             Definition                                                                            Comment/ Usage Note                                                    Status
+  S                                          Used in Snapshot                                         Declares when segment                                                                 Snapshot mode is the                                                   N
+                                             mode                                                     falls under snapshot  mode                                                            expected default; use
+                                                                                                      handling, i.e. all elements                                                           this code to explicitly
+                                                                                                      that were previously sent                                                             state that.
+                                                                                                      will be sent, not just any
+                                                                                                      changes
+  U                                          Update
+  X                                          No Change

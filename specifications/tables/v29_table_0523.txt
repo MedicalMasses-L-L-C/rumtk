@@ -1,0 +1,6 @@
+                                                                                                                               Table 0523Coded Content
+  Value                                          Display Name                                                  Definition                                                                                                                                                                Comment/                                      Status
+                                                                                                                                                                                                                                                                                         Usage Note
+  %                                              Indicates a percent
+                                                 change
+  a                                              Absolute Change

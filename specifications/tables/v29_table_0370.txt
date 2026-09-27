@@ -1,0 +1,35 @@
+                                                                                                 Table 0370Coded Content
+  Value                  Display Name                                   Definition                                                                                                                                   Comment/                            Status
+                                                                                                                                                                                                                     Usage Note
+  A                      Archived                                       Archived status is used by one system to inform another that the
+                                                                        container was already processed by this system, archived for a
+                                                                        longer time period and is re-                introduced to the automation system
+                                                                        for re-processing.
+  I                      Identified                                     Identified status is used by one system to inform another
+                                                                        that it has received a container. In the exchange between
+                                                                        the LAS and LIS the Identified status can be used for
+                                                                        reporting of the "In Lab" (Specimen Received) status. In
+                                                                        some cases this may not be equal to the first event of
+                                                                        sample recognition.
+  L                      Left Equipment                                 Left Equipment status is used by one system to inform
+                                                                        another that the container has been released from that
+                                                                        system.
+  M                      Missing                                        Missing status is used by one system to inform another
+                                                                        that the container did not arrive at its next expected
+                                                                        location.
+  O                      In Process                                     In Process status is used by one system to inform another
+                                                                        that the specific container is being processed by the
+                                                                        equipment. It is useful as a response to a query about
+                                                                        Container Status, when the specific step of the process is
+                                                                        not relevant.
+  P                      In Position                                    In Position status is used by one system to inform another
+                                                                        that the container is in position for specimen transfer
+                                                                        (e.g., container removal from track, pipetting, etc.).
+  R                      Process                                        Process Completed status is used by one system to inform
+                         Completed                                      another that the processing has been completed, but the
+                                                                        container has not been released from that system.
+  U                      Unknown                                        Unknown status is used by one system to inform another
+                                                                        that the container has not been identified.
+  X                      Container                                      Cancelled status is used by one system to inform another
+                         Unavailable                                    that the container is no longer available within the scope
+                                                                        of the system (e.g., tube broken or discarded).

@@ -1,0 +1,12 @@
+                                                                                                                                    Table 0438Coded Content
+   Value                                           Display Name                                                    Definition                                                                                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                   Usage Note
+   U                                               Unconfirmed
+   P                                               Pending
+   S                                               Suspect
+   C                                               Confirmed or
+                                                   verified
+   I                                               Confirmed but
+                                                   inactive
+   E                                               Erroneous
+   D                                               Doubt raised

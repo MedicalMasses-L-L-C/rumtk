@@ -1,0 +1,9 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0412
+  Description                                                                                    Table of codes that specify a category name (term given to a group of service
+                                                                                                 items for the purpose of classification). Examples: Laboratory, Pharmacy,
+                                                                                                 Diagnostic Imaging, etc.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        InM/OO
+  where used                                                                                     OM7-3
+  HL7 Version  Introduced                                                                        2.4

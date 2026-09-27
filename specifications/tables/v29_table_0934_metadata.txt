@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0934
+  Description                                                                               Table of codes specifying the profile of the order workflow.  No suggested
+                                                                                            values.
+  Type                                                                                      User
+  Steward                                                                                   OO
+  where used                                                                                ORC-                                                     34
+  HL7 Version  Introduced                                                                   2.8

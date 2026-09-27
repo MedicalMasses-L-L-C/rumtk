@@ -1,0 +1,8 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0761
+  Description                                                                                Table of codes specifying the status of the use of this particular procedure for
+                                                                                             the diagnosis related group (DRG) determination.  US Realm.
+  Type                                                                                       User
+  Steward                                                                                    FM
+  where used                                                                                 PR1-21
+  HL7 Version Introduced                                                                     2.6

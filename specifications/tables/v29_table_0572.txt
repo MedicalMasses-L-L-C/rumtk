@@ -1,0 +1,7 @@
+                                                                                                                                 Table 0572Coded Content
+   Value                                          Display Name                                                  Definition                                                                                                                                                                  Comment/                                       Status
+                                                                                                                                                                                                                                                                                            Usage Note
+   RVAT                                           Registered in VAT
+                                                  register
+   UVAT                                           Unregistered in
+                                                  VAT register

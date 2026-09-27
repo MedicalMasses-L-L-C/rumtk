@@ -1,0 +1,7 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0950
+  Description                                                                                  HL7-defined table of codes used to further define the status identified in ORC          -5
+  Type                                                                                         User
+  Steward                                                                                      OO
+  where used                                                                                   ORC-                                                     25
+  HL7 Version  Introduced                                                                      2.9

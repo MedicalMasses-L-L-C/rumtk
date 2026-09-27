@@ -1,0 +1,7 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0121
+  Description                                                                                HL7-defined table of codes allowing the placer (sending) application to
+                                                                                             determine the amount of information to be returned from the filler.
+  Type                                                                                       HL7
+  where used                                                                                 ORC-                                                     6
+  HL7 Version  Introduced                                                                    2.1

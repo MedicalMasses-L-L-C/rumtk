@@ -1,0 +1,10 @@
+                                                                                                                                    Table 0007Coded Content
+   Value                                           Display Name                                                                                                                                                                            Definition                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                           Usage Note
+   A                                               Accident
+   E                                               Emergency
+   L                                               Labor and Delivery
+   R                                               Routine
+   N                                               Newborn (Birth in healthcare facility)
+   U                                               Urgent
+   C                                               Elective

@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0382
+  Description                                                                                  Table of codes that identify a drug interference  associated with a specimen.  No
+                                                                                               suggested values.
+  Type                                                                                         User
+  Steward                                                                                      OO
+  where used                                                                                   SAC-41
+  HL7 Version Introduced                                                                       2.4

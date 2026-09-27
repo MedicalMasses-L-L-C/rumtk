@@ -1,0 +1,18 @@
+                                                                                                                                 Table 0165Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                  Comment/                                       Status
+                                                                                                                                                                                                                                                                                             Usage Note
+   CH                                             Chew
+   DI                                             Dissolve
+   DU                                             Dust
+   IF                                             Infiltrate
+   IS                                             Insert
+   IR                                             Irrigate
+   IVPB                                           IV Piggyback
+   IVP                                            IV Push
+   NB                                             Nebulized
+   PT                                             Paint
+   PF                                            Perfuse
+   SH                                            Shampoo
+   SO                                            Soak
+   WA                                            Wash
+   WI                                            Wipe

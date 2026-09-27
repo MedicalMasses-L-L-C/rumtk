@@ -1,0 +1,7 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0657
+  Description                                                                                              Table of codes specifying the kind of device as defined by the manufacturer.
+  Type                                                                                                     User
+  Steward                                                                                                  OO
+  where used                                                                                               SCP-7
+  HL7 Version Introduced                                                                                   2.6

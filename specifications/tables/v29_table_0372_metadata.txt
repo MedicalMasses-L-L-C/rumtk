@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0372
+  Description                                                                                  Table of codes that identify the specimen component, e.g., supernatant,
+                                                                                               sediment, etc.
+  Type                                                                                         User
+  Steward                                                                                      OO
+  where used                                                                                   SAC-28
+  HL7 Version  Introduced                                                                      2.4

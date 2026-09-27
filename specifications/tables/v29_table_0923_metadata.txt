@@ -1,0 +1,13 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0923
+  Description                                                                              HL7-defined table of codes specifying whether the process was interrrupted and
+                                                                                           whether the needle had been inserted in the donor's arm prior to the interruption.
+  Type                                                                                     User
+  Steward                                                                                  OO
+
+
+
+
+
+  where used                                                                               DON-                                                                                       12
+  HL7 Version  Introduced                                                                        2.8

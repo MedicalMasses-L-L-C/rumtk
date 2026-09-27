@@ -1,0 +1,7 @@
+                                                                                                                                 Table 0282Coded Content
+   Value                                  Display Name                                                                                                                         Definition                                                                                   Comment/ Usage                                                 Status
+                                                                                                                                                                                                                                                                            Note
+   WR                                     Send Written Report
+   RP                                     Return Patient After Evaluation
+   AM                                     Assume Management
+   SO                                     Second Opinion

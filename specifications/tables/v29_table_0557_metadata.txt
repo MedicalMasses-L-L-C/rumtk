@@ -1,0 +1,12 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0557
+  Description                                                                                        Table of codes used to specify the type of payee (e.g., organization, person).
+  Type                                                                                               User
+
+
+
+
+
+  Steward                                                                                            FM
+  where used                                                                                         PYE-2
+  HL7 Version  Introduced                                                               2.6

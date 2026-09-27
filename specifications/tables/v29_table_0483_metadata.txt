@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                         0483
+  Description                                                                                   HL7-defined table of codes of forms of authorization a recorder may receive
+                                                                                                from the responsible practitioner to create or change an order.
+  Type                                                                                          HL7
+  Steward                                                                                       OO
+  where used                                                                                    ORC-                                                     30
+  HL7 Version  Introduced                                                                       2.5

@@ -1,0 +1,14 @@
+                                                                                                                                     Table 0185Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                        Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   B                                               Beeper Number
+   C                                               Cellular Phone
+                                                   Number
+   E                                               E-Mail Address
+                                                   (for backward
+                                                   compatibility)
+   F                                               FAX Number
+   H                                               Home Phone
+                                                   Number
+   O                                               Office Phone
+                                                   Number

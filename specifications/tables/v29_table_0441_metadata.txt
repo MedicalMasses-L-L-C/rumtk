@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0441
+  Description                                                                                           Table of codes specifying the immunization registry status of the patient.
+  Type                                                                                                  User
+  Steward                                                                                               PA
+  where used                                                                                            PD1-16
+  HL7 Version  Introduced                                                                               2.4

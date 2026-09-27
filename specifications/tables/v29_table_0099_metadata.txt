@@ -1,0 +1,7 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0099
+  Description                                                                                        Table of codes specifying a type of VIP.  No suggested values.
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         PV1-16
+  HL7 Version  Introduced                                                                            2.1

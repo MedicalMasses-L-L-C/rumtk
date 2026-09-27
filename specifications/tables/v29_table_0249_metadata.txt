@@ -1,0 +1,13 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0249
+  Description                                                                                          Table of codes used to indicate whether the product used is a generic or a
+                                                                                                       branded product. No suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              OO
+  where used                                                                                           PCR-2
+
+
+
+
+
+  HL7 Version  Introduced                                                                       2.3

@@ -1,0 +1,6 @@
+                                                                                                                      Table 0243Coded Content
+  Value                                      Display Name                                             Definition                                                                                                                                                   Comment/                                   Status
+                                                                                                                                                                                                                                                                   Usage Note
+  Y                                          Yes
+  N                                          No
+  NA                                         Not applicable

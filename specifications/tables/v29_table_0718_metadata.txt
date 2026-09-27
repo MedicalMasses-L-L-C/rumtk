@@ -1,0 +1,11 @@
+                                                                                                                   Table Metadata
+  Table                                                                        0718
+  Description                                                                  9999
+  Type                                                                         undefined
+
+
+
+
+
+
+ where used                                                                    RXE-7

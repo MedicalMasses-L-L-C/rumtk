@@ -1,0 +1,8 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0945
+  Description                                                                              Vendor-defined codes of the pre‑configured dilution to be applied on the
+                                                                                           instrument, which can be used instead of a numeric declaration.
+  Type                                                                                     User
+  Steward                                                                                  OO
+  where used                                                                               TCD-11
+  HL7 Version  Introduced                                                                  2.9

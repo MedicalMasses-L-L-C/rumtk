@@ -1,0 +1,8 @@
+                                                                                                                            Table Metadata
+  Table                                                                              0719
+  Description                                                                        Table of codes specifying the reason for the restricted access.  Note these codes
+                                                                                     are maintained within HL7, but outside of Version 2.
+  Type                                                                               HL7-EXT
+  Steward                                                                            PA
+  where used                                                                         A   RV-4
+  HL7 Version  Introduced                                                            2.6

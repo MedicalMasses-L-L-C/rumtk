@@ -1,0 +1,7 @@
+                                                                                                                                Table 0275Coded Content
+  Value                                          Display Name                                                                                                         Definition                                                                                                           Comment/                                       Status
+                                                                                                                                                                                                                                                                                           Usage Note
+  AC                                             A ct iv e
+  AA                                             Active and archived
+  AR                                             Archived (not active)
+  PU                                             Purged

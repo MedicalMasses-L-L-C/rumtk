@@ -1,0 +1,7 @@
+                                                                                                                                 Table 0818Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                              Usage Note
+   CS                                             Case
+   BX                                             Box
+   EA                                             Each
+   SET                                            Set

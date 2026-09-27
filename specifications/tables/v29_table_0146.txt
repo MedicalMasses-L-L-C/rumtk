@@ -1,0 +1,8 @@
+                                                                                                                                   Table 0146Coded Content
+   Value                                           Display Name                                                    Definition                                                                                     Comment/ Usage Note                                                                                                             Status
+   DF                                              Differential
+   LM                                              Limit
+   PC                                              Percentage                                                                                                                                                     Retained for backward compatibility
+                                                                                                                                                                                                                  only as of v 2.5
+   RT                                              Rate
+   UL                                              Unlimited

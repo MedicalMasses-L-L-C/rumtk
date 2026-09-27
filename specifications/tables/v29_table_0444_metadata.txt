@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0444
+  Description                                                                                    HL7-defined table of codes specifying  the preferred display order of the
+                                                                                                 components of this person name.
+  Type                                                                                           HL7
+  Steward                                                                                        InM
+  where used                                                                                     PPN-19, XCN-18, XPN-11
+  HL7 Version  Introduced                                                                        2.4

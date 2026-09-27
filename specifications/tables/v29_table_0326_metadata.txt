@@ -1,0 +1,10 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0326
+  Description                                                                                      Table of codes specifying the level on which data are being sent.  It is the
+                                                                                                   indicator used to send data at two levels, visit and account.  HL7 recommends
+                                                                                                   sending an "A" or no value when the data in the message are at the account level
+                                                                                                   or "V" to indicate that the data sent in the message are at the visit level.
+  Type                                                                                             User
+  Steward                                                                                          PA
+  where used                                                                                       PV1-51
+  HL7 Version  Introduced                                                                          2.3

@@ -1,0 +1,13 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                                     0450
+
+
+
+
+
+
+  Description                                                                                               HL7-defined table of codes specifying the type of event of the message.
+  Type                                                                                                      HL7
+  Steward                                                                                                   OO
+  where used                                                                                                EQP-1
+  HL7 Version  Introduced                                                                                   2.4

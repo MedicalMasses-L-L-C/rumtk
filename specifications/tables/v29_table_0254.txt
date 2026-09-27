@@ -1,0 +1,184 @@
+                                                                                             Table 0254Coded Content
+  Value                             Display Name                                       Definition                        Comment/ Usage Note                                                                                                    Status
+  CACT                              Catalytic Activity                                                                   Usage Note: Adopted from the IUPAC Silver Book 1995”
+                                                                                                                         to the code
+  CNC                               Catalytic                                                                            Usage Note: Adopted from the IUPAC Silver
+                                    Concentration                                                                        Book 1995” to the code
+  CCRTO                             Catalytic
+                                    Concentration Ratio
+  CCNT                              Catalytic Content                                                                    Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  CF R                              Catalytic Fraction                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  CRAT                              Catalytic Rate                                                                       Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  CRTO                              Catalytic Ratio
+  ENT                               Entitic                                                                              Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  ENTSUB                            Entitic Substance of                                                                 Usage Note: Adopted from the IUPAC Silver
+                                    Amount                                                                               Book 1995” to the code
+  ENTCAT                            Entitic Catalytic                                                                    Usage Note: Adopted from the IUPAC Silver
+                                    Activity                                                                             Book 1995” to the code
+  ENTNUM                            Entitic Number                                                                       Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  ENTVOL                            Entitic Volume                                                                       Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  MASS                              Mass                                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  MCNC                              Mass Concentration                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  MCRTO                             Mass Concentration                                                                   Usage Note: Adopted from the IUPAC Silver
+                                    Ratio                                                                                Book 1995” to the code
+  MCNT                              Mass Content
+  MFR                               Mass Fraction                                                                        Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  MINC                              Mass Increment                                                                       Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code
+  MRAT                              Mass Ra te                                                                           Usage Note: Adopted from the IUPAC Silver
+                                                                                                                         Book 1995” to the code Value                           Display Name                                    Definition                     Comment/ Usage Note                                                                                            Status
+ MRTO                            Mass Ra tio                                                                    Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ NUM                             Number                                                                         Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ NCN C                           Number                                                                         Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+ NCNT                            Number Content                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ NFR                             Number Fraction                                                                Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ NRTO                            Number Ratio                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ SUB                             Substance Amount                                                               Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ SCN C                           Substance                                                                      Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+ SCRTO                           Substance                                                                      Usage Note: Adopted from the IUPAC Silver
+                                 Concentration Ratio                                                            Book 1995” to the code
+ SCNT                            Substance Content                                                              Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ SCNT R                          Substance Content                                                              Usage Note: Adopted from the IUPAC Silver
+                                 Rate                                                                           Book 1995” to the code
+ SFR                             Substance Fraction                                                             Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ SCN CIN                         Substance                                                                      Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+                                 Increment
+ SRAT                            Substance Rate                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ SRTO                            Substance Ratio                                                                Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ VOL                             Volume                                                                         Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ VCNT                            Volume Content                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ VFR                             Volume Fraction                                                                Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ VRAT                            Volume Rate                                                                    Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ VRTO                            Volume Ratio                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+ ACN C                           Concentration,
+                                 Arbitrary Substance
+ RLMCN C                         Relative Mass                                                                  Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+ RLSCNC                          Relative Substance                                                             Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+ THRMCNC                         Threshold Mass                                                                 Usage Note: Adopted from the IUPAC Silver
+                                 Concentration                                                                  Book 1995” to the code
+ THRS CNC                        Threshold                                                                      Usage Note: Adopted from the IUPAC Silver
+                                 Substance                                                                      Book 1995” to the code
+                                 Concentration
+ TIME                            Time (e.g. seconds)                                                            Usage Note: Adopted from the IUPAC Silver
+                                                                                                                Book 1995” to the code
+  TMDF                                 Time Difference                                                                              Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  TMSTP                                Time Stamp-Date                                                                              Usage Note: Adopted from the IUPAC Silver
+                                       and Time                                                                                     Book 1995” to the code
+  TRTO                                 Time Ratio                                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  RCRLTM                               Reciprocal Relative                                                                          Usage Note: Adopted from the IUPAC Silver
+                                       Time                                                                                         Book 1995” to the code
+  RLTM                                 Relative Time                                                                                Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  ABS                                  Absorbance
+  ACT                                  Activity                                                                                     Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  APER                                 Appearance
+  ARB                                  Arbitrary                                                                                    Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  AREA                                 Area
+  ASPECT                               Aspect
+  CLAS                                 Class
+  CNST                                 Constant                                                                                     Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  COEF                                 Coefficient                                                                                  Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  COLOR                                Color
+  CONS                                 Consistency
+  DEN                                  Density
+  DEV                                  Device
+  DIFF                                 Difference                                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  ELAS                                 Elasticity
+  ELPOT                                Electrical Potential
+                                       (Voltage)
+  ELRAT                                Electrical current
+                                       (amperage)
+  ELRES                                Electrical
+                                       Resi stance
+  ENGR                                 Energy
+  EQL                                  Equilibrium
+  FORCE                                Mechanical force
+  FREQ                                 Frequency
+  IMP                                  Impression/
+                                       interpretation of
+                                       study
+  KINV                                 Kinematic Viscosity                                                                          Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  LEN                                  Length
+  LINC                                 Length Increment                                                                             Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  LIQ                                  Liquefaction                                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                                    Book 1995” to the code
+  MGFLUX                               Magnetic flux
+  MORPH                                Morphology
+  MOTIL                                Motility  Value                              Display Name                                        Definition                         Comment/ Usage Note                                                                                                       Status
+  OD                                 Optical density
+  OSMOL                              Osmolality                                                                             Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  PRID                               Presence/Identity/E
+                                     xistence
+  PRES                               Pressure (Partial)                                                                     Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  PWR                                Power (wattage)
+  RANGE                              Ranges                                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  RATIO                              Ratios                                                                                 Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  RDEN                               Relative Density                                                                       Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  REL                                Relative                                                                               Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  SATFR                              Saturation Fraction                                                                    Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  SHAPE                              Shape
+  SMELL                              Smell
+  SUSC                               Susceptibility                                                                         Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  TASTE                              Taste
+  TEMP                               Temperature                                                                            Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  TEMPDF                             Temperature                                                                            Usage Note: Adopted from the IUPAC Silver
+                                     Difference                                                                             Book 1995” to the code
+  TEMPIN                             Temperature                                                                            Usage Note: Adopted from the IUPAC Silver
+                                     Increment                                                                              Book 1995” to the code
+  TITR                               Dilution Factor                                                                        Usage Note: Adopted from the IUPAC Silver
+                                     (Titer)                                                                                Book 1995” to the code
+  TYPE                               Type                                                                                   Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  VEL                                Velocity                                                                               Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  VELRT                              Velocity Ratio                                                                         Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code
+  VISC                               Viscosity                                                                              Usage Note: Adopted from the IUPAC Silver
+                                                                                                                            Book 1995” to the code

@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0103
+  Description                                                                                HL7-defined table of codes which specify whether the message is part of a
+                                                                                             production, training or debugging system.
+  Type                                                                                       HL7
+  Steward                                                                                    InM
+  where used                                                                                 P   T.   1
+  HL7 Version  Introduced                                                                    2.1

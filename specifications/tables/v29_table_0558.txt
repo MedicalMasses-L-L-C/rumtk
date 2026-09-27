@@ -1,0 +1,7 @@
+                                                                                                                                Table 0558Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                 Comment/                                       Status
+                                                                                                                                                                                                                                                                                          Usage Note
+   PT                                            Patient
+   FM                                            Family Member
+   SB                                            Subscriber
+   GT                                            Guarantor

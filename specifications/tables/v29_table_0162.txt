@@ -1,0 +1,60 @@
+                                                                                                                                            Table 0162Coded Content
+   Value                                              Display Name                                                        Definition                                                                                            Comment/ Usage Note                                                                                                                     Status
+   AP                                                 Apply Externally
+   B                                                  Buccal
+   DT                                                 Dental
+   EP                                                 Epidural
+   ET                                                 Endotrachial                                                        Endotrachial Tube*                                                                                    used primarily for respiratory therapy
+                                                      Tube                                                                                                                                                                      and anesthesia delivery
+   GTT                                                Gastrostomy
+                                                      Tube
+   GU                                                 GU Irrigant
+   IMR                                                Immerse (Soak)
+                                                      Body Part
+   IA                                                 Intra-arterial
+   IB                                                 Intrabursal
+   IC                                                 Intracardiac
+   ICV                                                Intracervical
+                                                      (uterus)
+   ID                                                 Intradermal
+   IH                                                 Inhalation
+   IHA                                                Intrahepatic
+                                                      Artery
+   IM                                                 Intramuscular
+   IN                                                 Intranasal
+   IO                                                 Intraocular
+   IP                                                 Intraperitoneal
+   IS                                                 Intrasynovial
+   IT                                                 Intrathecal
+   IU                                                 Intrauterine
+   IV                                                 Intravenous
+   MTH                                                Mouth/Throat
+   MM                                                 Mucous
+                                                      Membrane   Value                                       Display Name                                              Definition                                                                              Comment/ Usage Note                                                                                                   Status
+   NS                                          Nasal
+   NG                                          Nasogastric
+   NP                                          Nasal Prongs                                              Nasal Prongs*                                                                           used primarily for respiratory therapy
+                                                                                                                                                                                                 and anesthesia delivery
+   NT                                          Nasotrachial
+                                               Tube
+   OP                                          Ophthalmic
+   OT                                          Otic
+   OTH                                         Other/Miscellane
+                                               ous
+   PF                                          Perfusion
+   PO                                          Oral
+   PR                                          Rectal
+   RM                                          Rebreather Mask                                           Rebreather Mask*                                                                        used primarily for respiratory therapy
+                                                                                                                                                                                                 and anesthesia delivery
+   SD                                          Soaked Dressing
+   SC                                          Subcutaneous
+   SL                                          Sublingual
+   TP                                          Topical
+   TRA                                         Tracheostomy                                              Tracheostomy*                                                                           used primarily for respiratory therapy
+                                                                                                                                                                                                 and anesthesia delivery
+   TD                                          Transdermal
+   TL                                          Translingual
+   UR                                          Urethral
+   VG                                          Vaginal
+   VM                                          Ventimask
+   WND                                         Wound

@@ -1,0 +1,9 @@
+                                                                                                                             Table 0137Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                     Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   E                                            Employer
+   G                                            Guarantor
+   I                                            Insurance
+                                                company
+   O                                            Other
+   P                                            Patient

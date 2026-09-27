@@ -1,0 +1,7 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                     0305
+  Description                                                                                               Table of codes specifying the categorization of the person's location.
+  Type                                                                                                      User
+  Steward                                                                                                   I    n    M    /   PA
+  where used                                                                                                PL.6, NDL.9
+  HL7 Version  Introduced                                                                                   2.3

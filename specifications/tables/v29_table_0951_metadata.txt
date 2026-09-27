@@ -1,0 +1,14 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0951
+  Description                                                                           HL7-defined table of codes that provide additional information to the universal
+                                                                                        service identifier on why a test, study or review was ordered. Current suggested
+                                                                                        values are in support of the IHE LCC LAB-7 transaction.
+  Type                                                                                  User
+  Steward                                                                               OO
+
+
+
+
+
+ where used                                                                             OBR-                                                     31
+ HL7 Version  Introduced                                                    2.9

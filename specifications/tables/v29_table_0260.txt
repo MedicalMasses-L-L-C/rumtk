@@ -1,0 +1,11 @@
+                                                                                                                               Table 0260Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   N                                             Nursing Unit
+   R                                             Room
+   B                                             Bed
+   E                                             Exam Room
+   O                                             Operating Room
+   C                                             Clinic
+   D                                             Department
+   L                                             Other Location

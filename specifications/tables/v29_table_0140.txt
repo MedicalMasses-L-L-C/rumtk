@@ -1,0 +1,15 @@
+                                                                                                           Table 0140Coded Content
+  Value                                  Display Name                                                                                                                      Definition                                                       Comment/                               Status
+                                                                                                                                                                                                                                            Usage Note
+  USA                                    US Army
+  USN                                    US Navy
+  USAF                                   US Air Force
+  USMC                                   US Marine Corps
+  USCG                                   US Coast Guard
+  USPHS                                  US Public Health Service
+  NOAA                                   National Oceanic and Atmospheric
+                                         Administration
+  NATO                                   North Atlantic Treaty Organization
+  AUSA                                   Australian Army
+  AUSN                                   Australian Navy
+  AUSAF                                  Australian Air Force

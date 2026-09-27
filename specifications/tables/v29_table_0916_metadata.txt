@@ -1,0 +1,9 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0916
+  Description                                                                                    Table of codes specifying additional clinical information about the patient or
+                                                                                                 specimen to report the supporting and/or suspected diagnosis and clinical
+                                                                                                 findings on requests for interpreted diagnostic studies.
+  Type                                                                                           User
+  Steward                                                                                        OO
+  where used                                                                                     OBR-                                                     13
+  HL7 Version  Introduced                                                                        2.7.1

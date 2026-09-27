@@ -1,0 +1,12 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  9999
+  Description                                                                            Used as a 'placeholder' in the several datatypes for any table (may be external,
+                                                                                         local, or may vary).  If the field is of data type CQ, CE, CF, CNE or CWE and
+                                                                                         one or more externally or locally defined tables may be used, the number 9999
+                                                                                         will appear as a placeholder for the actual table in the segment table column.
+                                                                                         This is to indicate that table values are used, but no HL7/User-defined table has
+                                                                                         been allocated. The narrative may constrain which external tables can be used.
+  Type                                                                                   HL7
+  Steward                                                                                INM
+  where used                                                                             CE, DF, CQ, CNE, CWE
+  HL7 Version  Introduced                                                                2.4                                                                                                                                                                                                                            2.4

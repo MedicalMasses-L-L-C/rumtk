@@ -1,0 +1,13 @@
+                                                                                                                      Table Metadata
+  Table                                                                           0341
+  Description                                                                     Table of codes that specify a guarantor's credit rating.  No suggested values.
+  Type                                                                            User
+  Steward                                                                         FM
+  where used                                                                      GT1-23
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                  2.3.1

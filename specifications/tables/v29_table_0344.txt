@@ -1,0 +1,24 @@
+                                                                                                                          Table 0344Coded Content
+   Value                                       Display Name                                                                                                                         Definition                                                                               Comment/                                     Status
+                                                                                                                                                                                                                                                                             Usage Note
+   01                                          Patient is insured
+   02                                          Spouse
+   03                                          Natural child/insured financial
+                                               responsibility
+   04                                          Natural child/Insured does not have
+                                               financial responsibility
+   05                                          Step child
+   06                                          Foster child
+   07                                            Ward of the court
+   08                                            Employee
+   09                                            Unknown
+   10                                            Handicapped dependent
+   11                                            Organ donor
+   12                                            Cadaver donor
+   13                                            Grandchild
+   14                                            Niece/nephew
+   15                                            Injured plaintiff
+   16                                            Sponsored dependent
+   17                                            Minor dependent of a minor dependent
+   18                                            Parent
+   19                                            Grandparent

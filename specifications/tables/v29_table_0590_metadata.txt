@@ -1,0 +1,5 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0590
+  Description                                                                                               9999
+  Type                                                                                                      undefined
+  where used                                                                                                CS R-                           10

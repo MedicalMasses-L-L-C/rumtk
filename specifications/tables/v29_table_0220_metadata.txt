@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0220
+  Description                                                                                        Table of codes characterizing the situation that patient-associated parties live in
+                                                                                                     at their residential address.
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         NK1-21, PD1-                    2
+  HL7 Version  Introduced                                                                            2.3

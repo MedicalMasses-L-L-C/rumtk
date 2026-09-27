@@ -1,0 +1,8 @@
+                                                                                                                                                                      Table Metadata
+   Table                                                                                                           0968
+   Description                                                                                                     Values describing the material a container is made of or indication that the
+                                                                                                                   container may be a virtual type.  No suggested values.
+   Type                                                                                                            User
+   Steward                                                                                                         OO
+   where used                                                                                                      SAC-48
+   HL7 Version  Introduced                                                                                         2.9

@@ -1,0 +1,22 @@
+                                                                                                                        Table 0247Coded Content
+  Value                                Display Name                                                                                                        Definition                                                                                     Comment/ Usage                                            Status
+                                                                                                                                                                                                                                                          Note
+  Y                                    Evaluation completed
+  P                                    Evaluation in progress
+  K                                    Problem already known, no
+                                       evaluation necessary
+  X                                    Product not made by company
+  A                                    Evaluation anticipated, but not yet
+                                       begun
+  D                                    Product discarded -- unable to follow
+                                       up
+  C                                    Product received in condition which
+                                       made analysis impossible
+  I                                    Product remains implanted -- unable
+                                       to follow up
+  U                                    Product unavailable for follow up
+                                       investigation
+  Q                                    Product  under quarantine -- unable to
+                                       follow up
+  R                                    Product under recall/corrective action
+  O                                    Other

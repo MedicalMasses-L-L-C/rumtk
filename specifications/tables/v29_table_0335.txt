@@ -1,0 +1,70 @@
+                                                                                                        Table 0335Coded Content
+  Value                                              Display Name                                                   Definition                            Comment/ Usage Note                                                                                              Status
+  Q<integer>S                                        every <integer> seconds                                                                              This is not a real code, but guidelines how to                                                                   D
+                                                                                                                                                          construct the codes.
+  Q<integer>M                                        every <integer>                                                                                      This is not a real code, but guidelines how                                                                      D
+                                                     minutes                                                                                              to construct the codes.
+  Q<integer>H                                        every <integer> hours                                                                                This is not a real code, but guidelines how                                                                      D
+                                                                                                                                                          to construct the codes.
+  Q<integer>D                                        every <integer> days                                                                                 This is not a real code, but guidelines how                                                                      D
+                                                                                                                                                          to construct the codes.
+  Q<integer>W                                        every <integer> weeks                                                                                This is not a real code, but guidelines how                                                                      D
+                                                                                                                                                          to construct the codes.
+  Q<integer>L                                        every <integer>                                                                                      This is not a real code, but guidelines how                                                                      D
+                                                     months (Lunar cycle)                                                                                 to construct the codes.
+  Q<integer>J<day                                    repeats on a particular                                                                              This is not a real code, but guidelines how                                                                      D
+  #>                                                 day of the week,                                                                                     to construct the codes.
+  BID                                                twice a day at                                                                                       (e.g., 9AM-4PM)
+                                                     institution-specified
+                                                     times
+  TID                                                three times a day at                                                                                 (e.g., 9AM-4PM-9PM)
+                                                     institution-specified
+                                                     times
+  QID                                                four times a day at                                                                                  (e.g., 9AM-11AM-4PM-9PM)
+                                                     institution-specified
+                                                     times
+  xID                                                "X" times per day at                                                                                 This is not a real code, but guidelines how                                                                      D
+                                                     institution-specified                                                                                to construct the codes.
+                                                     times, where X is a
+                                                     numeral 5 or greater.
+  QAM                                                in the morning at
+                                                     institution-specified
+                                                     time
+  QSHIFT                                             during each of three
+                                                     eight-hour shifts at
+                                                     institution-specified
+                                                     times
+  QOD                                                every other day                                                                                      (same as Q2D)
+  QHS                                                every day before the
+                                                     hour of sleep
+  QPM                                                in the evening at
+                                                     institution-specified
+                                                     time  Value                                              Display Name                                                    Definition                            Comment/ Usage Note                                                                                                Status
+  C                                                  service is provided
+                                                     continuously between
+                                                     start time and stop
+                                                     time
+  U <spec>                                           for future use, where                                                                                 This is not a real code, but guidelines how                                                                        D
+                                                     <spec> is an interval                                                                                 to construct the codes.
+                                                     specification as
+                                                     defined by the UNIX
+                                                     cron specification.
+  PRN                                                given as needed
+  PRNxxx                                             where xxx is some                                                                                     This is not a real code, but guidelines how                                                                        D
+                                                     frequency code                                                                                        to construct the codes.
+  Once                                               one time only.                                                                                        This is also the default when this
+                                                                                                                                                           component is null.
+  Meal Related                                       <timing>C                                                                                             This is not a real code, but guidelines how                                                                        D
+  Timings                                            ("cum")<meal>                                                                                         to construct the codes.
+  A                                                  Ante (before)                                                                                         This is not a real code, but guidelines how                                                                        D
+                                                                                                                                                           to construct the codes.
+  P                                                  Post (after)                                                                                          This is not a real code, but guidelines how                                                                        D
+                                                                                                                                                           to construct the codes.
+  I                                                  Inter                                                                                                 This is not a real code, but guidelines how                                                                        D
+                                                                                                                                                           to construct the codes.
+  M                                                  Cibus Matutinus                                                                                       This is not a real code, but guidelines how                                                                        D
+                                                     (breakfast)                                                                                           to construct the codes.
+  D                                                  Cibus Diurnus (lunch)                                                                                 This is not a real code, but guidelines how                                                                        D
+                                                                                                                                                           to construct the codes.
+  V                                                  Cibus Vespertinus                                                                                     This is not a real code, but guidelines  how                                                                       D
+                                                     (dinner)                                                                                              to construct the codes.

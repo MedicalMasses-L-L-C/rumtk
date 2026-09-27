@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0307
+  Description                                                                                               Table of codes specifying the building where the person is located.  No
+                                                                                                            suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   I    n    M    /   PA
+  where used                                                                                                PL.7, NDL.10
+  HL7 Version Introduced                                                                                    2.3

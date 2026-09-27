@@ -1,0 +1,8 @@
+                                                                                                                     Table 0253Coded Content
+  Value                                      Display Name                                             Definition                                                                                                                                                  Comment/                                   Status
+                                                                                                                                                                                                                                                                  Usage Note
+  B                                          Breast milk
+  P                                          Transplacental
+  F                                          Father
+  X                                          Blood product
+  O                                          Other

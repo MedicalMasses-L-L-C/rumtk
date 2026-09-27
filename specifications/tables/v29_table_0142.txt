@@ -1,0 +1,6 @@
+                                                                                                                            Table 0142Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+   ACT                                          Active duty
+   RET                                          Retired
+   DEC                                          Deceased

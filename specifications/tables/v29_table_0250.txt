@@ -1,0 +1,10 @@
+                                                                                                                         Table 0250Coded Content
+  Value                                       Display Name                                               Definition                                                                                                                                                        Comment/                                    Status
+                                                                                                                                                                                                                                                                           Usage Note
+  H                                           Highly probable
+  M                                           Moderately
+                                              probable
+  S                                           Somewhat
+                                              probable
+  I                                           Improbable
+  N                                           Not related

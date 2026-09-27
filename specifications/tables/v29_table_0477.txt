@@ -1,0 +1,20 @@
+                                                                                                       Table 0477Coded Content
+  Value                          Display Name                                       Definition                           Comment/ Usage Note                                                                                                                             Status
+  I                              Schedule I                                                                              Includes drugs that have a high potential for abuse, no
+                                                                                                                         currently accepted medical use in the United States and a lack
+                                                                                                                         of accepted safety for use under medical supervision.
+  II                             Schedule II                                                                             Includes drugs having currently accepted medical use
+                                                                                                                         in the United States and a high abuse potential, with
+                                                                                                                         severe psychological or physical dependence liability.  Value                            Display Name                                         Definition                             Comment/ Usage Note                                                                                                                                    Status
+  III                              Schedule III                                                                                Includes drugs having an abuse potential less than that
+                                                                                                                               of drugs listed in Schedules I and II. All CS III drugs
+                                                                                                                               have a currently accepted medical use in the United
+                                                                                                                               States.
+  IV                               Schedule IV                                                                                 Includes drugs having a lesser potential for abuse than
+                                                                                                                               those listed in Schedule III. CS IV drugs have a
+                                                                                                                               currently accepted medical use in the United States.
+  V                                Schedule V                                                                                  Includes drugs having low abuse potential and limited
+                                                                                                                               physical or psychological dependence relative to those
+                                                                                                                               listed in IV and have an accepted medical use in the
+                                                                                                                               United States.
+  VI                               Schedule VI                                                                                 State defined

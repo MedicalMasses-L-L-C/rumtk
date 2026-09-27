@@ -1,0 +1,14 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0541
+  Description                                                                                              Table of codes that specify the modifying or qualifying description(s) about the
+                                                                                                           specimen type.  No suggested values.
+  Type                                                                                                     User
+
+
+
+
+
+
+  Steward                                                                                                  OO
+  where used                                                                                               SPM-5
+  HL7 Version  Introduced                                                          2.5

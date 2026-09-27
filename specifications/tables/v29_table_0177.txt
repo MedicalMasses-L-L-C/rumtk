@@ -1,0 +1,13 @@
+                                                                                                                             Table 0177Coded Content
+   Value                                        Display Name                                                                                                                                                            Definition                                                   Comment/                                     Status
+                                                                                                                                                                                                                                                                                     Usage Note
+   V                                            Very restricted
+   R                                            Restricted
+   U                                            Usual control
+   EMP                                          Employee
+   UWM                                          Unwed mother
+   VIP                                          Very important person or celebrity
+   PSY                                          Psychiatric patient
+   AID                                          AIDS patient
+   HIV                                          HIV(+) patient
+   ETH                                          Alcohol/drug  treatment patient

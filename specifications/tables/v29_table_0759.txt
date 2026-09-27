@@ -1,0 +1,8 @@
+                                                                                                                                Table 0759Coded Content
+   Value                                 Display Name                                                                                                                                                               Definition                                                           Comment/                                       Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   0                                     Admission status is valid; used for grouping
+   1                                     Admission status is valid; not used for grouping
+   2                                     Admission status is invalid; not used for grouping
+   3                                     Admission status is invalid; default value used for
+                                         grouping

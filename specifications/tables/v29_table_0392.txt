@@ -1,0 +1,11 @@
+                                                                                                              Table 0392Coded Content
+  Value                                   Display Name                                          Definition                                                                                                                                         Comment/                                 Status
+                                                                                                                                                                                                                                                   Usage Note
+  DB                                      Match on Date of
+                                          Birth
+  NA                                      Match on Name
+                                          (Alpha Match)
+  NP                                      Match on Name
+                                          (Phonetic Match)
+  SS                                      Match on Social
+                                          Security Number

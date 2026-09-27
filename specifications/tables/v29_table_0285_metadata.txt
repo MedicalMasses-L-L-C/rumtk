@@ -1,0 +1,13 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                     0285
+
+
+
+
+
+  Description                                                                               Table of codes specifying the identification of the insurance company or other
+                                                                                            entity that administers the authorizing coverage plan.  No suggested values.
+  Type                                                                                      User
+  Steward                                                                                   OO
+  where used                                                                                AUT-2
+  HL7 Version  Introduced                                                                   2.3

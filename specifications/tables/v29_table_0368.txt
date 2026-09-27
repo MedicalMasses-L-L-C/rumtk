@@ -1,0 +1,25 @@
+                                                                                                                                  Table 0368Coded Content
+   Value                                          Display Name                                                                                                           Definition                                                                                    Comment/ Usage                                                         Status
+                                                                                                                                                                                                                                                                       Note
+   SA                                             Sampling
+   LO                                             Load
+   UN                                             Unload
+   LK                                             Lock
+   UC                                             Unlock
+   TT                                             Transport To
+   CN                                             Clear Notification
+   IN                                             Initialize/Initiate
+   SU                                             Setup
+   CL                                             Clear
+   PA                                             Pause
+   RE                                             Resume
+  ES                                         Emergency -stop
+  LC                                         Local Control Request
+  RC                                         Remote Control Request
+  AB                                         Abort
+  EN                                         Enable Sending Events
+  DI                                         Disable Sending Events
+  EX                                         Execute (command specified in
+                                             field Parameters (ST) 01394)
+  AF                                         Aliquot From container                                                                                                                                                                          See desc. below
+  AT                                         Aliquot To container                                                                                                                                                                            See desc. below

@@ -1,0 +1,11 @@
+                                                                                                                                    Table 0834Coded Content
+  Va    l    u    e                               Display Name                                                    Definition                                                                                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                  Usage Note
+  application                                     Application data
+  audio                                           Audio data
+  image                                           Image data
+  model                                           Model data                                                                                                                                                                                                                                      RFC 2077
+  text                                            Text data
+  video                                           Video data
+  multipart                                       MIME multipart
+                                                  package

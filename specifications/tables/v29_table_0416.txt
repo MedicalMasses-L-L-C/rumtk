@@ -1,0 +1,9 @@
+                                                                                                                               Table 0416Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                               Comment/                                       Status
+                                                                                                                                                                                                                                                                                        Usage Note
+   1                                             1st non-Operative
+   2                                             2nd non-
+                                                 Operative
+   3                                             Major Operative
+   4                                             2nd Operative
+   5                                             3rd Operative

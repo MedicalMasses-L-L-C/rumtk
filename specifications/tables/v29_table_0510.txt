@@ -1,0 +1,27 @@
+                                                                                                    Table 0510Coded Content
+  Value                         Display Name                                                             Definition                                Comment/ Usage Note                                                                                          Status
+  RI                            Received into inventory (for                                                                                       Status determined by Filler
+                                specified patient)
+  RD                            Reserved and ready to                                                                                              Status determined by Filler
+                                dispense
+  RS                            Reserved (ordered and                                                                                              Status determined by Filler
+                                product allocated for the
+                                patient)
+  RE                            Released (no longer                                                                                                Status determined by Placer or Filler
+                                allocated for the patient)
+  DS                            Dispensed to patient                                                                                               Status determined by Filler
+                                location
+  RA                            Returned unused/no longer                                                                                          Status determined by Filler
+                                needed
+  RL                            Returned unused/keep                                                                                               Status determined by Filler
+                                linked to patient for
+                                possible use later
+  WA                            Wasted (product no longer                                                                                          Status determined by Filler
+                                viable)
+  PT                            Presumed transfused                                                                                                Status determined by Filler
+                                (dispensed and not
+                                returned)
+  CR                            Released into inventory for                                                                                        Status determined by Filler
+                                general availability
+  RQ                            Request to dispense blood                                                                                          Status determined by Placer
+                                product

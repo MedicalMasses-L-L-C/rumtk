@@ -1,0 +1,14 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                          0422
+
+
+
+
+
+
+  Description                                                                                    Table of codes specifying a patient's prioritization within the context of this
+                                                                                                 abstract.
+  Type                                                                                           User
+  Steward                                                                                        FM
+  where used                                                                                     ABS-6
+  HL7 Version  Introduced                                                                        2.4

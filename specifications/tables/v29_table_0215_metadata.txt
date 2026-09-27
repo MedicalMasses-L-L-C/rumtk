@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                  0215
+  Description                                                                                            Table of codes specifying a level of publicity of information about a patient for
+                                                                                                         a specific visit.
+  Type                                                                                                   User
+  Steward                                                                                                PA
+  where used                                                                                             PV2-21, PD1-                    11
+  HL7 Version  Introduced                                                                                2.3

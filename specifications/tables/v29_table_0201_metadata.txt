@@ -1,0 +1,9 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0201
+  Description                                                                             HL7-defined table of codes for specifying a specific use of a telecommunication
+                                                                                          number.  Best practice is to use this concept whenever a telecommunication
+                                                                                          number or access string is specified.
+  Type                                                                                    HL7
+  Steward                                                                                 InM
+  where used                                                                              XTN.2
+  HL7 Version  Introduced                                                                 2.3

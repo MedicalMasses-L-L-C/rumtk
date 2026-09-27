@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0880
+  Description                                                                              Table of codes specifying additional optional modifier(s) for the Product/Service
+                                                                                           Code (e.g., after hours -           evening, after hours -           weekend).  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  FM
+  where used                                                                               PSL-8
+  HL7 Version  Introduced                                                                  2.6

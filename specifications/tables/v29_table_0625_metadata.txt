@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0625
+  Description                                                                                          Table of codes specifying the state of an inventory item within the context of an
+                                                                                                       inventory location.
+  Type                                                                                                 User
+  Steward                                                                                              OO
+  where used                                                                                           IVT-6
+  HL7 Version  Introduced                                                                              2.6

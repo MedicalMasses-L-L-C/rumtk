@@ -1,0 +1,11 @@
+                                                                                                                                     Table 0566Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                        Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   WBL                                             Whole Blood
+   RBC                                             Red Blood Cells
+   PLS                                             Plasma
+   PLT                                             Platelets
+   GRN                                             Granulocytes
+   PSC                                             Peripheral Stem
+                                                   Cells
+   LYM                                             Lymphocytes

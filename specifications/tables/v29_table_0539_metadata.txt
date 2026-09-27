@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0539
+  Description                                                                                       Table of codes that specify the organization unit in the General Ledger to which
+                                                                                                    the staff member is currently assigned.  No suggested values.
+  Type                                                                                              User
+  Steward                                                                                           PA
+  where used                                                                                        STF-                      36
+  HL7 Version  Introduced                                                                           2.5

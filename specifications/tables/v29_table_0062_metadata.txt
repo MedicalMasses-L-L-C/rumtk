@@ -1,0 +1,7 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0062
+  Description                                                                                        Table of codes which specify the reason for an event.
+  Type                                                                                               User
+  Steward                                                                                            InM/FM
+  where used                                                                                         EVN-                                                         4, FC.1
+  HL7 Version  Introduced                                                                            2.1

@@ -1,0 +1,9 @@
+                                                                                                                             Table 0309Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   H                                            Hospital/institutional
+   P                                            Physician/profess
+                                                ional
+   B                                            Both hospital and
+                                                physician
+   RX                                           Pharmacy

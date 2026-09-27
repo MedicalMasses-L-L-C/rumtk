@@ -1,0 +1,15 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0347
+  Description                                                                            Table of codes specifying the names of the principal country subdivisions (e.g.,
+                                                                                         provinces or states).  The values in the table are country specific.  For example,
+                                                                                         in the US, the Federal Information Processing Standard (FIPS) alpha codes may
+                                                                                         be used by local agreement.
+  Type                                                                                   User
+  Steward                                                                                InM
+
+
+
+
+
+  where used                                                                             CX.9, PPN.23, XCN.22, ACC-4
+  HL7 Version  Introduced                                                            2.3.1

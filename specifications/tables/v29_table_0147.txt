@@ -1,0 +1,8 @@
+                                                                                                                                  Table 0147Coded Content
+   Value                                          Display Name                                                                                                                                  Definition                                                                                     Comment/                                        Status
+                                                                                                                                                                                                                                                                                               Usage Note
+   ANC                                            Ancillary
+   2ANC                                           Second ancillary
+   MMD                                            Major medical
+   2MMD                                           Second major medical
+   3MMD                                           Third major medical

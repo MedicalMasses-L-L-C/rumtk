@@ -1,0 +1,9 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0463
+  Description                                                                                       Table of codes specifying an identifying stock number, if any, which might be
+                                                                                                    used, for example, as a cross reference for materials management.  No suggested
+                                                                                                    values.
+  Type                                                                                              User
+  Steward                                                                                           InM/FM
+  where used                                                                                        CDM-9
+  HL7 Version  Introduced                                                                           2.4

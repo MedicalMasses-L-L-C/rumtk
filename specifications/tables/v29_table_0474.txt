@@ -1,0 +1,8 @@
+                                                                                                                            Table 0474Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                            Comment/                                      Status
+                                                                                                                                                                                                                                                                                  Usage Note
+   D                                            Department
+   F                                            Facility
+   U                                            Subdepartment
+   S                                            Subdivision
+   V                                            Division

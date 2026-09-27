@@ -1,0 +1,10 @@
+                                                                                                                Table 0945Coded Content
+  Value                                    Display Name                             Definition                                                                                             Comment/ Usage Note                                                                                   Status
+  X2                                       Dilution factor                          Specimen pre-diluted by factor 2                                                                       Usage Note: corresponds to ^1^:^2 in
+                                           2                                        applied on the instrument                                                                              TCD-2
+  X5                                       Dilution                                 Specimen pre-diluted by factor 5                                                                       Usage Note: corresponds to ^1^:^5
+                                           factor 5                                 applied on the instrument                                                                              in TCD-2
+  D1                                       Dilution                                 Specimen pre-diluted by factor                                                                         Usage Note: corresponds to
+                                           factor 1.23                              1.23 applied on the instrument                                                                         ^1^:^1.23 in TCD-2
+  D2                                       Dilution                                 Specimen pre-diluted by factor                                                                         Usage Note: corresponds to
+                                           factor 1.45                              1.45 applied on the instrument                                                                         ^1^:^1.45 in TCD-2

@@ -1,0 +1,15 @@
+                                                                                                                                     Table 0508Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                         Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   LR                                              Leukoreduced
+   IR                                              Irradiated
+   CS                                              CMV Safe
+   FR                                              Fresh unit
+   AU                                              Autologous Unit
+   DI                                              Directed Unit
+   HL                                              HLA Matched
+   CM                                              CMV Negative
+   HB                                              Hemoglobin S
+                                                   Negative
+   WA                                              Washed
+   IG                                              IgA Deficient

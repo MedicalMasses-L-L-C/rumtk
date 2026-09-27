@@ -1,0 +1,6 @@
+                                                                                                                     Table 0272Coded Content
+  Value                                      Display Name                                            Definition                                                                                                                                                  Comment/                                   Status
+                                                                                                                                                                                                                                                                 Usage Note
+  V                                          Very restricted
+  R                                          Restricted
+  U                                          Usual control

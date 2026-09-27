@@ -1,0 +1,12 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0556
+  Description                                                                                             Table of codes used to specify the benefit group.
+  Type                                                                                                    User
+
+
+
+
+
+  Steward                                                                                                 FM
+  where used                                                                                              IVC-25
+  HL7 Version  Introduced                                                                            2.6

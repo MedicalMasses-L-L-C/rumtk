@@ -1,0 +1,15 @@
+                                                                                                                   Table 0316Coded Content
+  Value                              Display Name                                                                                                                  Definition                                                                   Comment/ Usage                                          Status
+                                                                                                                                                                                                                                                Note
+  Y                                  Yes, patient is a documented donor and
+                                     documentation is on file
+  F                                  Yes, patient is a documented donor, but
+                                     documentation is not on file
+  N                                  No, patient has not agreed to be a donor
+  I                                  No, patient is not a documented donor, but
+                                     information was provided
+  R                                  Patient leaves organ donation decision to
+                                     relatives
+  P                                  Patient leaves organ donation decision to a
+                                     specific person
+  U                                  Unknown

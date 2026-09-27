@@ -1,0 +1,7 @@
+                                                                                                                                  Table 0204Coded Content
+   Value                                          Display Name                                                                                                                                  Definition                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                              Usage Note
+   A                                              Alias name
+   L                                              Legal name
+   D                                              Display name
+   SL                                             Stock exchange listing name

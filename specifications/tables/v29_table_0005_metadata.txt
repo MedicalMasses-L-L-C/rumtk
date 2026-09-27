@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0005
+  Description                                                                                Table of codes specifying the patient's race. These values are suggestions only,
+                                                                                             they are not required for use in HL7 messages.
+  Type                                                                                       User
+  Steward                                                                                    PA
+  where used                                                                                 PID-10
+  HL7 Version  Introduced                                                                    2.1

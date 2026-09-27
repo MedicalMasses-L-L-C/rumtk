@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0211
+  Description                                                                               Table of codes that identify one of a number of possible standard alternate
+                                                                                            character sets for a message, either single-                   byte or double-byte.
+  Type                                                                                      HL7
+  Steward                                                                                   InM
+  where used                                                                                MSH-18
+  HL7 Version Introduced                                                                    2.3

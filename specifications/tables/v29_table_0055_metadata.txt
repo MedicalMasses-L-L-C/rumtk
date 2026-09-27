@@ -1,0 +1,8 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0055
+  Description                                                                                              Table of codes specifying the diagnostic related group (DRG) for the
+                                                                                                           transaction.  No suggested values.
+  Type                                                                                                     User
+  Steward                                                                                                  InM/FM
+  where used                                                                                               DMI-1, DRG-1
+  HL7 Version  Introduced                                                                                  2.1

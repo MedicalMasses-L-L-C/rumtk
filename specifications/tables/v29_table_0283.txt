@@ -1,0 +1,7 @@
+                                                                                                                                Table 0283Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                Comment/                                       Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   A                                             Accepted
+   P                                             Pending
+   R                                             Rejected
+   E                                             Expired

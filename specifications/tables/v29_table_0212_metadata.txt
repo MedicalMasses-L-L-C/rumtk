@@ -1,0 +1,15 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0212
+  Description                                                                        Table of codes that identify the nation or national grouping to which the person
+                                                                                     belongs.  This information                                         may be different from a person’s citizenship in
+                                                                                     countries in which multiple nationalities are recognized (for example, Spain:
+                                                                                     Basque, Catalan, etc.).  No suggested values.
+
+
+
+
+
+
+  Type                                                                               User
+  where used                                                                         NK1-27, GT1-43. IN1-41,
+  HL7 Version  Introduced                                                                             2.3

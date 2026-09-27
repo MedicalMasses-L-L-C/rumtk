@@ -1,0 +1,6 @@
+                                                                                                                      Table 0564Coded Content
+   Value                                      Display Name                                                                         Definition                                                Comment/ Usage Note                                                                                               Status
+   EA                                         Edit/Adjudication Response                                                                                                                     Payer adjustment
+   IN                                         Information                                                                                                                                    Payer adjustment
+   PA                                         Provider Adjustment                                                                                                                            Provider adjustment
+   PR                                         Processing Result                                                                                                                              Payer adjustment

@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0904
+  Description                                                                                      HL7-defined table of codes specifying the scheme for the security check.
+  Type                                                                                             HL7
+  Steward                                                                                          InM
+  where used                                                                                       CX.12, PPN.26, XCN.25
+  HL7 Version Introduced                                                                           2.7

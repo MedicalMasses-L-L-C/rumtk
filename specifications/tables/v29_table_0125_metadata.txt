@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0125
+  Description                                                                                   HL7-defined table of codes specifying the format of the observation value in the
+                                                                                                Observation Result (OBX).
+  Type                                                                                          HL7
+  Steward                                                                                       OO
+  where used                                                                                    OBX-2, OM1-3, OM3-7 and OMC-9
+  HL7 Version  Introduced                                                                       2.1

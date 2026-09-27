@@ -1,0 +1,13 @@
+                                                                                                                        Table 0131Coded Content
+   Value                                      Display Name                                               Definition                                                                                                                                                      Comment/                                    Status
+                                                                                                                                                                                                                                                                         Usage Note
+   E                                          Employer
+   C                                          Emergency
+                                              Contact
+   F                                          Federal Agency
+   I                                          Insurance
+                                              Company
+   N                                          Next-of-Kin
+   S                                          State Agency
+   O                                          Other
+   U                                          Unknown

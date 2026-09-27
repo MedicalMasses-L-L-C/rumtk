@@ -1,0 +1,7 @@
+                                                                                                                                                              Table Metadata
+  Table                                                                                                      0159
+  Description                                                                                                HL7-defined table of codes which specify the type of diet.
+  Type                                                                                                       HL7
+  Steward                                                                                                    OO
+  where used                                                                                                 ODS-1
+  HL7 Version  Introduced                                                                                    2.2

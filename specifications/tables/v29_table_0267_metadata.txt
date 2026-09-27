@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0267
+  Description                                                                                           HL7-defined table of codes used to identify the day(s) of the week when a
+                                                                                                        location may be scheduled for appointments.
+  Type                                                                                                  HL7
+  Steward                                                                                               I    n    M    /   PA
+  where used                                                                                            UVC.2, LDP.10 UVC.1
+  HL7 Version Introduced                                                                                2.3

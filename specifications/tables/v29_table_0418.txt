@@ -1,0 +1,12 @@
+                                                                                                                              Table 0418Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                              Comment/                                      Status
+                                                                                                                                                                                                                                                                                     Usage Note
+   0                                            the admitting
+                                                procedure
+   1                                            the primary
+                                                procedure
+   2                                            for ranked
+                                                secondary
+                                                procedures
+   ...                                          No suggested                                                                                                                                                                                                                                                                       D
+                                                values defined

@@ -1,0 +1,7 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0922
+  Description                                                                                          Table of codes specifying the code for the certification category.
+  Type                                                                                                 User
+  Steward                                                                                              FM
+  where used                                                                                           IN3-27
+  HL7 Version  Introduced                                                                              2.8

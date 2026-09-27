@@ -1,0 +1,22 @@
+                                                                                                            Table Metadata
+ Table                                                                    0254
+ Description                                                              HL7-defined table of codes that describe the underlying kind of property
+                                                                          represented by an observation.  The categories distinguish concentrations from
+                                                                          total amounts, molar concentrations from mass concentrations, partial pressures
+                                                                          from colors, and so forth.  These are discussed more fully in the LOINC Users'
+
+
+
+
+                                                                           Manual.   They are derived from the approach described in 1995 edition of the
+                                                                           IUPAC Silver Book.  These distinctions are used in IUPAC and LOINC
+                                                                           standard codes.  The distinctions of true quantities in this table are based
+                                                                           primarily on dimensional analyses. The table contains a number of "families,"
+                                                                           those related to simple counts (number, number concentration, etc.), to mass
+                                                                           (mass, mass concentration, etc.), to enzyme activity (catalytic content, catalytic
+                                                                           concentration, etc.), and molar or equivalents (substance content, substance
+                                                                           concentration).
+ Type                                                                     HL7
+ Steward                                                                  InM
+ where used                                                               OM1-42
+ HL7 Version  Introduced                                                   2.3

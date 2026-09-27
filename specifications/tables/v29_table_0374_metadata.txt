@@ -1,0 +1,8 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0374
+  Description                                                                                      Table of codes that identify the specimen contaminant identifier associated with
+                                                                                                   the specimen in the container.
+  Type                                                                                             User
+  Steward                                                                                          OO
+  where used                                                                                       SAC-40
+  HL7 Version  Introduced                                                                          2.4

@@ -1,0 +1,7 @@
+                                                                                                                                                              Table Metadata
+  Table                                                                                                      0080
+  Description                                                                                                HL7-defined table of codes specifying the nature of an abnormal test.
+  Type                                                                                                       HL7
+  Steward                                                                                                    OO
+  where used                                                                                                 OBX-10
+  HL7 Version Introduced                                                                                     2.1

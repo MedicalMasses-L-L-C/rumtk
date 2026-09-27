@@ -1,0 +1,7 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0193
+  Description                                                                                          Table of codes specifying the amount quantity class.
+  Type                                                                                                 User
+  Steward                                                                                              InM/FM
+  where used                                                                                           P   TA   .   2
+  HL7 Version  Introduced                                                                              2.2

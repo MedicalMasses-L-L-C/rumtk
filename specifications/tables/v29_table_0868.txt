@@ -1,0 +1,15 @@
+                                                                                                                  Table 0868Coded Content
+  Value                                     Display Name                                            Definition                                             Comment/ Usage Note                                                                                                                        Status
+  M                                         Moved                                                                                                          The individual associated with the telecommunication
+                                                                                                                                                           address has moved and is no longer reachable at the
+                                                                                                                                                           address.
+  E                                         Added in error                                                                                                 The telecommunication address was incorrect
+                                                                                                                                                           and should never have been associated with the
+                                                                                                                                                           individual.
+  R                                         On request                                                                                                     The associated individual requested that the
+                                                                                                                                                           telecommunication address be removed from
+                                                                                                                                                           their record (though it may still be correct).
+  C                                         Corrected                                                                                                      The telecommunication address has been
+                                                                                                                                                           replaced with a corrected version.
+  N                                         No longer in                                                                                                   The telecommunication address is no longer
+                                            service                                                                                                        connected or available

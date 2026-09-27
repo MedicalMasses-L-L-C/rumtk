@@ -1,0 +1,5 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                          0750
+  Description                                                                                    9999
+  Type                                                                                           undefined
+  where used                                                                                     RXO-5

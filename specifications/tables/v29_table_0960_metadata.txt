@@ -1,0 +1,14 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                           0960
+  Description                                                                                     Used to specify why the normally expected content of the data element is
+                                                                                                  missing.  Note that this content is maintained in the FHIR product family.
+  Type                                                                                            HL7-EXT
+  Steward                                                                                         OO
+  where used                                                                                      OBX-32
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                            2.9

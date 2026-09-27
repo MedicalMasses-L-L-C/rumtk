@@ -1,0 +1,20 @@
+                                                                                                                  Table 0530Coded Content
+  Value                                     Display Name                                           Definition                                             Comment/ Usage Note                                                                                                                       Status
+  AE                                        American Express
+  DEA                                       Drug                                                                                                          The US Drug Enforcement Administration does
+                                            Enforcement                                                                                                   not solely assign DEA numbers in the United
+                                            Agency                                                                                                        States. Hospitals have the authority to issue
+                                                                                                                                                          DEA numbers to their medical residents. These  Value                                   Display Name                                         Definition                                           Comment/ Usage Note                                                                                                                  Status
+                                                                                                                                                    DEA numbers are based upon the hospital’s
+                                                                                                                                                    DEA number, but the authority rests with the
+                                                                                                                                                    hospital on the assignment to the residents.
+                                                                                                                                                    Thus, DEA as an Assigning Authority is
+                                                                                                                                                    necessary in addition to DEA as an Identifier
+                                                                                                                                                    Type.
+  DOD                                     Department of                                                                                             In some countries e.g., the US, more than one
+                                          Defense                                                                                                   department may issue a military identifier.
+                                                                                                                                                    Hence, US is not sufficient as the Assigning
+                                                                                                                                                    Authority.
+  MC                                      Master Card
+  VA                                      Veterans Affairs
+  VI                                      Visa

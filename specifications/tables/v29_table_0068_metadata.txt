@@ -1,0 +1,8 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0068
+  Description                                                                                     Table of codes specifying the type of guarantor, e.g., individual, institution, etc.
+                                                                                                  No suggested values.
+  Type                                                                                            User
+  Steward                                                                                         FM
+  where used                                                                                      DRG-33, GT1-                    10
+  HL7 Version  Introduced                                                                         2.1

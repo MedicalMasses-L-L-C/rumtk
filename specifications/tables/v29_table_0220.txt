@@ -1,0 +1,9 @@
+                                                                                                                             Table 0220Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   A                                            Alone
+   F                                            Family
+   I                                            Institution
+   R                                            Relative
+   U                                            Unknown
+   S                                            Spouse Only

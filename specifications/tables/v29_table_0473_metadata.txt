@@ -1,0 +1,13 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0473
+  Description                                                                             Table of codes specifying whether or not the service (pharmaceutical) is in the
+                                                                                          formulary.
+  Type                                                                                    User
+  Steward                                                                                 InM/OO
+  where used                                                                              OM7-22
+
+
+
+
+
+  HL7 Version Introduced                                                                         2.4

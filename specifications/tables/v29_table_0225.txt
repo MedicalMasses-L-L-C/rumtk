@@ -1,0 +1,6 @@
+                                                                                             Table 0225Coded Content
+  Value                             Display Name                                 Definition                                                                                                                  Comment/                          Status
+                                                                                                                                                                                                             Usage Note
+  R                                 Required
+  N                                 Not Required
+  U                                 Unknown

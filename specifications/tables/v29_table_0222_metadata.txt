@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0222
+  Description                                                                                        Table of codes used to indicate a reason for contacting a guarantor, for example,
+                                                                                                     to phone a guarantor if payments are late.  No suggested values.
+  Type                                                                                               User
+  Steward                                                                                            FM
+  where used                                                                                         GT1-47, NK1-29
+  HL7 Version  Introduced                                                                            2.3

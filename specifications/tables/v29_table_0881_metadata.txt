@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0881
+  Description                                                                                       Table of codes specifying the account role of the physician, for example, only
+                                                                                                    billing for the professional part, the technical part or both.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        PSL-31
+  HL7 Version  Introduced                                                                           2.6

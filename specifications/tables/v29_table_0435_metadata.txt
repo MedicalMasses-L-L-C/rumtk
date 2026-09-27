@@ -1,0 +1,7 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0435
+  Description                                                                                       Table of codes specifying the patient's instructions to the healthcare facility.
+  Type                                                                                              User
+  Steward                                                                                           PA
+  where used                                                                                        PV2-45, PD1-                    15
+  HL7 Version  Introduced                                                                           2.4

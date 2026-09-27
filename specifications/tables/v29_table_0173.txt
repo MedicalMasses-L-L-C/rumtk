@@ -1,0 +1,5 @@
+                                                                                                                       Table 0173Coded Content
+   Value                                      Display Name                                             Definition                                                                                                                                                     Comment/                                   Status
+                                                                                                                                                                                                                                                                      Usage Note
+   CO                                         Coordination
+   IN                                         Independent

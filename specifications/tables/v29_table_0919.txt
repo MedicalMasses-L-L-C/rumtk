@@ -1,0 +1,12 @@
+                                                                                                                 Table 0919Coded Content
+  Value                                    Display Name                                                                      Definition                                       Comment/ Usage Note                                                                                                 Status
+  Y                                        This test should be exclusive
+  N                                        This test can be included                                                                                                          Default -.will be assumed when this
+                                           with any number of other                                                                                                           field is empty
+                                           tests
+  D                                        In some cases, this test                                                                                                           When  D is specified for this field, using
+                                           should be only exclusively                                                                                                         field OM1-49 determines how tests
+                                           with like tests (examples                                                                                                          must be grouped together.  Tests within
+                                           are cyto or pathology)                                                                                                             the same Diagnostic Service Sector may
+                                                                                                                                                                              be on the same requisition, and therefore
+                                                                                                                                                                              in the same message

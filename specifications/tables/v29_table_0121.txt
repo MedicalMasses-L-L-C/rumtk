@@ -1,0 +1,13 @@
+                                                                                                                   Table 0121Coded Content
+  Value                       Display Name                                                                                             Definition                                                                                                      Comment/                                  Status
+                                                                                                                                                                                                                                                       Usage Note
+  E                           Report exceptions only
+  R                           Same as E, also Replacement and                                                                          Report exceptions, replacement and
+                              Parent-Child                                                                                             parent-child
+  D                           Same as R, also other associated                                                                         Report  exceptions, replacement,
+                              segments                                                                                                 parent-child and other associated
+                                                                                                                                       segments
+  F                           Same as D, plus confirmations                                                                            Report  exceptions, replacement,
+                              explicitly                                                                                               parent-child, other associated
+                                                                                                                                       segments and explicit confirmations
+  N                           Only the MSA segment is returned

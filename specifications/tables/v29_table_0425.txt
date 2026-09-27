@@ -1,0 +1,8 @@
+                                                                                                                                     Table 0425Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                        Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   5                                               Born at home
+   3                                               Born en route
+   1                                               Born in facility
+   4                                               Other
+   2                                               Transfer in

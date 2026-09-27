@@ -1,0 +1,6 @@
+                                                                                                                            Table 0224Coded Content
+  Value                                        Display Name                                                Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                Usage Note
+  A                                            Arranged
+  N                                            Not Arranged
+  U                                            Unknown

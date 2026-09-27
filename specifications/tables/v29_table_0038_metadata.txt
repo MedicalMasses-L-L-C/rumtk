@@ -1,0 +1,12 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0038
+  Description                                                                                      HL7-defined table of codes specifying the status of an order. The purpose of
+                                                                                                   these values are to report the status of an order either upon request (solicited), or
+                                                                                                   when the status changes (unsolicited). The values are not intended to initiate
+                                                                                                   action.  It is assumed that the order status value always reflects the status as it is
+                                                                                                   known to the sending application at the time that a message is sent.  Only the
+                                                                                                   filler can originate these values.
+  Type                                                                                             HL7
+  Steward                                                                                          OO
+  where used                                                                                       ORC-                                                     5
+  HL7 Version  Introduced                                                                          2.1

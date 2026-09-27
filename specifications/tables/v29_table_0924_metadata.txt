@@ -1,0 +1,15 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                             0924
+
+
+
+
+
+
+
+  Description                                                                                       Table of codes specifying the unit of measure (UoM) for the cumulative dosage
+                                                                                                    limit.
+  Type                                                                                              User
+  Steward                                                                                           OO
+  where used                                                                                        CDO-4
+  HL7 Version  Introduced                                                                           2.8
