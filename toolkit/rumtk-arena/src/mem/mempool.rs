@@ -23,7 +23,7 @@ use std::ptr::null_mut;
 
 use crate::mem::alloc::{direct_alloc, direct_dealloc, DirectAllocator, DIRECT_ALLOCATOR};
 use crate::mem::constants::DEFAULT_GLOBAL_MB_ALLOCATION;
-use crate::rumtk_layout;
+use crate::rumtk_mem_layout;
 
 ///
 /// Smallest slot size handed out by the pool. Every slot is a power of two and at least this big,
@@ -81,7 +81,7 @@ impl Chunk {
     /// Returns [None] if the system refuses to hand us the memory.
     ///
     pub fn new(capacity: usize) -> Option<Self> {
-        let base = unsafe { direct_alloc(rumtk_layout!(capacity)) };
+        let base = unsafe { direct_alloc(rumtk_mem_layout!(capacity)) };
         if base.is_null() {
             return None;
         }
@@ -275,7 +275,7 @@ impl Chunk {
 
 impl Drop for Chunk {
     fn drop(&mut self) {
-        unsafe { direct_dealloc(self.base, rumtk_layout!(self.capacity)) };
+        unsafe { direct_dealloc(self.base, rumtk_mem_layout!(self.capacity)) };
     }
 }
 

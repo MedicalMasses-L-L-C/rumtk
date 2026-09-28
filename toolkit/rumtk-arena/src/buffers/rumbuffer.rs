@@ -20,7 +20,7 @@
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::buffer_to_str;
 use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
-use crate::rumtk_layout;
+use crate::rumtk_mem_layout;
 use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
 use std::ops::DerefMut;
@@ -253,7 +253,7 @@ impl Drop for RUMBuffer {
     fn drop(&mut self) {
         if self.dealloc {
             unsafe {
-                dealloc(self.as_mut_ptr(), rumtk_layout!(self.size as usize))
+                dealloc(self.as_mut_ptr(), rumtk_mem_layout!(self.size as usize))
             }
         }
     }

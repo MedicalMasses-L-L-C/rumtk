@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-arena"
 description = "Arena/Bump allocator library to support performance critical portions of the rumtk framework."
-version = "0.5.2"
+version = "0.5.3"
 license = "LGPL-3.0"
 homepage = "https://github.com/luissantosHCIT/rumtk/tree/main/toolkit/rumtk-arena"
 documentation = "https://docs.rs/rumtk-arena"
@@ -23,9 +23,9 @@ simd = ["rand/simd_support"]
 mimalloc = {  version = "0.1.52", features = ["extended"], optional = true, default-features = false}
 libmimalloc-sys = {  version = "0.1.49",  features = ["extended", "arena"], optional = true }
 ahash = { version = "0.8.12", features = ["serde"] }
-rand = "0.10.1"
+rand = "0.10.3"
 bytecount = {version = "0.6.9", features = ["runtime-dispatch-simd"]}
-branches = "0.4.4"
+branches = "0.5.0"
 serde = { version = "1.0.228", features = ["derive", "std", "rc"] }
 
 [profile.release]
