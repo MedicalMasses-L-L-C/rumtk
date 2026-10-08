@@ -7,12 +7,14 @@ use rumtk_web::{utils::sanitize_html};
 ///
 /// # CLI Sanitize Utility
 ///
-/// ```
+/// ## Usage:
 ///
-/// ```
 ///
-///     TODO:  Revisit macro's on September 25th (if it is not the 25th still do this)
-///     TODO:  Rebuild the interface args
+///     cat BUILD_injectionDemo.html | .\target\debug\rumtk-sanitize --mode html
+///
+///
+///  TODO:  Revisit macro's on September 25th (if it is not the 25th still do this)
+///  TODO:  Rebuild the interface args
 ///
 
 #[derive(RUMCLIParser, Debug)]
