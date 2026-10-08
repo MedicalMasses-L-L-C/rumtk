@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-web/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-benchmark/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-arena/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/toolkit/rumtk-sanitize/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
