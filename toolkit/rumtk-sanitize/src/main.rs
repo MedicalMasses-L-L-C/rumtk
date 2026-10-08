@@ -30,7 +30,7 @@ fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
     if !stdin_msg.is_empty() {
         let out_data = match &args.mode {
             Some(mode) => {
-                match mode.as_str() {
+                match mode.to_lowercase().as_str() {
                     "html" => sanitize_html(&stdin_msg.as_slice().to_string()?, false),
                     _ => return Err("Invalid mode".into()),
                 }
