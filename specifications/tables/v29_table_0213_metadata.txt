@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0213
+  Description                                                                                         Table of codes used to define the state of a visit relative to its place in a purge
+                                                                                                      workflow.
+  Type                                                                                                User
+  Steward                                                                                             PA
+  where used                                                                                          PV2-16
+  HL7 Version  Introduced                                                                             2.3

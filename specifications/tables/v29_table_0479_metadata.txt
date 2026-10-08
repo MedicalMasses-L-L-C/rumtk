@@ -1,0 +1,9 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0479
+  Description                                                                                Table of codes specifying the medical substance or treatment that has been
+                                                                                             ordered to be given to the patient, as encoded by the pharmacy or treatment
+                                                                                             supplier.  No suggested values.
+  Type                                                                                       User
+  Steward                                                                                    OO
+  where used                                                                                 RXE-2
+  HL7 Version  Introduced                                                                    2.5

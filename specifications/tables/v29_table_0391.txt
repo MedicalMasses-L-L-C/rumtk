@@ -1,0 +1,136 @@
+                                                                                                                     Table 0391Coded Content
+  Value                                                                                                                                         Display Name                                             Definition                                               Comment/                                  Status
+                                                                                                                                                                                                                                                                  Usage Note
+  ADMINISTRATION
+  ALLERGY
+  APP_STATS
+  APP_STATUS
+  ASSOCIATED_PERSON
+  ASSOCIATED_RX_ADMIN
+  ASSOCIATED_RX_ORDER
+  AUTHORIZATION
+  AUTHORIZATION_CONTACT
+  CERTIFICATE
+  CLOCK
+  CLOCK_AND_STATISTICS
+  CLOCK_AND_STATS_WIT H_NOTES
+  CLOCK_AND_STATS_WIT H_NOTES_ALT
+  COMMAND
+  COMMAND_RESPONSE
+  COMMON_ORDER
+  COMPONENT
+  COMPONENTS
+  CONTAINER
+  DEFINITION
+  DIET
+  DISPENSE
+  ENCODED_ORDER
+  ENCODING
+  EXPERIENCE
+  FINANCIAL
+  FINANCIAL_COMMON_ORDER
+  FINANCIAL_INSURANCE
+  FINANCIAL_OBSERVATION
+  FINANCIAL_ORDER
+  FINANCIAL_PROCE DURE
+  FINANCIAL_TIMING_QUANTITY
+  GENERAL_RESOURCE
+  GIVE
+  GOAL
+  GOAL_OBSE RVATION
+  GOAL_PATHWAY
+  GOAL_ROLE
+  GUARANTOR_INSURANCE
+  INSURANCE
+  LOCATION_RESOURCE
+  MERGE_INFO
+  MF
+  MF_CDM
+  MF_CLIN_STUDY
+  MF_CLIN_STUDY_SCHED
+  MF_INV_ITEM
+  MF_LOC_DEPT
+  MF_LOCATION
+  MF_OBS_ATTRIBUTES
+  MF_PHASE_SCHED_DETAIL
+  MF_QUERY
+  MF_SITE_DEFINED
+  MF_STAFF
+  MF_TEST
+  MF_TEST_BATT_DETAIL
+  MF_TEST_BATTERIES
+  MF_TEST_CALC_DETAIL
+  MF_TEST_CALCULATED
+  MF_TEST_CAT_DETAIL
+  MF_TEST_CATEGORICAL
+  MF_TEST_NUMERIC
+  NK1_TIMING_QTY
+  NOTIFICATION  Value                                                                                                                                                Display Name                                               Definition                                                 Comment/                                     Status
+                                                                                                                                                                                                                                                                             Usage Note
+  OBSE RVATION
+  OBSE RVATION_PRIOR
+  OBSE RVATION_REQUEST
+  OMSERVATION
+  ORDER
+  ORDER_ CHOICE
+  ORDER_DETAIL
+  ORDER_DETAIL_SUPPLEMENT
+  ORDER_DIET
+  ORDER_ENCODED
+  ORDER_OBSE RVATION
+  ORDER_P RIO R
+  ORDER_T RAY
+  PATHWAY
+  PATHWAY_ROLE
+  PATIENT
+  PATIENT_PRIOR
+  PATIENT_RESULT
+  PATIENT_VISIT
+  PATIENT_VISIT_PRIOR
+  PERSONNEL_RESOURCE
+  PEX_CAUSE
+  PEX_OBSE RVATION
+  PRIOR_ RESULT
+  PRO BLEM
+  PRO BLEM_OBSE RVATION
+  PRO BLEM_PATH WAY
+  PRO BLEM_ROLE
+  PRO CEDU RE
+  PRODU CT
+  PRODUCT_STATUS
+  PROVIDE R
+  PROVIDE R_CONTACT
+  QBP
+  QRY_WITH_DETAIL
+  QUERY_RE SPONSE
+  QUERY_RE SULT_CLUSTE R
+  REQUEST
+  RESOU RCE
+  RESOU RCE S
+  RESPO NSE
+  RESULT
+  RESULTS
+  RESULTS_NOTES
+  ROW_DE FINITION
+  RX_ADMINISTRATION
+  RX_ORDE R
+  SCHEDULE
+  SERVICE
+  SPECIMEN
+  SPECIMEN_CONTAINER
+  STAFF
+  STUDY
+  STUDY_OBSERVATION
+  STUDY_PHASE
+  STUDY_SCHEDULE
+  TEST_CONFIGURATION
+  TIMING
+  TIMING_DIET
+  TIMING_ENCODED
+  TIMING_GIVE
+  TIMING_PRIOR
+  TIMING_QTY
+  TIMING_QUANTITY
+  TIMING_TRAY
+  TREATMENT
+  VISIT

@@ -1,0 +1,12 @@
+                                                                                                                            Table 0387Coded Content
+   Value                                        Display Name                                                                                                                                           Definition                                                                 Comment/                                     Status
+                                                                                                                                                                                                                                                                                  Usage Note
+   OK                                           Command completed successfully
+  TI                                     Command cannot be completed within
+                                         requested completion time
+  ER                                     Command cannot be completed because of                                                                                                                                                          See response
+                                         error condition                                                                                                                                                                                 parameters.
+  ST                                     Command cannot be completed because of the
+                                         status of the requested equipment
+  UN                                     Command cannot be completed for unknown
+                                         reasons

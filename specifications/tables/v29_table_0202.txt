@@ -1,0 +1,13 @@
+                                                                                                                        Table 0202Coded Content
+  Value                                       Display Name                                                                                                                        Definition                                                               Comment/ Usage                                            Status
+                                                                                                                                                                                                                                                           Note
+  PH                                          Telephone
+  FX                                          Fax
+  MD                                          Modem
+  CP                                          Cellular or Mobile Phone
+  SAT                                         Satellite Phone
+  BP                                          Beeper
+  Internet                                    Internet Address
+  X.400                                       X.400 email address
+  TDD                                         Telecommunications Device for the Deaf
+  TTY                                         Teletypewriter

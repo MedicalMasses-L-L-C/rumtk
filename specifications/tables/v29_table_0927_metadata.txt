@@ -1,0 +1,7 @@
+                                                                                                                                                                 Table Metadata
+  Table                                                                                                        0927
+  Description                                                                                                  HL7-defined table of codes specifying the arm(s) receiving the stick.
+  Type                                                                                                         HL7
+  Steward                                                                                                      OO
+  where used                                                                                                   DON-                                                                                       22
+  HL7 Version Introduced                                                                                       2.8

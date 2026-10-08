@@ -1,0 +1,10 @@
+                                                                                                                       Table 0271Coded Content
+  Value                                       Display Name                                                                                                                      Definition                                                                            Comment/                                    Status
+                                                                                                                                                                                                                                                                      Usage Note
+  DI                                          Dictated
+  DO                                          Documented
+  IP                                          In Progress
+  IN                                          Incomplete
+  PA                                          Pre-authenticated
+  AU                                          Authenticated
+  LA                                          Legally authenticated

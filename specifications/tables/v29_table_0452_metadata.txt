@@ -1,0 +1,17 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                             0452
+
+
+
+
+
+
+
+
+  Description                                                                       Table of codes specifying the major grouping of the service or occupation of the
+                                                                                    practitioner at a specific organization unit.   In the US, it is suggested to use
+                                                                                    ANSI ASC X12 Health Care Provider Taxonomy, Level 1 -                                         Type
+  Type                                                                              User
+  Steward                                                                           PA
+  where used                                                                        ORG-6
+  HL7 Version  Introduced                                                           2.4

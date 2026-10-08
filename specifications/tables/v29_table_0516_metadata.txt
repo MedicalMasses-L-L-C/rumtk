@@ -1,0 +1,10 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0516
+  Description                                                                               HL7-defined table of codes specifying the severity of an application error as
+                                                                                            reported during acknowledgment of messages. Knowing if something is Error,
+                                                                                            Warning or Information is intrinsic to how an application handles the content
+                                                                                            and the information flow.
+  Type                                                                                      HL7
+  Steward                                                                                   InM
+  where used                                                                                ERR-                                                     4
+  HL7 Version  Introduced                                                                   2.5

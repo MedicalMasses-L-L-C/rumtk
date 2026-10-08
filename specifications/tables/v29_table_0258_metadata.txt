@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0258
+  Description                                                                                        HL7-defined table of codes used in an observation definition to describe the
+                                                                                                     subject of an observation in relation to a patient.
+  Type                                                                                               HL7
+  Steward                                                                                            InM/OO
+  where used                                                                                         OM1-45
+  HL7 Version  Introduced                                                                            2.3

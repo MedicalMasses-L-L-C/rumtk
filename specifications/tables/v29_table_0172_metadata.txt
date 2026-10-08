@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0172
+  Description                                                                                  Table of codes specifying the military status assigned to a veteran.  No
+                                                                                               suggested values.
+  Type                                                                                         User
+  Steward                                                                                      PA
+  where used                                                                                   PID-27
+  HL7 Version  Introduced                                                                      2.2

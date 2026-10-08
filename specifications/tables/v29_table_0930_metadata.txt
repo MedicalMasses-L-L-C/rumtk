@@ -1,0 +1,7 @@
+                                                                                                                                                                    Table Metadata
+  Table                                                                                                          0930
+  Description                                                                                                    HL7-defined table of codes specifying the units of volume.
+  Type                                                                                                           HL7
+  Steward                                                                                                        OO
+  where used                                                                                                     BUI -7
+  HL7 Version  Introduced                                                                                        2.8

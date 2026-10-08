@@ -1,0 +1,13 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0185
+  Description                                                                               HL7-defined table of codes specifying which of a group of multiple phone
+                                                                                            numbers is the preferred method of contact for this person.
+  Type                                                                                      HL7
+
+
+
+
+
+  Steward                                                                                   PA
+  where used                                                                                STF-                      16, PRD-6, PRD-14, CTD-6
+  HL7 Version  Introduced                                                                                   2.2

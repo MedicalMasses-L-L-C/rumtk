@@ -1,0 +1,5 @@
+                                                                                                                                   Table 0269Coded Content
+   Value                                          Display Name                                                    Definition                                                                                                                                                                    Comment/                                        Status
+                                                                                                                                                                                                                                                                                                Usage Note
+   O                                              Charge on Order
+   R                                              Charge on Result

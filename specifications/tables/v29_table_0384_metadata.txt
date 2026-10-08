@@ -1,0 +1,6 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                  0384
+  Description                                                                                            HL7-defined table of codes identifying the type of substance.
+  Type                                                                                                   HL7
+  where used                                                                                             INV-3
+  HL7 Version  Introduced                                                                                2.4

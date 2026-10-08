@@ -1,0 +1,13 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0207
+  Description                                                                                  HL7-defined table of codes that indicate an archival process or an initial load
+                                                                                               process.
+  Type                                                                                         HL7
+  Steward                                                                                      InM
+
+
+
+
+
+  where used                                                                                   P   T.   2
+  HL7 Version  Introduced                                                                  2.3

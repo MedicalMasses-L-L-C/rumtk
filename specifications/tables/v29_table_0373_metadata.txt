@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                                0373
+  Description                                                                                          Table of codes that identify the specimen treatment performed during lab
+                                                                                                       processing.
+  Type                                                                                                 User
+  Steward                                                                                              OO
+  where used                                                                                           SAC-30
+  HL7 Version  Introduced                                                                              2.4

@@ -1,0 +1,7 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0230
+  Description                                                                                         Table of codes used to classify a procedure.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          PR1-6
+  HL7 Version  Introduced                                                                             2.3

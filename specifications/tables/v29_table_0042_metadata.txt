@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0042
+  Description                                                                                        Table of codes specifying an insurance company plan uniquely.  No suggested
+                                                                                                     values.
+  Type                                                                                               User
+  Steward                                                                                            FM
+  where used                                                                                         IN1-35
+  HL7 Version  Introduced                                                                            2.1

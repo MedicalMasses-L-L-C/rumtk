@@ -1,0 +1,5 @@
+                                                                                                                          Table 0435Coded Content
+   Value                                       Display Name                                                Definition                                                                                                                                                         Comment/                                     Status
+                                                                                                                                                                                                                                                                              Usage Note
+   DNR                                         Do not resuscitate
+   N                                           No directive

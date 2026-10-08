@@ -1,0 +1,14 @@
+                                                                                                                                Table Metadata
+  Table                                                                                 0411
+  Description                                                                           Table of codes that specify supplemental service information sent between a
+                                                                                        placer system and a filler system for the universal procedure code reported in
+                                                                                        OBR-                                                    4 Universal Service ID. This specifies ordering information detail that is
+                                                                                        not available in other specific tables for fields in the OBR segment.  These
+                                                                                        might be details such as whether a study is to be done on the right or left, for
+                                                                                        example, where the study is of the arm and the order master file does not
+                                                                                        distinguish right from left, or whether a study is to be done with or without
+                                                                                        contrast (when the order master file does not make such distinctions).
+  Type                                                                                  User
+  Steward                                                                               OO
+  where used                                                                            OBR-                                                    46, OBR-47, AIS-11  ,   A  I   S  -12
+  HL7 Version  Introduced                                                               2.4

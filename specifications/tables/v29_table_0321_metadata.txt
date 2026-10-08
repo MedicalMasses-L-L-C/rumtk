@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                               0321
+  Description                                                                                         HL7-defined table of codes specifying the method by which treatment is
+                                                                                                      dispensed.
+  Type                                                                                                HL7
+  Steward                                                                                             OO
+  where used                                                                                          RXE-30, RXD-24
+  HL7 Version  Introduced                                                                             2.3

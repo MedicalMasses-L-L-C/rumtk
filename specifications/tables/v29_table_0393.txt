@@ -1,0 +1,9 @@
+                                                                                                                          Table 0393Coded Content
+   Value                                       Display Name                                               Definition                                                                                                                                                         Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+   LINKSOFT_2.                                 Proprietary
+   01                                          algorithm for
+                                               LinkSoft v2.01
+   MATCH WA                                    Proprietary
+   RE_1.2                                      algorithm for
+                                               MatchWare v1.2

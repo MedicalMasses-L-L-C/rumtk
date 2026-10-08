@@ -1,0 +1,10 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0112
+  Description                                                                                        Table of codes which specify the disposition of the patient at time of discharge
+                                                                                                     (i.e., discharged to home, expired, etc.).  No suggested values.  In the US, this
+                                                                                                     field should use the Official Uniform Billing (UB) 04 2008 numeric codes
+                                                                                                     found on form locator 17.
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         PV1-36
+  HL7 Version  Introduced                                                                            2.1

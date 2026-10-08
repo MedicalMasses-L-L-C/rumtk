@@ -1,0 +1,9 @@
+                                                                                                                     Table 0180Coded Content
+  Value                                      Display Name                                                                                                                                                Definition                                              Comment/                                   Status
+                                                                                                                                                                                                                                                                 Usage Note
+  MAD                                        Add record to master file
+  MDL                                        Delete record from master file
+  MUP                                        Update record for master file
+  MDC                                        Deactivate: discontinue using record in master file,
+                                             but do not delete from database
+  MAC                                        Reactivate deactivated record

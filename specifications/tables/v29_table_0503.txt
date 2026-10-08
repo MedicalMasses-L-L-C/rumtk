@@ -1,0 +1,14 @@
+                                                                                                                Table 0503Coded Content
+  Value                             Display Name                                   Definition                               Comment/ Usage Note                                                                                                                                                Status
+  S                                 Sequential
+  C                                 Cyclical                                                                                Used for indicating a repeating cycle of service requests;
+                                                                                                                            for example, individual intravenous solutions used in a
+                                                                                                                            cyclical sequence (a.k.a. "Alternating IVs"). This value
+                                                                                                                            would be compatible with linking separate service
+                                                                                                                            requests or with having all cyclical service request
+                                                                                                                            components in a single service request. Likewise, the
+                                                                                                                            value would be compatible with either Parent-Child
+                                                                                                                            messages or a single service request message to
+                                                                                                                            communicate the service requests' sequencing
+  R                                 Reserved for
+                                    future use

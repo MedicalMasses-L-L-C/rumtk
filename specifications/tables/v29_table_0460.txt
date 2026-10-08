@@ -1,0 +1,8 @@
+                                                                                                                                   Table 0460Coded Content
+   Value                                   Display Name                                                                                                                                                                   Definition                                      Comment/ Usage                                                         Status
+                                                                                                                                                                                                                                                                          Note
+   0                                       Line item not denied or rejected
+   1                                       Line item denied or rejected
+   2                                       Line item is on a multiple-day claim. The line item
+                                           is not denied or rejected, but occurs on a day that has
+                                           been denied or rejected.

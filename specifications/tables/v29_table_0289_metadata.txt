@@ -1,0 +1,8 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0289
+  Description                                                                            Table of codes specifying the county or parish in which the specified address
+                                                                                         resides.  No suggested values.
+  Type                                                                                   User
+  Steward                                                                                InM
+  where used                                                                             XAD.9, CX.9
+  HL7 Version  Introduced                                                                2.3

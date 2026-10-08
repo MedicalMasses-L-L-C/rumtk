@@ -1,0 +1,26 @@
+                                                                                                                                                       Table 0417Coded Content
+   Value                                                  Display Name                                                              Definition                                                                                                                                                                                               Comment/                                                Status
+                                                                                                                                                                                                                                                                                                                                             Usage Note
+   1                                                      Insufficient Tissue
+   2                                                      Not abnormal
+   3                                                      Abnormal-not
+                                                          categorized
+   4                                                      Mechanical
+                                                          abnormal
+   5                                                      Growth alteration
+   6                                                      Degeneration &
+                                                          necrosis
+   7                                                      Non-acute
+                                                          inflammation
+   8                                                      Non-malignant
+                                                          neoplasm
+   9                                                      Malignant
+                                                          neoplasm
+   0                                                      No tissue
+                                                          expected
+   B                                                      Basal cell
+                                                          carcinoma
+   C                                                      Carcinoma-
+                                                          unspecified type
+   G                                                      Additional tissue
+                                                          required

@@ -1,0 +1,17 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                      0129
+
+
+
+
+
+
+
+
+  Description                                                                                Table of codes specifying the fiancial accommodation type of the bed or room
+                                                                                             which implies the rate to be used when occupied by a patient under specific
+                                                                                             medical conditions, which determines how it is billed.  No suggested values.
+  Type                                                                                       User
+  Steward                                                                                    I    n    M    /   PA
+  where used                                                                                 LCC-                                                     3
+  HL7 Version  Introduced                                                                    2.2

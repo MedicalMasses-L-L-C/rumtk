@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0398
+  Description                                                                               HL7-defined table of codes identifying whether it is a fragmented message or
+                                                                                            part of an interactive continuation message.
+  Type                                                                                      HL7
+  Steward                                                                                   InM
+  where used                                                                                CH02, DSC.2
+  HL7 Version  Introduced                                                                   2.4

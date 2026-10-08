@@ -1,0 +1,19 @@
+                                                                                                                               Table 0372Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                Comment/                                      Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   SUP                                           Supernatant
+   SED                                           Sediment
+   BLD                                           Whole blood,
+                                                 homogeneous
+   BSEP                                          Whole blood,
+                                                 separated
+   PRP                                           Platelet rich
+                                                 plasma
+   PPP                                           Platelet poor
+                                                 plasma
+   SER                                           Serum, NOS (not
+                                                 otherwise
+                                                 specified)
+   PLAS                                          Plasma, NOS (not
+                                                 otherwise
+                                                 specified)

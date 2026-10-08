@@ -1,0 +1,5 @@
+                                                                                                                                Table 0210Coded Content
+  Value                                          Display Name                                                  Definition                                                                                                                                                                 Comment/                                      Status
+                                                                                                                                                                                                                                                                                          Usage Note
+  AND                                            Default
+  OR

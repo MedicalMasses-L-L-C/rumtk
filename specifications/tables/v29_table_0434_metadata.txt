@@ -1,0 +1,9 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0434
+  Description                                                                                   Table of codes specifying the patient's current medical condition for the purpose
+                                                                                                of communicating to non-                    medical outside parties, e.g. family, employer,
+                                                                                                religious minister, media, etc.
+  Type                                                                                          User
+  Steward                                                                                       PA
+  where used                                                                                    PV2-42
+  HL7 Version  Introduced                                                                       2.4

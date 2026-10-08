@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0558
+  Description                                                                                          Table of codes used to specify the relationship to the invoice for Person Payee
+                                                                                                       Types.
+  Type                                                                                                 User
+  Steward                                                                                              FM
+  where used                                                                                           PYE-3
+  HL7 Version  Introduced                                                                              2.6

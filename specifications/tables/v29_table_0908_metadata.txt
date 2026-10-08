@@ -1,0 +1,7 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0908
+  Description                                                                               Table of codes specifying the type of package.  No suggested values.
+  Type                                                                                      User
+  Steward                                                                                   OO
+  where used                                                                                PA   C   -5
+  HL7 Version  Introduced                                                                   2.7

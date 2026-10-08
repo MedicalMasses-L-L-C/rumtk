@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0093
+  Description                                                                                               Table of codes specifying whether the healthcare provider can release
+                                                                                                            information about a patient and what information can be released.
+  Type                                                                                                      User
+  Steward                                                                                                   FM
+  where used                                                                                                IN1-27
+  HL7 Version  Introduced                                                                                   2.1

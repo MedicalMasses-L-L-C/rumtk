@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0019
+  Description                                                                                       Table of codes specifying the anesthesia used during the procedure.  No
+                                                                                                    suggested values.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        PR1-9
+  HL7 Version  Introduced                                                                           2.1

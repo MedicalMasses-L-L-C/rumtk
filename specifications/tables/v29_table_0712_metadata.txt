@@ -1,0 +1,5 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0712
+  Description                                                                                             9999
+  Type                                                                                                    undefined
+  where used                                                                                              RXD-27

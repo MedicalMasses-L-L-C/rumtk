@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0111
+  Description                                                                              Table of codes specifying that the account was deleted from the file and gives
+                                                                                           the reason.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  PA
+  where used                                                                               PV1-34
+  HL7 Version  Introduced                                                                  2.1

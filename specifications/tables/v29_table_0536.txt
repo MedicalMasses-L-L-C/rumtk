@@ -1,0 +1,8 @@
+                                                                                                                                      Table 0536Coded Content
+   Value                                            Display Name                                                    Definition                                                                                                                                                                         Comment/                                        Status
+                                                                                                                                                                                                                                                                                                       Usage Note
+   P                                                Provisional
+   R                                                Revoked
+   V                                                Active/Valid
+   E                                                Expired
+   I                                                Inactive

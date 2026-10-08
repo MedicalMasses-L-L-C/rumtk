@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0462
+  Description                                                                                       Table of codes specifying the cost center to which this location belongs.  No
+                                                                                                    suggested values.
+  Type                                                                                              User
+  Steward                                                                                           I    n    M    /   PA
+  where used                                                                                        LDP-12
+  HL7 Version  Introduced                                                                           2.4

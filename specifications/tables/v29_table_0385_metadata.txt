@@ -1,0 +1,9 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0385
+  Description                                                                                   Table of codes that identify a manufacturer of a substance.  Relevant external
+                                                                                                code systems may be used, e.g., HIBCC Manufacturers Labeler ID Code (LIC),
+                                                                                                UPC, NDC, etc.  No suggested values.
+  Type                                                                                          User
+  Steward                                                                                       OO
+  where used                                                                                    INV-17, RQ1-                    2, SID-4
+  HL7 Version  Introduced                                                                       2.4

@@ -1,0 +1,8 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0328
+  Description                                                                                Table of codes that specify a person's employee classification.  No suggested
+                                                                                             values.
+  Type                                                                                       User
+  Steward                                                                                    I    n    M    /   PA
+  where used                                                                                 JCC.2
+  HL7 Version  Introduced                                                                    2.3

@@ -1,0 +1,10 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0406
+  Description                                                                            HL7-defined table of codes that specify the environment in which the provider
+                                                                                         acts in the role associated with the provider type, and inludes codes for venues
+                                                                                         outside of formal organized healthcare settings, such as Home. The provider
+                                                                                         environment is not the specialty for the provider.
+  Type                                                                                   User
+  Steward                                                                                OO
+  where used                                                                             P   RT-7, ROL-10
+  HL7 Version  Introduced                                                                2.4

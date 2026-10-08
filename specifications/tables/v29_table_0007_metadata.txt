@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0007
+  Description                                                                                             Table of codes specifying the circumstances under which the patient was or will
+                                                                                                          be admitted.
+  Type                                                                                                    User
+  Steward                                                                                                 PA
+  where used                                                                                              PV1-4
+  HL7 Version  Introduced                                                                                 2.1

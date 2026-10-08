@@ -1,0 +1,30 @@
+                                                                                                                          Table 0365Coded Content
+  Value                         Display Name                                                                                                           Definition                                                                                                             Comment/                                    Status
+                                                                                                                                                                                                                                                                              Usage Note
+  IN                            Initializing                                                                                                           Software is ready, hardware not yet
+  CO                            Configuring
+  PU                       Powered Up                                                                                          Software and hardware are not yet
+                                                                                                                               ready
+  RS                       Ready to start                                                                                      Software and hardware are ready, but
+                                                                                                                               user action is required to start
+  ID                       Idle                                                                                                Successfully started, new orders can
+                                                                                                                               be accepted, currently no orders are
+                                                                                                                               present
+  OP                       Normal Operation                                                                                    Successfully started, new orders can
+                                                                                                                               be accepted
+  CL                       Clearing
+  PA                       Pausing
+  PD                       Paused                                                                                              User action is required to continue
+  ES                       E-stopped                                                                                           Error, remaining  orders  can be
+                                                                                                                               finished, new orders cannot be
+                                                                                                                               accepted
+  TS                       Transport stopped
+  SS                       Sampling stopped
+  SD                       Shutting down
+  DI                       Diagnose
+  MA                       Maintenance
+  FL                       Failure                                                                                             Failure, remaining orders are aborted,
+                                                                                                                               new orders cannot be accepted
+  UNK                      Unknown
+  LT                       Limited test menu                                                                                   For diagnostic instruments: some test
+                                                                                                                               types are unavailable

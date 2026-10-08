@@ -1,0 +1,7 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0426
+  Description                                                                                       Table of codes specifying the blood product code.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        BLC-                           1
+  HL7 Version  Introduced                                                                           2.4

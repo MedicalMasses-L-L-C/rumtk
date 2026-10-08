@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                  0946
+  Description                                                                                            Table of codes specifying the type of supplier that will distribute the supply
+                                                                                                         items associated to a contract number.
+  Type                                                                                                   User
+  Steward                                                                                                OO
+  where used                                                                                             CTR-                           8
+  HL7 Version  Introduced                                                                                2.9

@@ -1,0 +1,10 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                               0136
+  Description                                                                                         HL7-defined table of codes specifying either Yes or No used in fields containing
+                                                                                                      binary answers generally user-specified. The actual interpretation of Yes/No is
+                                                                                                      context sensitive. Individual chapters will further refine the meaning of Yes/No
+                                                                                                      in their specific context.
+  Type                                                                                                HL7
+  Steward                                                                                             InM
+  where used                                                                                          numerous
+  HL7 Version  Introduced                                                                             2.2

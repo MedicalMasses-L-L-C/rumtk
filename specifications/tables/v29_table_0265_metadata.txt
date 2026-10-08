@@ -1,0 +1,13 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0265
+  Description                                                                                  Table of codes used to identify the specialty of the care professional who is
+                                                                                               supported when using this location definition.
+  Type                                                                                         User
+
+
+
+
+
+  Steward                                                                                      I    n    M    /   PA
+  where used                                                                                   LDP-4
+  HL7 Version  Introduced                                                                                        2.3

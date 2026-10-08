@@ -1,0 +1,9 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0223
+  Description                                                                                  Table of codes identifying specific living conditions (e.g., spouse dependent on
+                                                                                               patient, walk-up) that are relevant to an evaluation of the patient's healthcare
+                                                                                               needs.
+  Type                                                                                         User
+  Steward                                                                                      PA
+  where used                                                                                   NK1-17, PD1-                    1
+  HL7 Version  Introduced                                                                      2.3

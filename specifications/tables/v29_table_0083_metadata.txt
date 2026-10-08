@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0083
+  Description                                                                                    Table of codes specifying the type of outlier (i.e. period of care beyond DRG          -
+                                                                                                 standard stay in facility) that has been paid.
+  Type                                                                                           User
+  Steward                                                                                        PA
+  where used                                                                                     DRG-5
+  HL7 Version  Introduced                                                                        2.1

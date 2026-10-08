@@ -1,0 +1,7 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0146
+  Description                                                                                             Table of codes which specify amount quantity type.
+  Type                                                                                                    User
+  Steward                                                                                                 InM/FM
+  where used                                                                                              RMC.2
+  HL7 Version  Introduced                                                                                 2.2

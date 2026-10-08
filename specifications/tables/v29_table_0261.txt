@@ -1,0 +1,11 @@
+                                                                                                                       Table 0261Coded Content
+   Value                                      Display Name                                                                                                                      Definition                                                                             Comment/                                    Status
+                                                                                                                                                                                                                                                                       Usage Note
+   OXY                                        Oxygen
+   SUC                                        Suction
+   VIT                                        Vital signs monitor
+   INF                                        Infusion pump
+   IVP                                        IV pump
+   EEG                                        Electro-Encephalogram
+   EKG                                        Electro-Cardiogram
+   VEN                                        Ventilator

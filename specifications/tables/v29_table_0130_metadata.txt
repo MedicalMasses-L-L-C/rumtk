@@ -1,0 +1,16 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                    0130
+
+
+
+
+
+
+
+  Description                                                                              Table of codes which specify categories of a patient's visit with respect to an
+                                                                                           individual institution's needs, and is expected to be different on a site-specific
+                                                                                           basis.
+  Type                                                                                     User
+  Steward                                                                                  PA
+  where used                                                                               PV2-7
+  HL7 Version  Introduced                                                                  2.2

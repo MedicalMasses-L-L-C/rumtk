@@ -1,0 +1,39 @@
+                                                                                                                                  Table 0123Coded Content
+  Value                                   Display Name                                                                  Definition                                                                                            Comment/ Usage Note                                                                                           Status
+  O                                       Order received; specimen
+                                          not yet received
+  I                                       No results available;
+                                          specimen received,
+                                          procedure incomplete
+  S                                       No results available;
+                                          procedure scheduled,
+                                          but not done
+  A                                       Some, but not all,
+                                          results available
+  P                                       Preliminary                                                                   A verified early result is
+                                                                                                                        available, final results not yet
+                                                                                                                        obtained
+  C                               Corrected, final                                                 A result under an order, th a t
+                                                                                                   has been finalized has been
+                                                                                                   corrected
+  R                               Results stored; not yet
+                                  verified
+  F                               Final results                                                    Final results; results stored                                                       Can only be changed with a
+                                                                                                   and verified.                                                                       corrected result.
+  X                               No results available;                                            No results available; Order
+                                  Order canceled                                                   canceled.
+  Y                               No order on record for                                           No order on record for this                                                         Usage Note: Used only on
+                                  this test                                                        test.                                                                               queries
+  Z                               No record of this                                                No record of this patient.                                                          Usage Note: Used only on
+                                  patient                                                                                                                                              queries
+  M                               Corrected, not final                                             A result under an order, that
+                                                                                                   has not yet been finalized has
+                                                                                                   been corrected
+  N                               Procedure completed,                                             No result available; requested                                                      Usage Note:
+                                  results pending                                                  procedure done.  To indicate                                                        Transitions/Relationships:
+                                                                                                   that a requested test is                                                            OBR-                                                    25  Valid preceding state
+                                                                                                   performed but results are                                                           (... to N): O, I, S.  Succeeding
+                                                                                                   pending/not yet available.                                                          state (N to ...): P, A, R, F, X
+                                                                                                                                                                                       OBX-11  No OBX segments can
+                                                                                                                                                                                       be present where OBX-29 =
+                                                                                                                                                                                       RSLT

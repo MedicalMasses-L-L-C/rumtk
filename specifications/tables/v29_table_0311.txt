@@ -1,0 +1,7 @@
+                                                                                                                                     Table 0311Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                         Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   P                                               Permanent
+   T                                               Temporary
+   O                                               Other
+   U                                               Unknown

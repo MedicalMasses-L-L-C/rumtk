@@ -1,0 +1,7 @@
+                                                                                                                 Table 0936Coded Content
+  Value                                    Display Name                                           Definition                                      Comment/ Usage Note                                                                                                                             Status
+  QST                                      Question                                                                                               Limited to expected responses to questions by the filler
+  RSLT                                     Result
+  SCI                                      Supporting                                                                                             Placer observations not explicitly requested by the
+                                           Clinical                                                                                               filler to provide context or supporting information
+                                           Information

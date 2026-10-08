@@ -1,0 +1,5 @@
+                                                                                                                         Table 0938Coded Content
+  Value                                       Display Name                                               Definition                                                                Comment/ Usage Note                                                                                                                 Status
+  ORD                                         Placing the order                                                                                                                    At time of placing the order
+  DRW                                         Collecting the                                                                                                                       When the specimen is collected (e.g.
+                                              specimen                                                                                                                             fasting status)

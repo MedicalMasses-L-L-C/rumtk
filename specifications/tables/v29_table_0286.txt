@@ -1,0 +1,7 @@
+                                                                                                                             Table 0286Coded Content
+   Value                                        Display Name                                                                                                                             Definition                                                                                 Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   RP                                           Referring Provider
+   PP                                           Primary Care Provider
+   CP                                           Consulting Provider
+   RT                                           Referred to Provider

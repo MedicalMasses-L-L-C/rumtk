@@ -1,0 +1,13 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                               0484
+
+
+
+
+
+
+  Description                                                                                         Table of codes specifying the type of dispensing event that occurred.
+  Type                                                                                                User
+  Steward                                                                                             OO
+  where used                                                                                          RXD-33
+  HL7 Version  Introduced                                                                             2.5

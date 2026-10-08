@@ -1,0 +1,18 @@
+                                                                                                               Table 0167Coded Content
+  Value                             Display Name                                                                                                                                                     Definition                                     Comment/                                Status
+                                                                                                                                                                                                                                                    Usage Note
+  N                                 No substitute was dispensed.  This is equivalent to the default
+                                    (null) value.
+  G                                 A generic substitution was dispensed.
+  T                                 A therapeutic substitution was dispensed.
+  0                                 No product selection indicated
+  1                                 Substitution not allowed by prescriber
+  2                                 Substitution allowed - patient requested product
+                                    dispensed
+  3                                 Substitution allowed - pharmacist selected product
+                                    dispensed
+  4                                 Substitution allowed - generic drug not in stock
+  5                                 Substitution allowed - brand drug dispensed as a generic
+  7                                 Substitution not allowed - brand drug mandated by law
+  8                                 Substitution allowed - generic drug not available in
+                                    marketplace

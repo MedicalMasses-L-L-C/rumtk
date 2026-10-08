@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0634
+  Description                                                                                             Table of codes that denote a level or importance of an inventory item within the
+                                                                                                          context of an inventory location.
+  Type                                                                                                    User
+  Steward                                                                                                 OO
+  where used                                                                                              IVT-14
+  HL7 Version Introduced                                                                                  2.6

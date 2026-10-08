@@ -1,0 +1,5 @@
+                                                                                                                              Table 0423Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   D                                             Doctor's Office
+                                                 Closed

@@ -1,0 +1,9 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                     0659
+  Description                                                                                               Table of codes specifying whether the sterilization load for a device is built in
+                                                                                                            the sub-                                        sterile area adjacent to an Operating Room or the Central Processing
+                                                                                                            Department.
+  Type                                                                                                      User
+  Steward                                                                                                   OO
+  where used                                                                                                SCP-8
+  HL7 Version  Introduced                                                                                   2.6

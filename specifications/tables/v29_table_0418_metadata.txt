@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0418
+  Description                                                                                 HL7-defined table of codes specifying a number that identifies the significance
+                                                                                              or priority of the procedure code.
+  Type                                                                                        User
+  Steward                                                                                     FM
+  where used                                                                                  PR1-14
+  HL7 Version  Introduced                                                                     2.4

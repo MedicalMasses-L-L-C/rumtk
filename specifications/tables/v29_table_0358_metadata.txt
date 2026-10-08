@@ -1,0 +1,8 @@
+                                                                                                                          Table Metadata
+  Table                                                                             0358
+  Description                                                                       Table of codes specifying the name and/or code of a group of practitioners to
+                                                                                    which this practitioner belongs.  No suggested values.
+  Type                                                                              User
+  Steward                                                                           FM
+  where used                                                                        DG1-15
+  HL7 Version  Introduced                                                           2.3.1

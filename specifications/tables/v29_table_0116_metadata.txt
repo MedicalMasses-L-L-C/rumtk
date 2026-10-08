@@ -1,0 +1,8 @@
+                                                                                                                                                               Table Metadata
+  Table                                                                                                       0116
+  Description                                                                                                 Table of codes which specify the state of a bed in an inpatient setting, and is
+                                                                                                              used to determine if a patient may be assigned to it or not.
+  Type                                                                                                        User
+  Steward                                                                                                     I    n    M    /   PA
+  where used                                                                                                  DLD.1. PV1-40
+  HL7 Version  Introduced                                                                                     2.1

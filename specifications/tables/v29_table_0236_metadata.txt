@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0236
+  Description                                                                                       HL7-defined table of codes used to identify the type of entity to which the event
+                                                                                                    has been reported.
+  Type                                                                                              HL7
+  Steward                                                                                           OO
+  where used                                                                                        PES-                      13
+  HL7 Version Introduced                                                                            2.3

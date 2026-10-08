@@ -1,0 +1,7 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0297
+  Description                                                                                      Table of codes specifying the CN identification source.  No suggested values.
+  Type                                                                                             User
+  Steward                                                                                          InM/OO
+  where used                                                                                       CNN.8, PPN.8, XCN.8
+  HL7 Version  Introduced                                                                          2.3

@@ -1,0 +1,14 @@
+                                                                                                                        Table Metadata
+  Table                                                                            0953
+  Description                                                                      Security observation values used to indicate security control metadata, meaning
+                                                                                   how security tagged data needs to be handled and what it can be used for. This
+                                                                                   value set is the union of V:SecurityPolicy,V:ObligationPolicy, V:RefrainPolicy,
+                                                                                   V:PurposeOfUse, and V:GeneralPurpose of Use in FHIR.   It is used to convey
+                                                                                   one or more nonhierarchical security control metadata dictating handling
+                                                                                   caveats, purpose of use, dissemination controls and other refrain policies, and
+                                                                                   obligations to which a custodian or receiver is required to comply.
+                                                                                   For the list of codes in the table, see the HL7 Webpage rendering.
+  Type                                                                             HL7-EXT
+  Steward                                                                          InM
+  where used                                                                       MSH-27, ARV-8
+  HL7 Version  Introduced                                                          2.9

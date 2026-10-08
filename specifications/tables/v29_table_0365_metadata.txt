@@ -1,0 +1,8 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0365
+  Description                                                                                      HL7-defined table of codes that identify the status the equipment was in at the
+                                                                                                   time the transaction was initiated.
+  Type                                                                                             HL7
+  Steward                                                                                          OO
+  where used                                                                                       EQU-                                                          3
+  HL7 Version  Introduced                                                                          2.4

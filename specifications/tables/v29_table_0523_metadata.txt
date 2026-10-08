@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0523
+  Description                                                                                          HL7-defined table of codes used to specify if the change is computed as a
+                                                                                                       percent change or as an absolute change.
+  Type                                                                                                 HL7
+  Steward                                                                                              InM/OO
+  where used                                                                                           D    LT .    3
+  HL7 Version Introduced                                                                               2.5

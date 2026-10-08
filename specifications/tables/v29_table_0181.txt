@@ -1,0 +1,6 @@
+                                                                                                                                 Table 0181Coded Content
+   Value                                  Display Name                                                                                                                                                                                        Definition                                     Comment/                                       Status
+                                                                                                                                                                                                                                                                                             Usage Note
+   S                                      Successful posting of the record defined by the MFE segment
+   U                                      Unsuccessful posting of the record defined by the MFE
+                                          segment

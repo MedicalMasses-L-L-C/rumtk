@@ -1,0 +1,9 @@
+                                                                                                                       Table 0434Coded Content
+   Value                                      Display Name                                              Definition                                                                                                                                                     Comment/                                   Status
+                                                                                                                                                                                                                                                                       Usage Note
+   A                                          Satisfactory
+   C                                          Critical
+   P                                          Poor
+   S                                            Stable
+   O                                            Other
+   U                                            Unknown

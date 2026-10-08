@@ -1,0 +1,9 @@
+                                                                                                                 Table 0298Coded Content
+  Value                             Display Name                                                                                                                             Definition                                                    Comment/ Usage                                        Status
+                                                                                                                                                                                                                                           Note
+  P                                 Pro-rate. Apply this price to this interval, pro-rated by
+                                    whatever portion of the interval has occurred/been
+                                    consumed
+  F                                 Flat-rate. Apply the entire price to this interval,
+                                    do not pro-rate the price if the full interval has
+                                    not occurred/been consumed

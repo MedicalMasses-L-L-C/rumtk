@@ -1,0 +1,7 @@
+                                                                                                                          Table 0178Coded Content
+  Value                                Display Name                                                                                                                                                               Definition                                                 Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+  REP                                  Replace current version of this master file with the version
+                                       contained in this message
+  UPD                                  Change file records as defined in the record-level event
+                                       codes for each record that follows

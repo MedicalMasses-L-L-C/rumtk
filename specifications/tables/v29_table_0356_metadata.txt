@@ -1,0 +1,9 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0356
+  Description                                                                           HL7-defined table of codes that specify the scheme used when any alternative
+                                                                                        character sets are specified in the second or later iterations of MSH                            -18
+                                                                                        Character Set, and if any special handling scheme is needed.
+  Type                                                                                  HL7
+  Steward                                                                               InM
+  where used                                                                            MSH-20
+  HL7 Version  Introduced                                                               2.3.1

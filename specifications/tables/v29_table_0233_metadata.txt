@@ -1,0 +1,6 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0233
+  Description                                                                                  Table of codes that specify a non-concur code and description for a denied
+                                                                                               request, used in insurance claims processing.  No suggested values.
+  Type                                                                                         User
+  HL7 Version Introduced                                                                       2.3

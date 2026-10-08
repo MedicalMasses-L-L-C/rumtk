@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0345
+  Description                                                                                          Table of codes that specify  reasons an appeal was made on a non-                                                                                concur for
+                                                                                                       certification.  No suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              FM
+  where used                                                                                           IN3-17
+  HL7 Version  Introduced                                                                              2.3.1

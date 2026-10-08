@@ -1,0 +1,7 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0200
+  Description                                                                              HL7-defined table of codes for types of names for persons.
+  Type                                                                                     HL7
+  Steward                                                                                  InM
+  where used                                                                               XPN.8, PPN.10, XCN.10, PID-5, MRG-7
+  HL7 Version  Introduced                                                                  2.3

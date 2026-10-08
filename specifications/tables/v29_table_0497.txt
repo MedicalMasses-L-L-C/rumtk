@@ -1,0 +1,6 @@
+                                                                                                                             Table 0497Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+  V                                             Verbal
+  W                                             Written
+  T                                             Telephone

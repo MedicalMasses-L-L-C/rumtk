@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                           0291
+  Description                                                                                     Table of codes specifying a subset of the media subtypes of binary data that are
+                                                                                                  encoded in an ascii structure or stream.
+  Type                                                                                            HL7
+  where used                                                                                      R    P.     4
+  HL7 Version  Introduced                                                                         2.3

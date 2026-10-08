@@ -1,0 +1,10 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0949
+  Description                                                                             HL7-defined table of codes that describe reasons for the chosen order control
+                                                                                          codes – this table is extensible; while these codes are intended to be generally
+                                                                                          useful, they were developed to cover situations for replacement orders (ORC-1
+                                                                                          = RO) and recommendations for replacement orders (ORC-1 = RP)
+  Type                                                                                    User
+  Steward                                                                                 OO
+  where used                                                                              ORC-                                                     16
+  HL7 Version  Introduced                                                                 2.9

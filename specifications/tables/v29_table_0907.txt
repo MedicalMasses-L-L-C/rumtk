@@ -1,0 +1,69 @@
+                                                                                                                       Table 0907Coded Content
+   Value                                      Display Name                                                                                                              Definition                                                                                    Comment/                                   Status
+                                                                                                                                                                                                                                                                      Usage Note
+   B                                          Business - Since the service class can                                                                                    Business – Since the service class
+                                              represent knowledge structures that may be                                                                                can represent knowledge
+                                              considered a trade or business secret, there                                                                              structures that may be considered
+                                              is sometimes (though rarely) the need to flag                                                                             a trade or business secret, there is
+                                              those items as of business level                                                                                          sometimes (though rarely) the
+                                              confidentiality.  However, no patient related                                                                             need to flag those items as of
+                                              inf                                                                                                                       business level confidentiality.
+                                                                                                                                                                        However, no patient related
+                                                                                                                                                                        information may ever be of this
+                                                                                                                                                                        confidentiality level.
+   D                                          Clinician - Only clinicians may see this
+                                              item, billing and administration persons  Value                                 Display Name                                                                                             Definition                                                                       Comment/                              Status
+                                                                                                                                                                                                                                  Usage Note
+                                        can not access this item without special
+                                        permission.
+  I                                     Individual - Access only to individual
+                                        persons who are mentioned explicitly as
+                                        actors of this service and whose actor
+                                        type warrants that access (cf. to actor
+                                        typed code).
+  L                                     Low - No patient record item can be of
+                                        low confidentiality.  However, some
+                                        service objects are not patient related
+                                        and therefore may have low
+                                        confidentiality.
+  N                                     Normal - Normal confidentiality rules
+                                        (according to good health care practice)
+                                        apply, that is, only authorized
+                                        individuals with a legitimate medical or
+                                        business need may access this item.
+  R                                     Restricted - Restricted access, e.g. only
+                                        to providers having a current care
+                                        relationship to the patient.
+  V                                     Very restricted - Very restricted access
+                                        as declared by the Privacy Officer of the
+                                        record holder.
+  ETH                                   Substance abuse related - Alcohol/drug-
+                                        abuse related item
+  HIV                                   HIV Related - HIV and AIDS related
+                                        item
+  PSY                                   Psychiatry related - Psychiatry related
+                                        item
+  SDV                                   Sexual  and domestic  violence related -
+                                        Sexual assault / domestic violence
+                                        related item
+  C                                     Celebrity - Celebrities are people of
+                                        public interest (VIP) including
+                                        employees, whose information require
+                                        special protection.
+  S                                     Sensitive - Information for which the                                                                    Sensitive – Information for
+                                        patient seeks heightened confidentiality.                                                                which the patient seeks
+                                        Sensitive information is not to be shared                                                                heightened confidentiality.
+                                        with family members.  Information                                                                        Sensitive information is not to
+                                        reported by the patient about family                                                                     be shared with family
+                                        members is sensitive by default.  Flag                                                                   members.  Information
+                                        can be set or cleared                                                                                    reported by the patient about
+                                                                                                                                                 family members is sensitive
+                                                                                                                                                 by default.  Flag can be set or
+                                                                                                                                                 cleared on patient's  request.
+  T                                     Taboo - Information not to be disclosed
+                                        or discussed with patient except through
+                                        physician assigned to patient in this
+                                        case.  This is usually a temporary
+                                        constraint only; example use is a new
+                                        fatal diagnosis or finding, such as
+                                        malignancy or HIV.

@@ -1,0 +1,6 @@
+                                                                                                                             Table 0149Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                     Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   AP                                           Approved
+   DE                                           Denied
+   PE                                           Pending

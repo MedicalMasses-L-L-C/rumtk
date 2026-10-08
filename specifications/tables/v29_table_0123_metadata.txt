@@ -1,0 +1,7 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0123
+  Description                                                                                           HL7-defined table of codes which specify a status of results for an order.
+  Type                                                                                                  HL7
+  Steward                                                                                               OO
+  where used                                                                                            OBR-                                                     25
+  HL7 Version  Introduced                                                                               2.1

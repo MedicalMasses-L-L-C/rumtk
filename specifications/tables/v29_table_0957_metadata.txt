@@ -1,0 +1,8 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0957
+  Description                                                                               Concepts representing whether a person does or does not currently have a job or
+                                                                                            is not currently in the labor pool seeking employment.
+  Type                                                                                      HL7-EXT
+  Steward                                                                                   PH
+  where used                                                                                OH1-3
+  HL7 Version  Introduced                                                                   2.9

@@ -1,0 +1,45 @@
+                                                                                                                                 Table 0255Coded Content
+   Value                                  Display Name                                                                                                                         Definition                                                    Comment/ Usage Note                                                                           Status
+   *                                      (asterisk) Life of the "unit"                                                                                                                                                                      Used for blood products.                                                                      D
+
+                                                                                                                                                                                                                                             Usage Note: Deprecated March
+                                                                                                                                                                                                                                             2016; use code LU instead.
+   30M                                    30 minutes
+   1H                                     1 hour
+   2H                                     2 hours
+   2.5H                                   2 1/2 hours
+   3H                                     3 hours
+   4H                                     4 hours
+   5H                                     5 hours
+   6H                                     6 hours
+   7H                                     7 hours
+   8H                                     8 hours
+   12H                                    12 hours
+   24H                                    24 hours   Value                                Display Name                                                                                                                 Definition                                                 Comment/ Usage Note                                                                     Status
+   2D                                   2 days
+   3D                                   3 days
+   4D                                   4 days
+   5D                                   5 days
+   6D                                   6 days
+   1W                                   1 week
+   2W                                   2 weeks
+   3W                                   3 weeks
+   4W                                   4 weeks
+   1L                                   1 months (30 days)
+   2L                                   2 months
+   3L                                   3 months
+   LU                                   Life of the "unit"                                                                                                           Life of the "unit"                                         Usage Note: In a master file
+                                                                                                                                                                     (for blood                                                 update for blood products,
+                                                                                                                                                                     products).                                                 no specific duration value
+                                                                                                                                                                                                                                can be specified (see OM1-
+                                                                                                                                                                                                                                43 “Point Versus Interval”
+                                                                                                                                                                                                                                field definition).
+   PT                                   point in time                                                                                                                To identify
+                                                                                                                                                                     measures at a
+                                                                                                                                                                     point in time.
+                                                                                                                                                                     This is a
+                                                                                                                                                                     synonym for
+                                                                                                                                                                     "spot" or
+                                                                                                                                                                     "random" as
+                                                                                                                                                                     applied to urine
+                                                                                                                                                                     measurements.

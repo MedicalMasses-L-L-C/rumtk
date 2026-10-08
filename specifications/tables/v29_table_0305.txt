@@ -1,0 +1,10 @@
+                                                                                                                                      Table 0305Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                         Comment/                                         Status
+                                                                                                                                                                                                                                                                                                        Usage Note
+   C                                                Clinic
+   D                                                Department
+   H                                                Home
+   N                                                Nursing Unit
+   O                                                Provider's Office
+   P                                                Phone
+   S                                                SNF

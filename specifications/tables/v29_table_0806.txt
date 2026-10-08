@@ -1,0 +1,6 @@
+                                                                                                                Table 0806Coded Content
+  Value                                    Display Name                                           Definition                                                                                                                                           Comment/                                 Status
+                                                                                                                                                                                                                                                       Usage Note
+  EOG                                      Ethylene Oxide Gas
+  PCA                                      Peracetic acid
+  STM                                      Steam

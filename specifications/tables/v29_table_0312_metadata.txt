@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0312
+  Description                                                                                               Table of codes specifying the extent of insurance coverage for a participating
+                                                                                                            member (e.g., single, family, etc.).  No suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   FM
+  where used                                                                                                IN2-59
+  HL7 Version  Introduced                                                                                   2.3

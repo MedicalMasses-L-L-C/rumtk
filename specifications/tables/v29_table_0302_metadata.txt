@@ -1,0 +1,9 @@
+                                                                                                                                Table Metadata
+  Table                                                                                 0302
+  Description                                                                           Table of codes specifying the point where patient care is administered.  It is
+                                                                                        conditional on Person Location Type (e.g., nursing unit or department or clinic).
+                                                                                        No suggested values.
+  Type                                                                                  User
+  Steward                                                                               I    n    M    /   PA
+  where used                                                                            PL.1, NDL.4
+  HL7 Version  Introduced                                                               2.3

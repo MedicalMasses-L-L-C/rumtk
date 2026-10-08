@@ -1,0 +1,9 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                         0173
+  Description                                                                                   Table of codes specifying whether this insurance works in conjunction with
+                                                                                                other insurance plans or if it provides independent coverage and payment of
+                                                                                                benefits regardless of other insurance that might be available to the patient.
+  Type                                                                                          User
+  Steward                                                                                       FM
+  where used                                                                                    IN1-21
+  HL7 Version  Introduced                                                                       2.2

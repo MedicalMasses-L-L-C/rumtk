@@ -1,0 +1,9 @@
+                                                                                                                               Table 0230Coded Content
+   Value                                         Display Name                                                                                                                                              Definition                                                                   Comment/                                      Status
+                                                                                                                                                                                                                                                                                        Usage Note
+   A                                             Anesthesia
+   P                                             Procedure for treatment (therapeutic, including
+                                                 operations)
+   I                                             Invasive procedure not classified elsewhere
+                                                 (e.g., IV, catheter, etc.)
+   D                                            Diagnostic procedure

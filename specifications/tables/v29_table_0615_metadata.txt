@@ -1,0 +1,7 @@
+                                                                                                                                                               Table Metadata
+  Table                                                                                                       0615
+  Description                                                                                                 HL7-defined table of codes specifying a type of user authentication credential.
+  Type                                                                                                        HL7
+  Steward                                                                                                     InM
+  where used                                                                                                  UAC-1
+  HL7 Version Introduced                                                                                      2.6

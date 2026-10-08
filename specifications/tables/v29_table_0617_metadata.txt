@@ -1,0 +1,7 @@
+                                                                                                                         Table Metadata
+  Table                                                                             0617
+  Description                                                                       HL7-defined table of codes specifying how an address is intended to be used.
+  Type                                                                              HL7
+  Steward                                                                           InM
+  where used                                                                        XAD.18
+  HL7 Version  Introduced                                                           2.6

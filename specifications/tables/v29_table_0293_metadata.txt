@@ -1,0 +1,9 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0293
+  Description                                                                           Table of codes specifying the billing category codes for any classification
+                                                                                        systems needed, for example, general ledger codes and UB92 categories.  No
+                                                                                        suggested values.
+  Type                                                                                  User
+  Steward                                                                               InM/FM
+  where used                                                                            PRC-14
+  HL7 Version  Introduced                                                               2.3

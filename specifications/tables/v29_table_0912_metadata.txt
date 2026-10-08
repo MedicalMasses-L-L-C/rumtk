@@ -1,0 +1,10 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0912
+  Description                                                                                 HL7-defined table of codes that represent functional involvement of a caregiver
+                                                                                              or member of a care team with an activity being transmitted (e.g., Case
+                                                                                              Manager, Evaluator, Transcriber, Nurse Care Practitioner, Midwife, Physician
+                                                                                              Assi stant, etc.).
+  Type                                                                                        HL7-EXT
+  Steward                                                                                     OO
+  where used                                                                                  P   RT-4
+  HL7 Version  Introduced                                                                     2.7

@@ -1,0 +1,6 @@
+                                                                                                                          Table 0326Coded Content
+   Value                                       Display Name                                                Definition                                                                                                                                                         Comment/                                     Status
+                                                                                                                                                                                                                                                                              Usage Note
+   A                                           Account level                                               Account level (default)                                                                                                                                            Usage Note:
+                                                                                                                                                                                                                                                                              default
+   V                                           Visit level

@@ -1,0 +1,6 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0838
+  Description                                                                                             Table of codes specifying from whose perspective this problem was identified.
+                                                                                                          No suggested values.
+  Type                                                                                                    User
+  HL7 Version  Introduced                                                                                 2.6

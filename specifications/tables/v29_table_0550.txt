@@ -1,0 +1,490 @@
+                                                                                                                                   Table 0550Coded Content
+  Value                                           Display Name                                                   Definition                                                                                                                                                                     Comment/                                       Status
+                                                                                                                                                                                                                                                                                                Usage Note
+  JUGE                                            Jugular, External
+  ADB                                             Abdomen
+  ACET                                            Acetabulum
+  ACHIL                                           Achilles
+  ADE                                             Adenoids
+  ADR                                             Adrenal
+  AMN                                             Amniotic fluid
+  AMS                                             Amniotic Sac
+  ANAL                                            Anal   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                         Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   ANKL                                            Ankle
+   ANTEC                                           Antecubital
+   ANTECF                                          Antecubital Fossa
+   ANTR                                            Antrum
+   ANUS                                            Anus
+   AORTA                                           Aorta
+   AR                                              Aortic Rim
+   AV                                              Aortic Valve
+   APDX                                            Appendix
+   AREO                                            Areola
+   ARM                                             Arm
+   ARTE                                            Artery
+   ASCIT                                           Ascites
+   ASCT                                            Ascitic Fluid
+   ATR                                             Atrium
+   AURI                                            Auricular
+   AXI                                             Axilla
+   BACK                                            Back
+   BARTD                                           Bartholin Duct
+   BARTG                                           Bartholin Gland
+   BRTG F                                          Bartholin Gland
+                                                   Fluid
+   BPH                                             Basophils
+   BID                                             Bile Duct
+   BIFL                                            Bile fluid
+   BLAD                                            Bladder
+   BLOOD                                           Blood
+   BLDA                                            Blood,  Arterial
+   BLDC                                            Blood,  Capillary
+   BLDV                                            Blood,  Venous
+   CBLD                                            Blood, Cord
+   BLD                                             Blood, Whole
+   BDY                                             Body, Whole
+   BON                                             Bone
+   BMAR                                            Bone marrow
+   BOWEL                                           Bowel
+   BOWL A                                          Bowel, Large
+   BOWSM                                           Bowel, Small
+   BRA                                             Brachial
+   BRAIN                                           Brain
+   BCY S                                           Brain Cyst Fluid
+   BRST                                            Breast
+   BRSTFL                                          Breast fluid
+   BRO                                             Bronchial
+   BRO CH                                          Bronchiole/Bronc
+                                                   hiolar
+   BRO NC                                          Bronchus/Bronch
+                                                   ial
+   BRV                                             Broviac
+   BUCCA                                           Buccal
+   BURSA                                           Bursa
+   BURSF                                           Bursa Fluid
+  BUTT                                             Buttocks
+  CALF                                             Calf
+  CANAL                                            Canal
+  CANLI                                            Canaliculis
+  CNL                                              Cannula
+  CANTH                                            Canthus
+  CDM                                              Cardiac Muscle
+  CARO                                             Carotid
+  CARP                                             Carpal
+  CAVIT                                            Cavity
+  CHE                                              Cavity, Chest
+  CECUM                                            Cecum/Cecal
+  CSF                                              Cerebral Spinal
+                                                   Fluid
+  CVX                                              Cervix
+  CERVUT                                           Cervix/Uterus
+  CHEEK                                            Cheek
+  CHES                                             Chest
+  CHESTÂ                                           Chest Tube
+  CHIN                                             Chin
+  CIRCU                                            Circumcision Site
+  CLAVI                                            Clavicle/Clavicul
+                                                   ar
+  CLITO                                            Clitoral
+  CLIT                                             Clitoris
+  COCCG                                            Coccygeal
+  COCCY                                            Coccyx
+  COLON                                            Colon
+  COLOS                                            Colostomy
+  COS                                              Colostomy Stoma
+  CDU CT                                           Common Duct
+  CONJ                                             Conjunctiva
+  CORAL                                            Coral
+  COR                                              Cord
+  CORD                                             Cord Blood
+  CORN                                             Cornea
+  CRA NE                                           Cranium, ethmoid
+  CRA NF                                           Cranium, frontal
+  CRA NO                                           Cranium,
+                                                   occipital
+  CRA NP                                           Cranium, parietal
+  CRA NS                                           Cranium,
+                                                   sphenoid
+  CRA NT                                           Cranium,
+                                                   temporal
+  CUBIT                                            Cubitus
+  CUFF                                             Cuff
+  CULD                                             Cul De Sac
+  CULDO                                            Culdocentesis
+  DELT                                             Deltoid
+  DENTA                                            Dental
+  DEN                                              Dental Gingiva   Value                                           Display Name                                                      Definition                                                                                                                                                                         Comment/                                        Status
+                                                                                                                                                                                                                                                                                                        Usage Note
+   DIAF                                            Dialysis Fluid
+   DPH                                             Diaphragm
+   DIGIT                                           Digit
+   DISC                                            Disc
+   DORS                                            Dorsum/Dorsal
+   DUFL                                            Duodenal Fluid
+   DUODE                                           Duodenum/Duod
+                                                   enal
+   DUR                                             Dura
+   EAR                                             Ear
+   EARBI                                           Ear bone, incus
+   EARBM                                           Ear bone, malleus
+   EARBS                                           Ear bone,stapes
+   EARLO                                           Ear Lobe
+   ELBOW                                           Elbow
+   ELBOWJ                                          Elbow Joint
+   ENDC                                            Endocardium
+   EC                                              Endocervical
+   EOLPH                                           endolpthamitis
+   ENDM                                            Endometrium
+   ET                                              Endotracheal
+   EUR                                             Endourethral
+   EOS                                             Eosinophils
+   EPICA                                           Epicardial
+   EPICM                                           Epicardium
+   EPD                                             Epididymis
+   EPIDU                                           Epidural
+   EPIGL                                           Epiglottis
+   ESOPG                                           Esophageal
+   ESO                                             Esophagus
+   ETHMO                                           Ethmoid
+   Â                                               External Jugular
+   EYE                                             Eye
+   BRO W                                           Eyebrow
+   EYELI                                           Eyelid
+   FACE                                            Face
+   FBINC                                           Facial bone,
+                                                   inferior nasal
+                                                   concha
+   FBLA C                                          Facial bone,
+                                                   lacrimal
+   FBMAX                                           Facial bone,
+                                                   maxilla
+   FBNA S                                          Facial bone, nasal
+   FBPAL                                           Facial bone,
+                                                   palatine
+   FBVOM                                           Facial bone,
+                                                   vomer
+   FBZYG                                           Facial bone,
+                                                   zygomatic
+   FALLT                                           Fallopian Tube
+   FEMOR                                           Femoral
+   FMH                                              Femoral Head
+   FEMUR                                            Femur
+   FET                                              Fetus
+   FIBU                                             Fibula
+   FING                                             Finger
+   FINGN                                            Finger Nail
+   FOL                                              Follicle
+   FOOT                                             Foot
+   FOREA                                            Forearm
+   FOREH                                            Forehead
+   FORES                                            Foreskin
+   FOURC                                            Fourchette
+   GB                                               Gall Bladder
+   GEN                                              Genital
+   GVU                                              Genital - Vulva
+   GENC                                             Genital Cervix
+   GL                                               Genital Lesion
+   GENL                                             Genital Lochia
+   GLAND                                            Gland
+   GLANS                                            Glans
+   GLUTE                                            Gluteal
+   GLUT                                             Gluteus
+   GLUTM                                            Gluteus Medius
+   GROIN                                            Groin
+   GUM                                              Gum
+   HAR                                              Hair
+   HAL                                              Hallux
+   HAND                                             Hand
+   HEAD                                             Head
+   HART                                             Heart
+   HV                                               Heart Valve
+   HVB                                              Heart Valve,
+                                                    Bicuspid
+   HVT                                              Heart Valve,
+                                                    Tricuspid
+   HEEL                                             Heel
+   HEM                                              Hemorrhoid
+   HIP                                              Hip
+   HIPJ                                             Hip Joint
+   HUMER                                            Humerus
+   HYMEN                                            Hymen
+   ILC                                              Ileal Conduit
+   ILE                                              Ileal Loop
+   ILEOS                                            Ileostomy
+   ILEUM                                            Ileum
+   ILIAC                                            Iliac
+   ILCR                                             Iliac Crest
+   ILCON                                            Ilical Conduit
+   INGUI                                            Inguinal
+   JUGI                                             Jugular, Internal
+   INT                                              Intestine
+   ICX                                              Intracervical   Value                                            Display Name                                                     Definition                                                                                                                                                                          Comment/                                         Status
+                                                                                                                                                                                                                                                                                                         Usage Note
+   INASA                                            Intranasal
+   INTRU                                            Intrauterine
+   INTRO                                            Introitus
+   ISCHI                                            Ischium
+   JAW                                              Jaw
+   KIDNÂ                                            Kidney
+   KNEE                                             Knee
+   KNEEF                                            Knee Fluid
+   KNEEJ                                            Knee Joint
+   LABIA                                            Labia
+   LABMA                                            Labia Majora
+   LABMI                                            Labia Minora
+   LACRI                                            Lacrimal
+   LAM                                              Lamella
+   INSTL                                            Intestine, Large
+   LARYN                                            Larynx
+   LEG                                              Leg
+   LENS                                             Lens
+   WBC                                              Leukocytes
+   LING                                             Lingual
+   LINGU                                            Lingula
+   LIP                                              Lip
+   STOOLL                                           Liquid Stool
+   LIVER                                            Liver
+   LOBE                                             Lobe
+   LOCH                                             Lochia
+   ISH                                              Loop, Ishial
+   LUMBA                                            Lumbar
+   LMN                                              Lumen
+   LUNG                                             Lung
+   LN                                               Lymph Node
+   LNG                                              Lymph Node,
+                                                    Groin
+   LYM                                              Lymphocytes
+   MAC                                              Macrophages
+   MALLE                                            Malleolus
+   MANDI                                            Mandible/Mandib
+                                                    ular
+   MAR                                              Marrow
+   MAST                                             Mastoid
+   MAXIL                                            Maxilla/Maxillar
+                                                    y
+   MAXS                                             Maxillary Sinus
+   MEATU                                            Meatus
+   MEC                                              Meconium
+   MEDST                                            Mediastinum
+   MEDU                                             Medullary
+   MOU                                              Membrane
+   MPB                                              Meninges
+   METAC                                            Metacarpal
+   METAT                                            Metatarsal
+   MILK                                             Milk, Breast
+   MITRL                                           Mitral Valve
+   MOLAR                                           Molar
+   MP                                              Mons Pubis
+   MONSU                                           Mons Ureteris
+   MONSV                                           Mons
+                                                   Veneris(Mons
+                                                   Pubis)
+   MOUTH                                           Mouth
+   MRSA2                                           Mrsa:
+   MYO                                             Myocardium
+   NAIL                                            Nail
+   NAILB                                           Nail Bed
+   NAILF                                           Nail, Finger
+   NAILT                                           Nail, Toe
+   NARES                                           Nares
+   NASL                                            Nasal
+   NSS                                             Nasal Septum
+   NLACR                                           Nasolacrimal
+   NP                                              Nasopharyngeal/
+                                                   Nasopharynx
+   NTRAC                                           Nasotracheal
+   NAVEL                                           Navel
+   NECK                                            Neck
+   NERVE                                           Nerve
+   NIPPL                                           Nipple
+   NOS                                             Nose (Nasal
+                                                   Passage)
+   NOSE                                            Nose/Nose(outsid
+                                                   e)
+   NOSTR                                           Nostril
+   OCCIP                                           Occipital
+   OLECR                                           Olecranon
+   OMEN                                            Omentum
+   ORBIT                                           Orbit/Orbital
+   ORO                                             Oropharynx
+   OSCOX                                           Os coxa (pelvic
+                                                   girdle)
+   OVARY                                           Ovary
+   PALAT                                           Palate
+   PLATH                                           Palate, Hard
+   PLATS                                           Palate, Soft
+   PALM                                            Palm
+   PANCR                                           Pancreas
+   PAFL                                            Pancreatic Fluid
+   PAS                                             Parasternal
+   PARAT                                           Paratracheal
+   PARIE                                           Parietal
+   PARON                                           Paronychia
+   PAROT                                           Parotid/Parotid
+                                                   Gland
+   PATEL                                           Patella
+   PELV                                            Pelvis   Value                                            Display Name                                                     Definition                                                                                                                                                                          Comment/                                          Status
+                                                                                                                                                                                                                                                                                                         Usage Note
+   PENSH                                            Penile Shaft
+   PENIS                                            Penis
+   PANAL                                            Perianal/Perirecta
+                                                    l
+   PERI                                             Pericardial Fluid
+   PCA RD                                           Pericardium
+   PCLIT                                            Periclitoral
+   PERIH                                            Perihepatic
+   PNEAL                                            Perineal
+   PERIN                                            Perineal Abscess
+   PNEPH                                            Perinephric
+   PNM                                              Perineum
+   PORBI                                            Periorbital
+   PERRA                                            Perirectal
+   PERIS                                            Perisplenic
+   PER                                              Peritoneal
+   PERT                                             Peritoneal Fluid
+   PERIT                                            Peritoneum
+   PTONS                                            Peritonsillar
+   PERIU                                            Periurethal
+   PERIV                                            Perivesicular
+   PHALA                                            Phalanyx
+   PILO                                             Pilonidal
+   PINNA                                            Pinna
+   PLC                                              Placenta
+   PLACF                                            Placenta (Fetal
+                                                    Side)
+   PLACM                                            Placenta
+                                                    (Maternal Side)
+   PLANT                                            Plantar
+   PLEUR                                            Pleura
+   PLEU                                             Pleural Fluid
+   PLR                                              Pleural Fluid
+                                                    (Thoracentesis
+                                                    Fld)
+   POPLI                                            Popliteal
+   PREAU                                            Preauricular
+   PRERE                                            Prerenal
+   PRST                                             Prostate Gland
+   PROS                                             Prostatic Fluid
+   PUBIC                                            Pubic
+   PUL                                              Pulmonary Artery
+   RADI                                             Radial
+   RADIUS                                           Radius
+   RECTL                                            Rectal
+   RECTU                                            Rectum
+   RBC                                              Red Blood Cells
+   RENL                                             Renal
+   RNP                                              Renal Pelvis
+   RPERI                                            Retroperitoneal
+   RIB                                              Rib
+   SACRA                                            Sacral
+  SACRO                                          Sacrococcygeal
+  SACIL                                          Sacroiliac
+  SACRU                                          Sacrum
+  SALGL                                          Salivary Gland
+  SCALP                                          Scalp
+  SCAP U                                         Scapula/Scapular
+  SCLER                                          Sclera
+  SCROT                                          Scrotum/Scrotal
+  SEMN                                           Semen
+  SEM                                            Seminal Fluid
+  SEPTU                                          Septum/Septal
+  SEROM                                          Seroma
+  SHIN                                           Shin
+  SHOLJ                                          Sholder Joint
+  SHOL                                           Shoulder
+  SIGMO                                          Sigmoid
+  SINUS                                          Sinus
+  SKM                                            Skeletal Muscle
+  SKENE                                          Skene's Gland
+  SKULL                                          Skull
+  INSTS                                          Intestine, Small
+  SOLE                                           Sole
+  SPRM                                           Spermatozoa
+  SPHEN                                          Sphenoid
+  SPCO R                                         Spinal Cord
+  SPLN                                           Spleen
+  STER                                           Sternum/Sternal
+  STOM                                           Stoma
+  USTOM                                          Stoma, Urinary
+  STOMA                                          Stomach
+  STUMP                                          Stump
+  SCLV                                           Sub Clavian
+  SDP                                            Subdiaphramatic
+  SUB                                            Subdural
+  SUBD                                           Subdural Fluid
+  SGF                                            Subgaleal Fluid
+  SUBM                                           Submandibular
+  SUBX                                           Submaxillary
+  SUBME                                          Submental
+  SUBP H                                         Subphrenic
+  SPX                                            Supra Cervical
+  SCLAV                                          Supraclavicle/Sup
+                                                 raclavicular
+  SUPRA                                          Suprapubic
+  SUPB                                           Suprapubic
+                                                 Specimen
+  SWT                                            Sweat
+  SWTG                                           Sweat Gland
+  SYNOL                                          Synovial
+  SYN                                            Synovial Fluid
+  SYNOV                                          Synovium
+  TARS                                           Tarsal  Value                                           Display Name                                                    Definition                                                                                                                                                                     Comment/                                        Status
+                                                                                                                                                                                                                                                                                                 Usage Note
+  TDUCT                                           Tear Duct
+  TEAR                                            Tears
+  TEMPL                                           Temple
+  TEMPO                                           Temporal
+  TML                                             Temporal Lobe
+  TESTI                                           Testicle(Testis)
+  THIGH                                           Thigh
+  THORA                                           Thorax/Thoracic/
+                                                  Thoracentesis
+  THRB                                            Throat
+  THUMB                                           Thumb
+  TNL                                             Thumbnail
+  THM                                             Thymus
+  THYRD                                           Thyroid
+  TIBIA                                           Tibia
+  TOE                                             Toe
+  TOEN                                            Toe Nail
+  TONG                                            Tongue
+  TONS                                            Tonsil
+  TOOTH                                           Tooth
+  TSK                                             Tooth Socket
+  TRCHE                                           Trachea/Tracheal
+  TBRON                                           Transbronchial
+  TCN                                             Transcarina Asp
+  ULNA                                            Ulna/Ulnar
+  UMB                                             Umbilical Blood
+  UMBL                                            Umbilicus/Umbili
+                                                  cal
+  URET                                            Ureter
+  URTH                                            Urethra
+  UTERI                                           Uterine
+  SAC                                             Uterine
+                                                  Cul/De/Sac
+  UTER                                            Uterus
+  VAGIN                                           Vagina/Vaginal
+  VCUFF                                           Vaginal Cuff
+  VGV                                             Vaginal Vault
+  VAL                                             Valve
+  VAS                                             Vas Deferens
+  VASTL                                           Vastus Lateralis
+  VAULT                                           Vault
+  VEIN                                            Vein
+  VENTG                                           Ventragluteal
+  VCSF                                            Ventricular CSF
+  VERMI                                           Vermis Cerebelli
+  VERTC                                           Vertebra, cervical
+  VERTL                                           Vertebra, lumbar
+  VERTT                                           Vertebra, thoracic
+  VESI                                            Vesicle
+  VESCL                                           Vesicular
+  VESFLD                                          Vesicular Fluid
+  VESTI                                         Vestibule(Genital
+                                                )
+  VITR                                          Vitreous Fluid
+  VOC                                           Vocal Cord
+  VULVA                                         Vulva
+  WRIST                                         Wrist

@@ -1,0 +1,9 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0164
+  Description                                                                                          Table of codes which specify the mechanical device used to aid in the
+                                                                                                       administration of the drug or other treatment.  Common examples are IV-sets of
+                                                                                                       different types.
+  Type                                                                                                 User
+  Steward                                                                                              OO
+  where used                                                                                           RXR-                           3
+  HL7 Version  Introduced                                                                              2.2

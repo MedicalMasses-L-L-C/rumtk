@@ -1,0 +1,14 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0308
+  Description                                                                                               Table of codes specifying the floor where the person is located.  No suggested
+                                                                                                            values.
+  Type                                                                                                      User
+  Steward                                                                                                   I    n    M    /   PA
+  where used                                                                                                PL.8, NDL.11
+
+
+
+
+
+
+  HL7 Version  Introduced                                                               2.3

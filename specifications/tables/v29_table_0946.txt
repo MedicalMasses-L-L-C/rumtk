@@ -1,0 +1,7 @@
+                                                                                                                                  Table 0946Coded Content
+   Value                                          Display Name                                                   Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                              Usage Note
+   D                                              Distributor                                                    When a vendor supplies  the medical supplies on this
+                                                                                                                 contract
+   M                                              Manufacturer                                                   When the Manufacturer supplies the medical
+                                                                                                                 supplies on this contract

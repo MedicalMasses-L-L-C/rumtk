@@ -1,0 +1,4 @@
+                                                                                                                                    Table 0634Coded Content
+   Value                                           Display Name                                                    Definition                                                                                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                   Usage Note
+   CRT                                             Critical

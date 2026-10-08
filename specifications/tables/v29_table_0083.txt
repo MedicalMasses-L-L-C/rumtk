@@ -1,0 +1,5 @@
+                                                                                                                 Table 0083Coded Content
+  Value                                     Display Name                                           Definition                                                                                                                                             Comment/                                 Status
+                                                                                                                                                                                                                                                          Usage Note
+  D                                         Outlier days
+  C                                         Outlier cost

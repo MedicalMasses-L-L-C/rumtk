@@ -1,0 +1,27 @@
+                                                                                                               Table 0278Coded Content
+  Value                                    Display Name                                          Definition                                                                                                                                          Comment/                                 Status
+                                                                                                                                                                                                                                                     Usage Note
+  Pending                                  Pending                                               Appointment has not yet been confirmed
+  Waitlist                                 Waitlist                                              Appointment has been placed on a waiting list for a
+                                                                                                 particular slot, or set of slots
+  Booked                                   Booked                                                The indicated appointment is booked
+  Started                                  Started                                               The indicated appointment has begun and is
+                                                                                                 currently in progress
+  Complete                                 Complete                                              The indicated appointment has completed normally
+                                                                                                 (was not discontinued, canceled, or deleted)  Value                                Display Name                                    Definition                                                                                                                             Comment/                            Status
+                                                                                                                                                                                                                              Usage Note
+  Cancelled                            Cancelled                                       The indicated appointment was stopped from
+                                                                                       occurring (canceled prior to starting)
+  DC                                   Discontinued                                    The indicated appointment was discontinued (DC’ed                                                                                      Replaced by                         D
+                                                                                       while in progress, discontinued parent appointment,                                                                                    code
+                                                                                       or discontinued child appointment)                                                                                                     'Discontinue
+                                                                                                                                                                                                                              d'
+  Discontinue                          Discontinued                                    The indicated appointment was discontinued (DC’ed
+  d                                                                                    while in progress, discontinued parent appointment,
+                                                                                       or discontinued child appointment)
+  Deleted                              Deleted                                         The indicated appointment was deleted from the
+                                                                                       filler application
+  Blocked                              Blocked                                         The indicated time slot(s) is(are) blocked
+  Overbook                             Overbook                                        The appointment has been confirmed; however it is
+                                                                                       confirmed in an overbooked state
+  Noshow                               Noshow                                          The patient did not show up for the appointment

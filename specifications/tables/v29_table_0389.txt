@@ -1,0 +1,9 @@
+                                                                                                                      Table 0389Coded Content
+  Value                                      Display Name                                             Definition                                                                                                                                                   Comment/                                   Status
+                                                                                                                                                                                                                                                                   Usage Note
+  O                                          Original, first run
+  R                                          Repeated without
+                                             dilution
+  D                                          Repeated with
+                                             dilution
+  F                                          Reflex test

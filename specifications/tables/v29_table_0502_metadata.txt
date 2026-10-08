@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0502
+  Description                                                                                 HL7-defined table of codes used to specify a reason consent was granted by a
+                                                                                              person other than the subject of the consent.
+  Type                                                                                        User
+  Steward                                                                                     StrucDoc
+  where used                                                                                  CON:23
+  HL7 Version  Introduced                                                                     2.5

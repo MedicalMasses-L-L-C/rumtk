@@ -1,0 +1,16 @@
+                                                                                                                     Table 0642Coded Content
+  Value                                      Display Name                                             Definition                                              Comment/ Usage Note                                                                                                                           Status
+  D                                          DOP/DOQ                                                                                                          Corresponds to the theory that calculates the
+                                                                                                                                                              appropriate order point and recommends the quantity
+                                                                                                                                                              to order based on system parameters and historical
+                                                                                                                                                              trends.  DOP stands for Dynamic Order Point, and
+                                                                                                                                                              DOQ stands for Dynamic Order Quantity.
+  M                                          MIN/MAX                                                                                                          Corresponds to theory - the quantity
+                                                                                                                                                              recommended is the Order Quantity, less the
+                                                                                                                                                              On Hand Quantity, and less the On Order
+                                                                                                                                                              Quantity.  The Order Amount is the desired
+                                                                                                                                                              Maximum On Hand Quantity.
+  O                                          Override                                                                                                         The quantity recommended is the Order
+                                                                                                                                                              Quantity, less the On Order Quantity.  The
+                                                                                                                                                              Order Amount is the amount to order when the
+                                                                                                                                                              On Hand reaches the Order Point.

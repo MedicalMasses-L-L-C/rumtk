@@ -1,0 +1,13 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0214
+  Description                                                                                 Table of codes used to record a health insurance program required for healthcare
+                                                                                              visit reimbursement.
+
+
+
+
+
+  Type                                                                                        User
+  Steward                                                                                     PA
+  where used                                                                                  PV2-18
+  HL7 Version  Introduced                                                                               2.3

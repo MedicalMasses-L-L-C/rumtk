@@ -1,0 +1,18 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0350
+  Description                                                                        Table of codes that specify a National Uniform Billing Committee (NUBC)
+                                                                                     code for the event or occurrence relating to a bill that may affect payer
+                                                                                     processing.  In the US, NUBC codes generally used, see code system
+
+
+
+
+
+
+
+                                                                                        2.16.840.1.113883.6.301.7; more information may be found at
+                                                                                        http://www.nubc.org/become.html
+  Type                                                                               External
+  Steward                                                                            InM/FM
+  where used                                                                         OCD.1
+  HL7 Version  Introduced                                                               2.3.1

@@ -1,0 +1,8 @@
+                                                                                                                                        Table 0905Coded Content
+   Value                                             Display Name                                                                                                                        Definition                                                        Comment/ Usage Note                                                                                Status
+   ONH                                               On Hold
+   INV                                               Inventoried
+   PRC                                               Processing
+   REJ                                               Rejected
+   TTL                                               Triaged to Lab
+   TRN                                               In Transit

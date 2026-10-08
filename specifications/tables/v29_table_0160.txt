@@ -1,0 +1,9 @@
+                                                                                                                              Table 0160Coded Content
+  Value                                         Display Name                                                  Definition                                                                                                                                                              Comment/                                      Status
+                                                                                                                                                                                                                                                                                      Usage Note
+  EARLY                                         Early tray
+  LATE                                          Late tray
+  GUEST                                         Guest tray
+  NO                                            No tray
+  MSG                                           Tray message
+                                                only

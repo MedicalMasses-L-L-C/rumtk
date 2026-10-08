@@ -1,0 +1,14 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0313
+  Description                                                                                               Table of codes specifying how an insurance policy is established.  No suggested
+                                                                                                            values.
+  Type                                                                                                      User
+
+
+
+
+
+
+  Steward                                                                                                   PA
+  where used                                                                                                IN2-60
+  HL7 Version  Introduced                                                              2.3

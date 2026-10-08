@@ -1,0 +1,37 @@
+                                                                                                              Table 0948Coded Content
+  Value                             Display Name                                   Definition                                                                      Comment/ Usage Note                                                                                                     Status
+  CAUS                              Causes/caused                                  Source universal service                                                        Example: a procedure caused  complication(s)                                                                            N
+                                                                                   identifier causes/caused the
+                                                                                   outcome(s) on the target
+  COMP                        Component of                            Target universal service                                            Example: one care plan activity (target) is                                                           N
+                                                                      identifier is a component of                                        a component of another care plan activity
+                                                                      source universal identifier                                         (source)
+  CON CR                      Concurrently                            Source and target universal                                         Example: two care plan activities should                                                              N
+                                                                      service identifier should                                           start concurrently
+                                                                      start concurrently
+  EVID                        Evidence                                Source universal service                                            Example: observation result provides                                                                  N
+                                                                      identifier provides evidence                                        evidence for certain care plan activity or
+                                                                      for target universal service                                        treatment action
+                                                                      identifier
+  INTF                        Interferes /                            Source universal service                                            Example: patient financial or physical                                                                N
+                              interfered                              identifier interferes /                                             constraints interferes / interfered with
+                                                                      interfered  with fulfilment of                                      fulfilment of goal
+                                                                      target universal service
+                                                                      identifier
+  LIMIT                       Limits/limited                          Source universal service                                            Example: patient condition limits the                                                                 N
+                                                                      identifier limits/limited the                                       extend that planned treatment can be
+                                                                      fulfillment of target                                               implemented
+                                                                      universal service identifier
+  SUCCD                       Succeeds                                Target universal service                                            Example: one care plan activity (target)                                                              N
+                                                                      identifier should succeed                                           should start after completion of another
+                                                                      (starts after end of) source                                        (source)
+                                                                      universal service identifier
+  SVTGT                       Service target                          Target universal service                                            Example: An order requests clarification                                                              N
+                                                                      identifier is the object of                                         or interpretation of a previous clinical
+                                                                      the service identified by the                                       laboratory test result
+                                                                      source universal service
+                                                                      identifier
+  TRIG                        Triggers/trigge                         Source universal service                                            Example: a bleeding complication triggers                                                             N
+                              red                                     identifier triggers action of                                       the review and change in anti-coagulant
+                                                                      target universal service                                            dosage
+                                                                      identifier

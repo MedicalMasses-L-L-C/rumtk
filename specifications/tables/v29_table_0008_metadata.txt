@@ -1,0 +1,9 @@
+                                                                                                                                Table Metadata
+  Table                                                                                 0008
+  Description                                                                           HL7-defined table of codes specifying acknowledgment codes used in Version
+                                                                                        2.x message.  For details of usage, see message processing rules in the published
+                                                                                        Standard.
+  Type                                                                                  HL7
+  Steward                                                                               InM
+  where used                                                                            MSA-1.1
+  HL7 Version  Introduced                                                               2.1

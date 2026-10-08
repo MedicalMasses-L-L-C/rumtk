@@ -1,0 +1,8 @@
+                                                                                                                     Table 0502Coded Content
+  Value                                      Display Name                                             Definition                                                                                                                                                  Comment/                                   Status
+                                                                                                                                                                                                                                                                  Usage Note
+  MIN                                        Subject is a minor
+  NC                                         Subject is not
+                                             competent to
+                                             consent
+  LM                                         Legally mandated

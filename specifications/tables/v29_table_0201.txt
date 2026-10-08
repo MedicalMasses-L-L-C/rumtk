@@ -1,0 +1,14 @@
+                                                                                                            Table 0201Coded Content
+  Value                            Display Name                                                                   Definition                                                                           Comment/ Usage Note                                                            Status
+  PRN                              Primary Residence Number
+  ORN                              Other Residence Number
+  WPN                              Work Number
+  VHN                              Vacation Home Number
+  ASN                              Answering Service Number
+  EMR                              Emergency Number
+  NET                              Network (email) Address                                                                                                                                             Retained for backward
+                                                                                                                                                                                                       compatibility as of v 2.6
+  BPN                              Beeper Number                                                                                                                                                       Retained for backward
+                                                                                                                                                                                                       compatibility as of v 2.6
+  PRS                              Personal                                                                                                                                                            Not tied to a location or
+                                                                                                                                                                                                       role

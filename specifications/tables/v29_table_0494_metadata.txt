@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0494
+  Description                                                                                        HL7-defined table of codes specifying for child specimens the relationship
+                                                                                                     between this specimen and the parent specimen.
+  Type                                                                                               HL7
+  Steward                                                                                            OO
+  where used                                                                                         SPM-29
+  HL7 Version Introduced                                                                             2.5

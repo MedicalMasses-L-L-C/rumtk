@@ -1,0 +1,12 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0296
+  Description                                                                           Table of codes specifying the patient's primary language.  No suggested values.
+  Type                                                                                  User
+
+
+
+
+
+  Steward                                                                               StrucDoc
+  where used                                                                            CON:18, PID-                             15
+  HL7 Version  Introduced                                                                          2.3

@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0470
+  Description                                                                                   Table of codes specifying the fee schedule reimbursement type applied to the
+                                                                                                line item.
+  Type                                                                                          User
+  Steward                                                                                       FM
+  where used                                                                                    GP2-12
+  HL7 Version  Introduced                                                                       2.4

@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0281
+  Description                                                                                       Table of codes used to identify the general category of healthcare professional
+                                                                                                    desired to satisfy a referral.
+  Type                                                                                              User
+  Steward                                                                                           OO
+  where used                                                                                        RF1-3
+  HL7 Version  Introduced                                                                           2.3

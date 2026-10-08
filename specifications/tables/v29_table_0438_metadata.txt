@@ -1,0 +1,13 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0438
+  Description                                                                                            Table of codes specifying the verification status for the allergy.
+
+
+
+
+
+
+  Type                                                                                                   User
+  Steward                                                                                                PA
+  where used                                                                                             IAM-17
+  HL7 Version  Introduced                                                                                  2.4

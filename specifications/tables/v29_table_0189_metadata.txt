@@ -1,0 +1,9 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0189
+  Description                                                                             Table of codes further defining a patient's ancestry.  In the US, a current use is to
+                                                                                          use these codes to report ethnicity in line with US federal standards for Hispanic
+                                                                                          origin.
+  Type                                                                                    User
+  Steward                                                                                 PA
+  where used                                                                              PID-22
+  HL7 Version  Introduced                                                                 2.2

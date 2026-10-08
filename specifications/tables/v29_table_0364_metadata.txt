@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                    0364
+  Description                                                                                              Table of codes that identify the type of comment text being sent in the specific
+                                                                                                           comment record.
+  Type                                                                                                     User
+  Steward                                                                                                  InM
+  where used                                                                                               NTE-4
+  HL7 Version  Introduced                                                                                  2.3.1

@@ -1,0 +1,12 @@
+                                                                                                                                 Table 0441Coded Content
+   Value                                          Display Name                                                                                                                                                Definition                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                            Usage Note
+   A                                              A ct iv e
+   I                                              Inactive
+   L                                              Inactive - Lost to follow-up (cancel contract)
+   M                                              Inactive - Moved or  gone elsewhere (cancel
+                                                  contract)
+   P                                              Inactive - Permanently inactive (Do not
+                                                  reactivate or add new entries to the record)
+   O                                              Other
+   U                                              Unknown

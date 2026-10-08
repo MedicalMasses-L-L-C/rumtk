@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0925
+  Description                                                                                          HL7-defined table of codes specifying the phlebotomy issue.
+  Type                                                                                                 HL7
+  Steward                                                                                              OO
+  where used                                                                                           DON-                                                                                       14
+  HL7 Version  Introduced                                                                              2.8

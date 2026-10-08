@@ -1,0 +1,12 @@
+                                                                                                                                         Table 0004Coded Content
+   Value                                             Display Name                                                                                                                                                           Definition                                                                         Comment/                                          Status
+                                                                                                                                                                                                                                                                                                               Usage Note
+   E                                                 Emergency
+   I                                                 Inpatient
+   O                                                 Outpatient
+   P                                                 Preadmit
+   R                                                 Recurring patient
+   B                                                 Obstetrics
+   C                                                 Commercial Account
+   N                                                 Not Applicable
+   U                                                 Unknown

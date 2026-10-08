@@ -1,0 +1,13 @@
+                                                                                                                                 Table 0237Coded Content
+  Value                                          Display Name                                                   Definition                                                                                                                                                                  Comment/                                        Status
+                                                                                                                                                                                                                                                                                            Usage Note
+  I                                              Interaction
+  O                                              Overdose
+  A                                              Abuse
+  M                                              Misuse
+  D                                              Dependency
+  L                                              Lack of expect
+                                                 therapeutic effect
+  W                                              Drug withdrawal
+  B                                              Unexpected
+                                                 beneficial effect

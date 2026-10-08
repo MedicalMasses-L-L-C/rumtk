@@ -1,0 +1,8 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0461
+  Description                                                                                             Table of codes specifying the license number for the facility.  No suggested
+                                                                                                          values.
+  Type                                                                                                    User
+  Steward                                                                                                 I    n    M    /   PA
+  where used                                                                                              LOC-7
+  HL7 Version  Introduced                                                                                 2.4

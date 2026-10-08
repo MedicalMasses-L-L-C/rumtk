@@ -1,0 +1,7 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0050
+  Description                                                                                               Table of codes specifying the type of accident.  No suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   FM
+  where used                                                                                                ACC-                                                     2
+  HL7 Version  Introduced                                                                                   2.1

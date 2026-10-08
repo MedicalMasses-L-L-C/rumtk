@@ -1,0 +1,17 @@
+                                                                                                                               Table 0427Coded Content
+   Value                                         Display Name                                                                                                                                              Definition                                                                  Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   B                                             Body fluid exposure
+   C                                             Contaminated Substance
+   D                                             Diet Errors
+   E                                             Equipment problem
+   F                                             Patient fell (not from bed)
+   H                                             Patient fell from bed
+   I                                             Infusion error
+   J                                             Foreign object left during surgery
+   K                                             Sterile precaution violated
+   P                                             Procedure error
+   R                                             Pharmaceutical error
+   S                                             Suicide Attempt
+   T                                              Transfusion error
+   O                                              Other

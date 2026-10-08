@@ -1,0 +1,7 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0336
+  Description                                                                                     Table of codes used to specify the reason for which the referral will take place.
+  Type                                                                                            User
+  Steward                                                                                         OO
+  where used                                                                                      RF1-10
+  HL7 Version  Introduced                                                                         2.3

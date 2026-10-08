@@ -1,0 +1,64 @@
+                                                                                                                Table 0360Coded Content
+  Value                                    Display Name                                                                                                                                          Definition                                             Comment/                                 Status
+                                                                                                                                                                                                                                                        Usage Note
+  PN                                       Advanced Practice Nurse
+  AAS                                      Associate of Applied Science
+  AA                                       Associate of Arts
+  ABA                                      Associate of Business Admini stration
+  AE                                       Associate of Engineering
+  AS                                       Associate of Science
+  BA                                       Bachelor of Arts
+  BBA                                      Bachelor of Business Administration
+  BE                                       Bachelor or Engineering
+  BFA                                      Bachelor of Fine Arts
+  BN                                       Bachelor of Nursing
+  BS                                       Bachelor of Science
+  BSL                                      Bachelor of Science - Law
+  BSN                                      Bachelor on Science - Nursing
+  BT                                       Bachelor of Theology
+  CER                                      Certificate
+  CANP                                     Certified Adult Nurse Practitioner
+  CMA                                      Certified Medical Assistant
+  CNP                                      Certified Nurse Practitioner
+  CNM                                      Certified Nurse Midwife
+  CRN                                      Certified Registered Nurse
+  CNS                                      Certified Nurse Specialist
+  CPNP                                     Certified Pediatric Nurse Practitioner
+  CTR                                      Certified Tumor Registrar
+  DIP                                      Diploma
+  DBA                                      Doctor of Business Administration
+  DED                                      Doctor of Education
+  PharmD                                   Doctor of Pharmacy
+  PHE                                      Doctor of Engineering
+  PHD                                      Doctor of Philosophy
+  PHS                                      Doctor of Science
+  MD                                       Doctor of Medicine
+  DO                                       Doctor of Osteopathy
+  EMT                                      Emergency Medical Technician
+  EMTP                                     Emergency Medical Technician - Paramedic
+  FPNP                                     Family Practice Nurse Practitioner
+  HS                                       High School Graduate
+  JD                                       Juris Doctor
+  MA                                       Master of Arts
+  MBA                                      Master of Business Administr ation
+  MCE                                      Master of Civil Engineering
+  MDI                                      Master of Divinity
+  MED                                      Master of Education
+  MEE                                      Master of Electrical Engineering
+  ME                                       Master of Engineering
+  MFA                                      Master of Fine Arts
+  MME                                      Master of Mechanical Engineering
+  MS                                       Master of Science
+  MSL                                      Master of Science - Law
+  MSN                                      Master of Science - Nursing
+  MTH                                      Master of Theology
+  MDA                                      Medical Assistant
+  MT                                       Medical Technician
+  NG                                       Non-Graduate
+  NP                                       Nurse Practitioner
+  PA                                       Physician Assi stant
+  RMA                                      Registered Medical Assistant
+  RN                                       Registered Nurse
+  RPH                                      Registered Pharmacist
+  SEC                                      Secretarial Certificate
+  TS                                       Trade School Graduate

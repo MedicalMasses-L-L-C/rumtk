@@ -1,0 +1,10 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0065
+  Description                                                                               HL7-defined table of codes which specify actions to be taken with respect to the
+                                                                                            specimens that accompany or precede an order.  The purpose of these are to
+                                                                                            further qualify (when appropriate) the general action indicated by the order
+                                                                                            control code ( table 0119).
+  Type                                                                                      HL7
+  Steward                                                                                   OO
+  where used                                                                                OBR-                                                     11
+  HL7 Vers ion  Introduced                                                                  2.1

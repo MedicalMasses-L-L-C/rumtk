@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0219
+  Description                                                                                   Table of codes used to indicate whether a treatment is continuous.  No suggested
+                                                                                                values.
+  Type                                                                                          User
+  Steward                                                                                       PA
+  where used                                                                                    PV2-31
+  HL7 Version  Introduced                                                                       2.3

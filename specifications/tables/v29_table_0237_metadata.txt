@@ -1,0 +1,14 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                                0237
+  Description                                                                                          HL7-defined table of codes used to qualify an event related to a product
+                                                                                                       experience.
+  Type                                                                                                 HL7
+
+
+
+
+
+
+  Steward                                                                                              OO
+  where used                                                                                           PEO-8
+  HL7 Version  Introduced                                                                               2.3

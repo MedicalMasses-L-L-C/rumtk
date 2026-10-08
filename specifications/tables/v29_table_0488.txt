@@ -1,0 +1,45 @@
+                                                                                                                     Table 0488Coded Content
+  Value                                      Display Name                                                                                                                                 Definition                                                             Comment/                                  Status
+                                                                                                                                                                                                                                                                 Usage Note
+  FNA                                        Aspiration, Fine Needle
+  PNA                                        Arterial puncture
+  BIO                                        Biopsy
+  BCAE                                       Blood Culture, Aerobic Bottle
+  BCA N                                      Blood Culture, Anaerobic Bottle
+  BCPD                                       Blood Culture, Pediatric Bottle
+  CAP                                        Capillary Specimen
+  CATH                                       Catheterized
+  EPLA                                       Environmental, Plate
+  ESWA                                       Environmental, Swab
+  LNA                                        Line, Arterial
+  CVP                                        Line, CVP
+  LNV                                        Line, Venous
+  MARTL                                      Martin-Lewis Agar
+  ML11                                       Mod. Martin-Lewis Agar
+  PACE                                       Pace, Gen-Probe
+  PIN                                        Pinworm Prep
+  KOFFP                                      Plate, Cough
+  MLP                                        Plate, Martin-Lewis
+  NYP                                        Plate, New York City
+  TMP                                        Plate, Thayer-Martin
+  ANP                                        Plates, Anaerobic
+  BAP                                        Plates, Blood Agar
+  PRIME                                      Pump Prime
+  PUMP                                       Pump Specimen
+  QC5                                        Quality Control For Micro
+  SCLP                                       Scalp, Fetal Vein
+  SCRAPS                                     Scrapings
+  SHA                                    Shaving
+  SWA                                    Swab
+  SWD                                    Swab, Dacron tipped
+  WOOD                                   Swab, Wooden Shaft
+  TMOT                                   Transport Media,
+  TMAN                                   Transport Media, Anaerobic
+  TMCH                                   Transport Media, Chalamydia
+  TMM4                                   Transport Media, M4
+  TMMY                                   Transport Media, Mycoplasma
+  TMPV                                   Transport Media, PVA
+  TMSC                                   Transport Media, Stool Culture
+  TMUP                                   Transport Media, Ureaplasma
+  TMVI                                   Transport Media, Viral
+  VENIP                                  Venipuncture

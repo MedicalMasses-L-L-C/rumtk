@@ -1,0 +1,13 @@
+                                                                                                                                   Table 0262Coded Content
+   Value                                           Display Name                                                   Definition                                                                                                                                                                      Comment/                                       Status
+                                                                                                                                                                                                                                                                                                  Usage Note
+   F                                               Isolation
+   P                                               Private room
+   J                                               Private room -
+                                                   medically
+                                                   justified
+   Q                                               Private room -
+                                                   due to overflow
+   S                                               Semi-private
+                                                   room
+   W                                               Ward

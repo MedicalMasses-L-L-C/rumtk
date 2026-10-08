@@ -1,0 +1,8 @@
+                                                                                                                             Table 0403Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   1                                            Read
+   2                                            Write
+   3                                            Speak
+   4                                            Understand
+   5                                            Sign

@@ -1,0 +1,6 @@
+                                                                                                                              Table 0501Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   E                                             Emergency
+   RX                                            Rx Private
+   PR                                            Patient Request

@@ -1,0 +1,8 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0262
+  Description                                                                                             Table of codes used to identify the level of privacy a patient will be afforded
+                                                                                                          when assigned to this location definition.
+  Type                                                                                                    User
+  Steward                                                                                                 I    n    M    /   PA
+  where used                                                                                              LCH-5
+  HL7 Version  Introduced                                                                                 2.3

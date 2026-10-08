@@ -1,0 +1,5 @@
+                                                                                                                                  Table 0183Coded Content
+  Value                                           Display Nam e                                                  Definition                                                                                                                                                                   Comment/                                        Status
+                                                                                                                                                                                                                                                                                              Usage Note
+  A                                               Active Staff
+  I                                               Inactive Staff

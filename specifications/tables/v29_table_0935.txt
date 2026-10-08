@@ -1,0 +1,16 @@
+                                                                                                                          Table 0935Coded Content
+   Value                                       Display Name                                                                                                    Definition                                                 Comment/ Usage Note                                                                              Status
+   NRG                                         No reason given, donor decided to stop
+                                               without giving a reason
+   PCD                                         Phone Call-Donor
+   DCW                                         Couldn't wait
+   CFT                                         Couldn't follow through with
+                                               donation (scared)
+   DBB                                         Bathroom
+   DNI                                         Phlebotomy Issue
+   ASC                                         Apheresis Software Crash
+   BS C                                        Manufacturing Software Crash
+   GFE                                         General Facility Emergency                                                                                                                                                 Power outage,  natural
+                                                                                                                                                                                                                          disaster (tornado, flood,
+                                                                                                                                                                                                                          hurricane, etc.), air
+                                                                                                                                                                                                                          conditioning failure, etc.

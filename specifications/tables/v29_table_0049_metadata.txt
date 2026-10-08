@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0049
+  Description                                                                                               Table of codes specifying the department code that controls the transaction
+                                                                                                            code.  No suggested values.
+  Type                                                                                                      User
+  Steward                                                                                                   FM
+  where used                                                                                                FT1-13
+  HL7 Version  Introduced                                                                                   2.1

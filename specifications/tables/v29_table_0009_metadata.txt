@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0009
+  Description                                                                                       Table of codes specifying permanent or transient handicapped conditions of a
+                                                                                                    person.
+  Type                                                                                              User
+  Steward                                                                                           PA
+  where used                                                                                        PV1-15
+  HL7 Version Introduced                                                                            2.1

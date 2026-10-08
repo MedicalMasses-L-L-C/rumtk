@@ -1,0 +1,6 @@
+                                                                                                                                Table 0625Coded Content
+   Value                                         Display Name                                                  Definition                                     Comment/ Usage Note                                                                                                                                                       Status
+   1                                             A ct iv e                                                                                                    Item is available to be purchased or issued.
+   2                                             Pending Inactive                                                                                             Item is not available to be purchased, but is available
+                                                                                                                                                              to be issued.
+   3                                             Inactive                                                                                                     Item is not available to be purchased or issued.

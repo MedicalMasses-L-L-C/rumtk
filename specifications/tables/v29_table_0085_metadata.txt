@@ -1,0 +1,8 @@
+                                                                                                                              Table Metadata
+  Table                                                                                0085
+  Description                                                                          HL7-defined table of codes which specify observation result status. These codes
+                                                                                       reflect the current completion status of the results for one Observation Identifier.
+  Type                                                                                 HL7
+  Steward                                                                              OO
+  where used                                                                           OBX-11
+  HL7 Version  Introduced                                                              2.1

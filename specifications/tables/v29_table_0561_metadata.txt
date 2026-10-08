@@ -1,0 +1,7 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0561
+  Description                                                                                 Table of codes used to specify the Product/Service Code.
+  Type                                                                                        User
+  Steward                                                                                     FM
+  where used                                                                                  PSL-17
+  HL7 Version  Introduced                                                                     2.6

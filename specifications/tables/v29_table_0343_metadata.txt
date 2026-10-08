@@ -1,0 +1,8 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0343
+  Description                                                                              Table of codes that specify a military program for the handicapped in which a
+                                                                                           patient is enrolled.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  FM
+  where used                                                                               IN2-59
+  HL7 Version Introduced                                                                   2.3.1

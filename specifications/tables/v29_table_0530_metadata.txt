@@ -1,0 +1,8 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0530
+  Description                                                                               Table of codes used to specify the agency or department that assigned the
+                                                                                            identifier in component 1.
+  Type                                                                                      User
+  Steward                                                                                   InM
+  where used                                                                                CX.10, PPN.24, XCN.23
+  HL7 Version Introduced                                                                    2.5

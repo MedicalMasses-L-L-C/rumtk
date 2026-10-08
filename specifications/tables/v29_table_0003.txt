@@ -1,0 +1,560 @@
+                                                                                                   Table 0003Coded Content
+  Value                   Display Name                                                                                                                         Definition                                            Comment/                                  Status
+                                                                                                                                                                                                                     Usage Note
+  A01                     ADT/ACK - Admit/visit notification
+  A02                     ADT/ACK - Transfer a patient
+  A03                     ADT/ACK -  Discharge/end visit
+  A04                     ADT/ACK -  Register a patient
+  A05                     ADT/ACK -  Pre-admit a patient
+  A06                     ADT/ACK -  Change an outpatient to an inpatient
+  A07                     ADT/ACK -  Change an inpatient to an outpatient
+  A08                     ADT/ACK -  Update patient information
+  A09                     ADT/ACK -  Patient departing - tracking
+  A10                     ADT/ACK -  Patient arriving - tracking
+  A11                     ADT/ACK -  Cancel admit/visit notification
+  A12                     ADT/ACK -  Cancel transfer
+  A13                     ADT/ACK -  Cancel discharge/end visit
+  A14                     ADT/ACK -  Pending admit
+  A15                     ADT/ACK -  Pending transfer
+  A16                     ADT/ACK -  Pending discharge
+  A17                     ADT/ACK -  Swap patients
+  A18                     ADT/ACK -  Merge patient information                                                                                                                                                       Deprecated                                D
+  A19                     QRY/ADR -  Patient query                                                                                                                                                                   Deprecated                                D
+  A20                     ADT/ACK -  Bed status update
+  A21                     ADT/ACK -  Patient goes on a "leave of absence"
+  A22                     ADT/ACK -  Patient returns from a "leave of
+                          absence"
+  A23                     ADT/ACK -  Delete a patient record
+  A24                     ADT/ACK -  Link patient information
+  A25                     ADT/ACK -  Cancel  pending discharge
+  A26                     ADT/ACK -  Cancel  pending transfer
+  A27                     ADT/ACK -  Cancel  pending admit
+  A28                     ADT/ACK -  Add person information
+  A29                     ADT/ACK -  Delete person information
+  A30                     ADT/ACK -  Merge person information                                                                                                                                                        Deprecated                                D
+  A31                     ADT/ACK -  Update person information
+  A32                     ADT/ACK -  Cancel patient arriving - tracking
+  A33                     ADT/ACK -  Cancel patient departing - tracking
+  A34                     ADT/ACK -  Merge patient information - patient ID                                                                                                                                          Deprecated                                D
+                          only
+  A35                     ADT/ACK -  Merge patient information - account                                                                                                                                             Deprecated                                D
+                          number only
+  A36                     ADT/ACK -  Merge patient information - patient ID                                                                                                                                          Deprecated                                D
+                          and account number
+  A37                     ADT/ACK -  Unlink patient information
+  A38                   ADT/ACK - Cancel pre-admit
+  A39                   ADT/ACK - Merge person - patient ID                                                                                                                                          Deprecated                             D
+  A40                   ADT/ACK - Merge patient - patient identifier list
+  A41                   ADT/ACK - Merge account - patient account
+                        number
+  A42                   ADT/ACK - Merge visit - visit number
+  A43                   ADT/ACK - Move patient information - patient
+                        identifier list
+  A44                   ADT/ACK - Move account information - patient
+                        account number
+  A45                   ADT/ACK - Move visit information - visit number
+  A46                   ADT/ACK - Change patient ID                                                                                                                                                  Deprecated                             D
+  A47                   ADT/ACK - Change patient identifier list
+  A48                   ADT/ACK - Change alternate patient ID                                                                                                                                        Deprecated                             D
+  A49                   ADT/ACK - Change patient account number
+  A50                   ADT/ACK - Change visit number
+  A51                   ADT/ACK - Change alternate visit ID
+  A52                   ADT/ACK - Cancel leave of absence for a patient
+  A53                   ADT/ACK - Cancel patient returns from a leave of
+                        absence
+  A54                   ADT/ACK - Change attending doctor
+  A55                   ADT/ACK - Cancel change attending doctor
+  A60                   ADT/ACK - Update allergy information
+  A61                   ADT/ACK - Change consulting doctor
+  A62                   ADT/ACK - Cancel change consulting doctor
+  B01                   PMU/ACK - Add personnel record
+  B02                   PMU/ACK - Update personnel record
+  B03                   PMU/ACK - Delete personnel re cord
+  B04                   PMU/ACK - Active practicing person
+  B05                   PMU/ACK - Deactivate practicing person
+  B06                   PMU/ACK - Terminate practicing person
+  B07                   PMU/ACK - Grant Certificate/Permission
+  B08                   PMU/ACK - Revoke Certificate/Permission
+  C01                   CRM - Register a patient on a clinical trial
+  C02                   CRM - Cancel a patient registration on clinical trial
+                        (for clerical mistakes only)
+  C03                   CRM - Correct/update registration information
+  C04                   CRM - Patient has gone off a clinical trial
+  C05                   CRM - Patient enters phase of clinical trial
+  C06                   CRM - Cancel patient entering a phase (clerical
+                        mistake)
+  C07                   CRM - Correct/update phase information
+  C08                   CRM - Patient has gone off phase of clinical trial
+  C09                   CSU - Automated time intervals for reporting, like
+                        monthly
+  C10                   CSU - Patient completes the clinical trial
+  C11                   CSU - Patient completes a phase of the clinical trial
+  C12                   CSU - Update/correction of patient order/result
+                        information
+  CNQ                   Cancel Query
+  E01                   Submit HealthCare Services Invoice
+  E02                   Cancel HealthCare Services Invoice  Value                   Display Name                                                                                                                      Definition                                            Comment/                                  Status
+                                                                                                                                                                                                                  Usage Note
+  E03                     HealthCare Services Invoice Status
+  E04                     Re-Assess HealthCare Services Invoice Request
+  E10                     Edit/Adjudication Results
+  E12                     Request Additional Information
+  E13                     Additional Information Response
+  E15                     Payment/Remittance Advice
+  E20                     Submit Authorization Request
+  E21                     Cancel Authorization Request
+  E22                     Authorization Request Status
+  E24                     Authorization Response
+  E30                     Submit Health Document related to Authorization                                                                                                                                         reserved for
+                          Request                                                                                                                                                                                 future/not yet
+                                                                                                                                                                                                                  defined
+  E31                     Cancel Health Document related to Authorization                                                                                                                                         reserved for
+                          Request                                                                                                                                                                                 future/not yet
+                                                                                                                                                                                                                  defined
+  I01                     RQI/RPI - Request for insurance information
+  I02                     RQI/RPL - Request/receipt of patient selection
+                          display list
+  I03                     RQI/RPR - Request/receipt of patient selection list
+  I04                     RQD/ RPI - Request for patient demographic data
+  I05                     RQC/RCI - Request for patient clinical information                                                                                                                                      Deprecated                                D
+  I06                     RQC/RCL - Request/receipt of clinical data listing                                                                                                                                      Deprecated                                D
+  I07                     PIN/ACK - Unsolicited insura nce information
+  I08                     RQA/RPA - Request for treatment authorization
+                          information
+  I09                     RQA/RPA - Request for modification to an
+                          authorization
+  I10                     RQA/RPA - Request for resubmission of an
+                          authorization
+  I11                     RQA/RPA - Request for cancellation of an
+                          authorization
+  I12                     REF/ RRI - Patient referral
+  I13                     REF/ RRI - Modify patient referral
+  I14                     REF/ RRI - Cancel patient referral
+  I15                     REF/ RRI - Request patient referral status
+  I16                     Collaborative Care Referral
+  I17                     Modify Collaborative Care Referral                                                                                                                                                      Deprecated                                D
+  I18                     Cancel Collaborative Care Referral                                                                                                                                                      Deprecated                                D
+  I19                     Collaborative Care Query/Collaborative Care Query
+                          Update
+  I20                     Asynchronous Collaborative Care Update
+  I21                     Collaborative Care Message
+  I22                     Collaborative Care Fetch / Collaborative Care
+                          Information
+  J01                     QCN/ACK - Cancel  query/acknowledge message
+  J02                     QSX/ACK - Cancel subscription/acknowledge
+                          message
+  K11                     RSP - Segment pattern response in response to
+                          QBP^Q11
+  K13                     RTB - Tabular response in response to QBP^Q13
+  K15                     RDY - Display response in response to QBP^Q15
+  K21                   RSP - Get person demographics response
+  K22                   RSP - Find candidates response
+  K23                   RSP - Get corresponding identifiers response
+  K24                   RSP - Allocate identifiers response
+  K25                   RSP - Personnel Information by Segment Response
+  K31                   RSP -Dispense History Response
+  K32                   Find Candidates including Visit Information
+                        Response
+  K33                   Get Donor Record Candidates Response Message
+  K34                   Segment Pattern Response Message
+  M01                   MFN/MFK - Master file not otherwise specified                                                                                                                                  Deprecated                             D
+  M02                   MFN/MFK - Master file - staff practitioner
+  M03                   MFN/MFK - Master file - test/observation                                                                                                                                       Deprecated                             D
+  M04                   MFN/MFK - Master files charge description
+  M05                   MFN/MFK - Patient location master file
+  M06                   MFN/MFK - Clinical study with phases and
+                        schedules master file
+  M07                   MFN/MFK - Clinical study without phases but with
+                        schedules master file
+  M08                   MFN/MFK - Test/observation (numeric) master file
+  M09                   MFN/MFK - Test/observation (categorical) master
+                        file
+  M10                   MFN/MFK - Test /observation batteries master file
+  M11                   MFN/MFK - Test/ca lculated observations master
+                        file
+  M12                   MFN/MFK - Master file notification message
+  M13                   MFN/MFK - Master file notification - general
+  M14                   MFN/MFK - Master file notification - site defined
+  M15                   MFN/MFK - Inventory item master file notification
+  M16                   MFN/MFK - Master File Notification Inventory
+                        Item Enhanced
+  M17                   DRG Master File Message
+  M18                   MFN/MFK - Master file notification -
+                        Test/Observation (Payer)
+  N01                   NMQ/NM R - Application management query                                                                                                                                        Deprecated                             D
+                        message
+  N02                   NMD/ACK - Application management data message
+                        (unsolicited)
+  O01                   ORM - Order message (also RDE, RDS, RG V,                                                                                                                                      Deprecated                             D
+                        RAS)
+  O02                   ORR - Order response (also RRE, RRD, RRG,                                                                                                                                      Deprecated                             D
+                        RRA)
+  O03                   OMD - Diet order
+  O04                   ORD - Diet order acknowledgment
+  O05                   OMS - Stock requisition order
+  O06                   ORS - Stock requisition acknowledgment
+  O07                   OMN - Non-stock requisition order
+  O08                   ORN - Non-stock requisition acknowledgment
+  O09                   OMP - Pharmacy/treatment order
+  O10                   ORP - Pharmacy/treatment order acknowledgment
+  O11                   RDE - Pharmacy/treatment encoded order  Value                  Display Name                                                                                                                    Definition                                          Comment/                                 Status
+                                                                                                                                                                                                             Usage Note
+  O12                    RRE - Pharmacy/treatment encoded order
+                         acknowledgment
+  O13                    RDS - Pharmacy/treatment dispense
+  O14                    RRD - Pharmacy/treatment dispense
+                         acknowledgment
+  O15                    RGV - Pharmacy/treatment give
+  O16                    RRG - Pharmacy/treatment give acknowledgment
+  O17                    RAS - Pharmacy/treatment administration
+  O18                    RRA - Pharmacy/treatment administration
+                         acknowledgment
+  O19                    OMG - General clinical order
+  O20                    ORG/O RL - General clinical order response
+  O21                    OML - Laboratory order
+  O22                    ORL - General laboratory order response message to
+                         any OML
+  O23                    OMI - Imaging order
+  O24                    ORI - Imaging order response message to any OMI
+  O25                    RDE - Pharmacy/treatment refill authorization
+                         request
+  O26                    RRE - Pharmacy/Treatment Refill Authorization
+                         Acknowledgement
+  O27                    OMB - Blood product order
+  O28                    ORB - Blood product order acknowledgment
+  O29                    BPS - Blood product dispense status
+  O30                    BRP - Blood product dispense status
+                         acknowledgment
+  O31                    BTS - Blood product transfusion/disposition
+  O32                    BRT - Blood product transfusion/disposition
+                         acknowledgment
+  O33                    OML - Laboratory order for multiple orders related
+                         to a single specimen
+  O34                    ORL - Laboratory order response message to a
+                         multiple order related to single specimen OML
+  O35                    OML - Laboratory order for multiple orders related
+                         to a single container of a specimen
+  O36                    ORL - Laboratory order response message to a
+                         single container of a specimen OML
+  O37                    OPL - Population/Location-Based Laboratory Order
+                         Message
+  O38                    OPR - Population/Location-Based Laboratory Order
+                         Acknowledgment Message
+  O39                    Specimen shipment centric laboratory order
+  O40                    Specimen Shipment Centric Laboratory Order
+                         Acknowledgment Message
+  O41                    DBC - Create Donor Record Message
+  O42                    DBU - Update Donor Record Message
+  O43                    General Order Message with Document Payload
+                         Acknowledgement Message
+  O44                    Donor Registration - Minimal Message
+  O45                    Donor Eligibility Observations Message
+  O46                    Donor Eligiblity Message
+  O47                    Donor Request to Collect Message
+  O48                    Donation Procedure Message
+  O49                    Pharmacy/Treatment Dispense Request Message
+  O50                    Pharmacy/Treatment Encoded Order
+                         Acknowledgment
+  O51                    OSU – Order Status Update                                                                                                                                                                                                 N
+  O52                    OSU – Order Status Update Acknowledgement                                                                                                                                                                                 N
+  O53                    ORL - General Laboratory Order Acknowledgment                                                                                                                                                                             N
+                         Message (Patient Optional)
+  O54                    ORL - Laboratory Order Acknowledgment Message                                                                                                                                                                             N
+                         – Multiple Order Per Specimen (Patient Optional)
+  O55                    ORL - Laboratory Order Acknowledgment Message                                                                                                                                                                             N
+                         – Multiple Order Per Container of Specimen (Patient
+                         Optional)
+  O56                    ORL - Specimen Shipment Centric Laboratory                                                                                                                                                                                N
+                         Order Acknowledgment Message (Patient Optional)
+  O57                    OMQ- General Order Message with Document                                                                                                                                                                                  B
+                         Payload
+  O58                    ORX - General Order Message with Document                                                                                                                                                                                 N
+                         Payload Acknowledgement Message
+  O59                    OML - Laboratory order for additional work up                                                                                 Fulfillment order for                               An example is                           N
+                                                                                                                                                       work up on a                                        the IHE LCC
+                                                                                                                                                       previously                                          profile
+                                                                                                                                                       communicated                                        describes this
+                                                                                                                                                       result or submitted                                 message in the
+                                                                                                                                                       specimen                                            LAB-7
+                                                                                                                                                                                                           transaction
+  P01                    BAR/ACK - Add patient accounts
+  P02                    BAR/ACK - Purge patient accounts
+  P03                    DFT/ACK - Post detail financial transaction
+  P04                    QRY/D SP - Generate bill and A/R statements                                                                                                                                       Deprecated                              D
+  P05                    BAR/ACK - Update account
+  P06                    BAR/ACK - End account
+  P07                    PEX - Unsolicited initial individual product
+                         experience report
+  P08                    PEX - Unsolicited update individual product
+                         experience report
+  P09                    SUR - Summary product experience report                                                                                                                                           Deprecated                              D
+  P10                    BAR/ACK -Transmit Ambulatory Payment
+                         Classification(APC)
+  P11                    DFT/ACK - Post Detail Finan cial Transactions -
+                         New
+  P12                    BAR/ACK - Update Diagnosis/Procedure
+  PC1                    PPR - PC/ problem add
+  PC2                    PPR - PC/ problem update
+  PC3                    PPR - PC/ problem delete
+  PC4                    QRY - PC/ problem query                                                                                                                                                           Deprecated                              D
+  PC5                    PRR - PC/ problem response                                                                                                                                                        Deprecated                              D
+  PC6                    PGL - PC/ goal add
+  PC7                    PGL - PC/ goal update
+  PC8                    PGL - PC/ goal delete
+  PC9                    QRY - PC/ goal query                                                                                                                                                              Deprecated                              D
+  PCA                    PPV - PC/ goal response                                                                                                                                                           Deprecated                              D  Value                 Display Name                                                                                                             Definition                                        Comment/                              Status
+                                                                                                                                                                                                   Usage Note
+  PCB                   PPP - PC/ pathway (problem-oriented) add
+  PCC                   PPP - PC/ pathway (problem-oriented) update
+  PCD                   PPP - PC/ pathway (problem-oriented) delete
+  PCE                   QRY - PC/ pathway (problem-oriented) query                                                                                                                                 Deprecated                            D
+  PCF                   PTR - PC/ pathway (problem-oriented) query                                                                                                                                 Deprecated                            D
+                        response
+  PCG                   PPG - PC/ pathway (goal-oriented) add
+  PCH                   PPG - PC/ pathway (goal-oriented) update
+  PCJ                   PPG - PC/ pathway (goal-oriented) delete
+  PCK                   QRY - PC/ pathway (goal-oriented) query                                                                                                                                    Deprecated                            D
+  PCL                   PPT - PC/ pathway (goal-oriented) query response                                                                                                                           Deprecated                            D
+  Q01                   QRY/D SR - Query sent for immediate response                                                                                                                               Deprecated                            D
+  Q02                   QRY/QCK - Query sent for deferred response                                                                                                                                 Deprecated                            D
+  Q03                   DSR/A CK - Deferred response to a query                                                                                                                                    Deprecated                            D
+  Q05                   UDM/ACK - Unsolicited display update message
+  Q06                   OSQ/OSR - Query for order status                                                                                                                                           Deprecated                            D
+  Q11                   QBP - Query by parameter requesting an RSP
+                        segment pattern response
+  Q13                   QBP - Query by parameter requesting an  RTB -
+                        tabular response
+  Q15                   QBP - Query by parameter requesting an RDY
+                        display response
+  Q16                   QSB - Create subscription
+  Q17                   QVR - Query for previous events
+  Q21                   QBP - Get person demographics
+  Q22                   QBP - Find candidates
+  Q23                   QBP - Get corresponding identifiers
+  Q24                   QBP - Allocate identifiers
+  Q25                   QBP - Personnel Information by Segment Query
+  Q26                   ROR - Pharmacy/treatment order response                                                                                                                                    Deprecated                            D
+  Q27                   RAR - Pharmacy/treatment administration                                                                                                                                    Deprecated                            D
+                        information
+  Q28                   RDR - Pharmacy/treatment dispense information                                                                                                                              Deprecated                            D
+  Q29                   RER - Pharmacy/treatment encoded order                                                                                                                                     Deprecated                            D
+                        information
+  Q30                   RGR - Pharmacy/treatment dose information                                                                                                                                  Deprecated                            D
+  Q31                   QBP Query Dispense history
+  Q32                   Find Candidates including Visit Information
+  Q33                   QBP - Get Donor Record Candidates
+  Q34                   QBP - Get Donor Record
+  R01                   ORU/ACK - Unsolicited transmission of an
+                        observation message
+  R02                   QRY - Query for results of observation                                                                                                                                     Deprecated                            D
+  R04                   ORF - Response to query; transmission of requested                                                                                                                         Deprecated                            D
+                        observation
+  R21                   OUL - Unsolicited  laboratory observation                                                                                                                                  Deprecated                            D
+  R22                   OUL - Unsolicited Specimen Oriented Observation
+                        Message
+  R23                   OUL - Unsolicited Specimen Container Oriented
+                        Observation Message
+  R24                   OUL - Unsolicited Order Oriented Observation
+                        Message
+  R25                    OPU - Unsolicited Population/Location-Based
+                         Laboratory Observation Message
+  R26                    OSM - Unsolicited Specimen Shipment Manifest
+                         Message
+  R30                    ORU - Unsolicited Point-Of-Care Observation
+                         Message Without Existing Order - Place An Order
+  R31                    ORU - Unsolicited New Point-Of-Care Observation
+                         Message - Search For An Order
+  R32                    ORU - Unsolicited Pre-Ordered Point-Of-Care
+                         Observation
+  R33                    ORA - Observation Report Acknowledgement
+  R40                    ORU - Unsolicited Report Alarm
+  R41                    Observation Report Alert Acknowledgement
+  R42                    ORU – Unsolicited Device Event Observation                                                                                                                                                                               N
+                         Message
+  R43                    ORU – Unsolicited Patient-De vice Association                                                                                                                                                                            N
+                         Observation Message
+  ROR                    ROR - Pharmacy prescription order query response                                                                                                                                 Deprecated                              D
+  S01                    SRM/ SRR - Request new appointment booking
+  S02                    SRM/ SRR - Request appointment rescheduling
+  S03                    SRM/ SRR - Request appointment modification
+  S04                    SRM/ SRR - Request appointment cancellation
+  S05                    SRM/ SRR - Request appointment discontinuation
+  S06                    SRM/ SRR - Request appointment deletion
+  S07                    SRM/ SRR - Request addition of service/resource on
+                         appointment
+  S08                    SRM/ SRR - Request modification of
+                         service/resource on appointment
+  S09                    SRM/ SRR - Request cancellation of service/resource
+                         on appointment
+  S10                    SRM/ SRR - Request discontinuation of
+                         service/resource on appointment
+  S11                    SRM/ SRR - Request deletion of service/resource on
+                         appointment
+  S12                    SIU/ACK - Notification of new appointment
+                         booking
+  S13                    SIU/ACK - Notification of appointment
+                         rescheduling
+  S14                    SIU/ACK - Notification of appointment
+                         modification
+  S15                    SIU/ACK - Notification of appointment cancellation
+  S16                    SIU/ACK - Notification of appointment
+                         discontinuation
+  S17                    SIU/ACK - Notification of appointment deletion
+  S18                    SIU/ACK - Notification of addition of
+                         service/resource on appointment
+  S19                    SIU/ACK - Notification of modification of
+                         service/resource on appointment
+  S20                    SIU/ACK - Notification of cancellation of
+                         service/resource on appointment
+  S21                    SIU/ACK - Notification of discontinuation of
+                         service/resource on appointment  Value                     Display Name                                                                                                                                    Definition                                                Comment/                                      Status
+                                                                                                                                                                                                                                      Usage Note
+  S22                       SIU/ACK - Notification of deletion of
+                            service/resource on appointment
+  S23                       SIU/ACK - Notification of blocked schedule time
+                            slot(s)
+  S24                       SIU/ACK - Notification of opened ("unblocked")
+                            schedule time slot(s)
+  S25                       SQM/SQ R - Schedule query message and response                                                                                                                                                            Deprecated                                    D
+  S26                       SIU/ACK Notification that patient did not show up
+                            for schedule appointment
+  S27                       SIU/ACK - Broadcast Notification of Scheduled
+                            Appointments
+  S28                       SLR/SL S - Request new sterilization lot
+  S29                       SLR/SL S - Request Sterilization lot deletion
+  S30                       STI/STS - Request item
+  S31                       SDR/ SDS - Request anti-microbial device data
+  S32                       SMD/SM S - Request anti-microbial device cycle
+                            data
+  S33                       STC/A CK - Notification of sterilization
+                            configuration
+  S34                       SLN/ACK - Notification of sterilization lot
+  S35                       SLN/ACK - Notification of sterilization lot deletion
+  S36                       SDN/ACK - Notification of anti-microbial device
+                            data
+  S37                       SCN/A CK - Notification of anti-microbial device
+                            cycle data
+  S38                       Containers Prepared for Specimen Collection                                                                                                     Describes the event                                                                                     N
+                                                                                                                                                                            before specimen
+                                                                                                                                                                            collection, when
+                                                                                                                                                                            containers have
+                                                                                                                                                                            been prepared
+  S39                       Specimen Collection Successful                                                                                                                  Describes the event                                                                                     N
+                                                                                                                                                                            when specimen
+                                                                                                                                                                            collection was
+                                                                                                                                                                            successful
+  S40                       Specimen Collection Unsuccessful                                                                                                                Describes the event                                                                                     N
+                                                                                                                                                                            when specimen
+                                                                                                                                                                            collection was not
+                                                                                                                                                                            successful and
+                                                                                                                                                                            provides a means to
+                                                                                                                                                                            document the reason
+  S41                       Specimen Departed                                                                                                                               Describes the event                                                                                     N
+                                                                                                                                                                            when a specimen
+                                                                                                                                                                            has been moved
+                                                                                                                                                                            from a location
+  S42                       Specimen Arrived                                                                                                                                Describes the event                                                                                     N
+                                                                                                                                                                            when a specimen
+                                                                                                                                                                            has been moved to a
+                                                                                                                                                                            location
+  S43                       Specimen Accepted                                                                                                                               Describes the event                                                                                     N
+                                                                                                                                                                            when a specimen
+                                                                                                                                                                            has been accepted
+                                                                                                                                                                            on the receiver side
+                                                                                                                                                                                           of a specimen
+                                                                                                                                                                                           movement
+  S44                          Specimen Rejected                                                                                                                                           Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           has been rejected by
+                                                                                                                                                                                           the receiver side of
+                                                                                                                                                                                           a specimen
+                                                                                                                                                                                           movement
+  S45                          Specimen Re-identified                                                                                                                                      Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           has been assigned
+                                                                                                                                                                                           an identifier
+  S46                          Specimen De-identified                                                                                                                                      Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           identifier has been
+                                                                                                                                                                                           removed to
+                                                                                                                                                                                           anonymize it
+  S47                          Specimen Sent to Archive                                                                                                                                    Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           has been moved into
+                                                                                                                                                                                           storage
+  S48                          Specimen Retrieved from Archive                                                                                                                             Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           has been moved out
+                                                                                                                                                                                           of storage
+  S49                          Specimen Disposed of                                                                                                                                        Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           has been
+                                                                                                                                                                                           permanently
+                                                                                                                                                                                           disposed of
+  S50                          Specimen Procedure Step Successful , with Derived                                                                                                           Describes the event                                                                                               N
+                               Specimen(s)                                                                                                                                                 when one or more
+                                                                                                                                                                                           specimen(s) has(ve)
+                                                                                                                                                                                           been created from
+                                                                                                                                                                                           one or more
+                                                                                                                                                                                           specimen(s)
+  S51                          Specimen Procedure Step Successful, no Derived                                                                                                              Describes the event                                                                                               N
+                               Specimen(s)                                                                                                                                                 when a specimen
+                                                                                                                                                                                           has been
+                                                                                                                                                                                           successfully
+                                                                                                                                                                                           processed without
+                                                                                                                                                                                           producing any child
+                                                                                                                                                                                           specimen(s)
+  S52                          Specimen Procedure Step Unsuccessful                                                                                                                        Describes the event                                                                                               N
+                                                                                                                                                                                           when a specimen
+                                                                                                                                                                                           could not be
+                                                                                                                                                                                           successfully
+                                                                                                                                                                                           processed and
+                                                                                                                                                                                           provides a means to
+                                                                                                                                                                                           document the reason
+  T01                          MDM/ACK - Original document notification
+  T02                          MDM/ACK - Original document notification and
+                               content  Value                  Display Name                                                                                                                  Definition                                         Comment/                                Status
+                                                                                                                                                                                                          Usage Note
+  T03                    MDM/ACK - Document status change notification
+  T04                    MDM/ACK - Document status change notification
+                         and content
+  T05                    MDM/ACK - Document addendum notification
+  T06                    MDM/ACK - Document addendum notification and
+                         content
+  T07                    MDM/ACK - Document edit notification
+  T08                    MDM/ACK - Document edit notification and
+                         content
+  T09                    MDM/ACK - Document replacement notification
+  T10                    MDM/ACK - Document replacement notification
+                         and content
+  T11                    MDM/ACK - Document cancel notification
+  T12                    QRY/DOC - Document query                                                                                                                                                         Deprecated                              D
+  U01                    ESU/ACK - Automated equipment status update
+  U02                    ESR/A CK - Automated equipment status request
+  U03                    SSU/A CK - Specimen status update
+  U04                    SSR/ ACK - specimen status r equest
+  U05                    INU/ACK  - Automated equipment inventory update
+  U06                    INR/ACK - Automated equipment inventory request
+  U07                    EAC/A CK - Automated equipment command
+  U08                    EAR/A CK - Automated equipment response
+  U09                    EAN/ACK - Automated equipment notification
+  U10                    TCU/A CK - Automated equipment test code settings
+                         update
+  U11                    TCR/A CK - Automated equipment test code settings
+                         request
+  U12                    LSU/ACK - Automated equipment log/service
+                         update
+  U13                    LSR/A CK - Automated equipment log/service
+                         request
+  U14                    INR/ACK – Automated Equipment Inventory
+                         Request
+  V01                    VXQ - Query for vaccination record                                                                                                                                               Deprecated                              D
+  V02                    VXX - Response to vaccination query returning                                                                                                                                    Deprecated                              D
+                         multiple PID matches
+  V03                    VXR - Vaccination record response                                                                                                                                                Deprecated                              D
+  V04                    VXU - Unsolicited vaccination record update
+  Varies                 MFQ/MFR - Master files query (use event same as                                                                                                                                                                          D
+                         asking for e.g., M05 - location)
+  W01                    ORU - Waveform result, unsolicited transmission of                                                                                                                               Deprecated                              D
+                         requested information
+  W02                    QRF - Waveform result, response to query                                                                                                                                         Deprecated                              D

@@ -1,0 +1,6 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0278
+  Description                                                                             Table of codes used to describe an appointment status from the perspective of
+                                                                                          the entity assigned to fulfill the appointment.
+  Type                                                                                    User
+  HL7 Version  Introduced                                                                 2.3

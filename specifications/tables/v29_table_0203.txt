@@ -1,0 +1,659 @@
+                                                                                                                Table 0203Coded Content
+  Value                                    Display Name                                          Definition                                                                                                                Comment/ Usage Note                                                Status
+  AC                                       Accreditation/Certifi                                 Identifier that has been assigned by an                                                                                   In Ask at Order Entry                                              N
+                                           cation Identifier                                     accreditation or certification organization in                                                                            (AOE) questions this can
+                                                                                                 specific fields, indicating a recognized skill                                                                            be used to identify the ID
+                                                                                                                                                                                                                           with the assigning
+                                                                                                                                                                                                                           authority.  For instance, a
+                                                                                                                                                                                                                           credentialed sonographer
+                                                                                                                                                                                                                           whose identifier assigned
+                                                                                                                                                                                                                           by the credentialing body
+                                                                                                                                                                                                                           has been entered can be
+                                                                                                                                                                                                                           properly labeled.
+  ACSN                                     Accession ID                                          Accession Identifier
+  AIN                                      Animal                                                A numbering system for the official                                                                                       AIN is the official                                                N
+                                           Identification                                        identification of individual animals in the                                                                               acronym used by
+                                           Number (US                                            United States that provides a nationally                                                                                  USDA
+                                           Official)                                             unique identification number for each
+                                                                                                 animal. The first two numbers on a tag are
+                                                                                                 the numbers assigned to a specific State.
+  AM                                       American                                                                                                                                                                        Deprecated and
+                                           Express                                                                                                                                                                         replaced by BC in v
+                                                                                                                                                                                                                           2.5.
+  AMA                                      American                                              A physician identifier assigned by the
+                                           Medical                                               AMA.
+                                           Association
+                                           Number
+  AN                                       Account number                                        Account An identifier that is unique to an
+                                                                                                 account.
+  ANC                                      Account number                                        A more precise definition of an account                                                                                   Class: Financial
+                                           Creditor                                              number                                                                                                                    Sometimes two
+                                                                                                                                                                                                                           distinct account
+                                                                                                                                                                                                                           numbers must be
+                                                                                                                                                                                                                           transmitted in the
+                                                                                                                                                                                                                           same message, one as
+                                                                                                                                                                                                                           the creditor, the other
+                                                                                                                                                                                                                           as the debitor.
+                                                                                                                                                                                                                                           Kreditorenkontonumm
+                                                                                                                                                                                                                                           er
+  AND                                         Account number                                            A more precise definition of an account                                                                                            Class: Financial
+                                              debitor                                                   number                                                                                                                             Sometimes two
+                                                                                                                                                                                                                                           distinct account
+                                                                                                                                                                                                                                           numbers must be
+                                                                                                                                                                                                                                           transmitted in the
+                                                                                                                                                                                                                                           same message, one as
+                                                                                                                                                                                                                                           the creditor, the other
+                                                                                                                                                                                                                                           as the debitor.
+                                                                                                                                                                                                                                           Debitorenkontonumme
+                                                                                                                                                                                                                                           r
+  ANON                                        Anonymous                                                 An identifier for a living subject whose                                                                                           Justification: For
+                                              identifier                                                real identity is protected or suppressed                                                                                           public health reporting
+                                                                                                                                                                                                                                           purposes, anonymous
+                                                                                                                                                                                                                                           identifiers are
+                                                                                                                                                                                                                                           occasionally used for
+                                                                                                                                                                                                                                           protecting patient
+                                                                                                                                                                                                                                           identity in reporting
+                                                                                                                                                                                                                                           certain results. For
+                                                                                                                                                                                                                                           instance, a state health
+                                                                                                                                                                                                                                           department may
+                                                                                                                                                                                                                                           choose to use a
+                                                                                                                                                                                                                                           scheme for generating
+                                                                                                                                                                                                                                           an anonymous
+                                                                                                                                                                                                                                           identifier for reporting
+                                                                                                                                                                                                                                           a patient that has had a
+                                                                                                                                                                                                                                           positive human
+                                                                                                                                                                                                                                           immunodeficiency
+                                                                                                                                                                                                                                           virus antibody test.
+                                                                                                                                                                                                                                           Anonymous identifiers
+                                                                                                                                                                                                                                           can be used in PID 3
+                                                                                                                                                                                                                                           by replacing the
+                                                                                                                                                                                                                                           medical record number
+                                                                                                                                                                                                                                           or other non-
+                                                                                                                                                                                                                                           anonymous identifier.
+                                                                                                                                                                                                                                           The assigning
+                                                                                                                                                                                                                                           authority for an
+                                                                                                                                                                                                                                           anonymous identifier
+                                                                                                                                                                                                                                           would be the
+                                                                                                                                                                                                                                           state/local health
+                                                                                                                                                                                                                                           department.
+  ANT                                         Temporary                                                 Temporary version of an Account Number                                                                                             Class: Financial
+                                              Account Number                                                                                                                                                                               Use Case: An ancillary
+                                                                                                                                                                                                                                           system that does not
+                                                                                                                                                                                                                                           normally assign
+                                                                                                                                                                                                                                           account numbers is the
+                                                                                                                                                                                                                                           first time to register a
+                                                                                                                                                                                                                                           patient. This ancillary
+                                                                                                                                                                                                                                           system will generate a
+                                                                                                                                                                                                                                           temporary account
+                                                                                                                                                                                                                                           number that will only
+                                                                                                                                                                                                                                           be used until an
+                                                                                                                                                                                                                                           official account
+                                                                                                                                                                                                                                           number is assigned.  Value                                Display Name                                     Definition                                                                                                     Comment/ Usage Note                                           Status
+  APRN                                 Advanced                                         An identifier that is unique to an advanced
+                                       Practice                                         practice registered nurse within the
+                                       Registered Nurse                                 jurisdiction of a certifying board
+                                       number
+  ASID                                 Ancestor                                         A unique identifier for the ancestor                                                                           All child, grandchild,
+                                       Specimen ID                                      specimen.                                                                                                      etc. specimens of the
+                                                                                                                                                                                                       ancestor specimen
+                                                                                                                                                                                                       share the same
+                                                                                                                                                                                                       Ancestor Specimen
+                                                                                                                                                                                                       ID.
+  BA                                   Bank Account                                                                                                                                                    Class: Financial
+                                       Number
+  BC                                   Bank Card                                        An identifier that is unique to a person's                                                                     Class: Financial
+                                       Number                                           bank card                                                                                                      Replaces AM, DI, DS,
+                                                                                                                                                                                                       MS, and VS beginning
+                                                                                                                                                                                                       in v 2.5.
+  BCFN                                 Birth Certificate                                The identifier used within the                                                                                                                                               N
+                                       File Number                                      jurisdictional vital records office file
+                                                                                        system as an auxiliary means of accessing
+                                                                                        the record associated with the birth
+                                                                                        certificate.
+  BCT                                  Birth Certificate                                A number associated with a document
+                                                                                        identifying the event of a person's birth
+  BR                                   Birth registry                                   An identifier unique within the Assigning
+                                       number                                           Authority that is the official legal record of
+                                                                                        a person's birth.
+  BRN                                  Breed Registry
+                                       Number
+  BSN R                                Primary                                                                                                                                                         Betriebsstättennummer
+                                       physician office                                                                                                                                                - for use in the
+                                       number                                                                                                                                                          German realm.
+  CAAI                                 Consumer                                         An identifier for the consumer (e.g.,                                                                          This may be the same                                          N
+                                       Application                                      patient, caregiver) for an application such                                                                    as a username, but
+                                       Account                                          as a portal or App.                                                                                            frequently is different.
+                                       Identifier
+  CC                                   Cost Center                                                                                                                                                     Class: Financial
+                                       number                                                                                                                                                          Use Case : needed
+                                                                                                                                                                                                       especially for
+                                                                                                                                                                                                       transmitting
+                                                                                                                                                                                                       information about
+                                                                                                                                                                                                       invoices.
+  CONM                                 Change of Name                                   A number associated with a document
+                                       Document                                         identifying a person's legal change of
+                                                                                        name.
+  CY                                   County number
+  CZ                                   Citizenship Card                                 A number assigned by a                                       person's country
+                                                                                        of residence to identify a person's
+                                                                                        citizenship.
+  DC                                   Death Certificate                                The identifier assigned to a death
+                                       ID                                               certificate, and printed on the death
+                                                                                        certificate when issued by a jurisdictional
+                                                                                        vital records office
+  DCFN                                 Death Certificate                                The identifier used within the
+                                       File Number                                      jurisdictional vital records office file
+                                                                                                    system as an auxiliary means of accessing
+                                                                                                    the record associated with the death
+                                                                                                    certificate.
+  DDS                                       Dentist license                                         An identifier that is unique to a dentist
+                                            number                                                  within the jurisdiction of the licensing
+                                                                                                    board
+  DEA                                       Drug                                                    An identifier for an individual or                                                                                           Use case: This is a
+                                            Enforcement                                             organization relative to controlled                                                                                          registration number
+                                            Administration                                          substance regulation and transactions.                                                                                       that identifies an
+                                            registration                                                                                                                                                                         individual or
+                                            number                                                                                                                                                                               organization relative to
+                                                                                                                                                                                                                                 controlled substance
+                                                                                                                                                                                                                                 regulation and
+                                                                                                                                                                                                                                 transactions.
+                                                                                                                                                                                                                                 A DEA number has a
+                                                                                                                                                                                                                                 very precise and
+                                                                                                                                                                                                                                 widely accepted
+                                                                                                                                                                                                                                 meaning within the
+                                                                                                                                                                                                                                 United States.
+                                                                                                                                                                                                                                 Surprisingly, the US
+                                                                                                                                                                                                                                 Drug Enforcement
+                                                                                                                                                                                                                                 Administration does
+                                                                                                                                                                                                                                 not solely assign DEA
+                                                                                                                                                                                                                                 numbers in the United
+                                                                                                                                                                                                                                 States. Hospitals have
+                                                                                                                                                                                                                                 the authority to issue
+                                                                                                                                                                                                                                 DEA numbers to their
+                                                                                                                                                                                                                                 medical residents.
+                                                                                                                                                                                                                                 These DEA numbers
+                                                                                                                                                                                                                                 are based upon the
+                                                                                                                                                                                                                                 hospital’s DEA
+                                                                                                                                                                                                                                 number, but the
+                                                                                                                                                                                                                                 authority rests with the
+                                                                                                                                                                                                                                 hospital on the
+                                                                                                                                                                                                                                 assignment to the
+                                                                                                                                                                                                                                 residents. Thus, DEA
+                                                                                                                                                                                                                                 as an Identifier Type is
+                                                                                                                                                                                                                                 necessary in addition
+                                                                                                                                                                                                                                 to DEA as an
+                                                                                                                                                                                                                                 Assigning Authority.
+  DFN                                       Drug Furnishing                                         An identifier issued to a health care                                                                                        Use Case : A nurse
+                                            or prescriptive                                         provider authorizing the person to write                                                                                     practitioner has
+                                            authority Number                                        drug orders                                                                                                                  authorization to
+                                                                                                                                                                                                                                 furnish or prescribe
+                                                                                                                                                                                                                                 pharmaceutical
+                                                                                                                                                                                                                                 substances; this
+                                                                                                                                                                                                                                 identifier is in
+                                                                                                                                                                                                                                 component 1.
+  DI                                        Diner's Club card                                                                                                                                                                    Deprecated and
+                                                                                                                                                                                                                                 replaced by BC in v
+                                                                                                                                                                                                                                 2.5.
+  DL                                        Driver's license
+                                            number
+  DN                                        Doctor number  Value                                Display Name                                      Definition                                                                                                       Comment/ Usage Note                                           Status
+  DO                                   Osteopathic                                       An identifier that is unique to an osteopath
+                                       License number                                    within the jurisdiction of a licensing board.
+  DP                                   Diplomatic                                        A number assigned to a diplomatic
+                                       Passport                                          passport.
+  DPM                                  Podiatrist license                                An identifier that is unique to a podiatrist
+                                       number                                            within the jurisdiction of the licensing
+                                                                                         board.
+  DR                                   Donor
+                                       Registration
+                                       Number
+  DS                                   Discover Card                                                                                                                                                      Deprecated and
+                                                                                                                                                                                                          replaced by BC in v
+                                                                                                                                                                                                          2.5.
+  DSG                                  Diagnostic Study                                  Unique Identifier that groups several                                                                            Example: Radiology                                            N
+                                       Group                                             orders that are to be performed together.                                                                        studies
+  EI                                   Employee                                          A number that uniquely identifies an
+                                       number                                            employee to an employer.
+  EN                                   Employer number
+  ESN                                  Staff Enterprise                                  An identifier that is unique to a staff
+                                       Number                                            member within an enterprise (as identified
+                                                                                         by the Assigning Authority).
+  FDR                                  Fetal Death                                       The identifier assigned to a fetal death                                                                                                                                       N
+                                       Report ID                                         report, and printed on the fetal death report
+                                                                                         when issued by a jurisdictional vital
+                                                                                         records office
+  FDRF N                               Fetal Death                                       The identifier used within the                                                                                                                                                 N
+                                       Report File                                       jurisdictional vital records office file
+                                       Number                                            system as an auxiliary means of accessing
+                                                                                         the record associated with the fetal death
+                                                                                         report certificate.
+  FGN                                  Filler Group                                      Unique identifier assigned to a group of                                                                         This is analogous to                                          N
+                                       Number                                            orders by the filler application.                                                                                the Placer Group
+                                                                                                                                                                                                          Number ORC-4,
+                                                                                                                                                                                                          except that it is
+                                                                                                                                                                                                          assigned by the filler.
+  FI                                   Facility ID
+  FILL                                 Filler Identifier                                 An identifier for a request where the
+                                                                                         identifier is issued by the person, or
+                                                                                         service, that produces the observations or
+                                                                                         fulfills the request.
+  GI                                   Guarantor                                                                                                                                                          Class: Financial
+                                       internal identifier
+  GIN                                  Animal Group                                      Identifier that can be used to                                                                                   GIN is the official                                           N
+                                       Identifier (US                                    unambiguously describe a specific group                                                                          acronym used by
+                                       Official)                                         of animals.                                                                                                      USDA
+  GL                                   General ledger                                                                                                                                                     Class: Financial
+                                       number
+  GN                                   Guarantor                                                                                                                                                          Class: Financial
+                                       external
+                                       identifier
+  HC                                   Health Card
+                                       Number
+  IND                                    Indigenous/Abori                                    A number assigned to a member of an
+                                         ginal                                               indigenous or aboriginal group outside of
+                                                                                             Canada.
+  JHN                                    Jurisdictional                                                                                                                                                            Class: Insurance
+                                         health number                                                                                                                                                             2 uses: a) UK
+                                                                                                                                                                                                                   jurisdictional CHI
+                                                                                                                                                                                                                   number; b) Canadian
+                                                                                                                                                                                                                   provincial health  card
+                                                                                                                                                                                                                   number:
+  LACSN                                  Laboratory                                          A laboratory accession id is used in the                                                                              The concept of
+                                         Accession ID                                        laboratory domain.                                                                                                    accession is used in
+                                                                                                                                                                                                                   other domains such as
+                                                                                                                                                                                                                   radiology, so the
+                                                                                                                                                                                                                   LACSN i s used to
+                                                                                                                                                                                                                   distinguish a lab
+                                                                                                                                                                                                                   accession id from an
+                                                                                                                                                                                                                   radiology accession id
+  LANR                                   Lifelong                                                                                                                                                                  Lebenslange
+                                         physician number                                                                                                                                                          Arztnummer - for use
+                                                                                                                                                                                                                   in German realm.
+  LI                                     Labor and
+                                         industries number
+  LN                                     License number
+  LR                                     Local Registry ID
+  MA                                     Patient Medicaid                                                                                                                                                          Class: Insurance
+                                         number
+  MB                                     Member Number                                       An identifier for the insured of an                                                                                   Use Case : Person is
+                                                                                             insurance policy (this insured always has a                                                                           covered by an
+                                                                                             subscriber), usually assigned by the                                                                                  insurance policy. This
+                                                                                             insurance carrier.                                                                                                    person may or may not
+                                                                                                                                                                                                                   be the subscriber of
+                                                                                                                                                                                                                   the policy.
+  MC                                     Patient's                                                                                                                                                                 Class: Insurance
+                                         Medicare number
+  MCD                                    Practitioner                                                                                                                                                              Class: Insurance
+                                         Medicaid number
+  MCN                                    Microchip
+                                         Number
+  MCR                                    Practitioner                                                                                                                                                              Class: Insurance
+                                         Medicare number
+  MCT                                    Marriage                                            A number associated with a document
+                                         Certificate                                         identifying the event of a person's
+                                                                                             marriage.
+  MD                                     Medical License                                     An identifier that is unique to a medical                                                                             Use Case : These
+                                         number                                              doctor within the jurisdiction of a licensing                                                                         license numbers are
+                                                                                             board.                                                                                                                sometimes used as
+                                                                                                                                                                                                                   identifiers. In some
+                                                                                                                                                                                                                   states, the same
+                                                                                                                                                                                                                   authority issues all
+                                                                                                                                                                                                                   three identifiers, e.g.,
+                                                                                                                                                                                                                   medical, osteopathic,
+                                                                                                                                                                                                                   and physician assistant
+                                                                                                                                                                                                                   licenses all issued by
+                                                                                                                                                                                                                   one state medical  Value                                     Display Name                                            Definition                                                                                                                   Comment/ Usage Note                                                   Status
+                                                                                                                                                                                                                                 board. For this case,
+                                                                                                                                                                                                                                 the CX data type
+                                                                                                                                                                                                                                 requires distinct
+                                                                                                                                                                                                                                 identifier types to
+                                                                                                                                                                                                                                 accurately interpret
+                                                                                                                                                                                                                                 component 1 .
+                                                                                                                                                                                                                                 Additionally, the
+                                                                                                                                                                                                                                 distinction among
+                                                                                                                                                                                                                                 these license types is
+                                                                                                                                                                                                                                 critical in most health
+                                                                                                                                                                                                                                 care settings (this is
+                                                                                                                                                                                                                                 not to convey full
+                                                                                                                                                                                                                                 licensing information,
+                                                                                                                                                                                                                                 which requires a
+                                                                                                                                                                                                                                 segment to support all
+                                                                                                                                                                                                                                 related attributes).
+  MI                                        Military ID                                             A number assigned to an individual who
+                                            number                                                  has had military duty, but is not currently
+                                                                                                    on active duty. The number is assigned by
+                                                                                                    the DOD or Veterans' Affairs (VA).
+  MR                                        Medical record                                          An identifier that is unique to a patient
+                                            number                                                  within a set of medical records, not
+                                                                                                    necessarily unique within an application.
+  MRT                                       Temporary                                               Temporary version of a Medical Record                                                                                        Use Case: An ancillary
+                                            Medical Record                                          Number                                                                                                                       system that does not
+                                            Number                                                                                                                                                                               normally assign
+                                                                                                                                                                                                                                 medical record
+                                                                                                                                                                                                                                 numbers is the first
+                                                                                                                                                                                                                                 time to register a
+                                                                                                                                                                                                                                 patient. This ancillary
+                                                                                                                                                                                                                                 system will generate a
+                                                                                                                                                                                                                                 temporary medical
+                                                                                                                                                                                                                                 record number that
+                                                                                                                                                                                                                                 will only be used until
+                                                                                                                                                                                                                                 an official medical
+                                                                                                                                                                                                                                 record number is
+                                                                                                                                                                                                                                 assigned.
+  MS                                        MasterCard                                                                                                                                                                           Deprecated and
+                                                                                                                                                                                                                                 replaced by BC in v
+                                                                                                                                                                                                                                 2.5.
+  NBSN R                                    Secondary                                                                                                                                                                            Nebenbetriebsstättenn
+                                            physician office                                                                                                                                                                     ummer - for use in the
+                                            number                                                                                                                                                                               German realm.
+  NCT                                       Naturalization                                          A number associated with a document
+                                            Certificate                                             identifying a person's retention of
+                                                                                                    citizenship in a particular country.
+  NE                                        National                                                                                                                                                                             In the US, the
+                                            employer                                                                                                                                                                             Assigning Authority
+                                            identifier                                                                                                                                                                           for this value is
+                                                                                                                                                                                                                                 typically CMS, but it
+                                                                                                                                                                                                                                 may be used by all
+                                                                                                                                                                                                                                 providers and
+                                                                                                                                                                                                                                 insurance companies
+                                                                                                                                                                                                                                                in HIPAA related
+                                                                                                                                                                                                                                                transactions.
+  NH                                           National Health                                                                                                                                                                                  Class: Insurance
+                                               Plan Identifier                                                                                                                                                                                  Used for the UK NHS
+                                                                                                                                                                                                                                                national identifier.
+  NI                                           National unique                                                                                                                                                                                  Class: Insurance
+                                               individual                                                                                                                                                                                       In the US, the
+                                               identifier                                                                                                                                                                                       Assigning Authority
+                                                                                                                                                                                                                                                for this value is
+                                                                                                                                                                                                                                                typically CMS, but it
+                                                                                                                                                                                                                                                may be used by all
+                                                                                                                                                                                                                                                providers and
+                                                                                                                                                                                                                                                insurance companies
+                                                                                                                                                                                                                                                in HIPAA related
+                                                                                                                                                                                                                                                transactions.
+  NII                                          National                                                                                                                                                                                         Class: Insurance
+                                               Insurance                                                                                                                                                                                        In Germany a national
+                                               Organization                                                                                                                                                                                     identifier for an
+                                               Identifier                                                                                                                                                                                       insurance company. It
+                                                                                                                                                                                                                                                is printed on the
+                                                                                                                                                                                                                                                insurance card (health
+                                                                                                                                                                                                                                                card). It is not to be
+                                                                                                                                                                                                                                                confused with the
+                                                                                                                                                                                                                                                health  card number
+                                                                                                                                                                                                                                                itself.
+                                                                                                                                                                                                                                                Krankenkassen-ID der
+                                                                                                                                                                                                                                                KV-Karte
+  NIIP                                         National                                                                                                                                                                                         Class: Insurance
+                                               Insurance Payor                                                                                                                                                                                  In Germany the
+                                               Identifier (Payor)                                                                                                                                                                               insurance identifier
+                                                                                                                                                                                                                                                addressed as the payor.
+                                                                                                                                                                                                                                                Krankenkassen-ID des
+                                                                                                                                                                                                                                                Rechnungsempfängers
+                                                                                                                                                                                                                                                Use case: a
+                                                                                                                                                                                                                                                subdivision issues the
+                                                                                                                                                                                                                                                card with their
+                                                                                                                                                                                                                                                identifier, but the main
+                                                                                                                                                                                                                                                division is going to
+                                                                                                                                                                                                                                                pay the invoices.
+  NNxxx                                        National Person
+                                               Identifier where
+                                               the xxx is the ISO
+                                               table 3166 3-
+                                               character
+                                               (alphabetic)
+                                               country code
+  NP                                           Nurse practitioner                                         An identifier that is unique to a nurse
+                                               number                                                     practitioner within the jurisdiction of a
+                                                                                                          certifying board.
+  NPI                                          National provider                                                                                                                                                                                Class: Insurance
+                                               identifier                                                                                                                                                                                       In the US, the
+                                                                                                                                                                                                                                                Assigning Authority
+                                                                                                                                                                                                                                                for this value is
+                                                                                                                                                                                                                                                typically CMS, but it  Value                                Display Name                                      Definition                                                                                                      Comment/ Usage Note                                           Status
+                                                                                                                                                                                                         may be used by all
+                                                                                                                                                                                                         providers and
+                                                                                                                                                                                                         insurance companies
+                                                                                                                                                                                                         in HIPAA related
+                                                                                                                                                                                                         transactions.
+  OBI                                  Observation                                       Unique and persistent identifier for an                                                                         For example in the                                            N
+                                       Instance                                          observation instance                                                                                            IHE-LCC Profile this
+                                       Identifier                                                                                                                                                        is used to identify the
+                                                                                                                                                                                                         OBX-21 of the result
+                                                                                                                                                                                                         for which a
+                                                                                                                                                                                                         clarification is
+                                                                                                                                                                                                         requested using an
+                                                                                                                                                                                                         OML^O59_OML_O5
+                                                                                                                                                                                                         9 message structure
+  OD                                   Optometrist                                       A number that is unique to an individual
+                                       license number                                    optometrist within the jurisdiction of the
+                                                                                         licensing board.
+  PA                                   Physician                                         An identifier that is unique to a physician
+                                       Assistant number                                  assistant within the jurisdiction of a
+                                                                                         licensing board
+  PC                                   Parole Card                                       A number identifying a person on parole.
+  PCN                                  Penitentiary/corre                                A number assigned to individual who is
+                                       ctional institution                               incarcerated.
+                                       Number
+  PE                                   Living Subject                                    An identifier that is unique to a living
+                                       Enterprise                                        subject within an enterprise (as identified
+                                       Number                                            by the Assigning Authority).
+  PEN                                  Pension Number
+  PGN                                  Placer Group                                      Unique identifier assigned to a group of                                                                        This is analogous to                                          N
+                                       Number                                            orders by the placer application.                                                                               the Placer Group
+                                                                                                                                                                                                         Number ORC-4.
+  PHC                                  Public Health                                     Identifier assigned to a person during a                                                                        For example every                                             N
+                                       Case Identifier                                   case investigation as part of a public health                                                                   person affected by the
+                                                                                         event                                                                                                           Norovirus outbreak on
+                                                                                                                                                                                                         a cruise ship will be
+                                                                                                                                                                                                         assigned a case ID for
+                                                                                                                                                                                                         investigation and
+                                                                                                                                                                                                         follow up
+  PHE                                  Public Health                                     Identifier assigned to an event of interest                                                                     For example an                                                N
+                                       Event Identifier                                  to  public health                                                                                               outbreak of Norovirus
+                                                                                                                                                                                                         on a cruise ship –                               this
+                                                                                                                                                                                                         is assigned by a public
+                                                                                                                                                                                                         health jurisdiction at
+                                                                                                                                                                                                         the local, state or
+                                                                                                                                                                                                         federal level
+  PHO                                  Public Health                                     An identifier for a person working at a                                                                         May need to identify                                          N
+                                       Official ID                                       public health agency (PHA),  assigned or                                                                        contact in a PHA that
+                                                                                         issued by the agency                                                                                            approved a test request
+                                                                                                                                                                                                         or is in charge of an
+                                                                                                                                                                                                         investigation.
+  PI                                   Patient internal                                  A number that is unique to a patient within
+                                       identifier                                        an Assigning Authority.
+  PIN                                     Premises                                              Identifier that uniquely identifies a                                                                                   The owner of the                                                   N
+                                          Identifier Number                                     geographic location in the US.                                                                                          premises, or a person
+                                          (US Official)                                                                                                                                                                 designated by the
+                                                                                                                                                                                                                        owner of the premises,
+                                                                                                                                                                                                                        can register his/her
+                                                                                                                                                                                                                        location. A premises
+                                                                                                                                                                                                                        identification number,
+                                                                                                                                                                                                                        or PIN, is then
+                                                                                                                                                                                                                        permanently assigned
+                                                                                                                                                                                                                        to that location
+                                                                                                                                                                                                                        associating it with the
+                                                                                                                                                                                                                        mailing address. If
+                                                                                                                                                                                                                        there is no mailing
+                                                                                                                                                                                                                        address at the
+                                                                                                                                                                                                                        property, geographic
+                                                                                                                                                                                                                        coordinates—latitude
+                                                                                                                                                                                                                        and longitude—can be
+                                                                                                                                                                                                                        used instead to
+                                                                                                                                                                                                                        describe the location.
+                                                                                                                                                                                                                        A premises
+                                                                                                                                                                                                                        identification number
+                                                                                                                                                                                                                        (PIN) is a unique, 7-
+                                                                                                                                                                                                                        digit code that
+                                                                                                                                                                                                                        includes both letters
+                                                                                                                                                                                                                        and numbers.
+                                                                                                                                                                                                                        Example: A123R69
+  PLAC                                    Placer Identifier                                     An identifier for a request where the
+                                                                                                identifier is issued by the person or service
+                                                                                                making the request.
+  PN                                      Person number                                         A number that is unique to a living subject
+                                                                                                within an Assigning Authority.
+  PNT                                     Temporary                                             Temporary version of a Living Subject
+                                          Living Subject                                        Number.
+                                          Number
+  PPIN                                    Medicare/CMS                                                                                                                                                                  Class:  Insurance
+                                          Performing
+                                          Provider                                                                                                                                                                      Usage Note: Class:
+                                          Identification                                                                                                                                                                Insurance
+                                          Number
+  PPN                                     Passport number                                       A unique number assigned to the                                                                                         In the US this number
+                                                                                                document affirming that a person is a                                                                                   is issued only by the
+                                                                                                citizen of the country.                                                                                                 State Department.
+  PRC                                     Permanent
+                                          Resident Card
+                                          Number
+  PRN                                     Provider number                                       A number that is unique to an individual                                                                                Use case: This allows
+                                                                                                provider, a provider group or an                                                                                        PRN to represent
+                                                                                                organization within an Assigning                                                                                        either an individual (a
+                                                                                                Authority.                                                                                                              nurse) or a
+                                                                                                                                                                                                                        group/organization
+                                                                                                                                                                                                                        (orthopedic surgery
+                                                                                                                                                                                                                        team).
+  PT                                      Patient external
+                                          identifier  Value                                    Display Name                                           Definition                                                                                                                  Comment/ Usage Note                                                  Status
+  QA                                       QA number
+  RI                                       Resource                                               A generalized resource identifier.                                                                                          Use Case : An
+                                           identifier                                                                                                                                                                         identifier type is
+                                                                                                                                                                                                                              needed to
+                                                                                                                                                                                                                              accommodate what are
+                                                                                                                                                                                                                              commonly known as
+                                                                                                                                                                                                                              resources. The
+                                                                                                                                                                                                                              resources can include
+                                                                                                                                                                                                                              human (e.g. a
+                                                                                                                                                                                                                              respiratory therapist),
+                                                                                                                                                                                                                              non-                                                           human (e.g., a
+                                                                                                                                                                                                                              companion animal),
+                                                                                                                                                                                                                              inanimate object (e.g.,
+                                                                                                                                                                                                                              an exam room),
+                                                                                                                                                                                                                              organization (e.g.,
+                                                                                                                                                                                                                              diabetic education
+                                                                                                                                                                                                                              class) or any other
+                                                                                                                                                                                                                              physical or logical
+                                                                                                                                                                                                                              entity.
+  RN                                       Registered Nurse                                       An identifier that is unique to a registered
+                                           Number                                                 nurse within the jurisdiction of the
+                                                                                                  licensing board.
+  RPH                                      Pharmacist                                             An identifier that is unique to a pharmacist
+                                           license number                                         within the jurisdiction of the licensing
+                                                                                                  board.
+  RR                                       Railroad                                               An identifier for an individual enrolled
+                                           Retirement                                             with the Railroad Retirement
+                                           number                                                 Administration.  Analogous to, but distinct
+                                                                                                  from, a Social Security Number
+  RRI                                      Regional registry
+                                           ID
+  RRP                                      Railroad                                                                                                                                                                           Class:  Insurance
+                                           Retirement
+                                           Provider
+  SAMN                                     SAMN#                                                  The accession number for the BioSample                                                                                      This accession is a                                                  N
+                                           accession                                              data repository at the National Center for                                                                                  permanent record
+                                           Number                                                 Biotechnology Information  (NCBI)                                                                                           locator for the
+                                                                                                                                                                                                                              BioSample record
+                                                                                                                                                                                                                              which contains
+                                                                                                                                                                                                                              metadata about the
+                                                                                                                                                                                                                              biological sample.
+  SB                                       Social                                                 An identifier issued by a governmental
+                                           Beneficiary                                            organization to a person to identify the
+                                           Identifier                                             person should they apply for or receive
+                                                                                                  social services and/or benefits
+  SID                                      Specimen ID                                            Identifier for a specimen.                                                                                                  Used when it is not
+                                                                                                                                                                                                                              known if the specimen
+                                                                                                                                                                                                                              ID is a unique
+                                                                                                                                                                                                                              specimen ID (USID)
+                                                                                                                                                                                                                              or an ancestor ID
+                                                                                                                                                                                                                              (ASID).
+  SL                                       State license
+  SN                                 Subscriber                                    An identifier for a subscriber of an                                                                     Class: Insurance
+                                     Number                                        insurance policy which is unique for, and                                                                Use Case : A person is
+                                                                                   usually assigned by, the insurance carrier.                                                              the subscriber of an
+                                                                                                                                                                                            insurance policy. The
+                                                                                                                                                                                            person’s family may
+                                                                                                                                                                                            be plan members, but
+                                                                                                                                                                                            are not the subscriber.
+  SNBS N                             State assigned                                The identifier on a Newborn Screening                                                                    For use either with                                       N
+                                     NDBS card                                     Dried Bloodspot (NDBS) card that is                                                                      OBX-5 as CX
+                                     Identifier                                    assigned by the state which provided the                                                                 datatype, where OBX-
+                                                                                   sample collection cards and to whom this                                                                 3 uses LOINC 57716-
+                                                                                   information must be reported                                                                             3^State printed on
+                                                                                                                                                                                            filter paper card
+                                                                                                                                                                                            [Identifier] in NBS
+                                                                                                                                                                                            card^LN, or in SPM-
+                                                                                                                                                                                            31
+  SNO                                Serial Number                                 An identifier affixed to an item by the
+                                                                                   manufacturer when it is first made, where
+                                                                                   each item has a different identifier.
+  SP                                 Study Permit                                  A number associated with a permit
+                                                                                   identifying a person who is a resident of a
+                                                                                   jurisdiction for the purpose of education.
+  SR                                 State registry ID
+  SRX                                SRA Acce ssion                                The accession number generated by the                                                                    This provides both the                                    N
+                                     number                                        Sequence Read Archive (SRA) at the                                                                       sequence data and
+                                                                                   National Center for Biotechnology                                                                        metadata on how the
+                                                                                   Information (NCBI) when sequence data                                                                    sample was
+                                                                                   are uploaded to NCBI.                                                                                    sequenced. – This
+                                                                                                                                                                                            accession is a
+                                                                                                                                                                                            permanent record
+                                                                                                                                                                                            locator for the
+                                                                                                                                                                                            submitted un-
+                                                                                                                                                                                            assembled sequence
+                                                                                                                                                                                            data.
+  SS                                 Social Security
+                                     number
+  STN                                Shipment                                      Identifier assigned to a package being                                                                   For example the Fed                                       N
+                                     Tracking Number                               shipped                                                                                                  Ex / UPS / DHS /
+                                                                                                                                                                                            USPS tracking number
+  TAX                                Tax ID number
+  TN                                 Treaty Number/                                A number assigned to a member of an                                                                      Use Case : First
+                                     (Canada)                                      indigenous group in Canada.                                                                              Nation.
+  TPR                                Temporary                                     A number associated with a document
+                                     Permanent                                     identifying a person's temporary
+                                     Resident                                      permanent resident status.
+                                     (Canada)
+  TRL                                Training License                              The license number used during training.                                                                                                                           N
+                                     Number
+  U                                  Unspecified
+                                     identifier
+  UDI                                Universal Device                              An identifier assigned to a device using
+                                     Identifier                                    the Unique Device Identification
+                                                                                   framework as defined by IMDRF
+                                                                                   (http://imdrf.org).  Value                                 Display Name                                        Definition                                                                                                         Comment/ Usage Note                                             Status
+  UPIN                                  Medicare/CMS                                        An identifier for a provider within the                                                                            Class: Insurance
+                                        (formerly                                           CMS/Medicare program.  A globally
+                                        HCFA) 's                                            unique identifier for the provider in the
+                                        Universal                                           Medicare program.
+                                        Physician
+                                        Identification
+                                        numbers
+  USID                                  Unique Specimen                                     A unique identifier for a specimen.
+                                        ID
+  VN                                    Visit number
+  VP                                    Visitor Permit                                      A number associated with a document
+                                                                                            identifying a person as a visitor of a
+                                                                                            jurisdiction or country.
+  VS                                    VISA                                                                                                                                                                   Deprecated and
+                                                                                                                                                                                                               replaced by BC in v
+                                                                                                                                                                                                               2.5.
+  WC                                    WIC identifier
+  WCN                                   Workers' Comp
+                                        Number
+  WP                                    Work Permit                                         A number associated with a permit for a
+                                                                                            person who is granted permission to work
+                                                                                            in a country for a specified time period.
+  XV                                    Health Plan                                         National unique health plan identifier                                                                             Also referred to as                                             N
+                                        Identifier                                          required by the US Department of Health                                                                            HPID (Health Plan
+                                                                                            and Human Services, Centers for Medicare                                                                           Identifier).
+                                                                                            and Medicaid Services (CMS) in the US
+                                                                                            Realm.                                                                                                             Usage Note: The code
+                                                                                                                                                                                                               value ‘XV’ is used in
+                                                                                                                                                                                                               CMS mandated Health
+                                                                                                                                                                                                               Insurance Portability
+                                                                                                                                                                                                               and Accountability
+                                                                                                                                                                                                               Act (HIPAA)
+                                                                                                                                                                                                               transactions.
+  XX                                    Organization
+                                        identifier

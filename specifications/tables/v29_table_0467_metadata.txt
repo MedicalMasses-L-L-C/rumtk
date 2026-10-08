@@ -1,0 +1,9 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0467
+  Description                                                                                         Table of codes that specify the edits of the modifiers for each line or
+                                                                                                      HCPCS/CPT.  This field is defined by CMS or other regulatory agencies in the
+                                                                                                      US.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          GP1-8
+  HL7 Version  Introduced                                                                             2.4

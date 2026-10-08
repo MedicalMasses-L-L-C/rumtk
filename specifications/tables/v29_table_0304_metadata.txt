@@ -1,0 +1,7 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0304
+  Description                                                                                    Table of codes specifying the patient's bed.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        I    n    M    /   PA
+  where used                                                                                     PL.3, NDL.6
+  HL7 Version  Introduced                                                                        2.3

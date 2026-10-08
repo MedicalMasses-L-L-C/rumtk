@@ -1,0 +1,9 @@
+                                                                                                                       Table 0778Coded Content
+   Value                                      Display Name                                             Definition                                                                                                                                                     Comment/                                   Status
+                                                                                                                                                                                                                                                                      Usage Note
+   EQP                                        Equipment
+   SUP                                        Supply
+   IMP                                        Implant
+   MED                                        Medication
+   TDC                                             Tubes, Drains,
+                                                   and Catheters

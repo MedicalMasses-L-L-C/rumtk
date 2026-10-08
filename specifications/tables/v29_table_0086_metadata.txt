@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0086
+  Description                                                                                 Table of codes specifying the coding structure that identifies the various plan
+                                                                                              types (i.e., Medicare, Medicaid, Blue Cross, HMO, etc.).  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     OO
+  where used                                                                                  IN1-15
+  HL7 Version  Introduced                                                                     2.1

@@ -1,0 +1,21 @@
+                                                                                                               Table 0299Coded Content
+  Value                             Display Name                                                                                                             Definition                                                                              Comment/                                Status
+                                                                                                                                                                                                                                                     Usage Note
+  A                                 No encoding - data are displayable ASCII
+                                    characters.
+  Hex                               Hexadecimal encoding - consecutive pairs
+                                    of hexadecimal digits represent
+                                    consecutive single octets.
+  Base64                            Encoding as defined by MIME                                                                                              Encoding as defined by                                                                  The Request
+                                    (Multipurpose Internet Mail Extensions)                                                                                  MIME (Multipurpose Internet                                                             For
+                                    standard RFC 1521. Four consecutive                                                                                      Mail Extensions) standard                                                               Comment
+                                    ASCII characters represent three                                                                                         RFC 1521. Four consecutive                                                              (RFC) 1521
+                                    consecutive octets of binary data. Base64                                                                                ASCII characters represent                                                              standard is
+                                    utilizes a 65-character subset of US-                                                                                    three consecutive octets of                                                             available at:
+                                    ASCII, consisting of both the upper and                                                                                  binary data. Base64 utilizes a                                                          http://www.i
+                                                                                                                                                             65-                                        character subset of US-                      etf.org/rfc/rf
+                                                                                                                                                             ASCII, consisting of both the                                                           c1521.txt
+                                                                                                                                                             upper and lower case
+                                                                                                                                                             alphabetic characters, digits
+                                                                                                                                                             “0” through “9”, “+”, “/”, and
+                                                                                                                                                             “=”.

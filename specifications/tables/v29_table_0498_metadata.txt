@@ -1,0 +1,13 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0498
+  Description                                                                                        HL7-defined table of codes specifying whether the consent has been sought and
+                                                                                                     granted.
+  Type                                                                                               HL7
+
+
+
+
+
+  Steward                                                                                            StrucDoc
+  where used                                                                                         TXA:11; CO N:11
+  HL7 Version  Introduced                                                                       2.5

@@ -1,0 +1,8 @@
+                                                                                                                       Table Metadata
+  Table                                                                           0489
+  Description                                                                     Table of codes specifying any known or suspected specimen hazards, e.g.,
+                                                                                  exceptionally infectious agent or blood from a hepatitis patient.
+  Type                                                                            User
+  Steward                                                                         OO
+  where used                                                                      SPM-16, PAC-8
+  HL7 Version  Introduced                                                         2.5

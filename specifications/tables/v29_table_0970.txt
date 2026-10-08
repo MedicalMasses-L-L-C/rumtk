@@ -1,0 +1,14 @@
+                                                                                                                    Table 0970Coded Content
+  Value                               Display Name                                     Definition                                                                                                                                                              Comment/                                  Status
+                                                                                                                                                                                                                                                               Usage Note
+  1                                   Update                                           English: Update of insurance information on card                                                                                                                                                                  N
+                                      performed
+                                                                                       German: Aktualisierung VSD auf eGK durchgeführt
+  2                                   update not                                       English: update of insurance information on card not                                                                                                                                                              N
+                                      necessary                                        necessary
+
+                                                                                       German: Keine Aktualisierung VSD auf eGK erforderlich
+  3                                   Error                                            English: An unrecoverable error occurred during the                                                                                                                                                               N
+                                                                                       update or verification of the insurance information
+
+                                                                                       German: Aktualisierung VSD auf eGK war nicht möglich

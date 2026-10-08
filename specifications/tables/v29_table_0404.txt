@@ -1,0 +1,10 @@
+                                                                                                                        Table 0404Coded Content
+   Value                                      Display Name                                               Definition                                                                                                                                                      Comment/                                   Status
+                                                                                                                                                                                                                                                                         Usage Note
+   1                                          Excellent
+   2                                          Good
+   3                                          Fair
+   4                                          Poor
+   5                                          Some (level
+                                              unknown)
+   6                                          None

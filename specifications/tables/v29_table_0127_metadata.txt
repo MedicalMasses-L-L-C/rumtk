@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                  0127
+  Description                                                                                            Table of codes speciying a classification of general allergy categories (drug,
+                                                                                                         food, pollen, etc.).
+  Type                                                                                                   User
+  Steward                                                                                                PA
+  where used                                                                                             AL1-2
+  HL7 Version  Introduced                                                                                2.2

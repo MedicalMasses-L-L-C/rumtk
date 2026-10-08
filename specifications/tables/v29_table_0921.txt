@@ -1,0 +1,6 @@
+                                                                                                                               Table 0921Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                Comment/                                      Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   ADM                                           Admitting
+   SERV                                          Service
+   PRO C                                         Procedure

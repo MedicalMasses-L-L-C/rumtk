@@ -1,0 +1,5 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0767
+  Description                                                                                             9999
+  Type                                                                                                    undefined
+  where used                                                                                              RXV-4

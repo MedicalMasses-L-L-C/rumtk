@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0137
+  Description                                                                                        Table of codes which specify a party to which a claim should be mailed when
+                                                                                                     claims are sent by mail.
+  Type                                                                                               User
+  Steward                                                                                            FM
+  where used                                                                                         IN2-5
+  HL7 Version  Introduced                                                                            2.2

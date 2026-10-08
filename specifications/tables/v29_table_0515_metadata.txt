@@ -1,0 +1,8 @@
+                                                                                                                              Table Metadata
+  Table                                                                                0515
+  Description                                                                          Table of codes that specify the reason the transfusion of the blood product was
+                                                                                       interrupted.  No suggested values.
+  Type                                                                                 User
+  Steward                                                                              OO
+  where used                                                                           BTX-19
+  HL7 Version  Introduced                                                              2.5

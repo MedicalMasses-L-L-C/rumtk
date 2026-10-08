@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0362
+  Description                                                                                  Table of codes specifying the site          -specific name for the facility used by this
+                                                                                               application.  No suggested values.
+  Type                                                                                         User
+  Steward                                                                                      InM
+  where used                                                                                   MSH-4, MSH-6
+  HL7 Version  Introduced                                                                      2.3.1

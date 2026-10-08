@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0104
+  Description                                                                                       HL7-defined table of codes which are used to identify an HL7 version in the
+                                                                                                    Version 2.x family of published standards.
+  Type                                                                                              HL7
+  Steward                                                                                           InM
+  where used                                                                                        VID.1
+  HL7 Version  Introduced                                                                           2.1

@@ -1,0 +1,10 @@
+                                                                                                                    Table 0377Coded Content
+  Value                                      Display Name                                            Definition                                                                                                                                                 Comment/                                  Status
+                                                                                                                                                                                                                                                                Usage Note
+  ATM                                        Opened container,
+                                             atmosphere and
+                                             duration unspecified
+  A60                                        Opened
+                                             container, indoor
+                                             atmosphere, 60
+                                             minutes duration

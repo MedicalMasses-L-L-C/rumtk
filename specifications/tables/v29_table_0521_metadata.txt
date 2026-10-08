@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0521
+  Description                                                                                         Table of codes that specify the reason for the business rule override.  No
+                                                                                                      suggested values.
+  Type                                                                                                User
+  Steward                                                                                             InM
+  where used                                                                                          OVR-2
+  HL7 Version  Introduced                                                                             2.5

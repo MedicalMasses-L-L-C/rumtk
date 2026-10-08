@@ -1,0 +1,13 @@
+                                                                                                            Table Metadata
+ Table                                                                     0301
+ Description                                                               HL7-defined table of codes specifying the type of UID (Universal Identifier).
+                                                                           Open Issue:  Table 0301 has a mix of class and instance identifiers for
+                                                                           namespaces, which is improper.  The values for instances. such as CLIA, CLIP,
+                                                                           CAP, and NPI. These were added for pragmatic issues related to older datatypes
+                                                                           that were universally bound tand should not be here but are needed for
+                                                                           implementation pragmatics.   These should be annotated in Comment or Usage
+                                                                           Notes that these are not universal ID types really.
+ Type                                                                      HL7
+ Steward                                                                   InM
+ where used                                                                HD.3, EI.4
+ HL7 Version  Introduced                                                   2.3

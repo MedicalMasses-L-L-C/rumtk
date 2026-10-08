@@ -1,0 +1,6 @@
+                                                                                                                  Table 0398Coded Content
+  Value                                     Display Name                                           Definition                                                                                                                                               Comment/                                  Status
+                                                                                                                                                                                                                                                            Usage Note
+  F                                         Fragmentation
+  I                                         Interactive
+                                            Continuation

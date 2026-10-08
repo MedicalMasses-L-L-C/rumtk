@@ -1,0 +1,14 @@
+                                                                                                                        Table Metadata
+  Table                                                                            0377
+  Description                                                                      Table of codes that identify the other environmental factors associated with the
+                                                                                   specimen in a specific container, e.g., atmospheric exposure.
+
+
+
+
+
+
+  Type                                                                             User
+  Steward                                                                          OO
+  where used                                                                       SAC-44
+  HL7 Version Introduced                                                                     2.4

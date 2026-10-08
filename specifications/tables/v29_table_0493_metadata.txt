@@ -1,0 +1,16 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                            0493
+
+
+
+
+
+
+
+
+  Description                                                                                      Table of codes specifying a mode or state of being that describes the nature of
+                                                                                                   the specimen.
+  Type                                                                                             User
+  Steward                                                                                          OO
+  where used                                                                                       SPM-24
+  HL7 Version  Introduced                                                                          2.5

@@ -1,0 +1,17 @@
+                                                                                                                                Table 0925Coded Content
+  Value                                          Display Name                                                                                                                                                               Definition                                                     Comment/                                      Status
+                                                                                                                                                                                                                                                                                           Usage Note
+  INF                                            Infiltration
+  VSM                                            Vein Spasm
+  COL                                            Collapse
+  MIS                                            Missed / in tissue
+  NAD                                            Needle adjustment (this may not end a procedure, if
+                                                 successful will impact component production)
+  PFL                                            Poor flow
+  CLT                                            Clotted
+  DND                                            Defective Needle
+  DBG                                            Defective Bag
+  DAK                                            Defective Apheresis Kit
+  DMT                                            Defective Instrument
+  IPF                                            Instrument Power Failure
+  ACN                                            Air Contamination

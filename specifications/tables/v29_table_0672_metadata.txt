@@ -1,0 +1,5 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0672
+  Description                                                                                              9999
+  Type                                                                                                     undefined
+  where used                                                                                               PCR-10

@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0560
+  Description                                                                                      Table of codes that specify the adjustment quantity.  No suggested values.
+  Type                                                                                             User
+  Steward                                                                                          FM
+  where used                                                                                       ADJ-6
+  HL7 Version  Introduced                                                                          2.6

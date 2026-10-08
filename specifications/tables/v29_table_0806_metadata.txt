@@ -1,0 +1,15 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0806
+  Description                                                                                     Table of codes specifying the type of sterilization used for sterilizing the
+                                                                                                  inventory supply item in the ITM segment.
+  Type                                                                                            User
+
+
+
+
+
+
+
+  Steward                                                                                         OO
+  where used                                                                                      STZ-1
+  HL7 Version  Introduced                                                                 2.6

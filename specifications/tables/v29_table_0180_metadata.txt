@@ -1,0 +1,13 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0180
+  Description                                                                              HL7-defined table of codes specifying an action for a master file record.
+  Type                                                                                     HL7
+
+
+
+
+
+
+  Steward                                                                                  InM
+  where used                                                                               MFE-1
+  HL7 Version  Introduced                                                                     2.2

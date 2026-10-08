@@ -1,0 +1,12 @@
+                                                                                                                          Table 0038Coded Content
+  Value                                        Display Name                                                                                                                                                       Definition                                                 Comment/                                     Status
+                                                                                                                                                                                                                                                                             Usage Note
+  A                                            Some, but not all, results available
+  CA                                           Order was canceled
+  CM                                           Order is completed
+  DC                                           Order was discontinued
+  ER                                           Error, order not found
+  HD                                           Order is on hold
+  IP                                           In process, unspecified
+  RP                                           Order has been replaced
+  SC                                           In process, scheduled

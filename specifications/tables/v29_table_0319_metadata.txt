@@ -1,0 +1,8 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                           0319
+  Description                                                                                     Table of codes specifying the accounting code that identifies the department in
+                                                                                                  order to charge for the item.  No suggested values.
+  Type                                                                                            User
+  Steward                                                                                         OO
+  where used                                                                                      RQD-7
+  HL7 Version  Introduced                                                                         2.3

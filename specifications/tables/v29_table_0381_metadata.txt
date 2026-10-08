@@ -1,0 +1,8 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0381
+  Description                                                                                  Table of codes that identify a type of cap that is to be used with a container for
+                                                                                               decapping, piercing or other mechanisms.  No suggested values.
+  Type                                                                                         User
+  Steward                                                                                      OO
+  where used                                                                                   SAC-26
+  HL7 Version  Introduced                                                                      2.4

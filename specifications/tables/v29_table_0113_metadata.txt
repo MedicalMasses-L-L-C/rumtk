@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0113
+  Description                                                                                        Table of codes specifying the healthcare facility to which the patient was
+                                                                                                     discharged.  No suggested values.
+  Type                                                                                               User
+  Steward                                                                                            I    n    M    /   PA
+  where used                                                                                         DLD.1. PV1-37
+  HL7 Version  Introduced                                                                            2.1

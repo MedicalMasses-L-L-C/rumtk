@@ -1,0 +1,9 @@
+                                                                                                                   Table 0353Coded Content
+  Value                                     Display Name                                            Definition                                                                                                                                               Comment/                                  Status
+                                                                                                                                                                                                                                                             Usage Note
+  U                                         Unknown
+  UASK                                      Asked but
+                                            Unknown
+  NAV                                       Not available
+  NA                                        Not applicable
+  NASK                                      Not asked

@@ -1,0 +1,6 @@
+                                                                                                                     Table 0465Coded Content
+  Value                               Display Name                                                                                                                                  Definition                                                       Comment/ Usage                                           Status
+                                                                                                                                                                                                                                                     Note
+  I                                   Ideographic (i.e., Kanji)
+  A                                   Alphabetic (i.e., Default or some single-byte)
+  P                                   Phonetic (i.e., ASCII, Katakana, Hiragana, etc.)

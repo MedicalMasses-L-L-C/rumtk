@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0402
+  Description                                                                                        Table of codes which specify a categorization of an academic institution that
+                                                                                                     grants a degree to a Staff Member.
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         EDU-                                                          7
+  HL7 Version  Introduced                                                                            2.4

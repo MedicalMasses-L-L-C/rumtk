@@ -1,0 +1,5 @@
+                                                                                                                                                              Table Metadata
+  Table                                                                                                      0784
+  Description                                                                                                9999
+  Type                                                                                                       undefined
+  where used                                                                                                 SPM-8

@@ -1,0 +1,9 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                      0135
+  Description                                                                                Table of codes which indicate whether an insured person agreed to assign the
+                                                                                             insurance benefits to a healthcare provider.  If so, the insurance will pay the
+                                                                                             provider directly.
+  Type                                                                                       User
+  Steward                                                                                    FM
+  where used                                                                                 IN1-20
+  HL7 Version  Introduced                                                                    2.2

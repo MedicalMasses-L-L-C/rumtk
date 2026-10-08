@@ -1,0 +1,7 @@
+                                                                                                                                    Table 0445Coded Content
+   Value                                           Display Name                                                                                                                    Definition                                                                                                      Comment/                                        Status
+                                                                                                                                                                                                                                                                                                   Usage Note
+   US                                              Unknown/Default Social Security Number
+   UD                                              Unknown/Default Date of Birth
+   UA                                              Unknown/Default Address
+   AL                                              Patient/Person Name is an Alias

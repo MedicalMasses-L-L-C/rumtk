@@ -1,0 +1,7 @@
+                                                                                                         Table 0170Coded Content
+  Value                                 Display Name                                       Definition                                                                                                                                  Comment/                               Status
+                                                                                                                                                                                                                                       Usage Note
+  P                                     Parent Observation
+  C                                     Child
+                                        Observation
+  N                                     Not Applicable

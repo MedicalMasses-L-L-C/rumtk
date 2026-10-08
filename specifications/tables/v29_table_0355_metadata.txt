@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0355
+  Description                                                                                 HL7-defined table of codes used to specify the type for the master file record
+                                                                                              identifier.
+  Type                                                                                        HL7
+  Steward                                                                                     InM
+  where used                                                                                  MFE-5
+  HL7 Version  Introduced                                                                     2.3.1

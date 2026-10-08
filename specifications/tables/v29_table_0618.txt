@@ -1,0 +1,6 @@
+                                                                                                                                       Table 0618Coded Content
+   Value                                            Display Name                                                                                                                                                                        Definition                                                       Comment/                                         Status
+                                                                                                                                                                                                                                                                                                         Usage Note
+   LI                                               Listed
+   UL                                               Unlisted (Should not appear in directories)
+   UP                                               Unpublished

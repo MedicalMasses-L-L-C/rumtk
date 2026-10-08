@@ -1,0 +1,7 @@
+                                                                                                                                  Table 0189Coded Content
+   Value                                          Display Name                                                    Definition                                                                                                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                                Usage Note
+   H                                              Hispanic or Latino
+   N                                              Not Hispanic or
+                                                  Latino
+   U                                              Unknown

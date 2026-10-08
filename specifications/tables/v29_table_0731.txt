@@ -1,0 +1,11 @@
+                                                                                                                              Table 0731Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+  0                                             Valid code
+  1                                             Invalid code
+  2                                             Two primary
+                                                diagnosis codes
+  3                                             Invalid for this
+                                                gender
+  4                                             Invalid for this
+                                                age

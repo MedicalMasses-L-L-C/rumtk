@@ -1,0 +1,13 @@
+                                                                                                                                         Table 0228Coded Content
+   Value                                             Display Name                                                                                                                                                         Definition                                                                         Comment/                                          Status
+                                                                                                                                                                                                                                                                                                             Usage Note
+   C                                                 Consultation
+   D                                                 Diagnosis
+   M                                                 Medication (antibiotic)
+   O                                                 Other
+   R                                                 Radiological scheduling (not using ICDA
+                                                     codes)
+   S                                                 Sign and symptom
+   T                                                 Tissue diagnosis
+   I                                                 Invasive procedure not classified elsewhere
+                                                     (I.V., catheter, etc.)

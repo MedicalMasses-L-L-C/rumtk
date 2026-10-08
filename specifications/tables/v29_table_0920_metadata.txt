@@ -1,0 +1,8 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0920
+  Description                                                                             HL7-defined table of codes that indicate whether a Specimen/Attribute is
+                                                                                          Preferred or Alternate for collection of a particular specimen.
+  Type                                                                                    HL7
+  Steward                                                                                 OO
+  where used                                                                              OM4-16
+  HL7 Version  Introduced                                                                 2.8

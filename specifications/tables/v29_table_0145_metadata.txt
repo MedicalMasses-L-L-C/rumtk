@@ -1,0 +1,7 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                     0145
+  Description                                                                                               Table of codes which specify the room type.
+  Type                                                                                                      User
+  Steward                                                                                                   InM/FM
+  where used                                                                                                RMC.1
+  HL7 Version  Introduced                                                                                   2.1

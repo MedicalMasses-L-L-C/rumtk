@@ -1,0 +1,11 @@
+                                                                                                                            Table Metadata
+  Table                                                                               0458
+  Description                                                                         Table of codes that specify the edits that result from processing the HCPCS/CPT
+                                                                                      procedures for a record after evaluating all the codes, revenue codes, and
+                                                                                      modifiers.  The codes listed as examples are not an exhaustive or current list,
+                                                                                      refer to OPPS Final Rule.  OCE (Outpatient Code Editor) edits also exist at the
+                                                                                      pre-procedure level.  This field is defined by CMS or other regulatory agencies.
+  Type                                                                                User
+  Steward                                                                             FM
+  where used                                                                          GP1-3
+  HL7 Version  Introduced                                                             2.4

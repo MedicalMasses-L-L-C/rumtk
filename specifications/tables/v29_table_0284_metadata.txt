@@ -1,0 +1,8 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0284
+  Description                                                                                              Table of codes used to describe the patient care setting where a referral should
+                                                                                                           take place.
+  Type                                                                                                     User
+  Steward                                                                                                  OO
+  where used                                                                                               RF1-5
+  HL7 Version  Introduced                                                                                  2.3

@@ -1,0 +1,22 @@
+                                                                                                                                             Table 0571Coded Content
+   Value                                              Display Name                                                        Definition                                                                                                                                                                                  Comment/                                           Status
+                                                                                                                                                                                                                                                                                                                      Usage Note
+   ACK                                                Acknowledge
+   REJECT                                             Reject
+   PEND                                               Pending
+   ADJZER                                             Adjudicated to
+                                                      Zero
+   ADJSUB                                             Adjudicated as
+                                                      Submitted
+   ADJ                                                Adjudicated with
+                                                      Adjustments
+   PAID                                               Paid
+   PRED                                               Pre-                                                                                                                                                                                                                                                            Indicates
+                                                      Determination                                                                                                                                                                                                                                                   that the IPR
+                                                                                                                                                                                                                                                                                                                      has been
+                                                                                                                                                                                                                                                                                                                      adjudicated
+                                                                                                                                                                                                                                                                                                                      but will not
+                                                                                                                                                                                                                                                                                                                      be paid.
+                                                                                                                                                                                                                                                                                                                      Equivalent
+                                                                                                                                                                                                                                                                                                                      to ADJUD
+                                                                                                                                                                                                                                                                                                                      (Adjudicate)

@@ -1,0 +1,7 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0232
+  Description                                                                                      Table of codes used to describe why an insurance company has been contacted.
+  Type                                                                                             User
+  Steward                                                                                          FM
+  where used                                                                                       IN2-57
+  HL7 Version  Introduced                                                                          2.3

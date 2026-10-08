@@ -1,0 +1,13 @@
+                                                                                                                          Table Metadata
+  Table                                                                             0717
+  Description                                                                       Table of codes specifying the policies governing the information to which
+                                                                                    access is controlled.
+  Type                                                                              User
+  Steward                                                                           PA
+  where used                                                                        A   RV-3
+
+
+
+
+
+  HL7 Version  Introduced                                                          2.6

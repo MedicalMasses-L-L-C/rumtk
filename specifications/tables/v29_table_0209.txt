@@ -1,0 +1,13 @@
+                                                                                                                                 Table 0209Coded Content
+  Value                                          Display Name                                                   Definition                                                                                                                                                                 Comment/                                       Status
+                                                                                                                                                                                                                                                                                           Usage Note
+  EQ                                             Equal
+  NE                                             Not Equal
+  LT                                             Less than
+  GT                                             Greater than
+  LE                                             Less than or
+                                                 equal
+  GE                                             Greater than or
+                                                 equal
+  CT                                             Contains
+  GN                                             Generic

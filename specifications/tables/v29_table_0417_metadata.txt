@@ -1,0 +1,7 @@
+                                                                                                                                                                                 Table Metadata
+   Table                                                                                                                  0417
+   Description                                                                                                            HL7-defined table of codes that specify
+   Type                                                                                                                   User
+   Steward                                                                                                                FM
+   where used                                                                                                             PR1-18
+   HL7 Version  Introduced                                                                                                2.4

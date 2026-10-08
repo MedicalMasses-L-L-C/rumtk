@@ -1,0 +1,9 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0243
+  Description                                                                                  HL7-defined table of codes used to define whether the primary observer has
+                                                                                               given permission for their identification information to be provided to a product
+                                                                                               manufacturer.
+  Type                                                                                         HL7
+  Steward                                                                                      OO
+  where used                                                                                   PEO-25
+  HL7 Version  Introduced                                                                      2.3

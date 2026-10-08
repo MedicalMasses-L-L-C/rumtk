@@ -1,0 +1,6 @@
+                                                                                                                                    Table 0540Coded Content
+   Value                                           Display Name                                                    Definition                                                                                                                                                                       Comment/                                        Status
+                                                                                                                                                                                                                                                                                                    Usage Note
+   L                                               Leave of Absence
+   T                                               Termination
+   R                                               Retired

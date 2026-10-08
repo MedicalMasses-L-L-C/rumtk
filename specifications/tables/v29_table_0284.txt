@@ -1,0 +1,7 @@
+                                                                                                                                     Table 0284Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                         Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   I                                               Inpatient
+   O                                               Outpatient
+   A                                               Ambulatory
+   E                                               Emergency

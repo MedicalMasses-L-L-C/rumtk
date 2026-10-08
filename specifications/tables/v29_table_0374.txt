@@ -1,0 +1,6 @@
+                                                                                                                          Table 0374Coded Content
+   Value                                       Display Name                                                Definition                                                                                                                                                         Comment/                                     Status
+                                                                                                                                                                                                                                                                              Usage Note
+   CNTM                                        Present, type of
+                                               contamination
+                                               unspecified

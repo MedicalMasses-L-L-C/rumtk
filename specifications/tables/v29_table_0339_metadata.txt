@@ -1,0 +1,19 @@
+                                                                                                              Table Metadata
+ Table                                                                      0339
+ Description                                                                Table of codes specifying the status of the patient's or the patient's
+                                                                            representative's consent for responsibility to pay for potentially uninsured
+
+
+
+
+
+                                                                                  services. This element was introduced to satisfy CMS Medical Necessity
+                                                                                  requirements for outpatient services in the United States. Includes concepts such
+                                                                                  as (a) whether the associated diagnosis codes for the service are subject to
+                                                                                  medical necessity procedures, (b) whether, for this type of service, the patient
+                                                                                  has been informed that they may be responsible for payment for the service, and
+                                                                                  (c) whether the patient agrees to be billed for this service.
+  Type                                                                      User
+  Steward                                                                   OO
+  where used                                                                ORC-20, FT1-                    27
+  HL7 Version  Introduced                                                         2.3.1

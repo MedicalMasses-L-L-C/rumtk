@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0161
+  Description                                                                                      HL7-defined table of codes which specify whether substitutions are allowed
+                                                                                                   and, if so, the type of substitutions allowed.
+  Type                                                                                             HL7
+  Steward                                                                                          OO
+  where used                                                                                       RXO-9
+  HL7 Version  Introduced                                                                          2.2

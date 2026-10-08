@@ -1,0 +1,16 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0132
+  Description                                                                                    Table of coded codes that are used by an institution for the purpose of uniquely
+                                                                                                 identifying a transaction based on the Transaction Type.  For example,
+
+
+
+
+
+
+                                                                                           procedure, supply item, or test for charges; or to identify the payment medium
+                                                                                           for payments.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        FM
+  where used                                                                                     FT1-7, ITM-12
+  HL7 Version  Introduced                                                                  2.2

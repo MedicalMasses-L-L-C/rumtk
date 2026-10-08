@@ -1,0 +1,12 @@
+                                                                                                                                Table 0164Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                Comment/                                       Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   AP                                            Applicator
+   BT                                            Buretrol
+   HL                                            Heparin Lock
+   IPPB                                          IPPB
+   IVP                                           IV Pump
+   IVS                                           IV Soluset
+   MI                                            Metered Inhaler
+   NEB                                           Nebulizer
+   PCA                                           PCA Pump

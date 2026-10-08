@@ -1,0 +1,13 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0570
+  Description                                                                                      Table of codes used to specify the method for the movement of payment.
+  Type                                                                                             User
+  Steward                                                                                          FM
+
+
+
+
+
+
+  where used                                                                                       PMT-4
+  HL7 Version  Introduced                                                                           2.6

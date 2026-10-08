@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0413
+  Description                                                                                    Table of codes that provide an identifier for the consent specified for a service
+                                                                                                 item.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        InM/OO
+  where used                                                                                     OM7-12
+  HL7 Version  Introduced                                                                        2.4

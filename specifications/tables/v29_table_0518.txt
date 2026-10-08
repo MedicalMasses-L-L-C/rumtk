@@ -1,0 +1,11 @@
+                                                                                                                   Table 0518Coded Content
+  Value                                     Display Name                                            Definition                                              Comment/ Usage Note                                                                                                                        Status
+  EXTN                                      Extension Override                                                                                              Identifies an override where a service is being
+                                                                                                                                                            performed for longer than the ordered period of time.
+  INLV                                      Interval Override                                                                                               Identifies an override where a repetition of
+                                                                                                                                                            service is being performed sooner than the
+                                                                                                                                                            ordered frequency.
+  EQV                                       Equivalence                                                                                                     Identifies an override where a service is being
+                                            Override                                                                                                        performed against an order that the system does
+                                                                                                                                                            not recognize as equivalent to the ordered
+                                                                                                                                                            service.

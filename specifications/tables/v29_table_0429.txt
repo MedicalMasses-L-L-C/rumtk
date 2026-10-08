@@ -1,0 +1,17 @@
+                                                                                                                             Table 0429Coded Content
+   Value                                        Display Name                                                 Definition                                                                                                                                                             Comment/                                      Status
+                                                                                                                                                                                                                                                                                    Usage Note
+   BR                                           Breeding/genetic
+                                                stock
+   DA                                           Dairy
+   DR                                           Draft
+   DU                                           Dual Purpose
+   LY                                           Layer, Includes
+                                                Multiplier flocks
+   MT                                           Meat
+   OT                                           Other
+   PL                                           Pleasure
+   RA                                           Racing
+   SH                                           Show
+   NA                                           Not Applicable
+   U                                            Unknown

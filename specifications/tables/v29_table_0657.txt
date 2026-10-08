@@ -1,0 +1,6 @@
+                                                                                                                                     Table 0657Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                         Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   1                                               EO Gas Sterilizer
+   2                                               Steam Sterilizer
+   3                                               Peracetic Acid

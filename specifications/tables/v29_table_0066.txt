@@ -1,0 +1,15 @@
+                                                                                                                          Table 0066Coded Content
+   Value                                       Display Name                                                                                                                                                       Definition                                                 Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+   1                                           Full time employed
+   2                                           Part time employed
+   4                                           Self-employed                                                                                                                                                      Self-employed,
+   C                                           Contract, per diem
+   L                                           Leave of absence (e.g., family leave, sabbatical, etc.)   Value                                       Display Name                                                                                                                                                       Definition                                                 Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+   T                                           Temporarily unemployed
+   3                                           Unemployed
+   5                                           Retired
+   6                                           On active military duty
+   O                                           Other
+   9                                           Unknown

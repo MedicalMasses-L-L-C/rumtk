@@ -1,0 +1,7 @@
+                                                                                                                     Table 0475Coded Content
+  Value                                      Display Name                                                                                                                    Definition                                              Comment/ Usage Note                                                    Status
+  01                                         Allergy
+  02                                         Intolerance
+  03                                         Treatment Failure
+  04                                         Patient Request
+  05                                         No Exception

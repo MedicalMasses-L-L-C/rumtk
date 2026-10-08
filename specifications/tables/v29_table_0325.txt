@@ -1,0 +1,10 @@
+                                                                                                                 Table 0325Coded Content
+  Value                              Display Name                                                                                                               Definition                                                                 Comment/ Usage                                         Status
+                                                                                                                                                                                                                                           Note
+  RX                                 Nearest  pharmacy
+  RX2                                Second nearest pharmacy
+  LAB                                Nearest  lab
+  LB2                                Second nearest lab
+  DTY                                Nearest  dietary location
+  ALI                                Location Alias(es)
+  PAR                                Parent location

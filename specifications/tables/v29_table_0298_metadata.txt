@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0298
+  Description                                                                              HL7-defined table of codes that specify whether a composite price range is
+                                                                                           experssed as a flat rate or a percentage.
+  Type                                                                                     HL7
+  Steward                                                                                  InM
+  where used                                                                               Data type CP.6
+  HL7 Version  Introduced                                                                  2.3

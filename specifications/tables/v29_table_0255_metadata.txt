@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0255
+  Description                                                                                           Table of codes used to classify an observation definition as intended to measure
+                                                                                                        a patient's state at a point in time.
+  Type                                                                                                  User
+  Steward                                                                                               InM/OO
+  where used                                                                                            OM1-43
+  HL7 Version  Introduced                                                                               2.3

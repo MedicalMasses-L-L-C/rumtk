@@ -1,0 +1,8 @@
+                                                                                                                                      Table 0150Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                         Comment/                                        Status
+                                                                                                                                                                                                                                                                                                        Usage Note
+   ER                                               Emergency
+   IPE                                              Inpatient elective
+   OPE                                              Outpatient
+                                                    elective
+   UR                                               Urgent

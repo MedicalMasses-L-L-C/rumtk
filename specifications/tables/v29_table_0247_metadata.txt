@@ -1,0 +1,12 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0247
+  Description                                                                                       HL7-defined table of codes that describes the status of product evaluation.
+  Type                                                                                              HL7
+  Steward                                                                                           OO
+
+
+
+
+
+  where used                                                                                        PCR-15
+  HL7 Version  Introduced                                                                        2.3

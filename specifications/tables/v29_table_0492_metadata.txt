@@ -1,0 +1,14 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                          0492
+  Description                                                                                    Table of codes specifying the suitability of the specimen for the particular
+                                                                                                 planned use as determined by the  filler.
+  Type                                                                                           User
+
+
+
+
+
+
+  Steward                                                                                        OO
+  where used                                                                                     SPM-23
+  HL7 Version  Introduced                                                                              2.5

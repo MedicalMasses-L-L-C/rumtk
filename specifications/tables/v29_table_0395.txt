@@ -1,0 +1,4 @@
+                                                                                                                          Table 0395Coded Content
+  Value                                Display Name                                                                                                   Definition                                                                Comment/ Usage Note                                                                      Status
+  N                                    New Subscription
+  M                                    Modified Subscription

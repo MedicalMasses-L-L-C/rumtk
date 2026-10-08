@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                         0528
+  Description                                                                                   HL7-defined table of codes used to specify a common (periodical) activity of
+                                                                                                daily living.
+  Type                                                                                          HL7
+  Steward                                                                                       InM/OO
+  where used                                                                                    R   P   T.   8
+  HL7 Version  Introduced                                                                       2.5

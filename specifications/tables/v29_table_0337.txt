@@ -1,0 +1,5 @@
+                                                                                                                                 Table 0337Coded Content
+  Value                                           Display Name                                                  Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                             Usage Note
+  C                                               Certified
+  E                                               Eligible

@@ -1,0 +1,7 @@
+                                                                                                                           Table 0161Coded Content
+  Value                                        Display Name                                                                                                                                         Definition                                                                 Comment/                                     Status
+                                                                                                                                                                                                                                                                               Usage Note
+  N                                            Substitutions are NOT authorized.  (This is the default
+                                               - null.)
+  G                                            Allow generic substitutions.
+  T                                            Allow therapeutic substitutions

@@ -1,0 +1,7 @@
+                                                                                                                               Table 0466Coded Content
+   Value                                 Display Name                                                                                                                       Definition                                                                                   Comment/ Usage                                               Status
+                                                                                                                                                                                                                                                                         Note
+   031                                   Dental procedures
+   163                                   Excision/biopsy
+   181                                   Level 1 skin repair.
+   ...                                   No suggested values defined                                                                                                                                                                                                                                                                  D

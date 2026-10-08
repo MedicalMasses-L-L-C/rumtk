@@ -1,0 +1,8 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0505
+  Description                                                                              HL7-defined table of codes used to specify if this service request is the first or
+                                                                                           last service request in a cyclic series of service requests.
+  Type                                                                                     HL7
+  Steward                                                                                  OO
+  where used                                                                               TQ2-7
+  HL7 Version  Introduced                                                                  2.5

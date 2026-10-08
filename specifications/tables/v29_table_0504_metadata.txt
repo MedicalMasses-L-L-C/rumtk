@@ -1,0 +1,9 @@
+                                                                                                                                          Table Metadata
+  Table                                                                                        0504
+  Description                                                                                  HL7-defined table of codes used to specify the relationship between the
+                                                                                               start/end of the related service request(s) (from TQ2-3, TQ2-4  or TQ2-5) and the
+                                                                                               current service request from ORC-2, 3 or 4.
+  Type                                                                                         HL7
+  Steward                                                                                      OO
+  where used                                                                                   TQ2-6
+  HL7 Version  Introduced                                                                      2.5

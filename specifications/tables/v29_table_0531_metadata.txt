@@ -1,0 +1,8 @@
+                                                                                                                                Table Metadata
+  Table                                                                                 0531
+  Description                                                                           Table of codes that specify the institution where a staff member is or was active.
+                                                                                        No suggested values.
+  Type                                                                                  User
+  Steward                                                                               I    n    M    /   PA
+  where used                                                                            DIN.2
+  HL7 Version  Introduced                                                               2.5

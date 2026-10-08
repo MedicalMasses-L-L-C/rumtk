@@ -1,0 +1,6 @@
+                                                                                                                        Table 0428Coded Content
+   Value                                      Display Name                                               Definition                                                                                                                                                      Comment/                                    Status
+                                                                                                                                                                                                                                                                         Usage Note
+   P                                          Preventable
+   U                                          User Error
+   O                                          Other

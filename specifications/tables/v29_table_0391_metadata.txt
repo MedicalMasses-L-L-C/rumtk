@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0391
+  Description                                                                                 HL7-defined table of codes specifying the optional segment groups which are to
+                                                                                              be included in a response.
+  Type                                                                                        HL7
+  Steward                                                                                     InM
+  where used                                                                                  RCP.7
+  HL7 Version  Introduced                                                                     2.4

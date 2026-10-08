@@ -1,0 +1,8 @@
+                                                                                                                              Table 0321Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                      Usage Note
+  TR                                            Traditional
+  UD                                            Unit Dose
+  F                                             Floor Stock
+  AD                                            Automatic
+                                                Dispensing

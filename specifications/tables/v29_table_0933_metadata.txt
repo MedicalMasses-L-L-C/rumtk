@@ -1,0 +1,7 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0933
+  Description                                                                                        HL7-defined table of codes specifying the type of intended procedure.
+  Type                                                                                               HL7
+  Steward                                                                                            OO
+  where used                                                                                         DON-                                                                                       7
+  HL7 Version  Introduced                                                                            2.8

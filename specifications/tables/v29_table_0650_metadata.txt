@@ -1,0 +1,5 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0650
+  Description                                                                                      9999
+  Type                                                                                             undefined
+  where used                                                                                       OM3-2

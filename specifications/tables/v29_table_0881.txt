@@ -1,0 +1,6 @@
+                                                                                                                            Table 0881Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+   T                                            Technical Part
+   P                                            Professional Part
+   B                                            Both

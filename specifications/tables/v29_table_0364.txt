@@ -1,0 +1,15 @@
+                                                                                                                                     Table 0364Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                        Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   PI                                              Patient Instructions
+   AI                                              Ancillary
+                                                   Instructions
+   GI                                              General
+                                                   Instructions
+   1R                                              Primary Reason
+   2R                                              Secondary
+                                                   Reason
+   GR                                              General Reason
+   RE                                              Remark
+   DR                                              Duplicate/Interact
+                                                   ion Reason

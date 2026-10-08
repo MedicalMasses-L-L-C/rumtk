@@ -1,0 +1,3 @@
+                                                                                                                                      Table 0451Coded Content
+   Value                                    Display Name                                                                                                                              Definition                                                       Comment/ Usage Note                                                                              Status
+   ALL                                      Used for query of all inventory items

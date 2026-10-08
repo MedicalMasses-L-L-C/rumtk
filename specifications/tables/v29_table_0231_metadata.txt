@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0231
+  Description                                                                                      Table of codes used to designate whether a guarantor is a full or part time
+                                                                                                   student.
+  Type                                                                                             User
+  Steward                                                                                          FM
+  where used                                                                                       GT1-40, NK1-24, PD1-5
+  HL7 Version  Introduced                                                                          2.3

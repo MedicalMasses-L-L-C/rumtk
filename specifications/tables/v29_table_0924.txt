@@ -1,0 +1,8 @@
+                                                                                                                            Table 0924Coded Content
+   Value                                               Display Name                                                                                                     Definition                                                   Comment/ Usage Note                                                                       Status
+   A                                                   Annual
+   D                                                   Per Day
+   M                                                   Per Month
+   O                                                   Duration of the Order                                                                                                                                                         Not from UCUM
+   PL                                                  Patients Lifetime                                                                                                                                                             Not from UCUM
+   WK                                                  Per Week

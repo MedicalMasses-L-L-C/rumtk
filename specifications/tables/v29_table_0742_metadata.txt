@@ -1,0 +1,8 @@
+                                                                                                                                       Table Metadata
+  Table                                                                                       0742
+  Description                                                                                 Table of codes specifying the status of the diagnosis related group (DRG)
+                                                                                              calculation regarding the financial aspects. US Realm.
+  Type                                                                                        User
+  Steward                                                                                     FM
+  where used                                                                                  DRG-20
+  HL7 Version  Introduced                                                                     2.6

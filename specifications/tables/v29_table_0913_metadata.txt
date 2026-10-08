@@ -1,0 +1,9 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0913
+  Description                                                                             Table of codes specifying the denomination in which the quantity is expressed.
+                                                                                          The values for the denomination component are the three-character codes
+                                                                                          specified in  ISO-4217 (1.0.4217 iso4217).
+  Type                                                                                    External
+  Steward                                                                                 InM
+  where used                                                                              MO.2, MOP.3
+  HL7 Version  Introduced                                                                 2.7

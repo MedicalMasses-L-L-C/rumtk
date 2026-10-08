@@ -1,0 +1,15 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                         0003
+
+
+
+
+
+
+
+  Description                                                                   HL7-defined table of codes specifying the trigger event for Version 2.x interface
+                                                                                messages.
+  Type                                                                          HL7
+  Steward                                                                       InM
+  where used                                                                    MSH-9.2
+  HL7 Version  Introduced                                                       2.1

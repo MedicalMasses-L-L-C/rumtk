@@ -1,0 +1,12 @@
+                                                                                                                                      Table 0659Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                         Comment/                                         Status
+                                                                                                                                                                                                                                                                                                        Usage Note
+   1                                                OR Mode Without
+                                                    Operator
+   2                                                OR Mode with
+                                                    Operator
+   3                                                CPD Mode
+                                                    Without Operator
+   4                                                CPD Mode With
+                                                    Operator
+   5                                                Offline Mode

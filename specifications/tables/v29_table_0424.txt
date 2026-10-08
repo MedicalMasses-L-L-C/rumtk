@@ -1,0 +1,8 @@
+                                                                                                                                 Table 0424Coded Content
+   Value                                          Display Name                                                  Definition                                                                                                                                                                  Comment/                                       Status
+                                                                                                                                                                                                                                                                                            Usage Note
+   1                                              Premature / Pre-
+                                                  term
+   2                                              Full Term
+   3                                              Overdue / Post-
+                                                  term

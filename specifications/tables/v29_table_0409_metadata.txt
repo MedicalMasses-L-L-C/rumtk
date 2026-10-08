@@ -1,0 +1,13 @@
+                                                                                                                                Table Metadata
+  Table                                                                                 0409
+  Description                                                                           HL7-defined table of codes that specify a type of change being requested (if
+                                                                                        NMR query) or announced (if NMD unsolicited update).
+  Type                                                                                  User
+  Steward                                                                               InM
+
+
+
+
+
+  where used                                                                            NSC-1
+  HL7 Version  Introduced                                                               2.3.1

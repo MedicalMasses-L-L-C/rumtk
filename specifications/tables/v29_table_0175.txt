@@ -1,0 +1,27 @@
+                                                                                                               Table 0175Coded Content
+  Value                                   Display Name                                                                                         Definition                                            Comment/ Usage Note                                                                    Status
+  CDM                                     Charge description master file
+  CMA                                     Clinical study with phases and
+                                          scheduled master file
+  CMB                                     Clinical study without phases but
+                                          with scheduled master file
+  LOC                                     Location master file
+  OMA                                     Numerical observation master file
+  OMB                                     Categorical observation master file
+  OMC                                     Observation batteries master file
+  OMD                                     Calculated observations master file
+  OMM                                     Mixed type observation master file
+  PRA                                     Practitioner master file
+  STF                                     Staff master file
+  CLN                                     Clinic master file
+  OME                                     Other Observation/Service Item
+                                          master file
+  INV                                     Inventory master file
+  MLCP                                    Medicare Limited Coverage                                                                                                                                  This identifies Universal
+                                          Process                                                                                                                                                    Service Identifiers that are not
+                                                                                                                                                                                                     approved for a CPT code
+                                                                                                                                                                                                     based on an ICD.
+  MACP                                    Medicare Approved Coverage                                                                                                                                 This identifies Universal
+                                          Process                                                                                                                                                    Service Identifier that are
+                                                                                                                                                                                                     approved for an ICD based on
+                                                                                                                                                                                                     the CPT.

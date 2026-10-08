@@ -1,0 +1,8 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0448
+  Description                                                                                      Table of codes specifying the context in which a name is used.  No suggested
+                                                                                                   values.
+  Type                                                                                             User
+  Steward                                                                                          InM
+  where used                                                                                       PPN.17, XCN.16, XPN.9
+  HL7 Version  Introduced                                                                          2.4

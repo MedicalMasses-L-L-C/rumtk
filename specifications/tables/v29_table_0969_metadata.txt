@@ -1,0 +1,8 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0969
+  Description                                                                                           Codes created by an organization as a shorthand way to express a combination
+                                                                                                        of container attributes.  No suggested values.
+  Type                                                                                                  User
+  Steward                                                                                               OO
+  where used                                                                                            SAC-49
+  HL7 Version Introduced                                                                                2.9

@@ -1,0 +1,8 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0248
+  Description                                                                                          HL7-defined table of codes used to describe the evaluation state of a product
+                                                                                                       identified in an incident.
+  Type                                                                                                 HL7
+  Steward                                                                                              OO
+  where used                                                                                           PCR-17
+  HL7 Version  Introduced                                                                              2.3

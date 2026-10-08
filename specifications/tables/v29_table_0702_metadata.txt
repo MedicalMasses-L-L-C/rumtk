@@ -1,0 +1,8 @@
+                                                                                                                             Table Metadata
+  Table                                                                               0702
+  Description                                                                         Table of codes specifying the type of cycle that is being executed.  A cycle type
+                                                                                      is a specific sterilization method used for a specific type of supply item.
+  Type                                                                                User
+  Steward                                                                             OO
+  where used                                                                          SCD-28
+  HL7 Version  Introduced                                                             2.6

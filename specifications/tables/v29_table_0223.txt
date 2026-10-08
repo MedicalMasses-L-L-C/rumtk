@@ -1,0 +1,8 @@
+                                                                                                                      Table 0223Coded Content
+  Value                                      Display Name                                                                                                                                   Definition                                                             Comment/                                   Status
+                                                                                                                                                                                                                                                                   Usage Note
+  S                                          Spouse Dependent
+  M                                          Medical Supervision Required
+  C                                          Small Children Dependent
+  O                                          Other
+   U                                            Unknown

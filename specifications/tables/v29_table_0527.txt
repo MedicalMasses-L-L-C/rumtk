@@ -1,0 +1,11 @@
+                                                                                                                     Table 0527Coded Content
+  Value                                      Display Name                                                                                                                                 Definition                                                             Comment/                                   Status
+                                                                                                                                                                                                                                                                 Usage Note
+  MY                                         month of the year
+  WY                                         week of the year
+  DM                                         day of the month
+  DY                                         day of the year
+  DW                                         day of the week (begins with Monday)
+  HD                                         hour of the day
+  NH                                         minute of the hour
+  SN                                         second of the minute

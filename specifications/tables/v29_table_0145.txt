@@ -1,0 +1,9 @@
+                                                                                                                                      Table 0145Coded Content
+   Value                                            Display Name                                                                                                                                                      Definition                                                                        Comment/                                         Status
+                                                                                                                                                                                                                                                                                                        Usage Note
+   PRI                                              Private room
+   2PRI                                             Second private room
+   SPR                                              Semi-private room
+   2SPR                                             Second semi-private room
+   ICU                                              Intensive care unit
+   2ICU                                             Second intensive care unit

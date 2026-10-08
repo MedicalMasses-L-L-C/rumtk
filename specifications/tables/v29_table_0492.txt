@@ -1,0 +1,6 @@
+                                                                                                                                Table 0492Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                                 Comment/                                      Status
+                                                                                                                                                                                                                                                                                          Usage Note
+   P                                             Preferred
+   A                                             Appropriate
+   I                                             Inappropriate

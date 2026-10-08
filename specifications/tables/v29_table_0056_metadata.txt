@@ -1,0 +1,14 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0056
+  Description                                                                                              Table of codes specifying that the grouper results have been reviewed and
+                                                                                                           approved.  No suggested values.
+  Type                                                                                                     User
+  Steward                                                                                                  FM
+  where used                                                                                               DRG-4
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                     2.1

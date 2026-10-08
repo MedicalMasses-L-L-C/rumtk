@@ -1,0 +1,7 @@
+                                                                                                                                                             Table Metadata
+  Table                                                                                                     0682
+  Description                                                                                               Table of codes specifying the state of a device.
+  Type                                                                                                      User
+  Steward                                                                                                   OO
+  where used                                                                                                SCD-10
+  HL7 Version  Introduced                                                                                   2.6

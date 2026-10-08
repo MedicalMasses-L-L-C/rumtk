@@ -1,0 +1,8 @@
+                                                                                                                                                                Table Metadata
+  Table                                                                                                       0432
+  Description                                                                                                 Table of codes specifying the acuity level assigned to the patient at the time of
+                                                                                                              admission.
+  Type                                                                                                        User
+  Steward                                                                                                     PA
+  where used                                                                                                  PV2-40
+  HL7 Version  Introduced                                                                                     2.4

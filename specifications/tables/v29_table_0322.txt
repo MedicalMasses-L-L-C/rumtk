@@ -1,0 +1,8 @@
+                                                                                                                              Table 0322Coded Content
+  Value                                         Display Name                                                 Definition                                                                                                                                                              Comment/                                      Status
+                                                                                                                                                                                                                                                                                     Usage Note
+  CP                                            Complete
+  RE                                            Refused
+  NA                                            Not Administered
+  PA                                            Partially
+                                                Administered

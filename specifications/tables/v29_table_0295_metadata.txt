@@ -1,0 +1,7 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0295
+  Description                                                                           Table of codes specifying an associated party's disability.  No suggested values.
+  Type                                                                                  User
+  Steward                                                                               PA
+  where used                                                                            NK1-36, PD1-                    6
+  HL7 Version  Introduced                                                               2.3

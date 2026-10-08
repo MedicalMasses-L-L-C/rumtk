@@ -1,0 +1,8 @@
+                                                                                                                            Table Metadata
+  Table                                                                               0376
+  Description                                                                         Table of codes describing how a specimen and/or container needs to be handled
+                                                                                      from the time of collection through the initiation of testing.
+  Type                                                                                User
+  Steward                                                                             OO
+  where used                                                                          SPM-15, SAC-43,  PAC-7 ,  OM 4 -15
+  HL7 Version  Introduced                                                             2.4

@@ -1,0 +1,6 @@
+                                                                                                                                              Table Metadata
+  Table                                                                                           0938
+  Description                                                                                     HL7-defined table of codes specifying the limit for the collection event or
+                                                                                                  process step.
+  Type                                                                                            HL7
+  HL7 Version  Introduced                                                                         2.8.2

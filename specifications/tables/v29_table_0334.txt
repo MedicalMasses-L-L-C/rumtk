@@ -1,0 +1,7 @@
+                                                                                                                   Table 0334Coded Content
+  Value                                     Display Name                                                                                                    Definition                                                                                        Comment/                                  Status
+                                                                                                                                                                                                                                                              Usage Note
+  PT                                        Patient
+  GT                                        Guarantor
+  IN                                        Insured
+  AP                                        Associated party

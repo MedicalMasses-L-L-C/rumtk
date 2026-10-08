@@ -1,0 +1,16 @@
+                                                                                                                             Table 0933Coded Content
+  Value                                         Display Name                                                                                                             Definition                                                   Comment/ Usage Note                                                                        Status
+  WBL                                           Whole Blood
+  2RC                                           Double Red Cells
+  PLS                                           Plasma
+  PLT                                           Platelets
+  PNP                                           Platelets and Plasma
+  PNR                                           Platelets and Red Cells
+  PPR                                       Platelets, Plasma, and Red Cells
+  GRN                                       Granulocytes
+  HEM                                       Hemachromatosis
+  HPC                                       Hematopoietic Progenitor Cells                                                                                                                                         Stem Cells and other cells
+                                                                                                                                                                                                                   classified as Hematopoietic
+  LYM                                       Lymphocytes
+  THA                                       Therapeutic Apheresis
+  THW                                       Therapeutic Whole Blood

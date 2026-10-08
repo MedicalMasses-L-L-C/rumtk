@@ -1,0 +1,54 @@
+                                                                                                                             Table 0906Coded Content
+   Value                                 Display Name                                                                                                                            Definition                                                                                        Comment/                                     Status
+                                                                                                                                                                                                                                                                                   Usage Note
+   A                                     ASAP - As soon as possible, next highest
+                                         priority after stat
+   CR                                    Callback results - filler should contact the
+                                         placer as soon as results are available,
+                                         even for preliminary results  Value                          Display Name                                                                                                   Definition                                                                      Comment/                             Status
+                                                                                                                                                                                                                                Usage Note
+  CS                             Callback for scheduling - Filler should
+                                 contact the placer (or target) to schedule
+                                 the service.
+  CSP                            Callback placer for scheduling - filler
+                                 should contact the placer to schedule the
+                                 service
+  CS R                           Contact recipient for scheduling                                                 - Filler
+                                 should contact the service recipient (target)
+                                 to schedule the service
+  EL                             Elective - Beneficial to the patient but not
+                                 essential for survival.
+  EM                             Emergency - An unforeseen combination
+                                 of circumstances or the resulting state that
+                                 calls for immediate action
+  P                              Preop - Used to indicate that a service is to                                                                  Preop – Used to indicate that a
+                                 be performed prior to a scheduled surgery.                                                                     service is to be performed
+                                 When ordering a service and using the pre-                                                                     prior to a scheduled surgery.
+                                 op priority, a check is done to see the                                                                        When ordering a service and
+                                 amount of time that must be allowed for                                                                        using the pre-op priority, a
+                                 performance of the service.  When the                                                                          check is done to see the
+                                 order                                                                                                          amount of time that must be
+                                                                                                                                                allowed  for performance of
+                                                                                                                                                the service.  When the order is
+                                                                                                                                                placed, a message can be
+                                                                                                                                                generated indicating the time
+                                                                                                                                                needed for the service so that
+                                                                                                                                                it is not ordered in conflict
+                                                                                                                                                with a scheduled operation.
+  PRN                            As needed - An "as needed" order should
+                                 be accompanied by a description of what
+                                 constitutes a need.  This description is
+                                 represented by an observation service
+                                 predicate as a precondition.
+  R                              Routine - Routine  service, do at usual
+                                 work hours
+  RR                             Rush reporting - A report should be
+                                 prepared and sent as quickly as possible
+  S                              Stat - With highest priority (e.g.
+                                 emergency).
+  T                              Timing critical - It is critical to come as
+                                 close as possible to the requested time
+                                 (e.g. for a through antimicrobial level).
+  UD                             Use as directed - Drug is to be used as
+                                 directed by the prescriber.
+  UR                             Urgent - Calls for prompt action

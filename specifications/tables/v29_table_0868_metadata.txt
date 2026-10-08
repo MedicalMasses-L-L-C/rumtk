@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0868
+  Description                                                                               Table of codes specifying the reason this contact number/email was marked as
+                                                                                            "ended".
+  Type                                                                                      User
+  Steward                                                                                   InM
+  where used                                                                                XTN.15
+  HL7 Version  Introduced                                                                   2.6

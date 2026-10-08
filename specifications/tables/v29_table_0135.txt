@@ -1,0 +1,6 @@
+                                                                                                                    Table 0135Coded Content
+  Value                                      Display Name                                                                                                                                Definition                                                            Comment/                                   Status
+                                                                                                                                                                                                                                                               Usage Note
+  Y                                          Yes
+  N                                          No
+  M                                          Modified assignment

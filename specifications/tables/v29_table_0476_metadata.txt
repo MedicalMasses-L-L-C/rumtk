@@ -1,0 +1,10 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0476
+  Description                                                                                 Table of codes specifying the reason the procedure code found in OBR-44
+                                                                                              Procedure Code is a duplicate of one ordered/charged previously for the same
+                                                                                              patient within the same date of service and has been determined to be medically
+                                                                                              necessary.  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     OO
+  where used                                                                                  OBR-                                                    48, FT1-                    28
+  HL7 Version  Introduced                                                                     2.5

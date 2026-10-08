@@ -1,0 +1,14 @@
+                                                                                                                                                                    Table Metadata
+  Table                                                                                                          0188
+  Description                                                                                                    Table of codes specifying the individual responsible for triggering the event.  No
+                                                                                                                 suggested values.
+  Type                                                                                                           User
+  Steward                                                                                                        PA
+  where used                                                                                                     EVN-                                                          5
+
+
+
+
+
+
+  HL7 Version  Introduced                                                                 2.2

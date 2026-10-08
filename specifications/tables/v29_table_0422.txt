@@ -1,0 +1,10 @@
+                                                                                                                         Table 0422Coded Content
+   Value                                       Display Name                                              Definition                                                                                                                                                       Comment/                                    Status
+                                                                                                                                                                                                                                                                          Usage Note
+   1                                           Non-acute
+   2                                           Acute
+   3                                           Urgent
+   4                                           Severe
+   5                                           Dead on Arrival
+                                               (DOA)
+   99                                          Other

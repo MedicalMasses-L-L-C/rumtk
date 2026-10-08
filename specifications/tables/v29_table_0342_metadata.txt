@@ -1,0 +1,8 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                    0342
+  Description                                                                              Table of codes that specify a designation as a military recipient.  This field is
+                                                                                           defined by CMS or other regulatory agencies.  No suggested values.
+  Type                                                                                     User
+  Steward                                                                                  FM
+  where used                                                                               IN2-11
+  HL7 Version  Introduced                                                                  2.3.1

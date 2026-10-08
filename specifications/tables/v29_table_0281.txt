@@ -1,0 +1,9 @@
+                                                                                                                            Table 0281Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+   Lab                                          Laboratory
+   Rad                                          Radiology
+   Med                                          Medical
+   Skn                                          Skilled Nursing
+   Psy                                          Psychiatric
+   Hom                                          Home Care

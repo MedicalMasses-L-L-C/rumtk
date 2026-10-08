@@ -1,0 +1,29 @@
+                                                                                                          Table 0485Coded Content
+  Value                                  Display Name                                       Definition                                         Comment/ Usage Note                                                                                                             Status
+  S                                      Stat                                                                                                  With highest priority
+  A                                      ASAP                                                                                                  Fill after S orders
+  R                                      Routine                                                                                               Default
+  P                                      Preop
+  C                                      Callback
+  T                                      Timing critical                                                                                       A request implying that it is critical to come as
+                                                                                                                                               close as possible to the requested time, e.g., for
+                                                                                                                                               a trough anti-microbial level.
+  TS<integer>                            Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                  D
+                                         within <integer>                                                                                      construct the codes.
+                                         seconds.
+  TM<integer                             Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                  D
+  >                                      within <integer>                                                                                      construct the codes.
+                                         minutes.
+  TH<integer>                            Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                  D
+                                         within <integer>                                                                                      construct the codes.
+                                         hours.
+  TD<integer>                            Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                  D
+                                         within <integer>                                                                                      construct the codes.
+                                         days.  Value                                 Display Name                                       Definition                                         Comment/ Usage Note                                                                                                            Status
+  TW<integer                            Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                 D
+  >                                     within <integer>                                                                                      construct the codes.
+                                        weeks.
+  TL<integer>                           Timing critical                                                                                       This is not a real code, but guidelines how to                                                                                 D
+                                        within <integer>                                                                                      construct the codes.
+                                        months.
+  PRN                                   As needed

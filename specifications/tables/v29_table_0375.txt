@@ -1,0 +1,7 @@
+                                                                                                                         Table 0375Coded Content
+   Value                                       Display Name                                               Definition                                                                                                                                                       Comment/                                    Status
+                                                                                                                                                                                                                                                                           Usage Note
+   SFHB                                        Stromal free
+                                               hemoglobin
+                                               preparations
+   FLUR                                        Fluorocarbons

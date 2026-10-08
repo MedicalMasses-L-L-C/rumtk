@@ -1,0 +1,13 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0052
+  Description                                                                                         Table of codes that specify a type of diagnosis being sent.
+  Type                                                                                                User
+
+
+
+
+
+
+  Steward                                                                                             FM
+  where used                                                                                          DG1-6
+  HL7 Version  Introduced                                                                                  2.1

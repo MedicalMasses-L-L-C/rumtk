@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0241
+  Description                                                                                              HL7-defined table of codes used to describe the overall state of a patient as a
+                                                                                                           result of patient care.
+  Type                                                                                                     HL7
+  Steward                                                                                                  OO
+  where used                                                                                               PEO-12
+  HL7 Version  Introduced                                                                                  2.3

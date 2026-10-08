@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0394
+  Description                                                                                              HL7-defined table of codes identifying the timing and grouping of the response
+                                                                                                           message(s).
+  Type                                                                                                     HL7
+  Steward                                                                                                  InM
+  where used                                                                                               RCP.3
+  HL7 Version  Introduced                                                                                  2.4

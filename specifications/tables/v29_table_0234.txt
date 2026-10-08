@@ -1,0 +1,15 @@
+                                                                                                                                     Table 0234Coded Content
+   Value                                           Display Name                                                    Definition                                                                                                                                                                        Comment/                                        Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   CO                                              Correction
+   AD                                              Additional
+                                                   information
+   RQ                                              Requested
+                                                   information
+   DE                                              Device evaluation
+   PD                                              Periodic
+   3D                                              3  day report
+   7D                                              7  day report
+   10D                                             10 day report
+   15D                                             15 day report
+   30D                                             30 day report

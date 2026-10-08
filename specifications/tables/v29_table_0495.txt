@@ -1,0 +1,23 @@
+                                                                                                                                       Table 0495Coded Content
+   Value                                            Display Name                                                     Definition                                                                                                                                                                          Comment/                                         Status
+                                                                                                                                                                                                                                                                                                         Usage Note
+   ANT                                              Anterior
+   BIL                                              Bilateral
+   DIS                                              Distal
+   EXT                                              External
+   LAT                                              Lateral
+   L                                                Left
+   LOW                                              Lower
+   MED                                              Medial
+   POS                                              Posterior
+   PRO                                              Proximal
+   LLQ                                              Quadrant, Left
+                                                    Lower
+   LUQ                                              Quadrant, Left
+                                                    Upper
+   RLQ                                              Quadrant, Right
+                                                    Lower
+   RUQ                                              Quadrant, Right
+                                                    Upper
+   R                                                Right
+   UPP                                              Upper

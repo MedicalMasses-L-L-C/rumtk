@@ -1,0 +1,10 @@
+                                                                                                              Table 0411Coded Content
+  Value                                   Display Name                                         Definition                                                                                                                                         Comment/                                Status
+                                                                                                                                                                                                                                                  Usage Note
+  NDBS                                    Observation of type                                                                                                                                                                                                                             N
+                                          Newborn Dried
+                                          Blood Screening
+                                          (NDBS)
+   CG                                         Observation of                                                                                                                                                                                                                                                         N
+                                              type Clinical
+                                              Genomics (CG)

@@ -1,0 +1,15 @@
+                                                                                                                       Table Metadata
+  Table                                                                           0956
+  Description                                                                     Reflects the amount of supervisory or management responsibilities for an
+                                                                                  individual’s job.  In the military, this is the person’s pay grade, which serves as a
+                                                                                  proxy for supervisory level and can be interpreted across branches. For
+                                                                                  enumeration of codes, see
+                                                                                  https://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11
+                                                                                  .7613
+                                                                                  The FHIR defining URL for the value set has been created as
+                                                                                  http://hl7.org/fhir/ValueSet/supervisory-                    lev el-odh-us, however note that this is
+                                                                                  not resolvable at this time.
+  Type                                                                            External
+  Steward                                                                         PH
+  where used                                                                      OH1-14
+  HL7 Version  Introduced                                                         2.9

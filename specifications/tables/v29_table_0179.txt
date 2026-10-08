@@ -1,0 +1,14 @@
+                                                                                                            Table 0179Coded Content
+  Value                                  Display Name                                                                                                                                     Definition                                          Comment/                               Status
+                                                                                                                                                                                                                                              Usage Note
+  NE                                     Never.  No application-level response needed  Value                                    Display Name                                                                                                                                          Definition                                             Comment/                                 Status
+                                                                                                                                                                                                                                                        Usage Note
+  ER                                       Error/Reject conditions only.  Only MFA segments
+                                           denoting errors must be returned via the application          -
+                                           level acknowledgment for this message
+  AL                                       Always.  All MFA segments (whether denoting
+                                           errors or not) must be returned via the application-
+                                           level acknowledgment message
+  SU                                       Success.  Only MFA segments denoting success
+                                           must be returned via the application-                                         level
+                                           acknowledgment for this message

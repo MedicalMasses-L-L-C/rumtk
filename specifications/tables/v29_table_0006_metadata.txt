@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0006
+  Description                                                                                           Table of codes specifying a person's religion.
+  Type                                                                                                  User
+  Steward                                                                                               InM
+  where used                                                                                            PID-17
+  HL7 Version  Introduced                                                                               2.1

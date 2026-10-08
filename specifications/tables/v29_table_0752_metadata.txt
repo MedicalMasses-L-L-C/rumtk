@@ -1,0 +1,10 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                          0752
+  Description                                                                                    9999
+
+
+
+
+
+  Type                                                                                           undefined
+  where used                                                                                     RXO-7

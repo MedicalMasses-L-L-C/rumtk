@@ -1,0 +1,7 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0915
+  Description                                                                           Table of codes specifying the process control code.  No suggested values.
+  Type                                                                                  User
+  Steward                                                                               OO
+  where used                                                                            OBX-28
+  HL7 Version  Introduced                                                               2.8

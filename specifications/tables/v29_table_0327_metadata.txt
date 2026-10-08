@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0327
+  Description                                                                                      Table of codes that specify a person's job code.  No suggested values.
+  Type                                                                                             User
+  Steward                                                                                          I    n    M    /   PA
+  where used                                                                                       JCC.1
+  HL7 Version  Introduced                                                                          2.3

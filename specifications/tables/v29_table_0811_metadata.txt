@@ -1,0 +1,15 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0811
+  Description                                                                             Table of codes specifying the type of maintenance performed on the inventory
+                                                                                          supply item.  This is different than the maintenance cycle in the sense that it can
+                                                                                          describe the number of maintenance cycles that can be performed before
+                                                                                          disposing of the inventory supply item.  No suggested values.
+
+
+
+
+
+  Type                                                                                    User
+  Steward                                                                                 OO
+  where used                                                                              STZ-4
+  HL7 Version  Introduced                                                                    2.6

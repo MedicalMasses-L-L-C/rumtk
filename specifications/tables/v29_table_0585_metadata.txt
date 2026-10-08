@@ -1,0 +1,5 @@
+                                                                                                                                                                 Table Metadata
+  Table                                                                                                        0585
+  Description                                                                                                  9999
+  Type                                                                                                         undefined
+  where used                                                                                                   CBS-5

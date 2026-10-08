@@ -1,0 +1,12 @@
+                                                                                                                      Table Metadata
+  Table                                                                           0340
+  Description                                                                     Table of codes that specify a procedure code modifier to a procedure code.
+                                                                                  Procedure code modifiers are defined by regulatory agencies such as CMS and
+                                                                                  the AMA.  Multiple modifiers may be reported.  The modifiers are sequenced in
+                                                                                  priority according to user entry.  This is a requirement of the UB and the 1500
+                                                                                  claim forms.  Multiple modifiers are allowed and the order placed on the form
+                                                                                  affects reimbursement.
+  Type                                                                            External
+  Steward                                                                         FM
+  where used                                                                      FT1-26, OBR-45, IIM-15
+  HL7 Version Introduced                                                          2.3.1

@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0268
+  Description                                                                                    Table of codes used to define whether a Charge Description Master description
+                                                                                                 may be overridden or if it must be overridden.
+  Type                                                                                           User
+  Steward                                                                                        InM/FM
+  where used                                                                                     CDM-5, PRC-                                                     13
+  HL7 Version  Introduced                                                                        2.3

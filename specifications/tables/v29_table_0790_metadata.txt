@@ -1,0 +1,8 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0790
+  Description                                                                                             Table of codes specifying the regulatory agency by which the item has been
+                                                                                                          approved, such as the FDA or AMA.
+  Type                                                                                                    User
+  Steward                                                                                                 OO
+  where used                                                                                              ITM-16
+  HL7 Version  Introduced                                                                                 2.6

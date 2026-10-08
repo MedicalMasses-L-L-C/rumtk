@@ -1,0 +1,6 @@
+                                                                                                                         Table 0755Coded Content
+   Value                               Display Name                                                                                                                                                      Definition                                                         Comment/                                    Status
+                                                                                                                                                                                                                                                                            Usage Note
+   0                                   No weight reported at admission used for grouping
+   1                                   Weight reported at admission used for grouping
+   2                                   Default weight (>2499g) used for grouping

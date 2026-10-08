@@ -1,0 +1,9 @@
+                                                                                                                                  Table 0069Coded Content
+   Value                                          Display Name                                                    Definition                                                                                                                                                                   Comment/                                        Status
+                                                                                                                                                                                                                                                                                               Usage Note
+   MED                                            Medical Service
+   SUR                                            Surgical Service
+   URO                                            Urology Service
+   PUL                                            Pulmonary
+                                                  Service
+   CAR                                            Cardiac Service

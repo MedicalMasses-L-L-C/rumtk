@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0457
+  Description                                                                                      Table of codes specifying the final status of the claim.
+  Type                                                                                             User
+  Steward                                                                                          FM
+  where used                                                                                       GP1-3
+  HL7 Version  Introduced                                                                          2.4

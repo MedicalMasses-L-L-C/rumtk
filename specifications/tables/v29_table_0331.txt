@@ -1,0 +1,7 @@
+                                                                                                                                 Table 0331Coded Content
+  Value                                           Display Name                                                                                                                 Definition                                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                             Usage Note
+  U                                               User
+  M                                               Manufacturer
+  D                                               Distributor
+  A                                               Agent for a foreign manufacturer

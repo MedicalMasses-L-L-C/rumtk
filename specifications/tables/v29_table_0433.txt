@@ -1,0 +1,11 @@
+                                                                                                                                       Table 0433Coded Content
+   Value                                    Display Name                                                      Definition                                                                                                                                                  Comment/ Usage Note                                                               Status
+   A                                        Aggressive
+   B                                        Blind
+   C                                        Confused
+   D                                        Deaf
+   I                                        On IV
+   N                                        Do not resuscitate                                                "No-code" (i.e. Do not resuscitate)
+   P                                        Paraplegic
+   O                                        Other
+   U                                        Unknown

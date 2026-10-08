@@ -1,0 +1,14 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0538
+  Description                                                                              Table of codes used to specify the relationship the staff person has with the
+                                                                                           institution for whom he/she provides services.
+
+
+
+
+
+
+  Type                                                                                     User
+  Steward                                                                                  PA
+  where used                                                                               STF-                      33
+  HL7 Version  Introduced                                                                           2.5

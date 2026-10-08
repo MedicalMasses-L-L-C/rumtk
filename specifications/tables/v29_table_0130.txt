@@ -1,0 +1,7 @@
+                                                                                                                Table 0130Coded Content
+  Value                                    Display Name                                           Definition                                                                                                                                            Comment/                                 Status
+                                                                                                                                                                                                                                                        Usage Note
+  TE                                       Teaching
+  HO                                       Home
+  MO                                       Mobile Unit
+  PH                                       Phone

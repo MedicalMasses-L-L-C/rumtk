@@ -1,0 +1,9 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0354
+  Description                                                                                          HL7-defined table of abstract message structure codes. Each code identifies a
+                                                                                                       specific message structure abstract syntax as published in the HL7 Version 2
+                                                                                                       standard.
+  Type                                                                                                 HL7
+  Steward                                                                                              InM
+  where used                                                                                           MSH-9.3
+  HL7 Version  Introduced                                                                              2.3.1

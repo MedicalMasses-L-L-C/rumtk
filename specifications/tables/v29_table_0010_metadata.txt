@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0010
+  Description                                                                                        Table of codes specifying the attending physician information.  No suggested
+                                                                                                     values.
+  Type                                                                                               User
+  Steward                                                                                            PA
+  where used                                                                                         PV1-7, SCD-34
+  HL7 Version Introduced                                                                             2.1

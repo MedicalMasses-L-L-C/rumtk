@@ -1,0 +1,6 @@
+                                                                                                                                                               Table Metadata
+  Table                                                                                                       0568
+  Description                                                                                                 Volume Units Note this table has been deprecated and is replacaced by table
+                                                                                                              0930.
+  Type                                                                                                        HL7
+  HL7 Version  Introduced                                                                                     2.8.2

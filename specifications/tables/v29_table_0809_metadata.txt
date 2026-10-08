@@ -1,0 +1,9 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0809
+  Description                                                                             Table of codes specifying the maintenance cycle used for the inventory supply
+                                                                                          item, such as the number of times to sharpen after five uses.  No suggested
+                                                                                          values.
+  Type                                                                                    User
+  Steward                                                                                 OO
+  where used                                                                              STZ-3
+  HL7 Version  Introduced                                                                 2.6

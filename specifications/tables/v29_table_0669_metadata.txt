@@ -1,0 +1,13 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                            0669
+  Description                                                                                      Table of codes specifying the status of the information provided in a device
+                                                                                                   sterilization or decontamination cycle.
+  Type                                                                                             User
+  Steward                                                                                          OO
+
+
+
+
+
+  where used                                                                                       SDD-5
+  HL7 Version  Introduced                                                                                    2.6

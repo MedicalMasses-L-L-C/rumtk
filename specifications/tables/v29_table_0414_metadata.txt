@@ -1,0 +1,7 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0414
+  Description                                                                             Table of codes that specify a unit of time.  No suggested values.
+  Type                                                                                    User
+  Steward                                                                                 InM/OO
+  where used                                                                              OM7-16
+  HL7 Version  Introduced                                                                 2.4

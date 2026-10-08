@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0181
+  Description                                                                                           Table of codes specifying the status of the requested update.  Site-defined table,
+                                                                                                        specific to each master file being updated via this transaction.
+  Type                                                                                                  User
+  Steward                                                                                               InM
+  where used                                                                                            M   FA   -4
+  HL7 Version  Introduced                                                                               2.2

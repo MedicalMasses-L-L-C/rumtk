@@ -1,0 +1,15 @@
+                                                                                                                                  Table 0483Coded Content
+  Value                                           Display Name                                                  Definition                                                                                                                                                                   Comment/                                       Status
+                                                                                                                                                                                                                                                                                             Usage Note
+  EL                                              Electronic
+  EM                                              E-mail
+  FX                                              Fax
+  IP                                              In Person
+  MA                                              Mail
+  PA                                              Paper
+  PH                                              Phone
+  RE                                              Reflexive
+                                                  (Automated
+                                                  system)
+  VC                                              Video-conference
+  VO                                              Voice

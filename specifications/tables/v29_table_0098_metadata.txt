@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0098
+  Description                                                                                           Table of codes which specify codes to further identify an insurance plan.
+  Type                                                                                                  User
+  Steward                                                                                               FM
+  where used                                                                                            IN1-31
+  HL7 Version  Introduced                                                                               2.1

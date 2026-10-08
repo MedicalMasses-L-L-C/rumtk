@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0468
+  Description                                                                                    Table of codes specifying any payment adjustment due to drugs or medical
+                                                                                                 devices.
+  Type                                                                                           User
+  Steward                                                                                        FM
+  where used                                                                                     GP2-9
+  HL7 Version Introduced                                                                         2.4

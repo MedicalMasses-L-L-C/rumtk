@@ -1,0 +1,364 @@
+                                                                                                                               Table 0354Coded Content
+  Value                                          Display Name                                                                                        Definition                                                                                           Comment/ Usage Note                                                          Status
+  ACK                                            Varies
+  ADR_A19                                                                                                                                                                                                                                                 Deprecated and                                                               D
+                                                                                                                                                                                                                                                          removed as of V2.7
+  ADT_A01                                        A01, A04, A08, A13
+  ADT_A02                                        A02
+  ADT_A03                                        A03
+  ADT_A05                                        A05, A14, A28, A31
+  ADT_A06                                        A06, A07
+  ADT_A09                                        A09, A10, A11
+  ADT_A12                                        A12
+  ADT_A15                                        A15
+  ADT_A16                                        A16
+  ADT_A17                                        A17
+  ADT_A18                                                                                                                                                                                                                                                 Deprecated and                                                               D
+                                                                                                                                                                                                                                                          removed as of V2.7
+  ADT_A20                                        A20
+  ADT_A21                                        A21, A22, A23, A25, A26,
+                                                 A27, A29, A32, A3 3
+  ADT_A24                                        A24
+  ADT_A30                                                                                                                                                                                                                                                 Deprecated and                                                               D
+                                                                                                                                                                                                                                                          removed as of V2.7
+  ADT_A37                                        A37
+  ADT_A38                                        A38  Value                                           Display Name                                                                                           Definition                                                                                              Comment/ Usage Note                                                            Status
+  ADT_A39                                         A39, A40, A41, A42
+  ADT_A43                                         A43
+  ADT_A44                                         A44
+  ADT_A45                                         A45
+  ADT_A50                                         A50, A51
+  ADT_A52                                         A52, A53
+  ADT_A54                                         A54, A55
+  ADT_A60                                         A60
+  ADT_A61                                         A61, A62
+  BAR_P01                                         P01
+  BAR_P02                                         P02
+  BAR_P05                                         P05
+  BAR_P06                                         P06
+  BAR_P10                                         P10
+  BAR_P12                                         P12
+  BPS_O29                                         O29
+  BRP_O30                                         O30
+  BRT_O32                                         O32
+  BTS_O31                                         O31
+  CCF_I22                                         I22
+  CCI_I22                                         I22
+  CCM_I21                                         I21
+  CCQ_I19                                         I19
+  CCR_I16                                         I16, |17, |18
+  CCU_I20                                         I20
+  CQU_I19                                         I19
+  CRM_ C01                                        C01, C02, C03, C04, C05,
+                                                  C06, C07, C08
+  CSU_C09                                         C09, C10, C11, C12
+  DBC_O41                                         O41
+  DBC_O42                                         O42
+  DEL_O46                                         O46
+  DEO_O45                                         O45
+  DER_O44                                         O44
+  DFT_P03                                         P03
+  DFT_P11                                         P11
+  DOC_T12                                                                                                                                                                                                                                                        Deprecated and                                                                 D
+                                                                                                                                                                                                                                                                 removed as of V2.7
+  DPR_O48                                         O48
+  DRC_O47                                         O47
+  DRG_O43                                         O43
+  EAC_U07                                         U07
+  EAN_U09                                         U09
+  EAR_U08                                         U08
+  EHC_E01                                         E01
+  EHC_E02                                         E02
+  EHC_E04                                         E04
+  EHC_E10                                         E10
+  EHC_E12                                         E12
+  EHC_E13                                         E13
+  EHC_E15                                         E15
+  EHC_E20                                         E20
+  EHC_E21                                         E21
+  EHC_E24                                 E24
+  ESR_U02                                 U02
+  ESU_U01                                 U01
+  INR_U06                                 U06
+  INU_U05                                 U05
+  INV_U14                                 Events U14                                                                             U14
+  LSU_U12                                 U12, U13
+  MDM_T01                                 T01, T03, T05, T07, T09, T11
+  MDM_T02                                 T02, T04, T06, T08, T10
+  MFK_M01                                 M01, M02, M03, M04, M05,
+                                          M06, M07, M08, M09, M10,
+                                          M11
+  MFN_M01                                                                                                                                                                                                               Deprecated and                                                     D
+                                                                                                                                                                                                                        removed as of V2.7
+  MFN_M02                                 M02
+  MFN_M03                                 M03                                                                                                                                                                           Deprecated                                                         D
+  MFN_M04                                 M04
+  MFN_M05                                 M05
+  MFN_M06                                 M06
+  MFN_M07                                 M07
+  MFN_M08                                 M08
+  MFN_M09                                 M09
+  MFN_M10                                 M10
+  MFN_M11                                 M11
+  MFN_M12                                 M12
+  MFN_M13                                 M13
+  MFN_M15                                 M15
+  MFN_M16                                 M16
+  MFN_M17                                 M17
+  MFN_M18                                 M18
+  MFQ_M01                                 M01, M02, M03, M04, M05,                                                                                                                                                      Deprecated                                                         D
+                                          M06
+  MFR_M01                                 M01, M02, M03,                                                                                                                                                                Deprecated                                                         D
+  MFR_M04                                 M04                                                                                                                                                                           Deprecated                                                         D
+  MFR_M05                                 M05                                                                                                                                                                           Deprecated                                                         D
+  MFR_M06                                 M06                                                                                                                                                                           Deprecated                                                         D
+  MFR_M07                                 M07                                                                                                                                                                           Deprecated                                                         D
+  NMD_N02                                 N02
+  NMQ_N01                                 N01                                                                                                                                                                           Deprecated                                                         D
+  NMR_N01                                 N01                                                                                                                                                                           Deprecated                                                         D
+  OMB_O27                                 O27
+  OMD_O03                                 O03
+  OMG_O19                                 O19
+  OMI_O23                                 O23
+  OML_O21                                 O21
+  OML_O33                                 O33
+  OML_O35                                 O35
+  OML_O39                                 O39
+  OML_O59                                 Laboratory Fulfillment                                                                 Laboratory order message                                                               An example is the IHE                                              N
+                                          request with REL segment                                                               structure for fulfillment                                                              LCC profile describes
+                                                                                                                                 request with REL segment                                                               this message in the
+                                                                                                                                                                                                                        LAB-7 transaction
+  OMN_O07                                 O07  Value                                     Display Name                                                                                Definition                                                                                  Comment/ Usage Note                                                   Status
+  OMP_O09                                   O09
+  OMQ_O42                                   O42                                                                                                                                                                                     Deprecated; was added                                                 D
+                                                                                                                                                                                                                                    erroneously in 2016
+  OMQ_O57                                   O57                                                                                         Identifier  for the message                                                                                                                                       N
+                                                                                                                                        structure for an OMQ
+                                                                                                                                        message with a trigger event
+                                                                                                                                        of General Order Message
+                                                                                                                                        with Document Payload
+                                                                                                                                        (O57)
+  OMS_O05                                   O05
+  OPL_O37                                   O37
+  OPR_O38                                   O38
+  OPU_R25                                   R25
+  ORA_R33                                   R33
+  ORA_R41                                   R41
+  ORB_O28                                   O28
+  ORD_O04                                   O04
+  ORF_R04                                   R04                                                                                                                                                                                     Deprecated                                                            D
+  ORG_O20                                   O20
+  ORI_O24                                   O24
+  ORL_O22                                   O22
+  ORL_O34                                   O34
+  ORL_O36                                   O36
+  ORL_O40                                   O40
+  ORL_O41                                   O41                                                                                                                                                                                     Deprecated; was added                                                 D
+                                                                                                                                                                                                                                    erroneously in 2016
+  ORL_O42                                   O42                                                                                                                                                                                     Deprecated; was added                                                 D
+                                                                                                                                                                                                                                    erroneously in 2016
+  ORL_O43                                   O43                                                                                                                                                                                     Deprecated; was added                                                 D
+                                                                                                                                                                                                                                    erroneously in 2016
+  ORL_O44                                   O44                                                                                                                                                                                     Deprecated; was added                                                 D
+                                                                                                                                                                                                                                    erroneously in 2016
+  ORL_O53                                   O53                                                                                         Identifier  for the message                                                                                                                                       N
+                                                                                                                                        structure for an ORL message
+                                                                                                                                        with a trigger event of -
+                                                                                                                                        General Laboratory Order
+                                                                                                                                        Acknowledgment Message
+                                                                                                                                        (Patient Optional) (O53)
+  ORL_O54                                   O54                                                                                         Identifier for the message                                                                                                                                        N
+                                                                                                                                        structure for an ORL message
+                                                                                                                                        with a trigger event of
+                                                                                                                                        Laboratory Order
+                                                                                                                                        Acknowledgment Message  –
+                                                                                                                                        Multiple Order Per Specimen
+                                                                                                                                        (Patient Optional) (O54)
+  ORL_O55                                   O55                                                                                         Identifier  for the message                                                                                                                                       N
+                                                                                                                                        structure for an ORL message
+                                                                                                                                        with a trigger event of
+                                                                                                                                        Laboratory Order
+                                                                                                                                        Acknowledgment Message  –
+                                                                                                                                        Multiple Order Per Container
+                                                                                                                                        of Specimen (Patient
+                                                                                                                                        Optional) (O55)
+  ORL_O56                                  O56                                                                                     Identifier  for the message                                                                                                                                N
+                                                                                                                                   structure for an ORL message
+                                                                                                                                   with a trigger event of
+                                                                                                                                   Specimen Shipment Centric
+                                                                                                                                   Laboratory Order
+                                                                                                                                   Acknowledgment Message
+                                                                                                                                   (Patient Optional) (O56)
+  ORM_O01                                  O01                                                                                                                                                                            Deprecated                                                          D
+  ORN_O08                                  O08
+  ORP_O10                                  O10
+  ORR_O02                                  O02                                                                                                                                                                            Deprecated                                                          D
+  ORS_O06                                  O06
+  ORU_R01                                  R01
+  ORU_R30                                  R30
+  ORU_W01                                  W01                                                                                                                                                                            Deprecated                                                          D
+  ORX_O43                                  O43                                                                                                                                                                            Deprecated; was added                                               D
+                                                                                                                                                                                                                          erroneously in 2016
+  ORX_O58                                  O58                                                                                     Identifier  for the message                                                                                                                                N
+                                                                                                                                   structure for an ORX message
+                                                                                                                                   with a trigger event of
+                                                                                                                                   General Order Message with
+                                                                                                                                   Document Payload
+                                                                                                                                   Acknowledgement Message
+                                                                                                                                   (O58)
+  OSM_R26                                  R26
+  OSQ_Q06                                  Q06                                                                                                                                                                            Deprecated                                                          D
+  OSR_Q06                                  Q06                                                                                                                                                                            Deprecated                                                          D
+  OSU_O41                                  O41                                                                                                                                                                            Deprecated; was added                                               D
+                                                                                                                                                                                                                          erroneously in 2016
+  OSU_O51                                  O51                                                                                     Identifier for the message                                                                                                                                 N
+                                                                                                                                   structure for an OSU message
+                                                                                                                                   with a trigger event of Order
+                                                                                                                                   Status Update (O51)
+  OSU_O52                                  O52                                                                                     Identifier for the message                                                                                                                                 N
+                                                                                                                                   structure for an OSU message
+                                                                                                                                   with a trigger event of Order
+                                                                                                                                   Status Update
+                                                                                                                                   Acknowledgement (O52)
+  OUL_R21                                  R21                                                                                                                                                                            Deprecated                                                          D
+  OUL_R22                                  R22
+  OUL_R23                                  R23
+  OUL_R24                                  R24
+  PEX_P07                                  P07, P08
+  PGL_PC6                                  PC6, PC7, PC8
+  PMU_B01                                  B01, B02
+  PMU_B03                                  B03
+  PMU_B04                                  B04, B05, B06
+  PMU_B07                                  B07
+  PMU_B08                                  B08
+  PPG_PCG                                  PCC, PCG, P CH, P CJ
+  PPP_PCB                                  PCB, PCD
+  PPR_P C1                                 PC1, PC2, PC3
+  PPT_PCL                                  PCL                                                                                                                                                                            Deprecated                                                          D  Value                                     Display Name                                                                               Definition                                                                                 Comment/ Usage Note                                                   Status
+  PPV_PCA                                   PCA                                                                                                                                                                                   Deprecated                                                            D
+  PRR_PC5                                   PC5                                                                                                                                                                                   Deprecated                                                            D
+  PTR_PCF                                   PCF                                                                                                                                                                                   Deprecated                                                            D
+  QBP_E03                                   E03
+  QBP_E22                                   E22
+  QBP_O33                                   O33
+  QBP_O34                                   O34
+  QBP_Q11                                   Q11
+  QBP_Q13                                   Q13
+  QBP_Q15                                   Q15
+  QBP_Q21                                   Q21, Q22, Q23,Q24, Q25
+  QCK_Q02                                   Q02                                                                                                                                                                                   Deprecated                                                            D
+  QCN_J01                                   J01, J02
+  QRF_W02                                   W02                                                                                                                                                                                   Deprecated                                                            D
+  QRY_A19                                   A19                                                                                                                                                                                   Deprecated                                                            D
+  QRY_P C4                                  PC4, PC9, PCE, P CK                                                                                                                                                                   Deprecated                                                            D
+  QRY_Q01                                   Q01, Q26, Q27, Q28, Q29,                                                                                                                                                              Deprecated                                                            D
+                                            Q30
+  QRY_Q02                                   Q02                                                                                                                                                                                   Deprecated                                                            D
+  QRY_R02                                   R02                                                                                                                                                                                   Deprecated                                                            D
+  QRY_T12                                   T12                                                                                                                                                                                   Deprecated                                                            D
+  QSB_Q16                                   Q16
+  QVR_Q17                                   Q17
+  RAR_ RAR                                  RAR                                                                                                                                                                                   Deprecated                                                            D
+  RAS_O17                                   O17
+  RCI_I05                                   I05                                                                                                                                                                                   Deprecated                                                            D
+  RCL_I06                                   I06                                                                                                                                                                                   Deprecated                                                            D
+  RDE_O11                                   O11, O25
+  RDE_O49                                   Events O49                                                                                 O49
+  RDR_ RDR                                  RDR
+  RDS_O13                                   O13
+  RDY_K15                                   K15
+  REF_I12                                   I12, I13, I14, I15
+  RER_RE R                                  RER                                                                                                                                                                                   Deprecated                                                            D
+  RGR_ RGR                                  RGR                                                                                                                                                                                   Deprecated                                                            D
+  RGV_O15                                   O15
+  ROR_ ROR                                  ROR                                                                                                                                                                                   Deprecated                                                            D
+  RPA_I08                                   I08, I09. I10, I11
+  RPI_I01                                   I01, I04
+  RPI_I04                                   I04
+  RPL_I02                                   I02
+  RP R_I03                                  I03
+  RQA_I08                                   I08, I09, I10, I11
+  RQC_I05                                   I05, I06                                                                                                                                                                              Deprecated                                                            D
+  RQI_I01                                   I01, I02, I03, I07
+  RQP_I04                                   I04
+  RRA_O18                                   O18
+  RRD_O14                                   O14
+  RRE_O12                                   O12, O26
+  RRE_O50                                   Events O50                                                                                 O50
+  RRG_O16                                   O16
+  RRI_I12                                   I12, I13, I14, I15
+  RSP_E03                                   E03
+  RSP_E22                             E22
+  RSP_K11                             K11
+  RSP_K21                             K21
+  RSP_K22                             K22
+  RSP_K23                             K23, K24
+  RSP_K25                             K25
+  RSP_K31                             K31
+  RSP_K32                             K32
+  RSP_O33                             O33
+  RSP_O34                             O34
+  RSP_Q11                             Q11                                                                                                                                                          Deprecated                                                  D
+  RTB_K13                             K13
+  SDR_S31                             S31, S36
+  SDR_S32                             S32, S37
+  SET_S38                             Specimen Container                                                             This message structure                                                        It can be used to                                           N
+                                      Preparation and Specimen                                                       supports tracking of                                                          describe the container
+                                      Collection Event                                                               information related to                                                        preparation for
+                                                                                                                     preparations for specimen                                                     collection as wellasthe
+                                                                                                                     collection and the collection                                                 successful collection
+                                                                                                                     event.                                                                        of one or more
+                                                                                                                                                                                                   specimen(s).
+  SET_S40                             Specimen Collection Event                                                      This message structure                                                        It can be used to                                           N
+                                      unsuccessful                                                                   supports tracking of                                                          describe the reason
+                                                                                                                     information when specimen                                                     why a specimen
+                                                                                                                     collection is not successful.                                                 collection was
+                                                                                                                                                                                                   unsuccessful.
+  SET_S41                             Specimen Movement Event                                                        This message structure                                                        It can be used to report                                    N
+                                                                                                                     supports tracking of                                                          on specimen
+                                                                                                                     information related to the                                                    departing, arriving,
+                                                                                                                     movements of specimens                                                        being accepted or
+                                                                                                                     across locations, and                                                         rejected, including
+                                                                                                                     placement in and out of                                                       moving the specimen
+                                                                                                                     storage.                                                                      into storage or
+                                                                                                                                                                                                   retrieving it from
+                                                                                                                                                                                                   storage (e.g. in
+                                                                                                                                                                                                   biobanking).
+  SET_S45                             Specimen Identification                                                        This message structure                                                        It can be used to report                                    N
+                                      Events                                                                         supports tracking of                                                          the de-and re-
+                                                                                                                     information to identify or de-                                                identification of
+                                                                                                                     identify specimens or at time                                                 specimen(s)  as well as
+                                                                                                                     of final disposal.                                                            the final disposition of
+                                                                                                                                                                                                   a specimen.
+  SET_S50                             Specimen Procedure Step                                                        This message structure                                                                                                                    N
+                                      successful                                                                     supports tracking of
+                                                                                                                     information related to
+                                                                                                                     processing  of one or more
+                                                                                                                     specimen that may result in
+                                                                                                                     derived (child) specimen or
+                                                                                                                     not.
+  SET_S52                             Specimen Procedure Step                                                        This message structure                                                        It can be used to                                           N
+                                      unsuccessful                                                                   supports tracking of                                                          describe the reason
+                                                                                                                     information when the                                                          why the specimen
+                                                                                                                     processing of a specimen was                                                  processing was
+                                                                                                                     unsuccessful.                                                                 unsuccessful.  Value                                    Display Name                                                                           Definition                                                                              Comment/ Usage Note                                                 Status
+  SIU_S12                                  S12, S13, S14, S15, S16, S17,
+                                           S18, S19, S20, S21, S22, S23,
+                                           S24, S26
+  SLR_S28                                  S28, S29, S30, S34, S35
+  SQM_S25                                  S25                                                                                                                                                                            Deprecated                                                          D
+  SQR_S25                                  S25                                                                                                                                                                            Deprecated                                                          D
+  SRM_S01                                  S01, S02, S03, S04, S05, S06,
+                                           S07, S08, S09, S10, S11
+  SRR_S01                                  S01, S02, S03, S04, S05, S06 ,
+                                           S07, S08, S09, S10, S11
+  SSR_U04                                  U04
+  SSU_U03                                  U03
+  STC_S33                                  S33
+  SUR_P09                                  P09                                                                                                                                                                            Deprecated                                                          D
+  TCU_U10                                  U10, U11
+  UDM_Q05                                  Q05
+  VXQ_V01                                  V01                                                                                                                                                                            Deprecated                                                          D
+  VXR_V03                                  V03                                                                                                                                                                            Deprecated                                                          D
+  VXU_V04                                  V04
+  VXX_V02                                  V02                                                                                                                                                                            Deprecated                                                          D

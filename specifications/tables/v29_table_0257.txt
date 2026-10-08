@@ -1,0 +1,8 @@
+                                                                                                                  Table 0257Coded Content
+  Value                                     Display Name                                                                                                                                             Definition                                             Comment/                                  Status
+                                                                                                                                                                                                                                                            Usage Note
+  CFST                                      Fasting (no calorie intake) for the period specified in the
+                                            time component of the term, e.g., 1H POST CFST
+  EXCZ                                      Exercise undertaken as challenge (can be quantified)
+  FFST                                      No fluid intake for the period specified in the time
+                                            component of the term

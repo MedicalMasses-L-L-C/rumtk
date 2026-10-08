@@ -1,0 +1,9 @@
+                                                                                                                      Table 0232Coded Content
+   Value                                      Display Name                                             Definition                                                                                                                                                    Comment/                                   Status
+                                                                                                                                                                                                                                                                     Usage Note
+   01                                         Medicare claim
+                                              status
+   02                                         Medicaid claim
+                                              status
+   03                                         Name/address
+                                              change

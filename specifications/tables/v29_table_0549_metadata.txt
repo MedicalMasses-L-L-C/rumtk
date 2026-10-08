@@ -1,0 +1,9 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0549
+  Description                                                                                       Table of codes that specify the National Drug Codes (NDC) that are required by
+                                                                                                    the Health Insurance Portability and Accountability Act (HIPAA) for electronic
+                                                                                                    claims for pharmacy charges.  No suggested values.
+  Type                                                                                              External
+  Steward                                                                                           FM
+  where used                                                                                        FT1-29
+  HL7 Version  Introduced                                                                           2.5

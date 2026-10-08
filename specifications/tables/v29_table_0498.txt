@@ -1,0 +1,10 @@
+                                                                                                                       Table 0498Coded Content
+  Value                                       Display Name                                                                                                                                                   Definition                                                Comment/                                   Status
+                                                                                                                                                                                                                                                                       Usage Note
+  A                                           A ct iv e - Consent has been granted
+  L                                           Limited - Consent has been granted with limitations
+  R                                           Refused - Consent has been refused
+  P                                           Pending - Consent has not yet been sought
+  X                                           Rescinded - Consent was initially granted, but was
+                                              subsequently revoked or ended.
+  B                                           Bypassed (Consent not sought)

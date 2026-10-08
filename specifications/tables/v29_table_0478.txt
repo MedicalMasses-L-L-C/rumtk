@@ -1,0 +1,9 @@
+                                                                                                                   Table 0478Coded Content
+  Value                              Display Name                                                                                                                                                     Definition                                              Comment/                                  Status
+                                                                                                                                                                                                                                                              Usage Note
+  Y                                  Pharmaceutical substance is in the formulary
+  N                                  Pharmaceutical substance is NOT in the formulary
+  R                                  Pharmaceutical substance is in the formulary, but
+                                     restrictions apply
+  G                                  Pharmaceutical substance is in the formulary, but
+                                     guidelines apply

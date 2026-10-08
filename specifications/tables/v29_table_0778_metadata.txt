@@ -1,0 +1,8 @@
+                                                                                                                                           Table Metadata
+  Table                                                                                         0778
+  Description                                                                                   Table of codes specifying a classification of material items into like groups as
+                                                                                                defined and utilized within an operating room setting for charting procedures.
+  Type                                                                                          User
+  Steward                                                                                       OO
+  where used                                                                                    ITM-4
+  HL7 Version  Introduced                                                                       2.6

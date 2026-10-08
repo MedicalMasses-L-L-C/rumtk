@@ -1,0 +1,8 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0954
+  Description                                                                                Describes an individual's typical arrangement of working hours for an
+                                                                                             occupation. For the list of codes in the table, see the HL7 Webpage rendering.
+  Type                                                                                       HL7-EXT
+  Steward                                                                                    PH
+  where used                                                                                 ODH2-9
+  HL7 Version Introduced                                                                     2.9

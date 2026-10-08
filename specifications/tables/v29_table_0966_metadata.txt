@@ -1,0 +1,10 @@
+                                                                                                                                                                         Table Metadata
+   Table                                                                                                             0966
+   Description                                                                                                       Values the describing the declared level of pricing for a particular product under
+                                                                                                                     a contract, usually based on a discount for larger orders under the contract –
+                                                                                                                     often assigned numerically, for example: 01 = Tier 1, 02 = Tier 2, 03 = Tier 3
+                                                                                                                     No suggested values.
+   Type                                                                                                              User
+   Steward                                                                                                           OO
+   where used                                                                                                        CTR-                           18
+   HL7 Version  Introduced                                                                                           2.9

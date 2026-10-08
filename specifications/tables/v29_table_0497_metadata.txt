@@ -1,0 +1,14 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                     0497
+  Description                                                                               HL7-defined table of codes specifying the method in which a subject provides
+                                                                                            consent.
+  Type                                                                                      HL7
+  Steward                                                                                   StrucDoc
+
+
+
+
+
+
+  where used                                                                                TXA:10; CON:10
+  HL7 Version  Introduced                                                                            2.5

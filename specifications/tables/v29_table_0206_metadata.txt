@@ -1,0 +1,9 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0206
+  Description                                                                             HL7-defined table of codes specifying actions to be applied for segments when
+                                                                                          an HL7 version 2 interface is operating in "action code mode" (a kind of update
+                                                                                          mode in the Standard).
+  Type                                                                                    HL7
+  Steward                                                                                 InM
+  where used                                                                              CH2, RXA-21, RXV-22, LCH-2, IAM-6    ,     A    RV-2, IN1-55, OH1
+  HL7 Version  Introduced                                                                 2.3

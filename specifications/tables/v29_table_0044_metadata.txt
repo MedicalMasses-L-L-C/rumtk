@@ -1,0 +1,9 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0044
+  Description                                                                                          Table of codes specifying the type of contract entered into by the healthcare
+                                                                                                       facility and the guarantor for the purpose of settling outstanding account
+                                                                                                       balances.  No suggested values.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           PV1-24
+  HL7 Version  Introduced                                                                              2.1

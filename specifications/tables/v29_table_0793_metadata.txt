@@ -1,0 +1,8 @@
+                                                                                                                                                                     Table Metadata
+  Table                                                                                                           0793
+  Description                                                                                                     Table of codes specifying an act containing a rule that the item is legally
+                                                                                                                  required to be included in notification reporting.
+  Type                                                                                                            User
+  Steward                                                                                                         OO
+  where used                                                                                                      ITM-18
+  HL7 Version  Introduced                                                                                         2.6

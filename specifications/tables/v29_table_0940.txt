@@ -1,0 +1,7 @@
+                                                                                                                 Table 0940Coded Content
+  Value                                    Display Name                                                                                                                Definition                                             Comment/ Usage Note                                                 Status
+  LCP                                      Limited Coverage Policy
+  NFDA                                     Non-FDA Approved Diagnositic
+                                           Procedure
+  FLDP                                     Frequency Limited Diagnostics Procedure
+  NT                                       New Test - Limited Diagnostic History

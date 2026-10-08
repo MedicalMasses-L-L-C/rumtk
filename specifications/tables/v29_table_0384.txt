@@ -1,0 +1,21 @@
+                                                                                                                                   Table 0384Coded Content
+  Value                                   Display Name                                                                                                                                                                                           Definition                                     Comment/                                        Status
+                                                                                                                                                                                                                                                                                                Usage Note
+  SR                                      Single Test Reagent
+  MR                                      Multiple Test Reagent                                                                                                                                                                                                                                 The
+                                                                                                                                                                                                                                                                                                consumption
+                                                                                                                                                                                                                                                                                                cannot be
+                                                                                                                                                                                                                                                                                                tied to orders
+                                                                                                                                                                                                                                                                                                for a single
+                                                                                                                                                                                                                                                                                                test
+  DI                                      Diluent
+  PT                                      Pretreatment
+  RC                                      Reagent Calibrator
+  CO                                      Control Reagent
+  PW                                  Purified Water
+  LW                                  Liquid Waste
+  SW                                  Solid Waste
+  SC                                  Countable Solid Item                                                                                                                                                                                                            E.g.,
+                                                                                                                                                                                                                                                                      Pipetting tip
+  LI                                  Measurable Liquid Item
+  OT                                  Other

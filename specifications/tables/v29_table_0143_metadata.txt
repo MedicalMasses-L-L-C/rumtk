@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0143
+  Description                                                                                       Table of codes specifying the reason a service is not covered.  No suggested
+                                                                                                    values.
+  Type                                                                                              User
+  Steward                                                                                           FM
+  where used                                                                                        IN2-24
+  HL7 Version  Introduced                                                                           2.2

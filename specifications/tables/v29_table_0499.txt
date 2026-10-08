@@ -1,0 +1,6 @@
+                                                                                                                        Table 0499Coded Content
+   Value                                      Display Name                                              Definition                                                                                                                                                      Comment/                                    Status
+                                                                                                                                                                                                                                                                        Usage Note
+   E                                          Emergency
+   PJ                                         Professional
+                                              Judgment

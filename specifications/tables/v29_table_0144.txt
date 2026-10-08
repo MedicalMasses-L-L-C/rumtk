@@ -1,0 +1,10 @@
+                                                                                                                                   Table 0144Coded Content
+   Value                                          Display Name                                                                                                                                                   Definition                                                                     Comment/                                        Status
+                                                                                                                                                                                                                                                                                                Usage Note
+   1                                              Insurance company
+   2                                              Employer
+   3                                              Insured presented policy
+   4                                              Insured presented card
+   5                                              Signed statement on file
+   6                                              Verbal information
+   7                                              None

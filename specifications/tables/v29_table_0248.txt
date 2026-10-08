@@ -1,0 +1,12 @@
+                                                                                                                                Table 0248Coded Content
+  Value                                          Display Name                                                                                                                Definition                                                                                   Comment/ Usage                                                Status
+                                                                                                                                                                                                                                                                          Note
+  A                                              Actual product involved in incident was
+                                                 evaluated
+  L                                              A product from the same lot as the
+                                                 actual product involved was
+                                                 evaluated
+  R                                              A product from a reserve sample was
+                                                 evaluated
+  N                                              A product from a controlled/non-
+                                                 related inventory was evaluated

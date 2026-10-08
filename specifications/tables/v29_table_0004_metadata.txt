@@ -1,0 +1,8 @@
+                                                                                                                                                                Table Metadata
+  Table                                                                                                        0004
+  Description                                                                                                  Table of codes used by systems to categorize patients by site in HL7 Version 2.x
+                                                                                                               interfaces.
+  Type                                                                                                         User
+  Steward                                                                                                      PA
+  where used                                                                                                   PV1-2
+  HL7 Version  Introduced                                                                                      2.1

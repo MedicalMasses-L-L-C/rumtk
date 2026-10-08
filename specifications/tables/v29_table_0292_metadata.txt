@@ -1,0 +1,21 @@
+                                                                                                                    Table Metadata
+  Table                                                                         0292
+  Description                                                                   Table of codes specifying the administered vaccines.   The values are
+                                                                                maintained by the US Centers of Disease Control.  The code system is
+                                                                                maintained by the CDC, and may be found at URL;
+                                                                                https://phinvads.cdc.gov/vads/ViewCodeSystem.action?id=2.16.840.1.113883.1
+                                                                                2.292
+
+
+
+
+
+
+
+                                                                                        The value set is maintained by the CDC and may be found at URL:
+                                                                                        https://phinvads.cdc.gov/vads/ViewValueSet.action?id=ABDEE003-                                                            77C3-
+                                                                                        48E7-                    B941-EBF92B6B81FC
+  Type                                                                          External
+  Steward                                                                       OO
+  where used                                                                    RXA-5, RXE-2, RXD-2, RX G-4
+  HL7 Version  Introduced                                                               2.3

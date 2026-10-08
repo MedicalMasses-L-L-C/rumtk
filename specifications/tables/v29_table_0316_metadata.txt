@@ -1,0 +1,9 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0316
+  Description                                                                                Table of codes specifying whether the patient wants to donate his/her organs and
+                                                                                             whether an organ donor card or similar documentation is on file with the
+                                                                                             healthcare organization.
+  Type                                                                                       User
+  Steward                                                                                    PA
+  where used                                                                                 PV2-44, PD1-                    8
+  HL7 Version  Introduced                                                                    2.3

@@ -1,0 +1,10 @@
+                                                                                                                                  Table Metadata
+  Table                                                                                   0361
+  Description                                                                             Table of codes that identify a sending application among all other applications
+                                                                                          within the network enterprise.  The network enterprise consists of all those
+                                                                                          applications that participate in the exchange of HL7 messages within the
+                                                                                          enterprise.  No suggested values.
+  Type                                                                                    User
+  Steward                                                                                 InM
+  where used                                                                              MSH-3, MSH-5
+  HL7 Version  Introduced                                                                 2.3.1

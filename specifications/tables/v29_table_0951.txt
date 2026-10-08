@@ -1,0 +1,47 @@
+                                                                                              Table 0951Coded Content
+  Value                        Display Name                      Definition                                                                                  Comment/ Usage Note                                                                   Status
+  BS                           Bank residual                     Requests that the specimen should be                                                                                                                                              N
+                               specimen                          stored long term
+  CR                           Confirm                           Requests verification of previously                                                         Usage Note: Used to indicate why                                                      N
+                               results value                     reported results                                                                            review is requested
+  FP                           Store                             Requests that the specimen should be                                                        Provides instructions for Specimen                                                    N
+                               residual                          saved for a short duration until follow                                                     storage
+                               specimen                          up is completed
+                               pending
+                               follow up
+  IN                           Interpret                         Requests interpretation of previously                                                       Usage Note: Used to indicate why                                                      N
+                               results                           reported results                                                                            review is requested
+  IR                           Review                            Requests comparison of previously                                                           Usage Note: Used to indicate why                                                      N
+                               clinically                        reported results amongst themselves                                                         review is requested
+                               inconsistent
+                               results
+  IT                           Incorrect test                    For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               performed                         code can be used to identify when an                                                        review is requested
+                                                                 incorrect test was performed for the
+                                                                 target order
+  OP                           Test                              For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               ordering                          code can be used to identify orders                                                         review is requested
+                               problem                           and the respective results, where
+                                                                 problems occurred during ordering
+  PI                           Patient                           For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               identificatio                     code can be used to identify when a                                                         review is requested
+                               n problem                         patient identification issue has
+                                                                 occurred on the target order
+  SI                           Suspected                         Requests verification of previously                                                         Usage Note: Used to indicate why                                                      N
+                               interference                      reported results due to suspected                                                           review is requested
+                                                                 interference
+  SP                           Sampling                          For process improvement work this                                                           Usage Note: Used to indicate why                                                      R
+                               problem                           code can be used to identify orders,                                                        review is requested
+                                                                 where problems occurred during
+                                                                 sample collection
+  TP                           Specimen                          For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               transport                         code can be used to identify orders,                                                        review is requested
+                               problem                           where problems occurred during
+                                                                 sample transport
+  TT                           Turnaround                        For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               time                              code can be used to identify results                                                        review is requested
+                               problem                           with excessive reporting delay
+  XR                           Incorrect                         For process improvement work this                                                           Usage Note: Used to indicate why                                                      N
+                               results                           code can be used to identify when                                                           review is requested
+                                                                 incorrect result were reported for the
+                                                                 target order

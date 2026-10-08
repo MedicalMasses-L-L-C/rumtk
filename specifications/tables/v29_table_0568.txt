@@ -1,0 +1,6 @@
+                                                                                                                                        Table 0568Coded Content
+   Value                                            Display Name                                                      Definition                                                                                                                                                                            Comment/                                         Status
+                                                                                                                                                                                                                                                                                                            Usage Note
+   l                                                Liter
+   [pt_us]                                          Pint
+   ml                                               Milliliters

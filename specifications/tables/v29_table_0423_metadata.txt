@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0423
+  Description                                                                                         Table of codes specifying the reason a non-                    urgent patient presents to the
+                                                                                                      emergency room for treatment instead of a clinic or physican office.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          ABS-9
+  HL7 Version  Introduced                                                                             2.4

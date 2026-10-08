@@ -1,0 +1,15 @@
+                                                                                                                            Table Metadata
+  Table                                                                               0227
+  Description                                                                         Table of codes specifying the organization that manufactures a vaccine. The
+                                                                                      values are maintained by the US Centers of Disease Control.  Note that the
+                                                                                      source of truth for these code values are maintained by the CDC, and the code
+                                                                                      system may be accessed at URL:
+                                                                                      https://phinvads.cdc.gov/vads/SearchCodeSystems_search.action?searchOptions
+                                                                                      .searchText=PH_ManufacturersOfVaccinesMVX_CDC_NIP.  The value set is
+                                                                                      also maintained by the CDC, and may be accessed at URL:
+                                                                                      https://phinvads.cdc.gov/vads/SearchValueSets_search.action?searchOptions.sea
+                                                                                      rchText=PHVS_ManufacturersOfVaccinesMVX_CDC_NIP
+  Type                                                                                Imported
+  Steward                                                                             OO
+  where used                                                                          RXA-17, RXD-20, RXG-21
+  HL7 Version  Introduced                                                             2.3

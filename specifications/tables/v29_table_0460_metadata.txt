@@ -1,0 +1,7 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0460
+  Description                                                                                             Table of codes specifying the OCE status of the line item.
+  Type                                                                                                    User
+  Steward                                                                                                 FM
+  where used                                                                                              GP2-5
+  HL7 Version Introduced                                                                                  2.4

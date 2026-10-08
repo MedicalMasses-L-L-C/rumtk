@@ -1,0 +1,7 @@
+                                                                                                                                                                       Table Metadata
+   Table                                                                                                            0017
+   Description                                                                                                      Table of codes specifying a type of financial transaction.
+   Type                                                                                                             User
+   Steward                                                                                                          FM
+   where used                                                                                                       FT1-6
+   HL7 Version  Introduced                                                                                          2.1

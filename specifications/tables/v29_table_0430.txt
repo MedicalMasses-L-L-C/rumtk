@@ -1,0 +1,10 @@
+                                                                                                                                     Table 0430Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                       Comment/                                         Status
+                                                                                                                                                                                                                                                                                                     Usage Note
+   A                                               Ambulance
+   C                                               Car
+   F                                               On foot
+   H                                               Helicopter
+   P                                               Public Transport
+   O                                               Other
+   U                                               Unknown

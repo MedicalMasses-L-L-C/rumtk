@@ -1,0 +1,9 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0415
+  Description                                                                                       HL7-defined table of codes that specify a type of hospital receiving a transfer
+                                                                                                    patient, which affects how a facility is reimbursed under diagnosis related group
+                                                                                                    (DRG's), for example, exempt or non-                                        exempt.
+  Type                                                                                              HL7
+  Steward                                                                                           FM
+  where used                                                                                        DRG-11
+  HL7 Version  Introduced                                                                           2.4

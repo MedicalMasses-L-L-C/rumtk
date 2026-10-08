@@ -1,0 +1,7 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0283
+  Description                                                                                          Table of codes used to define the state of a  referral.
+  Type                                                                                                 User
+  Steward                                                                                              OO
+  where used                                                                                           RF1-1
+  HL7 Version  Introduced                                                                              2.3

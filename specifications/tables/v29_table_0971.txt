@@ -1,0 +1,22 @@
+                                                                                                              Table 0971Coded Content
+  Value                             Display Name                                                Definition                                                                                                                                         Comment/                                Status
+                                                                                                                                                                                                                                                   Usage Note
+  1                                 Update technically not                                      English: update of insurance date on card technically not                                                                                                                                  N
+                                    possible                                                    possible
+
+                                                                                                German: Aktualisierung VSD auf eGK technisch nicht
+                                                                                                möglich
+  2                                 Invalid                                                     English: authentication certificate is invalid                                                                                                                                             N
+                                    Authentification
+                                    certificate                                                 German: Authentifizierungszertifikat eGK ungültig
+  3                                 Online verification                                         English: online verification of authentication                                                                                                                                             N
+                                    technically not                                             certificate is technically not possible
+                                    possible
+                                                                                                German: Onlineprüfung des Authentifizierungszerti-
+                                                                                                fikats technisch nicht möglich
+  4                                 Update technically                                          English: update of insurance date is technically not                                                                                                                                       N
+                                    not possible due to                                         possible due to maximum offline time exceeded
+                                    offline time
+                                    exceeded                                                    German: Aktualisierung VSD auf eGK technisch
+                                                                                                nicht möglich weil maximaler Offline-Zeitraum
+                                                                                                überschritten

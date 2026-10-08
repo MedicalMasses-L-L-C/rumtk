@@ -1,0 +1,5 @@
+                                                                                                                                  Table 0166Coded Content
+  Value                                           Display Name                                                   Definition                                                                                                                                                                    Comment/                                       Status
+                                                                                                                                                                                                                                                                                               Usage Note
+  B                                               Base
+  A                                               Additive

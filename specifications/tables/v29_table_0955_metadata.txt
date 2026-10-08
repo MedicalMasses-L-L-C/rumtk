@@ -1,0 +1,10 @@
+                                                                                                                    Table Metadata
+  Table                                                                         0955
+  Description                                                                   The type of business associated with the patient's occupation.  For enumeration
+                                                                                of codes, see
+                                                                                https://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11
+                                                                                .7187
+  Type                                                                          External
+  Steward                                                                       PH
+  where used                                                                    OH2-5, OH3-4
+  HL7 Version  Introduced                                                       2.9

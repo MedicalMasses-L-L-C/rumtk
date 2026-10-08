@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0205
+  Description                                                                                           HL7-defined table of codes used to identify the intent for the dollar amount on a
+                                                                                                        pricing transaction.
+  Type                                                                                                  HL7
+  Steward                                                                                               InM
+  where used                                                                                            C    P.     2
+  HL7 Version  Introduced                                                                               2.3

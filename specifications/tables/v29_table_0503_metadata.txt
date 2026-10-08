@@ -1,0 +1,9 @@
+                                                                                                                                   Table Metadata
+  Table                                                                                   0503
+  Description                                                                             HL7-defined table of codes used to specify the sequencing relationship between
+                                                                                          the current service request and the related service request(s) specified in this
+                                                                                          TQ2 segment.
+  Type                                                                                    HL7
+  Steward                                                                                 OO
+  where used                                                                              TQ2-2
+  HL7 Version  Introduced                                                                 2.5

@@ -1,0 +1,8 @@
+                                                                                                                        Table 0268Coded Content
+   Value                                      Display Name                                              Definition                                                                                                                                                      Comment/                                    Status
+                                                                                                                                                                                                                                                                        Usage Note
+   X                                          Override not
+                                              allowed   Value                                        Display Name                                               Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                Usage Note
+   A                                            Override allowed
+   R                                            Override required

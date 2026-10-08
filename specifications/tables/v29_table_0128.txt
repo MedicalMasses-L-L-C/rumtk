@@ -1,0 +1,7 @@
+                                                                                                                                     Table 0128Coded Content
+   Value                                           Display Name                                                     Definition                                                                                                                                                                        Comment/                                         Status
+                                                                                                                                                                                                                                                                                                      Usage Note
+   SV                                              Severe
+   MO                                              Moderate
+   MI                                              Mild
+   U                                               Unknown

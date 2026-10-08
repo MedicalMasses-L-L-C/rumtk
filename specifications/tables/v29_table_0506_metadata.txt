@@ -1,0 +1,16 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                      0506
+
+
+
+
+
+
+
+
+  Description                                                                                HL7-defined table of codes used to specify an additional or alternate
+                                                                                             relationship between this service request and other service requests.
+  Type                                                                                       HL7
+  Steward                                                                                    OO
+  where used                                                                                 TQ2-10
+  HL7 Version  Introduced                                                                    2.5

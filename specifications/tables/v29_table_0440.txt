@@ -1,0 +1,187 @@
+                                                                                                               Table 0440Coded Content
+  Value                             Display Name                                                                    Definition                              Comment/ Usage Note                                                                                                             Status
+  AD                                Address                                                                                                                 Replaced by XAD as of v 2.3
+  AUI                               Authorization information                                                                                               Replaces the CM data type used in sections
+                                                                                                                                                            6.5.6.14 IN1-14, as of v 2.5.
+  CCD                               Charge code and date                                                                                                    Replaces the CM data type used in section
+                                                                                                                                                            4.5.2.1 BLG-1, as of v 2.5.
+  CCP                               Channel calibration                                                                                                     Replaces the CM data type used in 7.14.1.5
+                                    parameters                                                                                                              OBX-5.3 where OBX-5Observation value
+                                                                                                                                                            (*) is data type CD as of v 2.5.
+  CD                                Channel definition                                                                                                      For waveform data only;.
+  CE                                Coded element                                                                                                           WITHDRA WN
+  CF                                Coded element with
+                                    formatted values
+  CK                                Composite ID with check                                                                                                 WITHDRA WN
+                                    digit
+  CM                                Composite                                                                                                               WITHDRAWN Replaced by numerous new
+                                                                                                                                                            unambiguous data types in v 2.5
+  CN                                Composite ID number and                                                                                                 WITHDRA WN. Replaced by XCN as of v
+                                    name                                                                                                                    2.3
+  CNE                               Coded with no exceptions
+  CNN                               Composite ID number and                                                                                                 Restores the original data type CN as was
+                                    name simplified                                                                                                         initially implementable in the CM used in
+                                                                                                                                                            sections 4.5.3.32 and 7.4.1.32-                                        (OBR-                                                     32),
+                                                                                                                                                            4.5.3.33 and 7.4.1.33 - (OBR-                                                    33) 4.5.3.34
+                                                                                                                                                            and 7.4.1.34 -                                                   (OBR-                                                    34) 4.5.3.35 and
+                                                                                                                                                            7.4.1.35 - (OBR-                                                    35). Components 7 and 8,
+                                                                                                                                                            however, have been promoted to data type IS
+                                                                                                                                                            to be consistent with current practice without
+                                                                                                                                                            violating backward compatibility.
+  CP                                Composite price                                                                                                         .
+  CQ                                Composite quantity with                                                                                                 CQ cannot be legally expressed when
+                                    units                                                                                                                   embedded within another data type. Its use is
+                                                                                                                                                            constrained to a segment field.
+  CSU                               Channel sensitivity and                                                                                                 Replaces the CM data type used in 7.14.1.5
+                                    units                                                                                                                   OBX-5.3 where OBX-5Observation value
+                                                                                                                                                            (*) is data type CD as of v 2.5.
+  CWE                               Coded with exceptions
+  CX                             Extended composite ID
+                                 with check digit
+  DDI                            Daily deductible                                                                                                Replaces the CM data type used in section
+                                 information                                                                                                     6.5.7.30   IN2-30, as of v 2.5.
+  DIN                            Date and institution name                                                                                       Replaces the CM data type used in sections
+                                                                                                                                                 15.4.6.12 STF-12 and 15.4.6.14 STF-                                                    13, as
+                                                                                                                                                 of v 2.5.
+  DLD                            Discharge to location and                                                                                       Replaces the CM data type used in section
+                                 date                                                                                                            8.8.4.9 - OM2-9, as of v 2.5
+  DLN                            Driver's license number
+  DLT                            Delta
+  DR                             Date/time range
+  DT                             Date
+  DTM                            Date/time
+  DTN                            Day type and number                                                                                             Replaces the CM data type used in section
+                                                                                                                                                 6.5.8.11   IN3-11, as of v 2.5.
+  ED                             Encapsulated data                                                                                               Supports ASCII MIME-encoding  of binary
+                                                                                                                                                 data.
+  EI                             Entity identifier
+  EIP                            Entity identifier pair                                                                                          Replaces the CM data type used in sections
+                                                                                                                                                 4.5.1.8  - ORC-                                                    8, 4.5.3.29 -                                                   OBR-                                                    29, 7.3.1.29
+                                                                                                                                                 - OBR-29, as of v 2.5.
+  ELD                            Error location and                                                                                              WITHDRA WN
+                                 description
+  ERL                            Error location
+  FC                             Financial class
+  FN                             Family name                                                                                                     Appears ONLY in the PPN, XCN, and XPN.
+  FT                             Formatted text
+  GTS                            General timing
+                                 specification
+  HD                             Hierarchic designator
+  ICD                            Insurance certification                                                                                         Replaces the CM data type used in section
+                                 definition                                                                                                      6.5.8.20   IN3-20, as of v 2.5.
+  ID                             Coded values for HL7
+                                 tables
+  IS                             Coded  value for user-
+                                 defined tables
+  JCC                            Job code/class
+  LA1                            Location with address                                                                                           Datatype has been withdrawn from the                                                                                 B
+                                 variation 1                                                                                                     Standard; the segments RXO- 8 and RXE-8
+                                                                                                                                                 were deprecated, and kept for backward
+                                                                                                                                                 compatibility only as of v2.5, and as of v2.9
+                                                                                                                                                 they have been witdrawn so the code for the
+                                                                                                                                                 datapyt is here marked as backwars-
+                                                                                                                                                 compatible use (for historical records only)
+  LA2                            Location with address                                                                                           Datatype has been withdrawn from the                                                                                 B
+                                 variation 2                                                                                                     Standard; the segments RXD- 13, RXG-11
+                                                                                                                                                 and RXA-11 were deprecated, and kept for
+                                                                                                                                                 backward compatibility only as of v2.5, and
+                                                                                                                                                 as of v2.9 they have been withdrawn so the
+                                                                                                                                                 code for the datatype is here marked as
+                                                                                                                                                 backwards-compatible use (for historical
+                                                                                                                                                 records only)
+  MA                             Multiplexed array                                                                                               For waveform data only  Value                          Display Name                                                               Definition                           Comment/ Usage Note                                                                                                    Status
+  MO                             Money
+  MOC                            Money and charge code                                                                                           Replaces the CM data type used in sections
+                                                                                                                                                 4.5.3.23 OBR-23 and 7.4.1.23- OBR-                                                    23 as of
+                                                                                                                                                 v 2.5.
+  MOP                            Money or percentage                                                                                             Replaces the CM data type used in section
+                                                                                                                                                 6.5.8.5  IN3-                      5, as of v 2.5. This data type is
+                                                                                                                                                 restricted to this field.
+  MSG                            Message type                                                                                                    Replaces the CM data type used in 2.16.9.9
+                                                                                                                                                 MSH-9 as of v 2.5.
+  NA                             Numeric array                                                                                                   For waveform data only
+  NDL                            Name with date and                                                                                              Replaces the CM data type used in sections
+                                 location                                                                                                        4.5.3.32 and 7.4.1.32-( OBR-                                                    32) , 4.5.3.33
+                                                                                                                                                 and 7.4.1.33  - ( OBR-                                                    33) 4.5.3.34 and
+                                                                                                                                                 7.4.1.34 - ( OBR-                                                    34) 4.5.3.35 and 7.4.1.35 -                                                   (
+                                                                                                                                                 OBR-35) as of v 2.5.
+  NM                             Numeric
+  NR                             Numeric range                                                                                                   Replaces the CM data type used in sections
+                                                                                                                                                 8.8.4.6.1- OM2-6.1, 8.8.4.6.3- OM2-6.3and
+                                                                                                                                                 8.8.4.6.4- OM2-6.4, as of v 2.5.
+  OCD                            Occurrence code and date                                                                                        Replaces the CM data type used in sections
+                                                                                                                                                 6.5.10.10 UB1-                      16 and 6.5.11.7 UB2-                    7, as of
+                                                                                                                                                 v 2.5.
+  OSD                            Order sequence definition                                                                                       WITHDRA WN
+  OSP                            Occurrence span code and                                                                                        Replaces the CM data type used in section
+                                 date                                                                                                            6.5.11.8 UB2-8, as of v 2.5.
+  PIP                            Practitioner institutional                                                                                      Replaces the CM data type used in 15.4.5.7
+                                 privileges                                                                                                      PRA-7 as of v 2.5.
+  PL                             Person location
+  PLN                            Practitioner license or other                                                                                   Replaces the CM data type used in 15.4.5.6
+                                 ID number                                                                                                       PRA-6, 11.6.3.7 PRD-7 and 11.6.4.7 CTD-7
+                                                                                                                                                 as of v 2.5.
+  PN                             Person name                                                                                                     WITHDRA WN
+  PPN                            Performing person time                                                                                          equivalent of an XCN joined with a TS
+                                 stamp
+  PRL                            Parent result link                                                                                              Replaces the CM data type used in sections
+                                                                                                                                                 4.5.3.26  - OBR-                                                       26 and 7.4.1.26 - OBR-                                                    26 as
+                                                                                                                                                 of v 2.5.
+  PT                             Processing type
+  PTA                            Policy type and amount                                                                                          Replaces the CM data type used in section
+                                                                                                                                                 6.5.7.29   IN2-29, as of v 2.5.
+  QIP                            Query input parameter list
+  QSC                            Query selection criteria
+  RCD                            Row column definition
+  RF R                           Reference range                                                                                                 Replaces the CM data type used in sections
+                                                                                                                                                 8.8.4.6  - OM2-6, 8.8.4.7 -                               OM2-7 and8.8.4.8
+                                                                                                                                                 - OM2-8 as of v 2.5.
+  RI                             Repeat interval
+  RMC                            Room coverage                                                                                                   Replaces the CM data type used in section
+                                                                                                                                                 6.5.7.28  IN2-28, as of v 2.5.
+  RP                             Reference pointer
+  RPT                            Repeat pattern
+  SAD                            Street Address                                                                                                  Appears ONLY in the XAD data type.
+  SCV                            Scheduling class value pair                                                                                     For scheduling data only. See Chapter 10
+  SI                             Sequence ID
+  SN                             Structured numeric
+  SNM                            String of telephone number                                                                                       Definition: a string whose characters are
+                                 digits                                                                                                           limited to "+" and the decimal digits 0
+                                                                                                                                                  through 9.  As a string, leading zeros are
+                                                                                                                                                  always considered significant.  Maximum
+                                                                                                                                                  length: Not specified for the type. May be
+                                                                                                                                                  specified in the context of use.
+  SPD                            Specialty description                                                                                            Replaces the CM data type used in 15.4.5.5
+                                                                                                                                                  PRA-5 as of v 2.5.
+  SPS                            Specimen source                                                                                                  WITHDRA WN
+  SRT                            Sort order
+  ST                             String data
+  TM                             Time
+  TN                             Telephone number                                                                                                 WITHDRA WN
+  TQ                             Timing/quantity                                                                                                  WITHDRA WN
+  TS                             Time stamp                                                                                                       WITHDRA WN
+  TX                             Text data
+  UVC                            UB value code and amount                                                                                         Replaces the CM data type used in sections
+                                                                                                                                                  6.5.10.10 UB1-                      10 and 6.5.11.6 UB2-                    6, as of
+                                                                                                                                                  v 2.5.
+  VH                             Visiting hours
+  VID                            Version identifier
+  VR                             Value range                                                                                                      Replaces the CM data type used in
+                                                                                                                                                  5.10.5.3.11 QRD-11 as of v 2.5.
+  WVI                            Channel Identifier                                                                                               Replaces the CM data type used in 7.14.1.3.1
+                                                                                                                                                  OBX-5.1 where OBX-5 Observation value
+                                                                                                                                                  (*) is data type CD as of v 2.5.
+  WVS                            Waveform source                                                                                                  Replaces the CM data type used in 7.14.1.4
+                                                                                                                                                  OBX-5.2 where OBX-5 Observation value
+                                                                                                                                                  (*) is data type CD as of v 2.5.
+  XAD                            Extended address                                                                                                 Replaces AD as of v 2.3
+  XCN                            Extended composite ID                                                                                            Replaces CN a s of v 2.3
+                                 number and name for
+                                 persons
+  XON                            Extended composite name
+                                 and ID number for
+                                 organizations
+  XPN                            Extended person name                                                                                             Replaces PN as of v 2.3.
+  XTN                            Extended                                                                                                         Replaces TN as of v 2.3
+                                 telecommunications
+                                 number

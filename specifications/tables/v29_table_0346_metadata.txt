@@ -1,0 +1,14 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0346
+  Description                                                                                          Table of codes that specify a certification agency.  No suggested values.
+  Type                                                                                                 User
+
+
+
+
+
+
+
+  Steward                                                                                              FM
+  where used                                                                                           IN3-18
+  HL7 Version  Introduced                                                                2.3.1

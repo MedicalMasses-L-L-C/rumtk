@@ -1,0 +1,8 @@
+                                                                                                                                                Table Metadata
+  Table                                                                                             0246
+  Description                                                                                       Table of codes used to indicate that the product is available for analysis. No
+                                                                                                    suggested values.
+  Type                                                                                              User
+  Steward                                                                                           OO
+  where used                                                                                        PCR-13
+  HL7 Version  Introduced                                                                           2.3

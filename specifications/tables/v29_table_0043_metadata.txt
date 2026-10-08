@@ -1,0 +1,8 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0043
+  Description                                                                                        Table of codes specifying the condition code.  These codes are defined by CMS
+                                                                                                     or other regulartory agencies.  No suggested values.
+  Type                                                                                               User
+  Steward                                                                                            FM
+  where used                                                                                         UB2-3
+  HL7 Version  Introduced                                                                            2.1

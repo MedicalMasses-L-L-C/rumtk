@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0073
+  Description                                                                                 Table of codes specifying the amount of interest that will be charged the
+                                                                                              guarantor on any outstanding amounts.  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     PA
+  where used                                                                                  PV1-28
+  HL7 Version Introduced                                                                      2.1

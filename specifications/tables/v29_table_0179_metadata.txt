@@ -1,0 +1,9 @@
+                                                                                                                              Table Metadata
+  Table                                                                                0179
+  Description                                                                          HL7-defined table of codes specifying application response levels defined for a
+                                                                                       given Master File Message at the MFE segment level, and used for MFN-Master
+                                                                                       File Notification message.
+  Type                                                                                 HL7
+  Steward                                                                              InM
+  where used                                                                           MFI-6
+  HL7 Version  Introduced                                                              2.2

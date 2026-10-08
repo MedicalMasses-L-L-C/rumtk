@@ -1,0 +1,10 @@
+                                                                                                                     Table 0276Coded Content
+  Value                                                    Display Name                                                                                                                    Definition                                              Comment/ Usage                                           Status
+                                                                                                                                                                                                                                                   Note
+  ROUTINE                                                  Routine appointment - default if not valued
+  WALKIN                                                   A previously unscheduled walk-in visit
+  CHECK UP                                                 A routine check-up, such as an annual
+                                                           physical
+  FOLLOWUP                                                 A follow up visit from a previous
+                                                           appointment
+  EMERGENCY                                                Emergency appointment

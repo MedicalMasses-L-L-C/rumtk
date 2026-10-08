@@ -1,0 +1,18 @@
+                                                                                                                               Table 0484Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                       Usage Note
+   B                                             Trial Quantity
+                                                 Balance
+   C                                             Compassionate
+                                                 Fill
+   N                                             New/Renew -
+                                                 Full Fill
+   P                                             New/Renew -
+                                                 Part Fill
+   Q                                             Refill - Part Fill
+   R                                             Refill - Full Fill
+   S                                             Manufacturer
+                                                 Sample
+   T                                             Trial Quantity
+   Z                                             Non-Prescription
+                                                 Fill

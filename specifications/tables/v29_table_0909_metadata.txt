@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0909
+  Description                                                                                 HL7-defined table of codes specifying the scheme for the patient results release
+                                                                                              categorization.
+  Type                                                                                        HL7
+  Steward                                                                                     OO
+  where used                                                                                  OBX-26
+  HL7 Version  Introduced                                                                     2.7

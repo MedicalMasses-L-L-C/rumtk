@@ -1,0 +1,16 @@
+                                                                                                                                 Table 0251Coded Content
+  Value                                          Display Name                                                   Definition                                                                                                                                                                  Comment/                                       Status
+                                                                                                                                                                                                                                                                                            Usage Note
+  WP                                             Product withdrawn
+                                                 permanently
+  WT                                             Product
+                                                 withdrawn
+                                                 temporarily
+  DR                                             Product dose or
+                                                 frequency of use
+                                                 reduced
+  DI                                             Product dose or
+                                                 frequency of use
+                                                 increased
+  OT                                             Other
+  N                                              None

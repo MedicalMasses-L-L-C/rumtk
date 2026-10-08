@@ -1,0 +1,8 @@
+                                                                                                                                                                   Table Metadata
+  Table                                                                                                          0074
+  Description                                                                                                    HL7-defined table of codes which specify a section of a diagnostic service
+                                                                                                                 where an observation may be performed.
+  Type                                                                                                           HL7
+  Steward                                                                                                        OO
+  where used                                                                                                     OBR-                                                    24, OM4-                    49
+  HL7 Version  Introduced                                                                                        2.1

@@ -1,0 +1,45 @@
+                                                                                                                            Table 0553Coded Content
+   Value                                Display Name                                                Definition                                                                         Comment/ Usage Note                                                                                                                    Status
+   OR                                   Original Invoice
+   CN                                   Cancel Invoice                                                                                                                                 Can be used to reverse or cancel an
+                                                                                                                                                                                       invoice in progress or reverse a paid
+                                                                                                                                                                                       invoice.  Receiver may only mark Invoice
+                                                                                                                                                                                       as cancelled, not purge records
+   CG                                   Cancel Invoice                                                                                                                                 Cancel a specific Product/Service Group in
+                                        Product/Service                                                                                                                                an Invoice
+                                        Group
+   CL                                   Cancel Invoice                                                                                                                                 Cancel a specific Product/Service Line
+                                        Product/Service                                                                                                                                Item in an Invoice
+                                        Line Item
+   PD                                   Pre-                                                                                                                                           Can be used to submit an invoice through
+                                        Determination                                                                                                                                  a Payer's edit and adjudication engine to
+                                        Invoice                                                                                                                                        determine if the invoice will be paid -           does
+                                                                                                                                                                                       not result in payment by Payer
+   RA                                   Re-Asse ssment                                                                                                                                 Used on EHC^E04 only
+   OA                                   Original
+                                        Authorization
+   SA                                   Special
+                                        Authorization
+   AI                                   Combined
+                                        Authorization and
+                                        Adjudication
+                                        request
+   PA                                   Pre-Authorization
+   AA                                   Authorization
+                                        request for
+                                        inpatient
+                                        admission
+   EA                                   Authorization
+                                        request for
+                                        inpatient stay
+                                        extension
+   RC                                   Referral Pre-
+                                        Authorization
+   CA                                   Cancel
+                                        Authorization
+                                        request
+   CP                                   Copy  of Invoice
+   CQ                                   Coverage
+                                        Register Query
+   RU                                   Referral
+                                        authorization

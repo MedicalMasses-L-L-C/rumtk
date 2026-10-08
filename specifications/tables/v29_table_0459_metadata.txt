@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0459
+  Description                                                                                       Table of codes specifying the action to be taken during reimbursement
+                                                                                                    calculations.
+  Type                                                                                              External
+  Steward                                                                                           FM
+  where used                                                                                        GP2-4
+  HL7 Version  Introduced                                                                           2.4

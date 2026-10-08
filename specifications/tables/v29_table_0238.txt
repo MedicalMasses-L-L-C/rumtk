@@ -1,0 +1,6 @@
+                                                                                                                            Table 0238Coded Content
+  Value                                        Display Name                                                 Definition                                                                                                                                                           Comment/                                     Status
+                                                                                                                                                                                                                                                                                 Usage Note
+  Y                                            Yes
+  S                                            Significant
+  N                                            No

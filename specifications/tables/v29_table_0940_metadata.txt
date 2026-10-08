@@ -1,0 +1,5 @@
+                                                                                                                                    Table Metadata
+  Table                                                                                    0940
+  Description                                                                              HL7-defined table of codes specifying the type of limitation.
+  Type                                                                                     HL7
+  HL7 Version  Introduced                                                                  2.8.2

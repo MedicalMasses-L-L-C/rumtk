@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0749
+  Description                                                                                 Table of codes specifying the status of the use of the gender information for
+                                                                                              diagnosis related group (DRG) determination. US Realm.
+  Type                                                                                        User
+  Steward                                                                                     FM
+  where used                                                                                  DRG-26
+  HL7 Version  Introduced                                                                     2.6

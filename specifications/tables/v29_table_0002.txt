@@ -1,0 +1,19 @@
+                                                                                                                                   Table 0002Coded Content
+   Value                                   Display Name                                                                                                                                                                          Definition                                              Comment/                                               Status
+                                                                                                                                                                                                                                                                                         Usage Note
+   A                                       Separated
+   D                                       Divorced
+   M                                       Married
+   S                                       Single
+   W                                       Widowed
+   C                                     Common law
+   G                                     Living together
+   P                                     Domestic partner
+   R                                     Registered domestic partner
+   E                                     Legally Separated
+   N                                     Annulled
+   I                                     Interlocutory
+   B                                     Unmarried
+   U                                     Unknown
+   O                                     Other
+   T                                     Unreported

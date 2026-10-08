@@ -1,0 +1,25 @@
+                                                                                                                                                 Table 0734Coded Content
+   Value                                                Display Name                                                          Definition                                                                                                                                                                                       Comment/                                             Status
+                                                                                                                                                                                                                                                                                                                               Usage Note
+   0                                                    Normal grouping
+   1                                                    Invalid or missing
+                                                        primary diagnosis
+   2                                                    Diagnosis is not
+                                                        allowed to be
+                                                        primary
+   3                                                    Data does not
+                                                        fulfill DRG
+                                                        criteria
+   4                                                    Invalid age,
+                                                        admission date,
+                                                        date of birth or
+                                                        discharge date
+   5                                                    Invalid gender
+   6                                                    Invalid discharge
+                                                        status
+   7                                                    Invalid weight ad
+                                                        admission
+   8                                                    Invalid length of
+                                                        stay
+   9                                                    Invalid field
+                                                        "same day"

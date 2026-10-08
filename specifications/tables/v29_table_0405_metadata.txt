@@ -1,0 +1,8 @@
+                                                                                                                                            Table Metadata
+  Table                                                                                          0405
+  Description                                                                                    Table of codes which specify the hierarchical components of an organization
+                                                                                                 unit, as defined by the institution.  No suggested values.
+  Type                                                                                           User
+  Steward                                                                                        PA
+  where used                                                                                     ORG-2
+  HL7 Version  Introduced                                                                        2.4

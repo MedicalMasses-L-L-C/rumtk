@@ -1,0 +1,21 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                  0464
+
+
+
+
+
+
+
+
+  Description                                                                            Table of codes specifying the facility of the institution for which this price (for
+                                                                                         the preceding CDM entry) is valid.  For use when needing multi-facility pricing.
+                                                                                         If null, assume all facilities. In a multi-                                                                 facility environment, the facility
+                                                                                         associated with this chargeable item may not be the same as the sending or
+                                                                                         receiving facility identified in the MSH segment. Use only when the price is not
+                                                                                         the same for all facilities, that is, a null value indicates that this pricing is valid
+                                                                                         for all facilities.  No suggested values.
+  Type                                                                                   User
+  Steward                                                                                InM/FM
+  where used                                                                             PRC-2
+  HL7 Version  Introduced                                                                2.4

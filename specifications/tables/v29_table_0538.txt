@@ -1,0 +1,7 @@
+                                                                                                                             Table 0538Coded Content
+   Value                                        Display Name                                                Definition                                                                                                                                                             Comment/                                     Status
+                                                                                                                                                                                                                                                                                   Usage Note
+   EMP                                          Employee
+   VOL                                          Volunteer
+   CON                                          Contractor
+   CST                                          Consultant

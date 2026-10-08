@@ -1,0 +1,13 @@
+                                                                                                                               Table Metadata
+  Table                                                                                 0959
+  Description                                                                           A patient's employment type as defined by work classification (e.g. paid vs.
+                                                                                        unpaid, self-employed vs. not self-employed, government vs. private, etc.).For
+                                                                                        the list of codes in the table, see the FHIR rendering.
+  Type                                                                                  HL7-EXT
+
+
+
+
+  Steward                                                                               PH
+  where used                                                                            ODH2-6
+  HL7 Version  Introduced                                                                         2.9

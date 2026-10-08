@@ -1,0 +1,5 @@
+                                                                                                                            Table 0415Coded Content
+  Value                                         Display Name                                                Definition                                                                                                                                                            Comment/                                     Status
+                                                                                                                                                                                                                                                                                  Usage Note
+  N                                             DRG Non Exempt
+  E                                             DRG Exempt

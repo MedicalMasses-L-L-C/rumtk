@@ -1,0 +1,5 @@
+                                                                                                                                               Table 0932Coded Content
+   Value                                               Display Name                                                          Definition                                                                                                                                                                                     Comment/                                            Status
+                                                                                                                                                                                                                                                                                                                            Usage Note
+   min                                                 Minutes
+   s                                                   Seconds

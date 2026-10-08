@@ -1,0 +1,7 @@
+                                                                                                                        Table 0517Coded Content
+   Value                                      Display Name                                                                                                                                                     Definition                                                Comment/                                    Status
+                                                                                                                                                                                                                                                                         Usage Note
+   PAT                                        Inform patient
+   NPAT                                       Do NOT inform patient
+   USR                                        Inform User
+   HD                                         Inform help desk

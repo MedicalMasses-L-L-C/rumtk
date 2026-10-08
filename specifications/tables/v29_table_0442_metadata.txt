@@ -1,0 +1,7 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0442
+  Description                                                                                        Table of codes specifying the types of services provided by the location.
+  Type                                                                                               User
+  Steward                                                                                            I    n    M    /   PA
+  where used                                                                                         LOC-9
+  HL7 Version  Introduced                                                                            2.4

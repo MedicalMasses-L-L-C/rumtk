@@ -1,0 +1,6 @@
+                                                                                                                                Table 0216Coded Content
+   Value                                         Display Name                                                   Definition                                                                                                                                                                 Comment/                                      Status
+                                                                                                                                                                                                                                                                                           Usage Note
+   AI                                            Active Inpatient
+   DI                                            Discharged
+                                                 Inpatient

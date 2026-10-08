@@ -1,0 +1,5 @@
+                                                                                                                               Table 0882Coded Content
+   Value                                         Display Name                                                  Definition                                                                                                                                                               Comment/                                      Status
+                                                                                                                                                                                                                                                                                        Usage Note
+   E                                             Employed
+   SE                                            Self-employed

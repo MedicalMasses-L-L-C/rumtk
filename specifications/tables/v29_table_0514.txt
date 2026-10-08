@@ -1,0 +1,35 @@
+                                                                                                                        Table 0514Coded Content
+   Value                                      Display Name                                                                                                                                                    Definition                                                Comment/                                   Status
+                                                                                                                                                                                                                                                                        Usage Note
+   ABOINC                                     ABO Incompatible Transfusion Reaction
+   ACUTHEH                                    Acute Hemolytic Transfusion Reaction
+   TR
+   ALLERGIC                                   Allergic Reaction - First
+   1
+   ALLERGIC                                   Allergic Reaction - Recurrent
+   2
+   ALLERGIC                                   Allergic Reaction - Repeating
+   R
+   ANAPHYL                                    Anaphylactic Reaction
+   AC
+   BACT CON                                   Reaction to Bacterial Contamination
+   TAM
+   DELAYED                                    Delayed Hemolytic Transfusion Reaction
+   HTR  Value                                   Display Name                                                                                                                                    Definition                                           Comment/                                Status
+                                                                                                                                                                                                                                               Usage Note
+  DELAYEDS                                Delayed Serological Transfusion Reaction
+  TR
+  GVHD                                    Graft vs Host Disease - Transfusion - Associated
+  HYPOTENS                                Non-hemolytic Hypotensive Reaction
+  NONHTR1                                 Non-Hemolytic Fever Chill Transfusion Reaction -
+                                          First
+  NONHTR2                                 Non-Hemolytic Fever Chill Transfusion Reaction -
+                                          Recurrent
+  NONHTRR                                 Non-Hemolytic Fever Chill Transfusion Reaction -
+  EC                                      Repeating
+  NONIMMU                                 Non-Immune Hemolysis
+  NE
+  NONSPE C                                Non-Specific, Non-Hemolytic Transfusion Reaction
+  NORXN                                   No Evidence of Transfusion Reaction
+  PTP                                     Posttransfusion Purpura
+  VOLOVER                                 Symptoms most likely due to volume overload

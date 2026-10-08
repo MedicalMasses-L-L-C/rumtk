@@ -1,0 +1,8 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                   0964
+  Description                                                                                             Table of codes describing reasons why a service was performed.  No suggested
+                                                                                                          values.
+  Type                                                                                                    User
+  Steward                                                                                                 FM
+  where used                                                                                              FT1-56
+  HL7 Version  Introduced                                                                                 2.9

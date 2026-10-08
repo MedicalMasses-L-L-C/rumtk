@@ -1,0 +1,10 @@
+                                                                                                                                Table Metadata
+  Table                                                                                  0379
+  Description                                                                            Table of codes that identify a type of tray.  Because the geometry can be
+                                                                                         different, the tray type should, if possible, express the number of positions in the
+                                                                                         tray.  The definition assumes hierarchical nesting using the following phrases:
+                                                                                         container is located in a carrier, carrier is located in a tray.  No suggested values.
+  Type                                                                                   User
+  Steward                                                                                OO
+  where used                                                                             SAC-12
+  H    L    7     Ve    rsion Introduced                                                 2.4

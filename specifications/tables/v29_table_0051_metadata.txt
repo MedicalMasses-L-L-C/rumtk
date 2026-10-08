@@ -1,0 +1,8 @@
+                                                                                                                                                    Table Metadata
+  Table                                                                                               0051
+  Description                                                                                         Table of codes specifying the primary diagnosis code for billing purposes.  No
+                                                                                                      suggested values.
+  Type                                                                                                User
+  Steward                                                                                             FM
+  where used                                                                                          FT1-19
+  HL7 Version  Introduced                                                                             2.1

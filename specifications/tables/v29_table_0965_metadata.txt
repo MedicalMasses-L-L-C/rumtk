@@ -1,0 +1,8 @@
+                                                                                                                                                                         Table Metadata
+   Table                                                                                                             0965
+   Description                                                                                                       Values describing the scope of contracts, for example Local, Regional and
+                                                                                                                     Global.  No suggested values.
+   Type                                                                                                              User
+   Steward                                                                                                           OO
+   where used                                                                                                        CTR-                           9
+   HL7 Version  Introduced                                                                                           2.9

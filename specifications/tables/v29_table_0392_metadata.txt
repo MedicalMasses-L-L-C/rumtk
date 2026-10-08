@@ -1,0 +1,11 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0392
+  Description                                                                            Table of codes identifying what search components (e.g., name, birthdate, social
+                                                                                         security number) of the record returned matched the original query where the
+                                                                                         responding system does not assign numeric match weights or confidence levels.
+                                                                                         It provides a method for passing a descriptive indication of the reason a
+                                                                                         particular record was found.
+  Type                                                                                   User
+  Steward                                                                                InM
+  where used                                                                             QRI.2
+  HL7 Version  Introd uced                                                               2.4

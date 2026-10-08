@@ -1,0 +1,8 @@
+                                                                                                                        Table 0444Coded Content
+  Value                                       Display Name                                              Definition                                                                                                                                                       Comment/                                    Status
+                                                                                                                                                                                                                                                                         Usage Note
+  G                                           Prefix Given Middle
+                                              Family Suffix
+  F                                          Prefix Family
+                                             Middle Given
+                                             Suffix

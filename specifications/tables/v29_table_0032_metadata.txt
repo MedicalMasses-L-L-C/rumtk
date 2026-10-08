@@ -1,0 +1,8 @@
+                                                                                                                        Table Metadata
+  Table                                                                            0032
+  Description                                                                      Table of codes specifying which price schedule is to be used for room and bed
+                                                                                   charges.  No suggested values.
+  Type                                                                             User
+  Steward                                                                          PA
+  where used                                                                       PV1-21
+  HL7 Version  Introduced                                                          2.1

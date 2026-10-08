@@ -1,0 +1,7 @@
+                                                                                                                                Table Metadata
+  Table                                                                                  0962
+  Description                                                                            Contains codes describing the availability status of the device.
+  Type                                                                                   HL7-EXT
+  Steward                                                                                OO
+  where used                                                                             DEV-4
+  HL7 Version  Introduced                                                                2.9

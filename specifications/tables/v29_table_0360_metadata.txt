@@ -1,0 +1,13 @@
+                                                                                                                              Table Metadata
+  Table                                                                                    0360
+
+
+
+
+
+  Description                                                                              Table of codes specifying an educational degree (e.g., MD).  Used in the CNN
+                                                                                           datatype (names and identifiers of clinicians) in Version 2 messaging.
+  Type                                                                                     User
+  Steward                                                                                  InM/OO
+  where used                                                                               CNN.7
+  HL7 Version  Introduced                                                                  2.3.1

@@ -1,0 +1,7 @@
+                                                                                                              Table 0409Coded Content
+  Value                                   Display Name                                         Definition                                                                                                                                         Comment/                                Status
+                                                                                                                                                                                                                                                  Usage Note
+  SU                                      Start up
+  SD                                      Shut down
+  M                                       Migrates to
+                                          different CPU

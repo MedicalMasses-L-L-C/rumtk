@@ -1,0 +1,10 @@
+                                                                                                                                       Table 0263Coded Content
+   Value                                            Display Name                                                      Definition                                                                                                                                                                          Comment/                                          Status
+                                                                                                                                                                                                                                                                                                          Usage Note
+   A                                                Ambulatory
+   E                                                Emergency
+   F                                                Isolation
+   N                                                Intensive care
+   C                                                Critical care
+   R                                                Routine
+   S                                                Surgery

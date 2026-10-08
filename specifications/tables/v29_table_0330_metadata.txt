@@ -1,0 +1,7 @@
+                                                                                                                                                          Table Metadata
+  Table                                                                                                    0330
+  Description                                                                                              HL7-defined table of codes used to specify the basis for marketing approval.
+  Type                                                                                                     HL7
+  Steward                                                                                                  OO
+  where used                                                                                               PDC-10
+  HL7 Version  Introduced                                                                                  2.3

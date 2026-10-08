@@ -1,0 +1,7 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                              0149
+  Description                                                                                        Table of codes which specify whether the days are denied, pending or approved.
+  Type                                                                                               User
+  Steward                                                                                            InM/FM
+  where used                                                                                         DTN.1
+  HL7 Version  Introduced                                                                            2.2

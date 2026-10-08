@@ -1,0 +1,8 @@
+                                                                                                                                                       Table Metadata
+  Table                                                                                                 0027
+  Description                                                                                           HL7-defined table of codes specifying the allowed priorities for obtaining the
+                                                                                                        specimen.
+  Type                                                                                                  HL7
+  Steward                                                                                               InM/OO
+  where used                                                                                            OM4-13
+  HL7 Version  Introduced                                                                               2.1

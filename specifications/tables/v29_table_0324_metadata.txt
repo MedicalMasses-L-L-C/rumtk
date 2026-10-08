@@ -1,0 +1,8 @@
+                                                                                                                                             Table Metadata
+  Table                                                                                          0324
+  Description                                                                                    Table of codes specifying an identifier code to show which characteristic is
+                                                                                                 being communicated with the segment.
+  Type                                                                                           User
+  Steward                                                                                        I    n    M    /   PA
+  where used                                                                                     LCH-4
+  HL7 Version  Introduced                                                                        2.3

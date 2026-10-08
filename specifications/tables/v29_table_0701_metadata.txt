@@ -1,0 +1,5 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                     0701
+  Description                                                                               9999
+  Type                                                                                      undefined
+  where used                                                                                RXC-                           9

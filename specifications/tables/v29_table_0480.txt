@@ -1,0 +1,9 @@
+                                                                                                                    Table 0480Coded Content
+  Value                                     Display Name                                             Definition                                Comment/ Usage Note                                                                                                                                        Status
+  M                                         Medication                                                                                         Default value.  Includes, but is not limited to, tables,
+                                                                                                                                               capsules, powders, puffs, and other non-                                                        injected/non-
+                                                                                                                                               infused products.
+  S                                         IV Large Volume                                                                                    Includes, but is not limited to, TPNs, admixtures,
+                                            Solutions                                                                                          solutions and drips.
+  O                                         Other solution as                                                                                  Includes, but is not limited to, piggybacks and
+                                            medication orders                                                                                  syringes

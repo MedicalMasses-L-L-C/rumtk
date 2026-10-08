@@ -1,0 +1,8 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0183
+  Description                                                                                            HL7-defined table of codes specifying whether a person is currently a valid staff
+                                                                                                         member.
+  Type                                                                                                   HL7
+  Steward                                                                                                PA
+  where used                                                                                             STF-                      7
+  HL7 Version  Introduced                                                                                2.2

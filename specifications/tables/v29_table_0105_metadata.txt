@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0105
+  Description                                                                                           HL7-defined table of codes which are used to specify the source of a comment.
+  Type                                                                                                  HL7
+  Steward                                                                                               InM
+  where used                                                                                            NTE-2
+  HL7 Version  Introduced                                                                               2.1

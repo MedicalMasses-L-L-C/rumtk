@@ -1,0 +1,7 @@
+                                                                                                                                                                    Table Metadata
+  Table                                                                                                          0162
+  Description                                                                                                    Table of codes which specify the route of administration.
+  Type                                                                                                           User
+  Steward                                                                                                        OO
+  where used                                                                                                     RXR-                           1
+  HL7 Version  Introduced                                                                                        2.2

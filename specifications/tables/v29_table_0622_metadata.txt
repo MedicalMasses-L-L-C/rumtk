@@ -1,0 +1,5 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0622
+  Description                                                                                             9999
+  Type                                                                                                    undefined
+  where used                                                                                              OBX-3

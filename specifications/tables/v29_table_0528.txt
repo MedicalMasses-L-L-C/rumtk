@@ -1,0 +1,16 @@
+                                                                                                                       Table 0528Coded Content
+  Value                                       Display Name                                                                                                                                                   Definition                                                Comment/                                    Status
+                                                                                                                                                                                                                                                                       Usage Note
+  HS                                          the hour of sleep (e.g., H18-22)
+  AC                                          before meal (from lat. ante cibus)
+  PC                                          after meal (from lat. post cibus)
+  IC                                          between meals (from lat. inter cibus)
+  ACM                                         before breakfast (from lat. ante cibus matutinus)
+  ACD                                         before lunch (from lat. ante cibus diurnus)
+  ACV                                         before dinner (from lat. ante cibus vespertinus)
+  PCM                                         after breakfast (from lat. post cibus matutinus)
+  PCD                                         after lunch (from lat. post cibus diurnus)
+  PCV                                         after dinner (from lat. post cibus vespertinus)
+  ICM                                         between breakfast and lunch
+  ICD                                         between lunch and dinner
+  ICV                                         between dinner and the hour of sleep

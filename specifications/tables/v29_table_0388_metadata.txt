@@ -1,0 +1,13 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0388
+  Description                                                                        HL7-defined table of codes identifying the processing type that applies to the
+                                                                                     test code.  If this attribute is omitted, then regular production is the default.
+
+
+
+
+
+  Type                                                                               HL7
+  Steward                                                                            OO
+  where used                                                                         TCC-                                                     14
+  HL7 Version  Introduced                                                                   2.4

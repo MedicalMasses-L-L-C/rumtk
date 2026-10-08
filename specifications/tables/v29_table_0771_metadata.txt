@@ -1,0 +1,13 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                 0771
+
+
+
+
+
+  Description                                                                                           Table of codes specifying a high level categorization of resources.  No
+                                                                                                        suggested values.
+  Type                                                                                                  User
+  Steward                                                                                               PA
+  where used                                                                                            STF-                      39
+  HL7 Version  Introduced                                                                               2.6

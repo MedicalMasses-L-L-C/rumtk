@@ -1,0 +1,8 @@
+                                                                                                                                               Table 0017Coded Content
+   Value                                               Display Name                                                          Definition                                                                                                                                                                                     Comment/                                             Status
+                                                                                                                                                                                                                                                                                                                            Usage Note
+   CG                                                  Charge
+   CD                                                  Credit
+   PY                                                  Payment
+   AJ                                                  Adjustment
+   CO                                                  Co-payment

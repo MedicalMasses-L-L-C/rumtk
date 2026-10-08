@@ -1,0 +1,8 @@
+                                                                                                                                                   Table Metadata
+  Table                                                                                              0731
+  Description                                                                                        HL7-defined table of codes specifying the status of a diagnosis for a diagnosis
+                                                                                                     related group (DRG) determination. US Realm.
+  Type                                                                                               HL7
+  Steward                                                                                            FM
+  where used                                                                                         DG1-25
+  HL7 Version  Introduced                                                                            2.6

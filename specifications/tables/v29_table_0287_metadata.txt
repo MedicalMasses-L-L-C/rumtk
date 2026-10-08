@@ -1,0 +1,14 @@
+                                                                                                                                                  Table Metadata
+  Table                                                                                           0287
+
+
+
+
+
+
+  Description                                                                                     HL7-defined table of codes used in Patient Care for the intent of a problem or
+                                                                                                  goal.
+  Type                                                                                            HL7
+  Steward                                                                                         PA
+  where used                                                                                      ROL-2, GOL-1, PRB-                                                    1, PTH-1
+  HL7 Version  Introduced                                                                         2.3

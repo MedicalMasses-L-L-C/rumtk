@@ -1,0 +1,54 @@
+                                                                                                           Table 0702Coded Content
+  Value                                  Display Name                                        Definition                                          Comment/ Usage Note                                                                                                                Status
+  FLS                                    Flash                                                                                                   Used to quickly sterilize instruments that were
+                                                                                                                                                 dropped during surgery.
+  PRV                                    Prevac                                                                                                  A prevac cycle is vacuum assisted.
+  GRV                                    Gravity                                                                                                 A gravity cycle is executed at atmospheric
+                                                                                                                                                 pressure.
+  LQD                                    Liquid                                                                                                  A cycle specific to sterilizing liquids.
+  EXP                                    Express                                                                                                 An express cycle is similar to a flash cycle but
+                                                                                                                                                 the supply item is wrapped.
+  DRT                                    Dart                                                                                                    A dart cycle is a special cycle used to test the
+                                                                                                                                                 integrity of the sterilizer chamber to hold a
+                                                                                                                                                 vacuum.
+  DRW                                    Dart Warm-up                                                                                            A dart warm-up cycle is used to bring the
+                                         Cycle                                                                                                   sterilizer chamber up to operating temperature
+                                                                                                                                                 in order to run a dart test cycle.
+  THR                                    Thermal
+  ISO                                    Isothermal
+  BWD                                    Bowie-Dick Test                                                                                         A Bowie-Dick test cycle is a special cycle used
+                                                                                                                                                 to test the integrity of the sterilizer chamber to
+                                                                                                                                                 hold a vacuum.
+  LKT                                    Leak Test                                                                                               A leak test cycle tests the integrity of the
+                                                                                                                                                 sterilizer chamber to hold a vacuum over a
+                                                                                                                                                 specific period of time.
+  WFP                                    Wrap/Steam                                                                                              A Wrap/SFPP cycle uses steam pulses instead
+                                         Flush Pressure                                                                                          of a vacuum during the conditioning phase of
+                                         Pulse                                                                                                   the cycle when the supply item is unwrapped.
+                                         (Wrap/SFPP)
+  SFP                                    Steam Flush                                                                                             An SFPP cycle uses steam pulses instead of a
+                                         Pressure Pulse                                                                                          vacuum during the conditioning phase of the
+                                                                                                                                                 cycle when the supply item is wrapped.
+  CMW                                    Chemical Wash                                                                                           A chemical wash cycle.
+  PEA                                    Peracetic Acid                                                                                          A peracetic acid cycle.
+  EOH                                    EO High
+                                         Temperature
+  EOL                                    EO Low
+                                         Temperature
+  CRT                                    Cart Wash
+  UTL                                    Utensil Wa sh
+   IST                                              Instrument Wash
+   GLS                                              Glassware
+   PLA                                              Plastic Goods
+                                                    Wash
+   ANR                                              Anesthesia/Re spir                                                                                                                 Special Wash cycle
+                                                    atory
+   GTL                                              Gentle
+   OPW                                              Optional Wash                                                                                                                      Any Optional Wash cycle
+   BDP                                              Bedpans
+   TRB                                              Tray/Basin
+   GNP                                              Gen. Purpose
+   COD                                              Code
+   RNS                                              Rinse
+   2RS                                              Second Rinse
+   DEC                                              Decontamination

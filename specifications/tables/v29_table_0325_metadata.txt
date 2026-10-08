@@ -1,0 +1,14 @@
+                                                                                                                                     Table Metadata
+  Table                                                                                    0325
+
+
+
+
+
+
+  Description                                                                              Table of codes specifying an identifier code to show which relationship is being
+                                                                                           communicated with the segment.
+  Type                                                                                     User
+  Steward                                                                                  I    n    M    /   PA
+  where used                                                                               LRL-4
+  HL7 Version  Introduced                                                                  2.3

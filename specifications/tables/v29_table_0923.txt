@@ -1,0 +1,8 @@
+                                                                                                                         Table 0923Coded Content
+   Value                                       Display Name                                                                                                                                                     Definition                                                Comment/                                    Status
+                                                                                                                                                                                                                                                                          Usage Note
+   NIN                                         Process was not interrupted
+   WOT                                         Walk Out: Process interrupted before the
+                                               Phlebotomist inserts the needle in the Donor's arm
+   ABR                                         Aborted Run: Process interrupted after the
+                                               Phlebotomist inserts the needle in the Donor's arm

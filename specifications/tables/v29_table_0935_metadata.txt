@@ -1,0 +1,7 @@
+                                                                                                                                               Table Metadata
+  Table                                                                                            0935
+  Description                                                                                      HL7-defined table of codes specifying the reason for the process interruption.
+  Type                                                                                             User
+  Steward                                                                                          OO
+  where used                                                                                       DON-                                                                                       13
+  HL7 Version  Introduced                                                                          2.8

@@ -1,0 +1,6 @@
+                                                                                                                    Table 0520Coded Content
+  Value                                     Display Name                                             Definition                                                                                                                                                 Comment/                                   Status
+                                                                                                                                                                                                                                                                Usage Note
+  H                                         High
+  M                                         Medium
+  L                                         Low

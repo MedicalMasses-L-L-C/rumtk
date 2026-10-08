@@ -1,0 +1,7 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0425
+  Description                                                                                              Table of codes specifying whether the baby was born in or out of the facility.
+  Type                                                                                                     User
+  Steward                                                                                                  FM
+  where used                                                                                               ABS-13
+  HL7 Version Introduced                                                                                   2.4

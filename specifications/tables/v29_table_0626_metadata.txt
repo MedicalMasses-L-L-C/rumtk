@@ -1,0 +1,11 @@
+                                                                                                                                                     Table Metadata
+  Table                                                                                                0626
+  Description                                                                                          9999
+  Type                                                                                                 undefined
+
+
+
+
+
+
+  where used                                                                                           OBX-17

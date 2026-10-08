@@ -1,0 +1,10 @@
+                                                                                                                            Table Metadata
+  Table                                                                               0895
+  Description                                                                         Table of codes specifying the present on admission indicator for this particular
+                                                                                      diagnosis. US reimbursement formulas for some states and Medicare have
+                                                                                      mandated that each diagnosis code be flagged as to whether it was present on
+                                                                                      admission or not.
+  Type                                                                                User
+  Steward                                                                             FM
+  where used                                                                          DG1-26
+  HL7 Version  Introduced                                                             2.6

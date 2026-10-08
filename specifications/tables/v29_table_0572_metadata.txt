@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                 0572
+  Description                                                                                           Table of codes used to specify the tax status of a provider.
+  Type                                                                                                  User
+  Steward                                                                                               FM
+  where used                                                                                            IVC-28
+  HL7 Version  Introduced                                                                               2.6

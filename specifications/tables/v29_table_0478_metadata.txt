@@ -1,0 +1,13 @@
+                                                                                                                              Table Metadata
+  Table                                                                                      0478
+
+
+
+
+
+  Description                                                                                HL7-defined table of codes specifying whether or not the pharmaceutical
+                                                                                             substance is part of the local formulary.
+  Type                                                                                       HL7
+  Steward                                                                                    OO
+  where used                                                                                 SPM-4
+  HL7 Version  Introduced                                                                    2.5

@@ -1,0 +1,13 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0072
+  Description                                                                                            Table of codes specifying the identifier of an insurance plan with which a
+                                                                                                         transaction should be associated.  No suggested values.
+  Type                                                                                                   User
+  Steward                                                                                                OO
+
+
+
+
+
+  where used                                                                                             AUT-1, FT1-14, IN1-                    2
+  HL7 Version Introduced                                                                      2.1

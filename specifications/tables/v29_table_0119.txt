@@ -1,0 +1,166 @@
+                                                                                                                Table 0119Coded Content
+  Value                      Display Name                                                        Definition                                                          Comment/ Usage Note                                                                                                       Status
+  AF                         Order/service refill                                                AF is a response to RF                                              Placer Applications .
+                             request approval                                                    where the placer
+                                                                                                 authorizing a refill or
+                                                                                                 quantity of refills.
+  CA                         Cancel order/service                                                                                                                    Placer or Filler Applications
+                             request
+  CH                         Child order/service                                                                                                                     Placer or Filler Applications.
+
+                                                                                                                                                                     Usage Note: Used in conjunction with the
+                                                                                                                                                                     PA - Parent order control code. Refer to
+                                                                                                                                                                     PA order control code for discussion.
+  CN                         Combined result                                                                                                                         Filler Applications.
+  CP                         Cancel process step                                                                                                                     Filler Applications.
+  CR                         Canceled as requested                                                                                                                   Filler or Placer Applications.
+
+                                                                                                                                                                     Usage Note: A response by the filler or
+                                                                                                                                                                     placer application that a request to cancel
+                                                                                                                                                                     (CA by the placer application) was
+                                                                                                                                                                     performed successfully.
+  DC                         Discontinue                                                                                                                             Placer or Filler Applications.
+                             order/service request
+  DE                         Data errors                                                                                                                             Placer or Filler Applications.
+  DF                         Order/service refill                                                                                                                    Placer Applications.
+                             request denied
+  DR                         Discontinued as                                                                                                                         Filler or Placer Applications.
+                             requested
+                                                                                                                                                                     Usage Note: The filler or placer, in
+                                                                                                                                                                     response to a request to discontinue (DC
+                                                                                                                                                                     from the placer or filler application), has
+                                                                                                                                                                     discontinued the order/service.
+  FU                         Order/service refilled,                                                                                                                 Filler Applications.
+                             unsolicited
+                                                                                                                                                           Usage Note: FU notifies the placer that the
+                                                                                                                                                           filler issued a refill for the order at the
+                                                                                                                                                           patient's request.
+  HD                       Hold order request                                                                                                              Placer Applications.
+
+                                                                                                                                                           Usage Note: Typical responses include,
+                                                                                                                                                           but are not limited to, CR -           Cancelled as
+                                                                                                                                                           requested, UC - Unable to Cancel.
+  HR                       On hold as requested                                                                                                            Filler Applications.
+  LI                       Link order/service to                                                                                                           Placer or Filler Applications.
+                           patient care problem
+                           or goal                                                                                                                         Usage Note: Refer to Chapter 12 Patient
+                                                                                                                                                           Care for complete discussion.
+  MC                       Miscellaneous Charge                                                                                                            applies to DFT^P03^DFT_P03 and
+                           - not associated with                                                                                                           DFT^P11^DFT_P11
+                           an order
+                                                                                                                                                           Usage Note: applies to
+                                                                                                                                                           DFT^P03^DFT_P03 and
+                                                                                                                                                           DFT^P11^DFT_P11
+  NA                       Number assigned                                                                                                                 Placer Applications.
+  NR                       Notification Received                                           Notifies the Filler that                                        Placer Applications.
+                                                                                           the Placer received a
+                                                                                           cancellation,
+                                                                                           discontinuance, or
+                                                                                           other state change
+                                                                                           notice
+  NW                       New order/service                                                                                                               Placer Applications.
+
+                                                                                                                                                           Usage Note: See comments for NA -
+                                                                                                                                                           Number Assigned.
+  OC                       Order/service canceled                                                                                                          Filler Applications.
+  OD                       Order/service                                                                                                                   Filler Applications.
+                           discontinued
+  OE                       Order/service released                                                                                                          Filler Applications.
+  OF                       Order/service refilled                                                                                                          Filler Applications.
+                           as requested
+                                                                                                                                                           Usage Note: OF directly responds to the
+                                                                                                                                                           placer system's request for a refill.
+  OH                       Order/service held                                                                                                              Filler Applications.
+  OK                       Order/service accepted                                                                                                          Filler Applications.
+                           & OK
+                                                                                                                                                           Usage Note: See comments for NA -
+                                                                                                                                                           Number Assigned.
+  OP                       Notification of order                                                                                                           Placer Applications.
+                           for outside dispense
+  OR                       Released as requested                                                                                                           Filler Applications.
+  PA                       Parent order/service                                                                                                            Filler Applications.
+  PR                       Previous Results with                                                                                                           Placer Applications.
+                           new order/service
+  PY                       Notification of                                                                                                                 Placer Applications.
+                           replacement order for
+                           outside dispense                                                                                                                Usage Note: See comments for OP -
+                                                                                                                                                           Notification of order for outside dispense.  Value                  Display Name                                              Definition                                                Comment/ Usage Note                                                                                      Status
+  RA                     Recommendation                                            Identifies that this                                      Placer Applications:                                                                                     N
+                         Accepted                                                  previously                                                Used in the Recommendation Accepted
+                                                                                   recommended                                               message; includes the assigned placer
+                                                                                   replacement order has                                     order number for the accepted replacement
+                                                                                   been accepted                                             order
+                                                                                                                                             Filler Applications:
+                                                                                                                                             Used in the acknowledgment response
+                                                                                                                                             message to the Recommendation Accepted
+                                                                                                                                             message
+  RC                     Recommended                                               Identifies that this                                      Filler Applications.                                                                                     N
+                         Change                                                    OBR represents a                                          Used in the recommendation message sent
+                                                                                   recommended                                               to the placer
+                                                                                   replacement order
+  RD                     Recommendation                                            Identifies that this                                      Placer Applications:                                                                                     N
+                         Declined                                                  previously sent                                           Used in the Recommendation Declined
+                                                                                   recommended                                               message
+                                                                                   replacement order has                                     Filler Applications:
+                                                                                   been declined                                             Used in the acknowledgment response
+                                                                                                                                             message to the Recommendation Declined
+                                                                                                                                             message
+  RE                     Observations/Performe                                                                                               Placer or Filler Applications.
+                         d Service to follow
+  RF                     Refill order/service                                                                                                Placer or Filler Applications.
+                         request
+  RL                     Release previous hold                                                                                               Placer Applications.
+  RO                     Replacement order                                                                                                   Placer or Filler Applications.
+  RP                     Order/service replace                                                                                               Placer Applications.
+                         request
+  RQ                     Replaced as requested                                                                                               Filler Applications.
+  RR                     Request received                                                                                                    Placer or Filler Applications.
+  RU                     Replaced unsolicited                                                                                                Filler Applications.
+  SC                     Status changed                                                                                                      Placer or Filler Applications.
+  SN                     Send order/service                                                                                                  Placer Applications.
+                         number
+                                                                                                                                             Usage Note: See comments for NA -
+                                                                                                                                             Number Assigned.
+  SQ                     Supplemented as                                           Supplementation                                           This code is used in the acknowledgment                                                                  N
+                         requested                                                 confirmation message                                      response to the request messages.
+                                                                                   indicating that an
+                                                                                   order was
+                                                                                   supplemented as
+                                                                                   requested.
+  SR                     Response to send                                                                                                    Filler Applications.
+                         order/service status
+                         request
+  SS                     Send order/service                                                                                                  Placer Applications.
+                         status request
+  SU                     Supplement this order                                     Identifies existing                                       For example this code is used in the filler’s N
+                                                                                   orders to be                                              order message to identify an order that is
+                                                                                   supplemented in                                           missing a recommended order based on
+                                                                                   Supplementation                                           organizational protocol for example as
+                                                                                   Recommendation                                            described in the IHE Laboratory
+                                                                                   (filler to placer) and                                    Communication (LCC) profile (LAB-6).
+                                                                                   Supplementation
+                                                                                            Request (placer to
+                                                                                            filler) messages.
+  UA                        Unable to accept                                                                                                                Filler Applications.
+                            order/service
+  UC                        Unable to cancel                                                                                                                Filler or Placer Applications.
+  UD                        Unable to discontinue                                                                                                           Filler or Placer Applications.
+  UF                        Unable to refill                                                                                                                Filler Applications.
+
+                                                                                                                                                            Usage Note: Negative response to RF
+                                                                                                                                                            Refill order/service request, indicating that
+                                                                                                                                                            the receiving application was not able to
+                                                                                                                                                            complete the refill request.
+  UH                        Unable to put on hold                                                                                                           Filler Applications.
+  UM                        Unable to replace                                                                                                               Filler Applications.
+  UN                        Unlink order/service                                                                                                            Placer or Filler Applications.
+                            from patient care
+                            problem or goal                                                                                                                 Usage Note: Refer to Chapter 12 Patient
+                                                                                                                                                            Care for complete discussion.
+  UR                        Unable to release                                                                                                               Filler Applications.
+  UX                        Unable to change                                                                                                                Filler Applications.
+  XO                        Change order/service                                                                                                            Placer Applications.
+                            request
+  XR                        Changed as requested                                                                                                            Filler Applications.
+  XX                        Order/service changed,                                                                                                          Filler Applications.
+                            unsol.

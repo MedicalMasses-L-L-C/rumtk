@@ -1,0 +1,11 @@
+                                                                                                                        Table Metadata
+  Table                                                                            0477
+  Description                                                                      Table of codes specifying the class of the drug or other substance if its usage is
+                                                                                   controlled by legislation.  In the USA, such legislation includes the federal
+                                                                                   Controlled Substance Act (CSA) or a State Uniform Controlled Substance Act.
+                                                                                   Values are drawn from the Pharmacy Law Digest July 1988.  Other countries
+                                                                                   should create their own versions of this table.  No suggested values.
+  Type                                                                             User
+  Steward                                                                          OO
+  where used                                                                       RXE-35
+  HL7 Version  Introduced                                                          2.5

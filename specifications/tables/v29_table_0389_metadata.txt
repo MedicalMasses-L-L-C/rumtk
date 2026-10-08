@@ -1,0 +1,14 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0389
+  Description                                                                                  HL7-defined table of codes identifying the repeat status for the analyte/result
+                                                                                               (e.g. original, rerun, repeat, reflex).  The following are assumptions regarding
+                                                                                               the table values: Repeated without dilution —                                                   performed usually to confirm
+                                                                                               correctness of results (e.g., in case of results flagged as "Panic" or mechanical
+                                                                                               failures).  Repeated with dilution —                                                   performed usually in the case the original
+                                                                                               result exceeded the measurement range (technical limits).  Reflex test —                                                   this
+                                                                                               test is performed as the consequence of rules triggered based on other test
+                                                                                               result(s).
+  Type                                                                                         HL7
+  Steward                                                                                      OO
+  where used                                                                                   TCD-8
+  HL7 Version Introduced                                                                       2.4

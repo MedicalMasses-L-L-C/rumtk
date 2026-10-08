@@ -1,0 +1,10 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0508
+  Description                                                                                              Table of codes used to specify additional information about the blood
+                                                                                                           component class associated with the Universal Service ID.  The placer of the
+                                                                                                           order can specify any required processing of the blood product that must be
+                                                                                                           completed prior to transfusion to the intended recipient.
+  Type                                                                                                     User
+  Steward                                                                                                  OO
+  where used                                                                                               BPO-3
+  HL7 Version  Introduced                                                                                  2.5

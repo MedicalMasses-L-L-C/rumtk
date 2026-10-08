@@ -1,0 +1,88 @@
+                                                                                                             Table 0006Coded Content
+  Value                            Display Name                                                                                                                                                         Definition                              Comment/                               Status
+                                                                                                                                                                                                                                                Usage Note
+  AGN                              Agnostic
+  ATH                              Atheist
+  BAH                              Baha'i
+  BRE                              Brethren
+  BUD                              Buddhist
+  BMA                              Buddhist: Mahayana
+  BTH                              Buddhist: Theravada
+  BTA                              Buddhist: Tantrayana
+  BOT                              Buddhist: Other
+  CF R                             Chinese Folk Religionist
+  CHR                              Christian
+  ABC                              Christian: American Baptist Church
+  AMT                              Christian: African Methodist Episcopal
+  AME                              Christian: African Methodist Episcopal Zion
+  ANG                              Christian: Anglican
+  AOG                              Christian: Assembly of God
+  BAP                              Christian: Baptist
+  CRR                              Christian: Christian Reformed
+  CHS                              Christian: Christian Science
+  CMA                              Christian: Christian Missionary Alliance
+  COC                              Christian: Church of Christ
+  COG                              Christian: Church of God
+  COI                              Christian: Church of God in Christ
+  COM                              Christian: Community
+  COL                              Christian: Congregational
+  EOT                              Christian: Eastern Orthodox
+  EVC                              Christian: Evangelical Church
+  EPI                              Christian: Episcopalian
+  FWB                              Christian: Free Will Baptist
+  FRQ                              Christian: Friends
+  FUL                              Christian: Full Gospel
+  GRE                              Christian: Greek Orthodox
+  JWN                              Christian: Jehovah's Witness
+  MOM                              Christian: Latter-day Saints
+  LUT                              Christian: Lutheran
+  LMS                              Christian: Lutheran Missouri Synod
+  MEN                              Christian: Mennonite
+  MET                              Christian: Methodist
+  NAZ                              Christian: Church of the Nazarene
+  ORT                              Christian: Orthodox
+  PEN                              Christian: Pentecostal
+  COP                              Christian: Other Pentecostal
+  PRE                              Christian: Presbyterian
+  PRO                              Christian: Protestant
+  PRC                              Christian: Other Protestant
+  REC                              Christian: Reformed Church
+  REO                              Christian: Reorganized Church of Jesus Christ-LDS
+  CAT                              Christian: Roman Catholic
+  SAA                              Christian: Salvation Army
+  SEV                              Christian: Seventh Day Adventist
+  SOU                              Christian: Southern Baptist
+  UCC                                 Christian: United Church of Christ
+  UMD                                 Christian: United Methodist
+  UNI                                 Christian: Unitarian
+  UNU                                 Christian: Unitarian Universalist
+  WES                                 Christian: We sleyan
+  WMC                                 Christian: We sleyan Methodist
+  COT                                 Christian: Other
+  CNF                                 Confucian
+  DOC                                 Disciples of Christ
+  ERL                                 Ethnic Religionist
+  HIN                                 Hindu
+  HSH                                 Hindu: Shaivites
+  HVA                                 Hindu: Vaishnavites
+  HOT                                 Hindu: Other
+  JAI                                 Jain
+  JEW                                 Jewish
+  JCO                                 Jewish: Conservative
+  JOR                                 Jewish: Orthodox
+  JRC                                 Jewish: Reconstructionist
+  JRF                                 Jewish: Reform
+  JRN                                 Jewish: Renewal
+  JOT                                 Jewish: Other
+  MOS                                 Muslim
+  MSH                                 Muslim: Shiite
+  MSU                                 Muslim: Sunni
+  MOT                                 Muslim: Other
+  NAM                                 Native American
+  NRL                                 New Religionist
+  NOE                                 Nonreligious
+  SHN                                 Shintoist
+  SIK                                 Sikh
+  SPI                                 Spiritist
+  OTH                                 Other
+  VAR                                 Unknown

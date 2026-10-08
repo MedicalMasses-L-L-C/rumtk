@@ -1,0 +1,7 @@
+                                                                                                                                Table 0926Coded Content
+  Value                                          Display Name                                                  Definition                                            Comment/ Usage Note                                                                                                                                                Status
+  SUC                                            Successful                                                                                                          Successful means a complete component was drawn
+  NDR                                            Not Drawn
+  UL5                                            Unsuccessful
+                                                 Less than 50 ml
+                                                 drawn

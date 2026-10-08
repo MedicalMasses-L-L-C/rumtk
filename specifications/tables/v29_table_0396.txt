@@ -1,0 +1,104 @@
+                                                                                              Table 0396Coded Content
+  Va    l    u    e                Display Name                                                         Definition                        Comment/ Usage Note                                                                                     Status
+  99zzz                            Local general code for a                                                                               The 'zzz' may be any printable ASCII string
+                                   site-defined code system                                                                               of variable length, but the recommendation
+                                   used for a specific set of                                                                             is to generally use only numbers and
+                                   trading partners.  The 'zzz'                                                                           uppercase letters, as that is how all of the
+                                   SHALL be any printable                                                                                 currently existent table 396 entries have
+                                   ASCII string.  Length of the                                                                           been created for many years.  In addition,
+                                   name SHALL not exceed                                                                                  there is no explicit length restriction, but it
+                                   field width, and is subject to                                                                         is recommended that the string be kept
+                                   local implementation.                                                                                  below  a 20 character maximum.
+  ACR                              American College of                                                                                    Index for Radiological Diagnosis Revised,
+                                   Radiology finding codes                                                                                3rd Edition 1986, American College of
+                                                                                                                                          Radiology, Reston, VA.
+  ACTCO DE                         Table of HL7 Version 3                                                                                 For use in v2.x systems interoperating with
+                                   ActCode values                                                                                         V3 systems.  Identical to the code system
+                                                                                                                                          2.16.840.1.113883.5.4 ActCode in the
+                                                                                                                                          Version 3 vocabulary.
+  ACTRELSS                         Used to indicate that the                                                                              V3 coding system.   Download with V3
+                                   target of the relationship                                                                             materials.
+                                   will be a filtered subset of
+                                   the total related set of
+                                   targets.
+                                   Used when there is a need
+                                   to limit the number of
+                                   components to the first, the
+                                   last, the next, the total, the
+                                   average or some other
+                                   filtere
+  ALPHAID2                         German Alpha-ID v2006                                                                                  ID of the alphabetical Index ICD-10-GM-
+  006                                                                                                                                     2006. Alpha-ID.
+  ALPHAID2                         German Alpha-ID v2007                                                                                  ID of the alphabetical Index ICD-10-GM-
+  007                                                                                                                                     2007. Alpha-ID.
+  ALPHAID2                         German Alpha-ID v2008                                                                                  ID of the alphabetical Index ICD-10-GM-
+  008                                                                                                                                     2008. Alpha-ID.
+  ALPHAID2                         German Alpha-ID v2009                                                                                  ID of the alphabetical Index ICD-10-GM-
+  009                                                                                                                                     2009. Alpha-ID.
+  AMTv2                            Australian Medicines                                                                                   The national terminology to identify
+                                   Terminology (v2)                                                                                       medicines used in Australia,
+                                                                                                                                          using unique codes to deliver
+                                                                                                                                          unambiguous, accurate and standardised
+                                                                                                                                          names for both branded  (trade)  and generic
+                                                                                                                                          (medicinal) products.
+  ANS+                             HL7 set of units of measure                                                                            HL7 set of units of measure based upon
+                                                                                                                                          ANSI X3.50 -           1986, ISO 2988-83, and US
+                                                                                                                                          customary units / see chapter 7, section
+                                                                                                                                          7.4.2.6.
+  ART                              WHO Adverse Reaction                                                                                   WHO Collaborating Centre for
+                                   Terms                                                                                                  International Drug Monitoring, Box 26, S-
+                                                                                                                                          751 03, Uppsala, Sweden.  Va    l    u    e                Display Name                                                         Definition                        Comment/ Usage Note                                                                                    Status
+  AS4                              ASTM E1238/ E1467                                                                                      American Society for Testing & Materials
+                                   Universal                                                                                              and CPT4 (see Appendix X1 of
+                                                                                                                                          Specification E1238 and Appendix X2 of
+                                                                                                                                          Specification E1467).
+  AS4E                             AS4 Neurophysiology                                                                                    ASTM’s diagnostic codes and test result
+                                   Codes                                                                                                  coding/grading systems for clinical
+                                                                                                                                          neurophysiology. See ASTM Specification
+                                                                                                                                          E1467, Appendix 2.
+  ATC                              American Type Culture                                                                                  Reference cultures (microorganisms, tissue
+                                   Collection                                                                                             cultures, etc.), related biological materials
+                                                                                                                                          and associated data. American Type
+                                                                                                                                          Culture Collection, 12301 Parklawn Dr,
+                                                                                                                                          Rockville MD, 20852. (301) 881-2600.
+  C4                               CPT-4                                                                                                  American Medical Association, P.O. Box
+                                                                                                                                          10946, Chicago IL  60610.
+  C5                               CPT-5                                                                                                  Not currently being worked on, no                                                                      D
+                                                                                                                                          proposed release date at this time.
+                                                                                                                                          American Medical Association, P.O. Box
+                                                                                                                                          10946, Chicago IL  60610.
+  CAPE CC                          College of American                                                                                    Each code in this system represents a single
+                                   Pathologists Electronic                                                                                line in a database template for the College
+                                   Cancer Checklist                                                                                       of American Pathologists Electronic
+                                                                                                                                          Cancer Checklist (CAP eCC).  Each line
+                                                                                                                                          and its code corresponds to either a
+                                                                                                                                          question or an answer selection.  The code
+                                                                                                                                          is in a decimal format of
+                                                                                                                                          #########.#########, where each "#" is
+                                                                                                                                          an optional number.  The nine digits to the
+                                                                                                                                          right of the Ckey decimal point make up a
+                                                                                                                                          namespace identifier, which is specific to
+                                                                                                                                          the center that created the database entries
+                                                                                                                                          for the checklist line items with their
+                                                                                                                                          unique Ckey values.   The namespace
+                                                                                                                                          identifier for SNOMED Terminology
+                                                                                                                                          Solutions at the College of American
+                                                                                                                                          Pathologists is 1000043.  All Ckey values
+                                                                                                                                          in the 2008 release use namespace
+                                                                                                                                          1000043.  The digits to the left of the
+                                                                                                                                          decimal point are a locally assigned
+                                                                                                                                          sequential key for the
+                                                                                                                                          ChecklistTemplateItems table in the local
+                                                                                                                                          CAP eCC database.  These codes are used
+                                                                                                                                          to specify questions and answers selected
+                                                                                                                                          in a CAP eCC template for transmission in
+                                                                                                                                          an HL7 message, as defined by the
+                                                                                                                                          NAACCR Pathology Workgroup and the
+                                                                                                                                          CDC/NPCR Reporting Pathology Protocols
+                                                                                                                                          II (RPP II) project. SNOMED Terminology
+                                                                                                                                          Solutions, College of American
+                                                                                                                                          Pathologists, 325 Waukegan Road,
+                                                                                                                                          Northfield, Illinois, 60093,
+                                                                                                                                          snomedsolutions@cap.org
+  CAS                              Chemical abstract codes                                                                                These include unique codes for each unique
+                                                                                                                                          chemical, including all generic drugs. The

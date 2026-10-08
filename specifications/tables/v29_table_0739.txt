@@ -1,0 +1,6 @@
+                                                                                                                                         Table 0739Coded Content
+   Value                                     Display Name                                                                                                                                                                           Definition                                                                 Comment/                                          Status
+                                                                                                                                                                                                                                                                                                               Usage Note
+   1                                         Normal length of stay
+   2                                         Short length of stay
+   3                                         Long length of stay

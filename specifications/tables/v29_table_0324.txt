@@ -1,0 +1,19 @@
+                                                                                                                        Table 0324Coded Content
+   Value                               Display Name                                                                                                                                      Definition                                                        Comment/ Usage                                            Status
+                                                                                                                                                                                                                                                           Note
+   SMK                                 S m ok i ng
+   LIC                                 Licensed
+   IMP                                 Implant: can be used for radiation implant
+                                       patients
+   SHA                                 Shadow: a temporary holding location that does
+                                       not physically exist
+  INF                                Infectious disease: this location can be used for
+                                     isolation
+  PRL                                Privacy level: indicating the level of private
+                                     versus non-private room
+  LCR                                Level of care
+  OVR                                Overflow
+  STF                                Bed is staffed
+  SET                                Bed is set up
+  GEN                                Gender of patient(s)
+  TEA                                Teaching location

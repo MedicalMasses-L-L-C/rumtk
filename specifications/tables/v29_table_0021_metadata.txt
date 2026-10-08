@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0021
+  Description                                                                                       Table of codes specifying the bad debt agency to which the account was
+                                                                                                    transferred.  No suggested values.
+  Type                                                                                              User
+  Steward                                                                                           PA
+  where used                                                                                        PV1-31
+  HL7 Version  Introduced                                                                           2.1

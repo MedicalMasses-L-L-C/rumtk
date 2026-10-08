@@ -1,0 +1,11 @@
+                                                                                                                           Table Metadata
+  Table                                                                              0485
+  Description                                                                        Table of codes describing the urgency of a request carried in an order. See the
+                                                                                     Comment/Usage Note in the table below, as the table contains both
+                                                                                     precoordinated codes that may be used in an HL7 field or component and also
+                                                                                     explanatory patterns illustrating the syntax used to construct expressions using
+                                                                                     the codes and other modifiers.
+  Type                                                                               User
+  Steward                                                                            OO
+  where used                                                                         TQ1-9
+  HL7 Version  Introduced                                                            2.5

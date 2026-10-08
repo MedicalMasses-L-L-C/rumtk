@@ -1,0 +1,10 @@
+                                                                                                                               Table 0236Coded Content
+  Value                                          Display Name                                                 Definition                                                                                                                                                                Comment/                                      Status
+                                                                                                                                                                                                                                                                                        Usage Note
+  M                                              Manufacturer
+  L                                              Local
+                                                 facility/user
+                                                 facility
+  R                                              Regulatory
+                                                 agency
+  D                                              Distributor

@@ -1,0 +1,331 @@
+                                                                                                              Table 0487Coded Content
+  Value                                   Display Name                                                                                  Definition                              Comment/ Usage Note                                                                                        Status
+  ABS                                     Abscess
+  ACNE                                    Tissue, Acne                                                                                                                          Tissue
+  ACNFLD                                  Fluid, Acne                                                                                                                           Fluid
+  AIRS                                    Air Sample                                                                                                                            Environment
+  ALL                                     Allograft                                                                                                                             Tissue
+  AMN                                     Amniotic fluid
+  AMP                                     Amputation                                                                                                                            Tissue
+  ANGI                                    Catheter Tip, Angio                                                                                                                   Device
+  ARTC                                    Catheter Tip, Arterial                                                                                                                Device
+  ASERU                                   Serum, Acute                                                                                                                          Blood
+  ASP                                     Aspirate
+  ATTE                                    Environment, Attest                                                                                                                   Environment                                                                                                D
+  AUTOA                                   Environmental, Autoclave                                                                                                              Environment
+                                          Ampule
+  AUTOC                                   Environmental, Autoclave                                                                                                              Environment                                                                                                D
+                                          Capsule
+  AUTP                                    Autopsy                                                                                                                               Tissue
+  BBL                                     Blood bag                                                                                                                             Blood
+  BCY ST                                  Cyst, Baker 's                                                                                                                        Condition
+  BDY                                     Whole body                                                                                                                            Body submitted for autopsy / carcass
+                                                                                                                                                                                submitted
+  BIFL                                    Bile Fluid
+  BITE                                    Bite                                                                                                                                  Conditions
+  BLD                                     Whole blood
+  BLDA                                    Blood arterial
+  BLDCO                                   Cord blood
+  BLDV                                    Blood venous
+  BLEB                                    Bleb                                                                                                                                  Condition, Fluid/Tissue
+  BLIST                                   Blister                                                                                                                               Condition, Fluid/Tissue
+  BOIL                                    Boil                                                                                                                                  Condition
+  BON                                     Bone
+  BOWL                                    Bowel contents                                                                                                                        Condition
+  BPH                                     Basophils
+  BPU                                     Blood product unit                                                                                                                    Blood
+  BRN                                     Burn
+  BRSH                                    Brush                                                                                                                                 Product; Brush or brushing (these
+                                                                                                                                                                                may be 2 separate entries as in a
+                                                                                                                                                                                physical brush or a portion thereof vs
+                                                                                                                                                                                the substance obtained after a surface
+                                                                                                                                                                                has been brushed)
+  BRTH                                    Breath (use EXHLD)  Value                                  Display Name                                                                              Definition                             Comment/ Usage Note                                                                                    Status
+  BRU S                                  Brushing                                                                                                                         Product
+  BUB                                    Bubo                                                                                                                             Condition
+  BULLA                                  Bulla/Bullae                                                                                                                     Condition
+  BX                                     Biopsy                                                                                                                           Tissue
+  CALC                                   Calculus (=Stone)
+  CARBU                                  Carbuncle                                                                                                                        Condition
+  CAT                                    Catheter                                                                                                                         Device
+  CBITE                                  Bite, Cat                                                                                                                        Conditions
+  CDM                                    Cardiac muscle
+  CLIPP                                  Clippings                                                                                                                        Condition
+  CNJT                                   Conjunctiva
+  CNL                                    Cannula
+  COL                                    Colostrum
+  CONE                                   Biospy, Cone                                                                                                                     Tissue
+  CS CR                                  Scratch, Cat                                                                                                                     Condition
+  CSERU                                  Serum, Convalescent                                                                                                              Blood
+  CSF                                    Cerebral spinal fluid
+  CSITE                                  Catheter Insertion Site                                                                                                          Device
+  CSMY                                   Fluid,  Cystostomy Tube                                                                                                          Fluid
+  CST                                    Fluid, Cyst                                                                                                                      Fluid
+  CSV R                                  Blood, Cell Saver                                                                                                                Transfusion
+  CTP                                    Catheter tip                                                                                                                     Device
+  CUR                                    Curretage                                                                                                                        Uterine specimen obtained by
+                                                                                                                                                                          curettage = Currettings
+  CVM                                    Cervical Mucus
+  CVPS                                   Site, CVP                                                                                                                        Site
+  CVPT                                   Catheter Tip, CVP                                                                                                                Device
+  CYN                                    Nodule, Cystic                                                                                                                   Condition
+  CYST                                   Cyst
+  DBITE                                  Bite, Dog                                                                                                                        Conditions
+  DCS                                    Sputum, Deep Cough                                                                                                               Condition
+  DEC                                    Ulcer, Decubitus                                                                                                                 Condition
+  DEION                                  Environmental, Water                                                                                                             Environment
+                                         (Deionized)
+  DIA                                    Dialysate                                                                                                                        Condition
+  DIAF                                   Dialysis Fluid                                                                                                                   Fluid used for dialysis - is a product
+  DISCHG                                 Discharge                                                                                                                        Condition
+  DIV                                    Diverticulum                                                                                                                     Condition
+  DRN                                    Drain                                                                                                                            Device
+  DRNG                                   Drainage, Tube                                                                                                                   Device
+  DRNGP                                  Drainage, Penrose                                                                                                                Condition
+  DUFL                                   Duodenal fluid
+  EARW                                   Ear wax (cerumen)
+  EBRU SH                                Brush, Esophageal                                                                                                                Product
+  EEYE                                   Environmental, Eye Wash                                                                                                          Environment
+  EFF                                    Environmental, Effluent                                                                                                          Environment
+  EFFUS                                  Effusion                                                                                                                         Condition
+  EFOD                                   Environmental, Food                                                                                                              Environment
+  EISO                                   Environmental, Isolette                                                                                                          Environment
+  ELT                                    Electrode
+  ENVIR                                  Environmental, Unidentified                                                                                                      Environment
+                                         Substance
+  EOS                                    Eosinophils
+  EOTH                                 Environmental, Other Substance                                                                                                Environment; (Substance is Known
+                                                                                                                                                                     but not in code Table)
+  ESOI                                 Environmental, Soil                                                                                                           Environment
+  ESOS                                 Environmental, Solution                                                                                                       Environment
+                                       (Sterile)
+  ETA                                  Aspirate,  Endotrach                                                                                                          Aspirate
+  ETTP                                 Catheter Tip, Endotracheal                                                                                                    Device
+  ETTUB                                Tube, Endotracheal                                                                                                            Device
+  EWHI                                 Environmental, Whirlpool                                                                                                      Environment
+  EXG                                  Gas, exhaled (=breath)
+  EXS                                  Shunt, External                                                                                                               Condition
+  EXUDTE                               Exudate                                                                                                                       Condition
+  FAW                                  Environmental, Water  (Well)                                                                                                  Environment
+  FBLOOD                               Blood, Fetal                                                                                                                  Blood
+  FGA                                  Fluid,  Abdomen                                                                                                               Fluid
+  FIB                                  Fibroblasts
+  FIST                                 Fistula
+  FLD                                  Fluid, Other                                                                                                                  Fluid
+  FLT                                  Filter
+  FLU                                  Fluid, Body unsp
+  FLUID                                Fluid                                                                                                                         Fluid
+  FOLEY                                Catheter Tip, Foley                                                                                                           Device
+  FRS                                  Fluid, Respiratory                                                                                                            Fluid
+  FSCL P                               Scalp, Fetal                                                                                                                  Condition
+  FUR                                  Furuncle                                                                                                                      Condition
+  GAS                                  Gas
+  GASA                                 Aspirate, Gastric                                                                                                             Aspirate
+  GASAN                                Antrum, Gastric                                                                                                               Tissue
+  GASBR                                Brushing, Gastric                                                                                                             Product
+  GASD                                 Drainage, Gastric                                                                                                             Condition
+  GAST                                 Fluid/contents, Gastric
+  GENL                                 Genital lochia
+  GENV                                 Genital vaginal
+  GRAFT                                Graft                                                                                                                         Condition
+  GRAFT S                              Graft Site                                                                                                                    Condition
+  GRANU                                Granuloma                                                                                                                     Condition
+  GROSH                                Catheter, Groshong                                                                                                            Device
+  GSOL                                 Solution, Gastrostomy                                                                                                         Product
+  GSPEC                                Biopsy, Gastric                                                                                                               Tissue
+  GT                                   Tube, Gastric                                                                                                                 Device
+  GTUBE                                Drainage Tube, Drainage                                                                                                       Condition
+                                       (Gastrostomy)
+  HAR                                  Hair
+  HBITE                                Bite, Human                                                                                                                   Conditions
+  HBLUD                                Blood, Autopsy                                                                                                                Blood
+  HEMAQ                                Catheter Tip, Hemaquit                                                                                                        Device
+  HEMO                                 Catheter Tip, Hemovac                                                                                                         Device
+  HERNI                                Tissue, Herniated                                                                                                             Tissue
+  HEV                                  Drain, Hemovac                                                                                                                Device
+  HIC                                  Catheter, Hickman                                                                                                             Device
+  HYDC                                 Fluid, Hydrocele                                                                                                              Fluid
+  IBITE                                Bite, Insect                                                                                                                  Conditions
+  ICYST                                Cyst, Inclusion                                                                                                               Condition  Value                                 Display Name                                                                              Definition                            Comment/ Usage Note                                                                                    Status
+  IDC                                   Catheter Tip, Indwelling                                                                                                        Device
+  IHG                                   Gas, Inhaled
+  ILEO                                  Drainage, Ileostomy                                                                                                             Condition
+  ILLEG                                 Source of Specimen Is Illegible
+  IMP                                   Implant                                                                                                                         Device
+  INCI                                  Site, Incision/Surgical                                                                                                         Site
+  INFIL                                 Infiltrate                                                                                                                      Condition
+  INS                                   Insect                                                                                                                          Object
+  INTRD                                 Catheter Tip, Introducer                                                                                                        Device
+  ISLT                                  Isolate
+  IT                                    Intubation tube
+  IUD                                   Intrauterine Device                                                                                                             Device (Common Usage)
+  IVCAT                                 Catheter Tip, IV                                                                                                                Device
+  IVFLD                                 Fluid, IV                                                                                                                       Fluid
+  IVTIP                                 Tubing Tip, IV                                                                                                                  Device
+  JEJU                                  Drainage, Jejunal                                                                                                               Condition
+  JNTFLD                                Fluid, Joint                                                                                                                    Fluid
+  JP                                    Drainage, Jackson Pratt                                                                                                         Condition
+  KELOI                                 Lavage                                                                                                                          Product
+  KIDFLD                                Fluid, Kidney                                                                                                                   Fluid
+  LAVG                                  Lavage, Bronhial                                                                                                                Product
+  LAVGG                                 Lavage, Gastric                                                                                                                 Product
+  LAVGP                                 Lavage, Peritoneal                                                                                                              Product
+  LAVPG                                 Lavage, Pre-Bronch                                                                                                              Product
+  LENS1                                 Contact Lens                                                                                                                    Device
+  LENS2                                 Contact Lens Case                                                                                                               Device
+  LESN                                  Lesion                                                                                                                          Condition
+  LIQ                                   Liquid, Unspecified
+  LIQO                                  Liquid, Other
+  LNA                                   Line arterial                                                                                                                   Arterial blood collected via arterial
+                                                                                                                                                                        line
+  LNV                                   Line venous                                                                                                                     Venous blood collected via venous
+                                                                                                                                                                        line
+  LSAC                                  Fluid, Lumbar Sac                                                                                                               Fluid
+  LYM                                   Lymphocytes
+  MAC                                   Macrophages
+  MAHUR                                 Catheter Tip, Makurkour                                                                                                         Device
+  MAR                                   Marrow                                                                                                                          Bone marrow
+  MASS                                  Mass                                                                                                                            Condition
+  MBLD                                  Blood, Menstrual                                                                                                                Blood
+  MEC                                   Meconium
+  MILK                                  Breast milk                                                                                                                     Mother's milk specimen
+  MLK                                   Milk                                                                                                                            Food specimen
+  MUCOS                                 Mucosa                                                                                                                          Condition
+  MUCUS                                 Mucus                                                                                                                           Condition
+  NAIL                                  Nail                                                                                                                            Finger or toe nail sample
+  NASDR                                 Drainage, Nasal                                                                                                                 Condition
+  NEDL                                  Needle                                                                                                                          Device
+  NEPH                                  Site, Nephrostomy                                                                                                               Site
+  NGASP                                 Aspirate, Nasogastric                                                                                                           Aspirate
+  NGAST                                 Drainage, Nasogastric                                                                                                           Condition
+  NGS                                   Site, Naso/Gastric                                                                                                              Site
+  NODUL                                 Nodule(s)                                                                                                                       Condition
+  NSECR                                 Secretion, Nasal                                                                                                               Condition
+  ORH                                   Other
+  ORL                                   Lesion, Oral                                                                                                                   Condition (Common Usage)
+  OTH                                   Source, Other
+  PACEM                                 Pacemaker                                                                                                                      Device
+  PAFL                                  Pancreatic fluid
+  PCFL                                  Fluid, Pericardial
+  PDSIT                                 Site, Peritoneal Dialysis                                                                                                      Site
+  PDTS                                  Site, Peritoneal Dialysis Tunnel                                                                                               Site
+  PELVA                                 Abscess, Pelvic                                                                                                                Condition
+  PENIL                                 Lesion, Penile                                                                                                                 Condition (Common Usage)
+  PERIA                                 Abscess, Perianal                                                                                                              Condition, Abscess & Body Part
+  PILOC                                 Cyst, Pilonidal                                                                                                                Condition
+  PINS                                  Site, Pin                                                                                                                      Site
+  PIS                                   Site, Pacemaker Insetion                                                                                                       Site
+  PLAN                                  Plant Material                                                                                                                 Object
+  PLAS                                  Plasma                                                                                                                         Blood
+  PLB                                   Plasma bag                                                                                                                     Blood
+  PLC                                   Placenta
+  PLEVS                                 Serum, Peak Level                                                                                                              Blood
+  PLR                                   Pleural fluid (thoracentesis fluid)
+  PMN                                   Polymorphonuclear neutrophils
+  PND                                   Drainage, Penile                                                                                                               Condition
+  POL                                   Polyps                                                                                                                         Condition
+  POPGS                                 Graft Site, Popliteal                                                                                                          Condition
+  POPLG                                 Graft, Popliteal                                                                                                               Condition
+  POPLV                                 Site, Popliteal Vein                                                                                                           Site
+  PORTA                                 Catheter, Porta                                                                                                                Device
+  PPP                                   Plasma, Platelet poor                                                                                                          Blood
+  PROST                                 Prosthetic Device                                                                                                              Device
+  PRP                                   Plasma, Platelet rich                                                                                                          Blood
+  PSC                                   Pseudocyst                                                                                                                     Condition
+  PUNCT                                 Wound, Puncture                                                                                                                Condition
+  PUS                                   Pus
+  PUSFR                                 Pustule                                                                                                                        Condition
+  PUST                                  Pus                                                                                                                            Condition
+  QC3                                   Quality Control                                                                                                                Environment
+  RANDU                                 Urine, Random                                                                                                                  Condition
+  RBC                                   Erythrocytes
+  RBITE                                 Bite, Reptile                                                                                                                  Conditions
+  RECT                                  Drainage, Rectal                                                                                                               Condition
+  RECTA                                 Abscess, Rec tal                                                                                                               Condition
+  RENALC                                Cyst, Renal                                                                                                                    Condition
+  RENC                                  Fluid, Renal Cyst                                                                                                              Fluid
+  RES                                   Respiratory                                                                                                                    Condition (Ambiguous)
+  SAL                                   Saliva
+  SCA R                                 Tissue, Keloid (Scar)                                                                                                          Tissue
+  SCLV                                  Catheter Tip, Subclavian                                                                                                       Device
+  SCROA                                 Abscess, Scrotal                                                                                                               Condition
+  SECRE                                 Secretion(s)                                                                                                                   Fluid/Secretion
+  SER                                   Serum
+  SHU                                   Site, Shunt                                                                                                                    Site  Value                                 Display Name                                                                             Definition                            Comment/ Usage Note                                                                                  Status
+  SHUNF                                 Fluid, Shunt                                                                                                                   Fluid
+  SHUNT                                 Shunt                                                                                                                          Condition
+  SITE                                  Site                                                                                                                           Site
+  SKBP                                  Biopsy, Skin                                                                                                                   Tissue
+  SKN                                   Skin
+  SMM                                   Mass, Sub-Mandibular                                                                                                           Condition
+  SMN                                   Seminal fluid
+  SNV                                   Fluid, synovial (Joint fluid)
+  SPRM                                  Spermatozoa
+  SPRP                                  Catheter Tip, Suprapubic                                                                                                       Device
+  SPRPB                                 Cathether Tip, Suprapubic                                                                                                      Device
+  SPS                                   Environmental, Spore Strip                                                                                                     Environment
+  SPT                                   Sputum
+  SPTC                                  Sputum - coughed
+  SPTT                                  Sputum - tracheal aspirate
+  SPUT1                                 Sputum, Simulated                                                                                                              Condition
+  SPUTIN                                Sputum, Inducted                                                                                                               Condition
+  SPUTSP                                Sputum, Spontaneous                                                                                                            Condition
+  STER                                  Environmental, Sterrad                                                                                                         Environment
+  STL                                   Stool = Fecal
+  STONE                                 Stone, Kidney                                                                                                                  Condition
+  SUBMA                                 Abscess, Submandibular                                                                                                         Condition
+  SUBMX                                 Abscess, Submaxillary                                                                                                          Condition
+  SUMP                                  Drainage, Sump                                                                                                                 Condition
+  SUP                                   Suprapubic Tap                                                                                                                 Product
+  SUTUR                                 Suture                                                                                                                         Object
+  SWGZ                                  Catheter Tip, Swan Gantz                                                                                                       Device
+  SWT                                   Sweat
+  TASP                                  Aspirate, Tracheal                                                                                                             Aspirate
+  TEAR                                  Tears
+  THRB                                  Thrombocyte (platelet)
+  TISS                                  Tissue
+  TISU                                  Tissue ulcer
+  TLC                                   Cathether Tip, Triple Lumen                                                                                                    Device
+  TRAC                                  Site, Tracheostomy                                                                                                             Site
+  TRANS                                 Transudate                                                                                                                     Condition
+  TSERU                                 Serum, Trough                                                                                                                  Blood
+  TSTES                                 Abscess, Testicular                                                                                                            Condition
+  TTRA                                  Aspirate, Transtracheal                                                                                                        Aspirate
+  TUBES                                 Tubes                                                                                                                          Device
+  TUMOR                                 Tumor                                                                                                                          Condition
+  TZANC                                 Smear, Tzanck
+  UDENT                                 Source, Unidentified
+  UMED                                  Unknown Medicine                                                                                                               for forensic and possibly chemistry
+                                                                                                                                                                       testing
+  UR                                    Urine
+  URC                                   Urine clean catch
+  URINB                                 Urine, Bladder Washings                                                                                                        Condition
+  URINC                                 Urine, Catheterized                                                                                                            Condition
+  URINM                                 Urine, Midstream                                                                                                               Condition
+  URINN                                 Urine, Nephrostomy                                                                                                             Condition
+  URINP                                 Urine, Pedibag                                                                                                                 Device
+  URNS                                  Urine sediment
+  URT                                     Urine catheter
+  USCO P                                  Urine, Cystoscopy                                                                                                                    Condition
+  USPEC                                   Source, Unspecified
+  USUB                                    Unkown substance
+  VASTIP                                  Catheter Tip, Vas                                                                                                                    Device
+  VENT                                    Catheter Tip, Ventricular                                                                                                            Device
+  VITF                                    Vitreous Fluid
+  VOM                                     Vomitus
+  WASH                                    Wash                                                                                                                                 Product
+  WASI                                    Washing, e.g. bronchial washing                                                                                                      Product
+  WAT                                     Water
+  WB                                      Blood, Whole                                                                                                                         Blood
+  WBC                                     Leukocytes
+  WEN                                     Wen                                                                                                                                  Tissue
+  WICK                                    Wick
+  WND                                     Wound
+  WNDA                                    Wound abscess
+  WNDD                                    Wound drainage
+  WNDE                                    Wound exudate
+  WORM                                    Worm                                                                                                                                 Object
+  WRT                                     Wart                                                                                                                                 Tissue
+  WWA                                     Environmental, Water                                                                                                                 Environment
+  WWO                                     Environmental, Water (Ocean)
+  WWT                                     Environmental, Water  (Tap)                                                                                                          Environment

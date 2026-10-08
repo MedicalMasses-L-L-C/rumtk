@@ -1,0 +1,7 @@
+                                                                                                                                                      Table Metadata
+  Table                                                                                                0216
+  Description                                                                                          Table of codes used to define the state of a care episode for a patient.
+  Type                                                                                                 User
+  Steward                                                                                              PA
+  where used                                                                                           PV2-24
+  HL7 Version  Introduced                                                                              2.3

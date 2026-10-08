@@ -1,0 +1,8 @@
+                                                                                                                                                            Table Metadata
+  Table                                                                                                     0150
+  Description                                                                                               Table of codes which specify the category or type of patient for which this
+                                                                                                            certification is requested.
+  Type                                                                                                      User
+  Steward                                                                                                   InM/FM
+  where used                                                                                                ICD.1
+  HL7 Version  Introduced                                                                                   2.2

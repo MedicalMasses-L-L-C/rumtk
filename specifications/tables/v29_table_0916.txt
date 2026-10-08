@@ -1,0 +1,8 @@
+                                                                                                                        Table 0916Coded Content
+   Value                                      Display Name                                                                                                                                      Definition                                                               Comment/                                    Status
+                                                                                                                                                                                                                                                                         Usage Note
+   F                                          Patient was fasting prior to the procedure.
+   NF                                         The patient indicated they did not fast prior to
+                                              the procedure.
+   NG                                         Not Given - Patient was not asked at the time of
+                                              the procedure.

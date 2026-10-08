@@ -1,0 +1,13 @@
+                                                                                                                                      Table Metadata
+  Table                                                                                      0818
+  Description                                                                                Table of codes specifying the packaging unit in which this inventory supply
+                                                                                             item can be ordered or issued when purchased from the vendor in the related
+                                                                                             vendor segment.
+  Type                                                                                       User
+
+
+
+
+  Steward                                                                                    OO
+  where used                                                                                 PKG-2
+  HL7 Version  Introduced                                                                               2.6

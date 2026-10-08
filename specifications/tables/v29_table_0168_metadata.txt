@@ -1,0 +1,8 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                        0168
+  Description                                                                                  HL7-defined table of codes which specify one or more available priorities for
+                                                                                               performing the observation or test.
+  Type                                                                                         HL7
+  Steward                                                                                      InM
+  where used                                                                                   OM1-25
+  HL7 Version  Introduced                                                                      2.2

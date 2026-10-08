@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0059
+  Description                                                                                 Table of codes specifying the type of consent that was obtained for permission
+                                                                                              to treat the patient.  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     FM
+  where used                                                                                  PR1-13
+  HL7 Version  Introduced                                                                     2.1

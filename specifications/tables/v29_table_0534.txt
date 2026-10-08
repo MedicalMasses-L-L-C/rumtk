@@ -1,0 +1,8 @@
+                                                                                                                              Table 0534Coded Content
+   Value                                         Display Name                                                 Definition                                                                                                                                                              Comment/                                      Status
+                                                                                                                                                                                                                                                                                      Usage Note
+   Y                                             Yes
+   N                                             No
+   L                                             Last Rite s only
+   O                                             Other
+   U                                             Unknown

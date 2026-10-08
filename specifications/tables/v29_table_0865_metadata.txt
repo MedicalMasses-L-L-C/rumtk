@@ -1,0 +1,8 @@
+                                                                                                                             Table Metadata
+  Table                                                                                0865
+  Description                                                                          Table of codes specifying to the receiving provider that the clinical history in the
+                                                                                       message is incomplete and that more will follow.  No suggested values.
+  Type                                                                                 User
+  Steward                                                                              OO
+  where used                                                                           RF1-12
+  HL7 Version Introduced                                                               2.6

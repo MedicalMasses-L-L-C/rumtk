@@ -1,0 +1,5 @@
+                                                                                                                                                         Table Metadata
+  Table                                                                                                   0621
+  Description                                                                                             9999
+  Type                                                                                                    undefined
+  where used                                                                                              OBR-                                                     43

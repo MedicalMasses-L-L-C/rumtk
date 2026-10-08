@@ -1,0 +1,6 @@
+                                                                                                                             Table 0329Coded Content
+  Value                                         Display Name                                                Definition                                                                                                                                                             Comment/                                     Status
+                                                                                                                                                                                                                                                                                   Usage Note
+  A                                             Actual count
+  E                                             Estimated (see
+                                                comment)

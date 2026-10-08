@@ -1,0 +1,8 @@
+                                                                                                                                                                 Table Metadata
+  Table                                                                                                        0559
+  Description                                                                                                  Table of codes used to specify the processing status for the Product/Service
+                                                                                                               Code.
+  Type                                                                                                         User
+  Steward                                                                                                      FM
+  where used                                                                                                   PLS-                      6
+  HL7 Version  Introduced                                                                                      2.6

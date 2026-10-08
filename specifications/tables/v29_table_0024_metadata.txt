@@ -1,0 +1,8 @@
+                                                                                                                                                        Table Metadata
+  Table                                                                                                  0024
+  Description                                                                                            Table of codes specifying the appropriate fee schedule to be used for this
+                                                                                                         transaction posting.  No suggested values.
+  Type                                                                                                   User
+  Steward                                                                                                FM
+  where used                                                                                             FT1-17
+  HL7 Version Introduced                                                                                 2.1

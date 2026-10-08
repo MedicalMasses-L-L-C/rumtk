@@ -1,0 +1,8 @@
+                                                                                                                                                 Table Metadata
+  Table                                                                                             0238
+  Description                                                                                       HL7-defined table of codes used by a sender to designate an event as serious or
+                                                                                                    significant.
+  Type                                                                                              HL7
+  Steward                                                                                           OO
+  where used                                                                                        PEO-9
+  HL7 Version  Introduced                                                                           2.3

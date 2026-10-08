@@ -1,0 +1,10 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0272
+  Description                                                                                 HL7-defined table of codes that specify the degree to which special
+                                                                                              confidentiality protection should be applied to  information.  The assignment of
+                                                                                              data elements to these categories is left to the discretion of the healthcare
+                                                                                              organization.
+  Type                                                                                        HL7
+  Steward                                                                                     StrucDoc
+  where used                                                                                  TXA-                                                          18
+  HL7 Version  Introduced                                                                     2.3

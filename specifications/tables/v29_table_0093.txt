@@ -1,0 +1,7 @@
+                                                                                                                                      Table 0093Coded Content
+   Value                                            Display Name                                                    Definition                                                                                                                                                                         Comment/                                        Status
+                                                                                                                                                                                                                                                                                                       Usage Note
+   Y                                                Yes
+   N                                                No
+   ...                                              user-defined                                                                                                                                                                                                                                                                                       D
+                                                    codes

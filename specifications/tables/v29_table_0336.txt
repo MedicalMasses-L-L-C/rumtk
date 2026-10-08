@@ -1,0 +1,7 @@
+                                                                                                                          Table 0336Coded Content
+   Value                                       Display Name                                                                                                          Definition                                                                                              Comment/                                    Status
+                                                                                                                                                                                                                                                                             Usage Note
+   S                                           Second Opinion
+   P                                           Patient Preference
+   O                                           Provider Ordered
+   W                                           Work Load

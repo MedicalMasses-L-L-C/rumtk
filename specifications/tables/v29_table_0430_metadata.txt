@@ -1,0 +1,7 @@
+                                                                                                                                                           Table Metadata
+  Table                                                                                                    0430
+  Description                                                                                              Table of codes specifying how the patient was brought to the healthcare facility.
+  Type                                                                                                     User
+  Steward                                                                                                  PA
+  where used                                                                                               PV2-38
+  HL7 Version  Introduced                                                                                  2.4

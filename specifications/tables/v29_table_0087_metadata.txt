@@ -1,0 +1,8 @@
+                                                                                                                                        Table Metadata
+  Table                                                                                       0087
+  Description                                                                                 Table of codes specifying whether the patient must have pre                                                  -admission testing
+                                                                                              done in order to be admitted.  No suggested values.
+  Type                                                                                        User
+  Steward                                                                                     PA
+  where used                                                                                  PV1-13
+  HL7 Version  Introduced                                                                     2.1

@@ -1,0 +1,10 @@
+                                                                                                                  Table 0505Coded Content
+  Value                              Display Name                                                                      Definition                                                                                Comment/ Usage Note                                                                Status
+  F                                  First service                                                                     The first service request in a cyclic
+                                                                                                                       group
+  L                                  Last service                                                                      The last service request in a
+                                                                                                                       cyclic group
+  *                                  The first service request in                                                                                                                                                Usage Note: Retired March                                                          R
+                                     a cyclic group                                                                                                                                                              2016. Use code F instead
+  #                                  The last service request in a                                                                                                                                               Usage Note: Retired March                                                          R
+                                     cyclic group.                                                                                                                                                               2016. Use code L instead

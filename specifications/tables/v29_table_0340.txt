@@ -1,0 +1,34 @@
+                                                                                                     Table 0340Coded Content
+  Va    l    u    e                    Display Name                                     Definition                           Comment/ Usage Note                                                                                                                    Status
+  CPTM                                 CPT Modifier                                                                          Available for the AMA at the address listed for CPT                                                                                    D
+                                       Code                                                                                  above. These codes are found in Appendix A of CPT
+                                                                                                                             2000 Standard Edition. (CPT 2000 Standard Edition,
+                                                                                                                             American Medical Associatio n, Chicago, IL)
+  HPC                                  CMS (formerly                                                                         Health Care Financing Administration (HCFA)                                                                                            D
+                                       HCFA)                                                                                 Common Procedure Coding System (HCPCS)
+                                       Procedure Codes                                                                       including modifiers.
+                                       (HCPCS)
+                                                                                                                             Usage Note: The HCPCS code is divided into three
+                                                                                                                             "levels."  Level I includes the entire CPT-4  code by
+                                                                                                                             reference.  Level II includes the American Dental
+                                                                                                                             Association’s Current Dental Terminology (CDT-2 )
+                                                                                                                             code by reference.  Level II also includes the
+                                                                                                                             genuine HCPCS codes, approved and maintained
+                                                                                                                             jointly by the Alpha-Numeric Editorial Panel,
+                                                                                                                             consisting of CMS, the Health Insurance Association
+                                                                                                                             of America, and the Blue Cross and Blue Shield
+                                                                                                                             Association. Level III are codes developed locally
+                                                                                                                             by Medicare carriers.  The HCPCS modifiers are
+                                                                                                                             divided into the same three levels, I being CPT-4
+                                                                                                                             modifiers, II CDT-2 and genuine HCPCS modifiers,
+                                                                                                                             and III being locally agreed modifiers.
+
+                                                                                                                             The genuine HCPCS codes and modifiers of level II
+                                                                                                                             can be found at
+                                                                                                                             http://www.hcfa.gov/stats/anhcpcdl.htm. CMS
+                                                                                                                             distributes the HCPCS codes via the National
+                                                                                                                             Technical Information Service (NTIS,
+                                                                                                                             www.ntis.gov) and NTIS distribution includes the
+                                                                                                                             CDT-2 part of HCPCS Level II, but does not include
+                                                                                                                             the CPT-4 part (Level I). CMS may distribute the
+                                                                                                                             CPT-4 part to ist contractors.

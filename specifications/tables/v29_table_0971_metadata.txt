@@ -1,0 +1,7 @@
+                                                                                                                                 Table Metadata
+  Table                                                                                  0971
+  Description                                                                            Error Code of the online verification of insurance data
+  Type                                                                                   User
+  Steward                                                                                FM
+  where used                                                                             IN3-30
+  HL7 Version  Introduced                                                                2.9

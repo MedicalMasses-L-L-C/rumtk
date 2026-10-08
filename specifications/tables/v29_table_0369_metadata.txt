@@ -1,0 +1,14 @@
+                                                                                                                                         Table Metadata
+  Table                                                                                       0369
+  Description                                                                                 Table of codes that identify the role of a sample.
+
+
+
+
+
+
+
+  Type                                                                                        User
+  Steward                                                                                     OO
+  where used                                                                                  SPM-11  ,   O  B  R -15
+  HL7 Version  Introduced                                                                  2.4

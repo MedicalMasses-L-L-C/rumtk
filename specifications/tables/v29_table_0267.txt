@@ -1,0 +1,10 @@
+                                                                                                                                 Table 0267Coded Content
+  Value                                          Display Name                                                   Definition                                                                                                                                                                  Comment/                                      Status
+                                                                                                                                                                                                                                                                                            Usage Note
+  SAT                                            Saturday
+  SUN                                            Sunday
+  MON                                            Monday
+  TUE                                            Tuesday
+  WED                                            Wednesday
+  THU                                            Thursday
+  FRI                                            Friday
