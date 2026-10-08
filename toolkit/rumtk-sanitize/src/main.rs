@@ -54,14 +54,5 @@ fn process_message_loop(args: &RUMTKInterfaceArgs) {
 
 fn main() {
     let args = RUMTKInterfaceArgs::parse();
-    let inbound = match rumtk_read_stdin!() {
-        Ok(input) => input,
-        Err(e) => panic!("{e}"),
-    };
-    let inbound_str = match inbound.to_string(){
-        Ok(input) => input,
-        Err(e) => panic!("{e}"),
-    };
-    let filtered = sanitize_html(&inbound_str, false);
-    println!("{filtered}");
+    process_message_loop(&args);
 }
