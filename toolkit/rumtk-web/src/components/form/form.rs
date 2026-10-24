@@ -27,7 +27,7 @@ use rumtk_core::rumtk_generate_id;
 #[derive(RUMWebTemplate, Debug)]
 #[template(
     source = "
-        <div class='form-{{css_class}}-box'>
+        <div id='form-{{htmx_target}}' class='form-{{css_class}}-box'>
             {% if custom_css_enabled %}
                 <link href='/static/components/form/form.css' rel='stylesheet'>
             {% endif %}
@@ -35,7 +35,7 @@ use rumtk_core::rumtk_generate_id;
                 <script type='module' id='form-script' src='/static/js/forms/form_{{typ}}.js' async defer>
                 </script>
             {% endif %}
-            <form id='form-{{htmx_target}}' class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
+            <form class='f18 centered form-default-contents gap-10 form-{{css_class}}-contents' role='form' hx-encoding='multipart/form-data' hx-post='{{endpoint}}' aria-label='{{typ}} form' hx-swap='{{htmx_swap_mode}}' hx-target='#form-{{htmx_target}}'>
                 <h1>{{ title }}</h1>
                 {% for element in elements %}
                     {{ element|safe }}
