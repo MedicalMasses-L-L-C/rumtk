@@ -21,40 +21,21 @@
 use rumtk_core::base::RUMResult;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
+use rumtk_core::{rumtk_cli_define_args, rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
 ///
 /// HL7 V2 Parser CLI
 ///
-#[derive(RUMCLIParser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct RUMTKInterfaceArgs {
-    ///
-    /// Specifies command line script to execute on message.
-    ///
-    #[arg(short, long, default_value_t = 1)]
-    threads: usize,
+rumtk_cli_define_args!(
     ///
     /// Specifies whether to output the pretty print version of the message. This option has no
     /// effect for raw v2 messages piped into the program
     ///
     #[arg(short, long)]
-    pretty: bool,
-    ///
-    /// Don not write to stdout. Mostly used to distinguish between performance issues with parser
-    /// vs. serde's JSON serialization.
-    ///
-    #[arg(short, long)]
-    quiet: bool,
-    ///
-    /// Only used if in client/outbound mode. Places the interface into a loop constantly looking
-    /// for messages in stdin to ship to the connected listening interface.
-    ///
-    #[arg(short, long)]
-    daemon: bool,
-}
+    pretty: bool
+);
 
 fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
     let stdin_msg = rumtk_read_stdin!()?;
