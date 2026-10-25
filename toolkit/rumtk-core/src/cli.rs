@@ -242,6 +242,41 @@ pub mod cli_utils {
 }
 
 pub mod macros {
+    #[macro_export]
+    macro_rules! rumtk_cli_define_args {
+        (
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ) => {
+            #[derive($crate::types::RUMCLIParser, Debug)]
+            #[command(author, version, about, long_about = None)]
+            pub struct RUMTKInterfaceArgs {
+                $(
+                    $(#[$field_meta])*
+                    pub $field_name: $field_typ,
+                )*
+                ///
+                /// Specifies command line script to execute on message.
+                ///
+                #[arg(short, long, default_value_t = 1)]
+                pub threads: usize,
+                ///
+                /// Don't write to stdout. Mostly used to distinguish between performance issues with parser
+                /// vs. serde's JSON serialization.
+                ///
+                #[arg(short, long)]
+                pub quiet: bool,
+                ///
+                /// Only used if in client/outbound mode. Places the interface into a loop constantly looking
+                /// for messages in stdin to ship to the connected listening interface.
+                ///
+                #[arg(short, long)]
+                pub daemon: bool,
+            }
+        };
+    }
     ///
     /// Reads STDIN and unescapes the incoming message.
     /// Return this unescaped message.
