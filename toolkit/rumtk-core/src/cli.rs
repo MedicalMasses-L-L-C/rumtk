@@ -44,7 +44,11 @@
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
     use crate::cpu::CPU_PAGE_SIZE;
-    use crate::strings::rumtk_format;
+    use crate::serde::RUMDeJson;
+    use crate::strings::RUMArrayConversions;
+    use crate::strings::{rumtk_format, RUMString};
+    use crate::types::RUMCLIParser;
+    use crate::{rumtk_deserialize, rumtk_read_stdin, rumtk_write_stdout};
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
@@ -229,6 +233,40 @@ pub mod cli_utils {
         }
     }
 
+    pub fn process_message<Args, OT, OF, EF>(args: &Args, ok: &OF, err: &EF) -> RUMResult<()>
+    where
+        Args: RUMCLIParser,
+        OT: for<'a> RUMDeJson<'a>,
+        OF: Fn(OT, &Args) -> RUMResult<RUMString>,
+        EF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
+    {
+        let stdin_msg = rumtk_read_stdin!()?;
+        if !stdin_msg.is_empty() {
+            let out_data = match rumtk_deserialize!(&stdin_msg.as_slice().to_string()?) {
+                Ok(msg) => ok(msg, args)?,
+                Err(_) => err(stdin_msg, args)?
+            };
+
+            rumtk_write_stdout!(&out_data);
+        }
+        Ok(())
+    }
+
+    pub fn process_message_loop<Args, OT, OF, EF>(args: &Args, ok: OF, err: EF)
+    where
+        Args: RUMCLIParser,
+        OT: for<'a> RUMDeJson<'a>,
+        OF: Fn(OT, &Args) -> RUMResult<RUMString>,
+        EF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
+    {
+        loop {
+            match process_message(args, &ok, &err) {
+                Ok(()) => continue,
+                Err(e) => println!("{}", e), // TODO: missing log call
+            };
+        }
+    }
+
     pub fn print_license_notice(program: &str, year: &str, author_list: &Vec<&str>) {
         let authors = author_list.join(", ");
         let notice = rumtk_format!(
@@ -242,6 +280,9 @@ pub mod cli_utils {
 }
 
 pub mod macros {
+    ///
+    ///
+    ///
     #[macro_export]
     macro_rules! rumtk_cli_define_args {
         (
@@ -277,6 +318,7 @@ pub mod macros {
             }
         };
     }
+
     ///
     /// Reads STDIN and unescapes the incoming message.
     /// Return this unescaped message.
@@ -411,6 +453,22 @@ pub mod macros {
         ( $program:expr, $year:expr, $authors:expr ) => {{
             use $crate::cli::cli_utils::print_license_notice;
             print_license_notice(&$program, &$year, &$authors);
+        }};
+    }
+
+    #[macro_export]
+    macro_rules! rumtk_cli_process {
+        ( $($args:expr),* $(,)?,
+            $ok:expr, $err:expr) => {{
+            use $crate::cli::cli_utils::{process_message_loop, process_message};
+            rumtk_cli_define_args!($args);
+
+            let args = RUMTKInterfaceArgs::parse();
+
+            match $daemon {
+                true => process_message_loop(&args, &$ok, &$err),
+                false => process_message(&args, &$ok, &$err).expect("Failed to generate V2 message"),
+            }
         }};
     }
 }

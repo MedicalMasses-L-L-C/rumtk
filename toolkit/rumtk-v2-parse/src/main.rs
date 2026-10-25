@@ -18,10 +18,10 @@
  */
 #![feature(str_as_str)]
 
-use rumtk_core::base::RUMResult;
+use rumtk_core::base::{RUMResult, RUMVec};
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_cli_define_args, rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
+use rumtk_core::{rumtk_cli_define_args, rumtk_cli_process, rumtk_serialize};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
@@ -37,46 +37,29 @@ rumtk_cli_define_args!(
     pretty: bool
 );
 
-fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
-    let stdin_msg = rumtk_read_stdin!()?;
-    if !stdin_msg.is_empty() {
-        let out_data = match rumtk_deserialize!(&stdin_msg.as_slice().to_string()?) {
-            Ok(msg) => {
-                let parsed_msg: V2Message = msg;
-                rumtk_v2_generate_message!(&parsed_msg)
-            }
-            Err(_) => {
-                let msg = rumtk_v2_parse_message!(stdin_msg)?;
-
-                if !args.quiet {
-                    rumtk_serialize!(&msg)?
-                    //RUMString::default()
-                } else {
-                    RUMString::default()
-                }
-            }
-        };
-
-        rumtk_write_stdout!(&out_data);
-    }
-    Ok(())
-}
-
-fn process_message_loop(args: &RUMTKInterfaceArgs) {
-    loop {
-        match process_message(args) {
-            Ok(()) => continue,
-            Err(e) => println!("{}", e), // TODO: missing log call
-        };
-    }
-}
-
 fn main() {
     let args = RUMTKInterfaceArgs::parse();
 
-    if args.daemon {
-        process_message_loop(&args);
-    } else {
-        process_message(&args).expect("Failed to generate V2 message");
-    }
+    rumtk_cli_process!(
+        ///
+        /// Specifies whether to output the pretty print version of the message. This option has no
+        /// effect for raw v2 messages piped into the program
+        ///
+        #[arg(short, long)]
+        pretty: bool
+        ,
+        |parsed_msg: V2Message, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            Ok(rumtk_v2_generate_message!(&parsed_msg))
+        },
+        |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            let msg = rumtk_v2_parse_message!(data)?;
+
+            if !args.quiet {
+                Ok(rumtk_serialize!(&msg)?)
+                //RUMString::default()
+            } else {
+                Ok(RUMString::default())
+            }
+        }
+    );
 }
