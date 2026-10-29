@@ -44,19 +44,24 @@
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
     use crate::cpu::CPU_PAGE_SIZE;
-    use crate::serde::RUMDeJson;
-    use crate::strings::RUMArrayConversions;
     use crate::strings::{rumtk_format, RUMString};
     use crate::types::RUMCLIParser;
-    use crate::{rumtk_deserialize, rumtk_read_stdin, rumtk_write_stdout};
+    use rumtk_arena::AsSlice;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
     #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
 
+    pub type BufferSlice = RUMVec<u8>;
+    pub type CliInput = RUMVec<u8>;
+    pub type CLIOutput = RUMVec<u8>;
+    pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
+
     const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
 
-    pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
+    pub enum CliProcessor<Args> {
+        Direct(fn(args: &Args) -> RUMResult<()>),
+        Message(fn(msg: RUMVec<u8>, args: &Args) -> RUMResult<RUMString>),
+    }
 
     ///
     /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
@@ -233,34 +238,28 @@ pub mod cli_utils {
         }
     }
 
-    pub fn process_message<Args, OT, OF, EF>(args: &Args, ok: &OF, err: &EF) -> RUMResult<()>
+    pub fn process_message<Args, PF, R>(args: &Args, processor: PF) -> RUMResult<()>
     where
         Args: RUMCLIParser,
-        OT: for<'a> RUMDeJson<'a>,
-        OF: Fn(OT, &Args) -> RUMResult<RUMString>,
-        EF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
+        R: AsSlice,
+        PF: Fn(RUMVec<u8>, &Args) -> RUMResult<R>
     {
-        let stdin_msg = rumtk_read_stdin!()?;
+        let stdin_msg = read_stdin(CPU_PAGE_SIZE * CPU_PAGE_SIZE)?;
         if !stdin_msg.is_empty() {
-            let out_data = match rumtk_deserialize!(&stdin_msg.as_slice().to_string()?) {
-                Ok(msg) => ok(msg, args)?,
-                Err(_) => err(stdin_msg, args)?
-            };
+            let out_data = processor(stdin_msg, args)?;
 
-            rumtk_write_stdout!(&out_data);
+            write_stdout(out_data.as_slice())?;
         }
         Ok(())
     }
 
-    pub fn process_message_loop<Args, OT, OF, EF>(args: &Args, ok: OF, err: EF)
+    pub fn process_message_loop<Args, PF>(args: &Args, processor: &PF)
     where
         Args: RUMCLIParser,
-        OT: for<'a> RUMDeJson<'a>,
-        OF: Fn(OT, &Args) -> RUMResult<RUMString>,
-        EF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
+        PF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
     {
         loop {
-            match process_message(args, &ok, &err) {
+            match process_message(args, processor) {
                 Ok(()) => continue,
                 Err(e) => println!("{}", e), // TODO: missing log call
             };
@@ -391,15 +390,11 @@ pub mod macros {
     /// use rumtk_core::buffers::{new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
     ///
     /// let buffer = new_random_rumbuffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
-    /// rumtk_write_stdout!(buffer, true);
+    /// rumtk_write_stdout!(buffer);
     /// ```
     ///
     #[macro_export]
     macro_rules! rumtk_write_stdout {
-        ( $message:expr ) => {{
-            use $crate::cli::cli_utils::write_string_stdout;
-            write_string_stdout(&$message)
-        }};
         ( $message:expr, $binary:expr ) => {{
             use $crate::cli::cli_utils::write_stdout;
             write_stdout(&$message)
@@ -565,40 +560,32 @@ pub mod macros {
         };
         (
             @collect [$($cli_args:tt)*]
-            $ok:expr,
-            $err:expr $(,)?
-        ) => {{
-            use $crate::cli::cli_utils::{process_message, process_message_loop};
-
-            $crate::rumtk_cli_process!(
-                @collect [$($cli_args)*]
-                |args: &RUMTKInterfaceArgs| -> RUMResult<_> {
-                    let ok = $ok;
-                    let err = $err;
-
-                    if args.daemon {
-                        Ok(process_message_loop(args, ok, err))
-                    } else {
-                        process_message(args, &ok, &err)
-                    }
-                }
-            );
-        }};
-        (
-            @collect [$($cli_args:tt)*]
             $logic:expr $(,)?
         ) => {{
+            use $crate::cli::cli_utils::{process_message_loop, process_message, CliProcessor};
             use $crate::types::RUMCLIParser;
 
             $crate::rumtk_cli_define_args!($($cli_args)*);
 
             let args = RUMTKInterfaceArgs::parse();
-            let logic = $logic;
 
-            match logic(&args) {
+            let r = match $logic {
+                CliProcessor::Direct(executor) => {
+                    executor(&args)
+                },
+                CliProcessor::Message(executor) => {
+                    if args.daemon {
+                        Ok(process_message_loop(&args, &executor))
+                    } else {
+                        process_message(&args, &executor)
+                    }
+                }
+            };
+
+            match r {
                 Ok(_) => {},
                 Err(e) => println!("Error: {}", e),
-            }
+            };
         }};
         (
             $($tokens:tt)*
