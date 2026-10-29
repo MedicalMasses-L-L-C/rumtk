@@ -461,14 +461,19 @@ pub mod macros {
     /// processing logic.
     ///
     /// The macro expects an optional list of CLI argument definitions (same syntax accepted by
-    /// [rumtk_cli_define_args](crate::rumtk_cli_define_args)) followed by the two message handlers:
+    /// [rumtk_cli_define_args](crate::rumtk_cli_define_args)) followed by either the two message
+    /// handlers:
     ///
     /// + `ok`  => Called when the incoming message could be deserialized into the expected type.
     /// + `err` => Called with the raw bytes when deserialization was not possible.
     ///
-    /// The generated argument struct is named `RUMTKInterfaceArgs` and is available to both
-    /// handlers. If the `--daemon` flag is passed, the handlers are called in a loop for every
-    /// message coming through `stdin`. Otherwise, a single message is processed.
+    /// or a single piece of logic receiving the parsed arguments. In the latter case, the logic
+    /// owns the whole interface lifecycle and is called once with a reference to the parsed
+    /// arguments.
+    ///
+    /// The generated argument struct is named `RUMTKInterfaceArgs` and is available to the
+    /// handlers. If the `--daemon` flag is passed, the `ok`/`err` handlers are called in a loop for
+    /// every message coming through `stdin`. Otherwise, a single message is processed.
     ///
     /// ## Example
     ///
@@ -523,7 +528,7 @@ pub mod macros {
     ///         #[arg(short, long)]
     ///         debug: bool,
     ///         |args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
-    ///             Ok(msg)
+    ///             Ok(RUMString::default())
     ///         }
     ///     );
     /// }
@@ -569,16 +574,17 @@ pub mod macros {
             $crate::rumtk_cli_define_args!($($cli_args)*);
 
             let args = RUMTKInterfaceArgs::parse();
-            let ok = $ok;
-            let err = $err;
-            
+
             $crate::rumtk_cli_process!(
                 @collect [$($cli_args:tt)*],
                 |args: &RUMTKInterfaceArgs| {
+                    let ok = $ok;
+                    let err = $err;
+
                     if args.daemon {
-                        process_message_loop(&args, ok, err)
+                        Ok(process_message_loop(&args, ok, err))
                     } else {
-                        process_message(&args, &ok, &err).expect("Failed to process CLI message")
+                        Ok(process_message(&args, &ok, &err)?)
                     }
                 }
             );
@@ -587,13 +593,17 @@ pub mod macros {
             @collect [$($cli_args:tt)*]
             $logic:expr $(,)?
         ) => {{
-            use $crate::cli::cli_utils::{process_message, process_message_loop};
             use $crate::types::RUMCLIParser;
 
             $crate::rumtk_cli_define_args!($($cli_args)*);
 
             let args = RUMTKInterfaceArgs::parse();
-            $logic(&args);
+            let logic = $logic;
+
+            match logic(&args) {
+                Ok(_) => {},
+                Err(e) => println!("Error: {}", e),
+            }
         }};
         (
             $($tokens:tt)*
