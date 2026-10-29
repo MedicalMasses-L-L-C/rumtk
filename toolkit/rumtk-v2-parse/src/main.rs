@@ -18,10 +18,12 @@
  */
 #![feature(str_as_str)]
 
-use rumtk_core::base::RUMResult;
-use rumtk_core::strings::{RUMArrayConversions, RUMString};
+use rumtk_core::base::{RUMResult, RUMVec};
+use rumtk_core::cli::cli_utils::CliProcessor;
+use rumtk_core::strings::RUMArrayConversions;
+use rumtk_core::strings::RUMString;
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_cli_process, rumtk_serialize};
+use rumtk_core::{rumtk_cli_process, rumtk_deserialize, rumtk_serialize};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
@@ -33,19 +35,22 @@ fn main() {
         ///
         #[arg(short, long)]
         pretty: bool,
-        |msg, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
-            let parsed_msg: V2Message = msg;
-            Ok(rumtk_v2_generate_message!(&parsed_msg))
-        },
-        |data, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
-            let msg = rumtk_v2_parse_message!(data)?;
+        CliProcessor::Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            match rumtk_deserialize!(&data.to_string()?) {
+                Ok(msg) => {
+                    let parsed_msg: V2Message = msg;
+                    Ok(rumtk_v2_generate_message!(&parsed_msg))
+                }
+                Err(_) => {
+                    let msg = rumtk_v2_parse_message!(data)?;
 
-            if !args.quiet {
-                Ok(rumtk_serialize!(&msg)?)
-                //RUMString::default()
-            } else {
-                Ok(RUMString::default())
+                    let r = match args.quiet {
+                        true => RUMString::default(),
+                        false => rumtk_serialize!(&msg)?
+                    };
+                    Ok(r)
+                }
             }
-        }
+        })
     );
 }
