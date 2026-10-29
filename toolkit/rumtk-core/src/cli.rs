@@ -46,14 +46,14 @@ pub mod cli_utils {
     use crate::cpu::CPU_PAGE_SIZE;
     use crate::strings::{rumtk_format, RUMString};
     use crate::types::RUMCLIParser;
-    use rumtk_arena::AsSlice;
+    use rumtk_arena::AsRUMSlice;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
-    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
 
     pub type BufferSlice = RUMVec<u8>;
-    pub type CliInput = RUMVec<u8>;
-    pub type CLIOutput = RUMVec<u8>;
+    pub type CliSTDInput = RUMVec<u8>;
+    pub type CliSTDOutput<R: AsRUMSlice> = R;
     pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
 
     const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
@@ -81,8 +81,8 @@ pub mod cli_utils {
     /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
     /// ```
     ///
-    pub fn read_stdin(minimum_size: usize) -> RUMResult<RUMVec<u8>> {
-        let mut stdin_buffer = RUMVec::with_capacity(minimum_size);
+    pub fn read_stdin(minimum_size: usize) -> RUMResult<CliSTDInput> {
+        let mut stdin_buffer = CliSTDInput::with_capacity(minimum_size);
 
         loop {
             let s = read_some_stdin(&mut stdin_buffer)?;
@@ -190,18 +190,11 @@ pub mod cli_utils {
     }
 
     ///
-    /// writes [`stringview`] to `stdout`.
-    ///
-    pub fn write_string_stdout(data: &str) -> RUMResult<()> {
-        write_stdout(&data.as_bytes())
-    }
-
-    ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
     #[cfg(target_os = "windows")]
-    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
-        match stdout().write_all(data) {
+    pub fn write_stdout<R: AsSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
+        match stdout().write_all(data.as_rum_slice()) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
@@ -209,8 +202,8 @@ pub mod cli_utils {
         Ok(())
     }
 
-    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
-    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
+    #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
+    pub fn write_stdout<R: AsRUMSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
         // Create an unbuffered File handle from file descriptor 1 (stdout)
         let stdout_fd = stdout().as_raw_fd();
 
@@ -218,7 +211,7 @@ pub mod cli_utils {
             let mut file = BufWriter::new(unsafe { std::fs::File::from_raw_fd(stdout_fd) });
 
             // Write bytes directly
-            match file.write_all(data) {
+            match file.write_all(data.as_rum_slice()) {
                 Ok(_) => {
                     file.flush().unwrap_or_default();
                     std::mem::forget(file);
@@ -241,14 +234,14 @@ pub mod cli_utils {
     pub fn process_message<Args, PF, R>(args: &Args, processor: PF) -> RUMResult<()>
     where
         Args: RUMCLIParser,
-        R: AsSlice,
-        PF: Fn(RUMVec<u8>, &Args) -> RUMResult<R>
+        R: AsRUMSlice,
+        PF: Fn(CliSTDInput, &Args) -> RUMResult<R>
     {
         let stdin_msg = read_stdin(CPU_PAGE_SIZE * CPU_PAGE_SIZE)?;
         if !stdin_msg.is_empty() {
             let out_data = processor(stdin_msg, args)?;
 
-            write_stdout(out_data.as_slice())?;
+            write_stdout(out_data)?;
         }
         Ok(())
     }
@@ -256,7 +249,7 @@ pub mod cli_utils {
     pub fn process_message_loop<Args, PF>(args: &Args, processor: &PF)
     where
         Args: RUMCLIParser,
-        PF: Fn(RUMVec<u8>, &Args) -> RUMResult<RUMString>
+        PF: Fn(CliSTDInput, &Args) -> RUMResult<RUMString>
     {
         loop {
             match process_message(args, processor) {
