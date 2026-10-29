@@ -20,19 +20,12 @@
 
 use crate::base::*;
 
-pub trait AsPtr {
-    #[inline(always)]
-    fn as_ptr(&self) -> *const u8 {
-        self as *const _ as *const u8
-    }
-    #[inline(always)]
-    fn as_mut_ptr(&mut self) -> *mut u8 {
-        self as *mut _ as *mut u8
-    }
+pub trait AsRUMPtr {
+    fn as_rum_ptr(&self) -> *const u8;
+    fn as_mut_rum_ptr(&mut self) -> *mut u8;
 }
 
 pub trait SizedType {
-    #[inline(always)]
     fn size(&self) -> usize;
 }
 
@@ -42,11 +35,11 @@ impl SizedType for RUMVec<u8> { fn size(&self) -> usize { self.len() } }
 impl SizedType for &RUMVec<u8> { fn size(&self) -> usize { self.len() } }
 impl SizedType for RUMString { fn size(&self) -> usize { self.len() } }
 
-pub trait AsSlice: AsPtr + SizedType {
+pub trait AsSlice: AsRUMPtr + SizedType {
     #[inline(always)]
-    fn as_slice(&self) -> &[u8] { as_slice(self.as_ptr(),  self.size()) }
+    fn as_slice(&self) -> &[u8] { as_slice(self.as_rum_ptr(),  self.size()) }
     #[inline(always)]
-    fn as_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+    fn as_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_rum_ptr(),  self.size()) }
 
     #[inline(always)]
     fn contains(&self, x: &u8) -> bool {
@@ -63,3 +56,28 @@ pub fn as_slice<'a>(src: *const u8, size: usize) -> &'a [u8] {
 pub fn as_slice_mut<'a>(src: *mut u8, size: usize) -> &'a mut [u8] {
     unsafe { std::slice::from_raw_parts_mut(src, size) }
 }
+
+/********************** Basic Impl for AsSlice************************/
+impl AsRUMPtr for RUMVec<u8> {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
+}
+impl AsRUMPtr for &[u8] {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self as *mut _ as *mut u8 }
+}
+impl AsRUMPtr for RUMString {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
+}
+
+/********************** Basic Impl for AsSlice************************/
+impl AsSlice for RUMVec<u8> {}
+impl AsSlice for &[u8] {}
+impl AsSlice for RUMString {}

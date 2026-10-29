@@ -19,7 +19,7 @@
  */
 use crate::buffers::RUMBuffer;
 use crate::mem::constants::KB;
-use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsPtr, AsSlice, SizedType};
+use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsRUMPtr, AsSlice, SizedType};
 use crate::rumtk_mem_layout;
 use std::alloc::AllocError;
 use std::ops::Index;
@@ -249,7 +249,7 @@ impl Arena {
 
     #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
-        self.as_ptr()
+        self.as_rum_ptr()
     }
 
     #[inline(always)]
@@ -265,9 +265,9 @@ impl Arena {
 
 impl AsSlice for Arena {
     #[inline(always)]
-    fn as_slice(&self) -> &'static [u8] { as_slice(self.as_ptr(),  self.size()) }
+    fn as_slice(&self) -> &'static [u8] { as_slice(self.as_rum_ptr(),  self.size()) }
     #[inline(always)]
-    fn as_slice_mut(&mut self) -> &'static mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+    fn as_slice_mut(&mut self) -> &'static mut [u8] {  as_slice_mut(self.as_mut_rum_ptr(),  self.size()) }
 
     #[inline(always)]
     fn contains(&self, x: &u8) -> bool {
@@ -275,13 +275,13 @@ impl AsSlice for Arena {
     }
 }
 
-impl AsPtr for Arena {
+impl AsRUMPtr for Arena {
     #[inline(always)]
-    fn as_ptr(&self) -> *const u8 {
+    fn as_rum_ptr(&self) -> *const u8 {
         self.memory.as_ptr()
     }
     #[inline(always)]
-    fn as_mut_ptr(&mut self) -> *mut u8 {
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 {
         self.memory.as_mut_ptr()
     }
 }

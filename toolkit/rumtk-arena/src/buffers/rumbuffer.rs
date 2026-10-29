@@ -19,7 +19,7 @@
  */
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::buffer_to_str;
-use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
+use crate::mem::{as_slice_mut, copy_from_slice, AsRUMPtr, AsSlice, SizedType};
 use crate::rumtk_mem_layout;
 use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
@@ -192,13 +192,13 @@ impl SizedType for RUMBuffer {
     }
 }
 
-impl AsPtr for RUMBuffer {
+impl AsRUMPtr for RUMBuffer {
     #[inline(always)]
-    fn as_ptr(&self) -> *const u8 {
+    fn as_rum_ptr(&self) -> *const u8 {
         self.data
     }
     #[inline(always)]
-    fn as_mut_ptr(&mut self) -> *mut u8 {
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 {
         self.data as *mut u8
     }
 }
