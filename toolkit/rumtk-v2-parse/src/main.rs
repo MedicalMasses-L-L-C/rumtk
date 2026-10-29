@@ -18,13 +18,14 @@
  */
 #![feature(str_as_str)]
 
-use rumtk_core::base::{RUMResult, RUMVec};
+use rumtk_core::base::RUMResult;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_cli_define_args, rumtk_cli_process, rumtk_serialize};
+use rumtk_core::{rumtk_cli_process, rumtk_serialize};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
+/*
 ///
 /// HL7 V2 Parser CLI
 ///
@@ -36,22 +37,21 @@ rumtk_cli_define_args!(
     #[arg(short, long)]
     pretty: bool
 );
+*/
 
 fn main() {
-    let args = RUMTKInterfaceArgs::parse();
-
     rumtk_cli_process!(
         ///
         /// Specifies whether to output the pretty print version of the message. This option has no
         /// effect for raw v2 messages piped into the program
         ///
         #[arg(short, long)]
-        pretty: bool
-        ,
-        |parsed_msg: V2Message, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+        pretty: bool,
+        |msg, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            let parsed_msg: V2Message = msg;
             Ok(rumtk_v2_generate_message!(&parsed_msg))
         },
-        |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+        |data, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
             let msg = rumtk_v2_parse_message!(data)?;
 
             if !args.quiet {

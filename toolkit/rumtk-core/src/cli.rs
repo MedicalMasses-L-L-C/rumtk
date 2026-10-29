@@ -456,19 +456,103 @@ pub mod macros {
         }};
     }
 
+    ///
+    /// Defines the CLI arguments of the program, parses the command line, and wires the message
+    /// processing logic.
+    ///
+    /// The macro expects an optional list of CLI argument definitions (same syntax accepted by
+    /// [rumtk_cli_define_args](crate::rumtk_cli_define_args)) followed by the two message handlers:
+    ///
+    /// + `ok`  => Called when the incoming message could be deserialized into the expected type.
+    /// + `err` => Called with the raw bytes when deserialization was not possible.
+    ///
+    /// The generated argument struct is named `RUMTKInterfaceArgs` and is available to both
+    /// handlers. If the `--daemon` flag is passed, the handlers are called in a loop for every
+    /// message coming through `stdin`. Otherwise, a single message is processed.
+    ///
+    /// ## Example
+    ///
+    /// ```no_run
+    /// use rumtk_core::base::{RUMResult, RUMVec};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMCLIParser;
+    /// use rumtk_core::rumtk_cli_process;
+    ///
+    /// fn main() {
+    ///     rumtk_cli_process!(
+    ///         ///
+    ///         /// Pretty print the outgoing message.
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         pretty: bool,
+    ///         ///
+    ///         /// Run in debug mode?
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         debug: bool,
+    ///         |msg: RUMString, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(msg)
+    ///         },
+    ///         |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(RUMString::default())
+    ///         }
+    ///     );
+    /// }
+    /// ```
+    ///
+    /// ## Notes
+    ///
+    /// I let `Claude Opus 5` help complete this macro. I did not understand how to wire the
+    /// token tree muncher into the argument pattern to pass to [rumtk_cli_define_args](crate::rumtk_cli_define_args)
+    /// and the two additional arguments representing the closures to be executed if message parsing is successful or not.
+    ///
     #[macro_export]
     macro_rules! rumtk_cli_process {
-        ( $($args:expr),* $(,)?,
-            $ok:expr, $err:expr) => {{
-            use $crate::cli::cli_utils::{process_message_loop, process_message};
-            rumtk_cli_define_args!($args);
+        (
+            @collect [$($cli_args:tt)*]
+            $(#[$field_meta:meta])+
+            $field_name:ident : $field_typ:ty,
+            $($rest:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(
+                @collect [$($cli_args)* $(#[$field_meta])* $field_name : $field_typ,]
+                $($rest)*
+            )
+        };
+        (
+            @collect [$($cli_args:tt)*]
+            $field_name:ident : $field_typ:ty,
+            $($rest:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(
+                @collect [$($cli_args)* $field_name : $field_typ,]
+                $($rest)*
+            )
+        };
+        (
+            @collect [$($cli_args:tt)*]
+            $ok:expr,
+            $err:expr $(,)?
+        ) => {{
+            use $crate::cli::cli_utils::{process_message, process_message_loop};
+            use $crate::types::RUMCLIParser;
+
+            $crate::rumtk_cli_define_args!($($cli_args)*);
 
             let args = RUMTKInterfaceArgs::parse();
+            let ok = $ok;
+            let err = $err;
 
-            match $daemon {
-                true => process_message_loop(&args, &$ok, &$err),
-                false => process_message(&args, &$ok, &$err).expect("Failed to generate V2 message"),
+            if args.daemon {
+                process_message_loop(&args, ok, err)
+            } else {
+                process_message(&args, &ok, &err).expect("Failed to process CLI message")
             }
         }};
+        (
+            $($tokens:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(@collect [] $($tokens)*)
+        };
     }
 }
