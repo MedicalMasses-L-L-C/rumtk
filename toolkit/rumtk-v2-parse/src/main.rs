@@ -25,20 +25,6 @@ use rumtk_core::{rumtk_cli_process, rumtk_serialize};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
-/*
-///
-/// HL7 V2 Parser CLI
-///
-rumtk_cli_define_args!(
-    ///
-    /// Specifies whether to output the pretty print version of the message. This option has no
-    /// effect for raw v2 messages piped into the program
-    ///
-    #[arg(short, long)]
-    pretty: bool
-);
-*/
-
 fn main() {
     rumtk_cli_process!(
         ///

@@ -23,7 +23,7 @@ use rumtk_core::dependencies::clap;
 use rumtk_core::net::tcp::LOCALHOST;
 use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_read_stdin, rumtk_write_stdout};
+use rumtk_core::{rumtk_cli_process, rumtk_read_stdin, rumtk_write_stdout};
 use rumtk_hl7_v2::hl7_v2_mllp::mllp_v2::{SafeAsyncMLLP, SafeMLLPChannel, MLLP_FILTER_POLICY};
 use rumtk_hl7_v2::{
     rumtk_v2_mllp_connect, rumtk_v2_mllp_get_ip_port, rumtk_v2_mllp_iter_channels,
@@ -138,7 +138,28 @@ fn inbound_loop(listener: &SafeAsyncMLLP) {
 }
 
 fn main() {
-    let args = RUMTKInterfaceArgs::parse();
+    rumtk_cli_process!(
+        ///
+        /// Specifies whether to output the pretty print version of the message. This option has no
+        /// effect for raw v2 messages piped into the program
+        ///
+        #[arg(short, long)]
+        pretty: bool,
+        |msg, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            let parsed_msg: V2Message = msg;
+            Ok(rumtk_v2_generate_message!(&parsed_msg))
+        },
+        |data, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            let msg = rumtk_v2_parse_message!(data)?;
+
+            if !args.quiet {
+                Ok(rumtk_serialize!(&msg)?)
+                //RUMString::default()
+            } else {
+                Ok(RUMString::default())
+            }
+        }
+    );
 
     let mllp_filter_policy = match args.filter_policy.as_str() {
         "escape" => MLLP_FILTER_POLICY::ESCAPE_INPUT,

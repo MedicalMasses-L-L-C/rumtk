@@ -472,6 +472,8 @@ pub mod macros {
     ///
     /// ## Example
     ///
+    /// ### Example 1 - With Parsed and Unparsed Message Closures
+    /// 
     /// ```no_run
     /// use rumtk_core::base::{RUMResult, RUMVec};
     /// use rumtk_core::strings::RUMString;
@@ -495,6 +497,33 @@ pub mod macros {
     ///         },
     ///         |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
     ///             Ok(RUMString::default())
+    ///         }
+    ///     );
+    /// }
+    /// ```
+    ///
+    /// ### Example 2 - With Raw Logic
+    ///
+    /// ```no_run
+    /// use rumtk_core::base::{RUMResult, RUMVec};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMCLIParser;
+    /// use rumtk_core::rumtk_cli_process;
+    ///
+    /// fn main() {
+    ///     rumtk_cli_process!(
+    ///         ///
+    ///         /// Pretty print the outgoing message.
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         pretty: bool,
+    ///         ///
+    ///         /// Run in debug mode?
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         debug: bool,
+    ///         |args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(msg)
     ///         }
     ///     );
     /// }
@@ -542,12 +571,29 @@ pub mod macros {
             let args = RUMTKInterfaceArgs::parse();
             let ok = $ok;
             let err = $err;
+            
+            $crate::rumtk_cli_process!(
+                @collect [$($cli_args:tt)*],
+                |args: &RUMTKInterfaceArgs| {
+                    if args.daemon {
+                        process_message_loop(&args, ok, err)
+                    } else {
+                        process_message(&args, &ok, &err).expect("Failed to process CLI message")
+                    }
+                }
+            );
+        }};
+        (
+            @collect [$($cli_args:tt)*]
+            $logic:expr $(,)?
+        ) => {{
+            use $crate::cli::cli_utils::{process_message, process_message_loop};
+            use $crate::types::RUMCLIParser;
 
-            if args.daemon {
-                process_message_loop(&args, ok, err)
-            } else {
-                process_message(&args, &ok, &err).expect("Failed to process CLI message")
-            }
+            $crate::rumtk_cli_define_args!($($cli_args)*);
+
+            let args = RUMTKInterfaceArgs::parse();
+            $logic(&args);
         }};
         (
             $($tokens:tt)*
