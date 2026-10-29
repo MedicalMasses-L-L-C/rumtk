@@ -579,7 +579,7 @@ pub mod macros {
                     if args.daemon {
                         Ok(process_message_loop(args, ok, err))
                     } else {
-                        Ok(process_message(args, &ok, &err)?)
+                        process_message(args, &ok, &err)
                     }
                 }
             );
