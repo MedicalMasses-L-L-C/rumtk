@@ -216,7 +216,7 @@ impl Deref for RUMBuffer {
     type Target = [u8];
     #[inline]
     fn deref(&self) -> &Self::Target {
-        self.as_slice()
+        self.as_rum_slice()
     }
 }
 
