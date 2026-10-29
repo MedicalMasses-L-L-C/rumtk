@@ -25,25 +25,26 @@ pub trait AsRUMPtr {
     fn as_mut_rum_ptr(&mut self) -> *mut u8;
 }
 
-pub trait SizedType {
+pub trait SizedRUMType {
     fn size(&self) -> usize;
 }
 
-impl SizedType for [u8] { fn size(&self) -> usize { self.len() } }
-impl SizedType for &[u8] { fn size(&self) -> usize { self.len() } }
-impl SizedType for RUMVec<u8> { fn size(&self) -> usize { self.len() } }
-impl SizedType for &RUMVec<u8> { fn size(&self) -> usize { self.len() } }
-impl SizedType for RUMString { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for [u8] { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for &[u8] { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for RUMVec<u8> { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for &RUMVec<u8> { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for RUMString { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for &str { fn size(&self) -> usize { self.len() } }
 
-pub trait AsSlice: AsRUMPtr + SizedType {
+pub trait AsRUMSlice: AsRUMPtr + SizedRUMType {
     #[inline(always)]
-    fn as_slice(&self) -> &[u8] { as_slice(self.as_rum_ptr(),  self.size()) }
+    fn as_rum_slice(&self) -> &[u8] { as_slice(self.as_rum_ptr(),  self.size()) }
     #[inline(always)]
-    fn as_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_rum_ptr(),  self.size()) }
+    fn as_rum_slice_mut(&mut self) -> &mut [u8] {  as_slice_mut(self.as_mut_rum_ptr(),  self.size()) }
 
     #[inline(always)]
     fn contains(&self, x: &u8) -> bool {
-        self.as_slice().contains(x)
+        self.as_rum_slice().contains(x)
     }
 }
 
@@ -76,8 +77,15 @@ impl AsRUMPtr for RUMString {
     #[inline(always)]
     fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
 }
+impl AsRUMPtr for &str {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self as *mut _ as *mut u8 }
+}
 
 /********************** Basic Impl for AsSlice************************/
-impl AsSlice for RUMVec<u8> {}
-impl AsSlice for &[u8] {}
-impl AsSlice for RUMString {}
+impl AsRUMSlice for RUMVec<u8> {}
+impl AsRUMSlice for &[u8] {}
+impl AsRUMSlice for RUMString {}
+impl AsRUMSlice for &str {}
