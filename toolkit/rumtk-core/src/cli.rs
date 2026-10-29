@@ -569,22 +569,17 @@ pub mod macros {
             $err:expr $(,)?
         ) => {{
             use $crate::cli::cli_utils::{process_message, process_message_loop};
-            use $crate::types::RUMCLIParser;
-
-            $crate::rumtk_cli_define_args!($($cli_args)*);
-
-            let args = RUMTKInterfaceArgs::parse();
 
             $crate::rumtk_cli_process!(
-                @collect [$($cli_args:tt)*],
-                |args: &RUMTKInterfaceArgs| {
+                @collect [$($cli_args)*]
+                |args: &RUMTKInterfaceArgs| -> RUMResult<_> {
                     let ok = $ok;
                     let err = $err;
 
                     if args.daemon {
-                        Ok(process_message_loop(&args, ok, err))
+                        Ok(process_message_loop(args, ok, err))
                     } else {
-                        Ok(process_message(&args, &ok, &err)?)
+                        Ok(process_message(args, &ok, &err)?)
                     }
                 }
             );
