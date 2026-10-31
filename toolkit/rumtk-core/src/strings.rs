@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+pub use rumtk_arena::base::RUMString;
+pub use rumtk_arena::mem::traits::*;
 use crate::base::{is_unique, RUMResult, RUMVec};
 use crate::buffers::RUMBuffer;
 use base64::prelude::*;
@@ -38,7 +40,6 @@ pub const EMPTY_STRING_OPTION: Option<&str> = Some("");
 pub const READABLE_ASCII: &str = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 /**************************** Types *****************************************/
-pub type RUMString = String;
 pub type EscapeException<'a> = (&'a str, &'a str);
 pub type EscapeExceptions<'a> = Option<&'a [EscapeException<'a>]>;
 pub type StringReplacementPair<'a> = [(&'a str, &'a str)];

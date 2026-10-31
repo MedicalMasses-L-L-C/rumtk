@@ -388,7 +388,7 @@ pub mod macros {
     ///
     #[macro_export]
     macro_rules! rumtk_write_stdout {
-        ( $message:expr, $binary:expr ) => {{
+        ( $message:expr ) => {{
             use $crate::cli::cli_utils::write_stdout;
             write_stdout(&$message)
         }};
