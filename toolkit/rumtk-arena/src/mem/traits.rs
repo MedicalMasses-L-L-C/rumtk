@@ -34,6 +34,7 @@ impl SizedRUMType for &[u8] { fn size(&self) -> usize { self.len() } }
 impl SizedRUMType for RUMVec<u8> { fn size(&self) -> usize { self.len() } }
 impl SizedRUMType for &RUMVec<u8> { fn size(&self) -> usize { self.len() } }
 impl SizedRUMType for RUMString { fn size(&self) -> usize { self.len() } }
+impl SizedRUMType for &RUMString { fn size(&self) -> usize { self.len() } }
 impl SizedRUMType for &str { fn size(&self) -> usize { self.len() } }
 
 pub trait AsRUMSlice: AsRUMPtr + SizedRUMType {
@@ -65,13 +66,43 @@ impl AsRUMPtr for RUMVec<u8> {
     #[inline(always)]
     fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
 }
+impl AsRUMPtr for &RUMVec<u8> {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { panic!("Asked for mutable pointer to &RUMVec<u8> which is immutable!") }
+}
+impl AsRUMPtr for &mut RUMVec<u8> {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
+}
 impl AsRUMPtr for &[u8] {
     #[inline(always)]
     fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
     #[inline(always)]
-    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self as *mut _ as *mut u8 }
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { panic!("Asked for mutable pointer to &[u8] which is immutable!") }
+}
+impl AsRUMPtr for &mut [u8] {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
 }
 impl AsRUMPtr for RUMString {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
+}
+impl AsRUMPtr for &RUMString {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { panic!("Asked for mutable pointer to &RUMString which is immutable!") }
+}
+impl AsRUMPtr for &mut RUMString {
     #[inline(always)]
     fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
     #[inline(always)]
@@ -81,11 +112,19 @@ impl AsRUMPtr for &str {
     #[inline(always)]
     fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
     #[inline(always)]
-    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self as *mut _ as *mut u8 }
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { panic!("Asked for mutable pointer to &str which is immutable!") }
+}
+impl AsRUMPtr for &mut str {
+    #[inline(always)]
+    fn as_rum_ptr(&self) -> *const u8 { self.as_ptr() }
+    #[inline(always)]
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 { self.as_mut_ptr() }
 }
 
 /********************** Basic Impl for AsSlice************************/
 impl AsRUMSlice for RUMVec<u8> {}
+impl AsRUMSlice for &RUMVec<u8> {}
 impl AsRUMSlice for &[u8] {}
 impl AsRUMSlice for RUMString {}
+impl AsRUMSlice for &RUMString {}
 impl AsRUMSlice for &str {}
