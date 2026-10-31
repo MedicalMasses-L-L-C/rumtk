@@ -127,7 +127,7 @@ fn main() {
         ///
         #[arg(short, long)]
         local: bool,
-        |args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+        CliProcessor::Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
             let mllp_filter_policy = match args.filter_policy.as_str() {
                 "escape" => MLLP_FILTER_POLICY::ESCAPE_INPUT,
                 "filter" => MLLP_FILTER_POLICY::FILTER_INPUT,
@@ -187,6 +187,6 @@ fn main() {
                 inbound_loop(&listener_handle);
             }
             Ok(())
-        }
+        })
     );
 }
