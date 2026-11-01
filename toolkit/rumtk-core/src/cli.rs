@@ -485,9 +485,6 @@ pub mod macros {
     ///         ///
     ///         #[arg(short, long)]
     ///         debug: bool,
-    ///         |msg: RUMString, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
-    ///             Ok(msg)
-    ///         },
     ///         |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
     ///             Ok(RUMString::default())
     ///         }
