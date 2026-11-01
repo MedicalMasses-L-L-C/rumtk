@@ -33,6 +33,10 @@ communication and automation in medicine.
 
 [![Build Status](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-hl7-v2-parse)](COPYING) [![Crates.io](https://img.shields.io/crates/v/rumtk-hl7-v2-parse)](https://crates.io/crates/rumtk-hl7-v2-parse) [![Released API docs](https://docs.rs/rumtk-hl7-v2-parse/badge.svg)](https://docs.rs/rumtk-hl7-v2-parse) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/MedicalMasses-L-L-C/rumtk)
 
+## Rumtk-Sanitizer
+
+[![Build Status](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-sanitize)](COPYING) [![Crates.io](https://img.shields.io/crates/v/rumtk-sanitize)](https://crates.io/crates/rumtk-sanitize) [![Released API docs](https://docs.rs/rumtk-sanitize/badge.svg)](https://docs.rs/rumtk-sanitize) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/MedicalMasses-L-L-C/rumtk)
+
 # Goal
 
 + To create a simple toolkit with the necessary libraries, dependencies, and utilities for managing bridging HL7 V2
