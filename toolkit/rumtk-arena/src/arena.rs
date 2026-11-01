@@ -19,7 +19,7 @@
  */
 use crate::buffers::RUMBuffer;
 use crate::mem::constants::KB;
-use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsPtr, AsSlice, SizedType};
+use crate::mem::{as_slice, as_slice_mut, cast_to_nonnull, direct_alloc, AsRUMPtr, AsRUMSlice, SizedRUMType};
 use crate::rumtk_mem_layout;
 use std::alloc::AllocError;
 use std::ops::Index;
@@ -249,7 +249,7 @@ impl Arena {
 
     #[inline(always)]
     pub fn address(&self) -> ArenaBaseAddress {
-        self.as_ptr()
+        self.as_rum_ptr()
     }
 
     #[inline(always)]
@@ -263,30 +263,30 @@ impl Arena {
     }
 }
 
-impl AsSlice for Arena {
+impl AsRUMSlice for Arena {
     #[inline(always)]
-    fn as_slice(&self) -> &'static [u8] { as_slice(self.as_ptr(),  self.size()) }
+    fn as_rum_slice(&self) -> &'static [u8] { as_slice(self.as_rum_ptr(),  self.size()) }
     #[inline(always)]
-    fn as_slice_mut(&mut self) -> &'static mut [u8] {  as_slice_mut(self.as_mut_ptr(),  self.size()) }
+    fn as_rum_slice_mut(&mut self) -> &'static mut [u8] {  as_slice_mut(self.as_mut_rum_ptr(),  self.size()) }
 
     #[inline(always)]
     fn contains(&self, x: &u8) -> bool {
-        self.as_slice().contains(x)
+        self.as_rum_slice().contains(x)
     }
 }
 
-impl AsPtr for Arena {
+impl AsRUMPtr for Arena {
     #[inline(always)]
-    fn as_ptr(&self) -> *const u8 {
+    fn as_rum_ptr(&self) -> *const u8 {
         self.memory.as_ptr()
     }
     #[inline(always)]
-    fn as_mut_ptr(&mut self) -> *mut u8 {
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 {
         self.memory.as_mut_ptr()
     }
 }
 
-impl SizedType for Arena {
+impl SizedRUMType for Arena {
     #[inline(always)]
     fn size(&self) -> usize {
         self.capacity
@@ -306,7 +306,7 @@ impl Index<usize> for Arena {
     type Output = u8;
     #[inline]
     fn index(&self, i: usize) -> & Self::Output {
-        &self.as_slice()[i]
+        &self.as_rum_slice()[i]
     }
 }
 
@@ -314,7 +314,7 @@ impl Index<Range<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: Range<usize>) -> & Self::Output {
-        &self.as_slice()[i.start..i.end]
+        &self.as_rum_slice()[i.start..i.end]
     }
 }
 
@@ -322,7 +322,7 @@ impl Index<RangeTo<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeTo<usize>) -> & Self::Output {
-        &self.as_slice()[..i.end]
+        &self.as_rum_slice()[..i.end]
     }
 }
 
@@ -330,7 +330,7 @@ impl Index<RangeFrom<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeFrom<usize>) -> & Self::Output {
-        &self.as_slice()[i.start..]
+        &self.as_rum_slice()[i.start..]
     }
 }
 
@@ -338,7 +338,7 @@ impl Index<RangeToInclusive<usize>> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeToInclusive<usize>) -> & Self::Output {
-        &self.as_slice()[..=i.end]
+        &self.as_rum_slice()[..=i.end]
     }
 }
 
@@ -346,7 +346,7 @@ impl Index<RangeFull> for Arena {
     type Output = [u8];
     #[inline]
     fn index(&self, i: RangeFull) -> & Self::Output {
-        self.as_slice()
+        self.as_rum_slice()
     }
 }
 

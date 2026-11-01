@@ -44,15 +44,24 @@
 pub mod cli_utils {
     use crate::base::{RUMResult, RUMVec};
     use crate::cpu::CPU_PAGE_SIZE;
-    use crate::strings::rumtk_format;
+    use crate::strings::{rumtk_format, RUMString};
+    use crate::types::RUMCLIParser;
+    use rumtk_arena::AsRUMSlice;
     use std::io::{stdin, stdout, BufWriter, Read, Write};
-    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
+
+    pub type BufferSlice = RUMVec<u8>;
+    pub type CliSTDInput = RUMVec<u8>;
+    pub type CliSTDOutput<R: AsRUMSlice> = R;
+    pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
 
     const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
 
-    pub type BufferSlice = Vec<u8>;
-    pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
+    pub enum CliProcessor<Args> {
+        Direct(fn(args: &Args) -> RUMResult<()>),
+        Message(fn(msg: RUMVec<u8>, args: &Args) -> RUMResult<RUMString>),
+    }
 
     ///
     /// Consumes the incoming buffer in chunks of [CPU_PAGE_SIZE](CPU_PAGE_SIZE) bytes size
@@ -72,8 +81,8 @@ pub mod cli_utils {
     /// assert_eq!(stdin_data.len(), 0, "Returned data with {} size even though we expected 0 bytes!", stdin_data.len())
     /// ```
     ///
-    pub fn read_stdin(minimum_size: usize) -> RUMResult<RUMVec<u8>> {
-        let mut stdin_buffer = RUMVec::with_capacity(minimum_size);
+    pub fn read_stdin(minimum_size: usize) -> RUMResult<CliSTDInput> {
+        let mut stdin_buffer = CliSTDInput::with_capacity(minimum_size);
 
         loop {
             let s = read_some_stdin(&mut stdin_buffer)?;
@@ -181,18 +190,11 @@ pub mod cli_utils {
     }
 
     ///
-    /// writes [`stringview`] to `stdout`.
-    ///
-    pub fn write_string_stdout(data: &str) -> RUMResult<()> {
-        write_stdout(&data.as_bytes())
-    }
-
-    ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
     #[cfg(target_os = "windows")]
-    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
-        match stdout().write_all(data) {
+    pub fn write_stdout<R: AsSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
+        match stdout().write_all(data.as_rum_slice()) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
@@ -200,8 +202,8 @@ pub mod cli_utils {
         Ok(())
     }
 
-    #[cfg(any(target_os = "unix", target_os = "linux", target_os = "macos"))]
-    pub fn write_stdout(data: &[u8]) -> RUMResult<()> {
+    #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
+    pub fn write_stdout<R: AsRUMSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
         // Create an unbuffered File handle from file descriptor 1 (stdout)
         let stdout_fd = stdout().as_raw_fd();
 
@@ -209,7 +211,7 @@ pub mod cli_utils {
             let mut file = BufWriter::new(unsafe { std::fs::File::from_raw_fd(stdout_fd) });
 
             // Write bytes directly
-            match file.write_all(data) {
+            match file.write_all(data.as_rum_slice()) {
                 Ok(_) => {
                     file.flush().unwrap_or_default();
                     std::mem::forget(file);
@@ -229,6 +231,34 @@ pub mod cli_utils {
         }
     }
 
+    pub fn process_message<Args, PF, R>(args: &Args, processor: PF) -> RUMResult<()>
+    where
+        Args: RUMCLIParser,
+        R: AsRUMSlice,
+        PF: Fn(CliSTDInput, &Args) -> RUMResult<R>
+    {
+        let stdin_msg = read_stdin(CPU_PAGE_SIZE * CPU_PAGE_SIZE)?;
+        if !stdin_msg.is_empty() {
+            let out_data = processor(stdin_msg, args)?;
+
+            write_stdout(out_data)?;
+        }
+        Ok(())
+    }
+
+    pub fn process_message_loop<Args, PF>(args: &Args, processor: &PF)
+    where
+        Args: RUMCLIParser,
+        PF: Fn(CliSTDInput, &Args) -> RUMResult<RUMString>
+    {
+        loop {
+            match process_message(args, processor) {
+                Ok(()) => continue,
+                Err(e) => println!("{}", e), // TODO: missing log call
+            };
+        }
+    }
+
     pub fn print_license_notice(program: &str, year: &str, author_list: &Vec<&str>) {
         let authors = author_list.join(", ");
         let notice = rumtk_format!(
@@ -242,6 +272,45 @@ pub mod cli_utils {
 }
 
 pub mod macros {
+    ///
+    ///
+    ///
+    #[macro_export]
+    macro_rules! rumtk_cli_define_args {
+        (
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ) => {
+            #[derive($crate::types::RUMCLIParser, Debug)]
+            #[command(author, version, about, long_about = None)]
+            pub struct RUMTKInterfaceArgs {
+                $(
+                    $(#[$field_meta])*
+                    pub $field_name: $field_typ,
+                )*
+                ///
+                /// Specifies command line script to execute on message.
+                ///
+                #[arg(short, long, default_value_t = 1)]
+                pub threads: usize,
+                ///
+                /// Don't write to stdout. Mostly used to distinguish between performance issues with parser
+                /// vs. serde's JSON serialization.
+                ///
+                #[arg(short, long)]
+                pub quiet: bool,
+                ///
+                /// Only used if in client/outbound mode. Places the interface into a loop constantly looking
+                /// for messages in stdin to ship to the connected listening interface.
+                ///
+                #[arg(short, long)]
+                pub daemon: bool,
+            }
+        };
+    }
+
     ///
     /// Reads STDIN and unescapes the incoming message.
     /// Return this unescaped message.
@@ -314,16 +383,12 @@ pub mod macros {
     /// use rumtk_core::buffers::{new_random_rumbuffer, DEFAULT_BUFFER_CHUNK_SIZE};
     ///
     /// let buffer = new_random_rumbuffer::<DEFAULT_BUFFER_CHUNK_SIZE>();
-    /// rumtk_write_stdout!(buffer, true);
+    /// rumtk_write_stdout!(buffer);
     /// ```
     ///
     #[macro_export]
     macro_rules! rumtk_write_stdout {
         ( $message:expr ) => {{
-            use $crate::cli::cli_utils::write_string_stdout;
-            write_string_stdout(&$message)
-        }};
-        ( $message:expr, $binary:expr ) => {{
             use $crate::cli::cli_utils::write_stdout;
             write_stdout(&$message)
         }};
@@ -377,5 +442,148 @@ pub mod macros {
             use $crate::cli::cli_utils::print_license_notice;
             print_license_notice(&$program, &$year, &$authors);
         }};
+    }
+
+    ///
+    /// Defines the CLI arguments of the program, parses the command line, and wires the message
+    /// processing logic.
+    ///
+    /// The macro expects an optional list of CLI argument definitions (same syntax accepted by
+    /// [rumtk_cli_define_args](crate::rumtk_cli_define_args)) followed by either the two message
+    /// handlers:
+    ///
+    /// + `ok`  => Called when the incoming message could be deserialized into the expected type.
+    /// + `err` => Called with the raw bytes when deserialization was not possible.
+    ///
+    /// or a single piece of logic receiving the parsed arguments. In the latter case, the logic
+    /// owns the whole interface lifecycle and is called once with a reference to the parsed
+    /// arguments.
+    ///
+    /// The generated argument struct is named `RUMTKInterfaceArgs` and is available to the
+    /// handlers. If the `--daemon` flag is passed, the `ok`/`err` handlers are called in a loop for
+    /// every message coming through `stdin`. Otherwise, a single message is processed.
+    ///
+    /// ## Example
+    ///
+    /// ### Example 1 - With Parsed and Unparsed Message Closures
+    /// 
+    /// ```no_run
+    /// use rumtk_core::base::{RUMResult, RUMVec};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMCLIParser;
+    /// use rumtk_core::rumtk_cli_process;
+    ///
+    /// fn main() {
+    ///     rumtk_cli_process!(
+    ///         ///
+    ///         /// Pretty print the outgoing message.
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         pretty: bool,
+    ///         ///
+    ///         /// Run in debug mode?
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         debug: bool,
+    ///         |msg: RUMString, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(msg)
+    ///         },
+    ///         |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(RUMString::default())
+    ///         }
+    ///     );
+    /// }
+    /// ```
+    ///
+    /// ### Example 2 - With Raw Logic
+    ///
+    /// ```no_run
+    /// use rumtk_core::base::{RUMResult, RUMVec};
+    /// use rumtk_core::strings::RUMString;
+    /// use rumtk_core::types::RUMCLIParser;
+    /// use rumtk_core::rumtk_cli_process;
+    ///
+    /// fn main() {
+    ///     rumtk_cli_process!(
+    ///         ///
+    ///         /// Pretty print the outgoing message.
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         pretty: bool,
+    ///         ///
+    ///         /// Run in debug mode?
+    ///         ///
+    ///         #[arg(short, long)]
+    ///         debug: bool,
+    ///         |args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///             Ok(RUMString::default())
+    ///         }
+    ///     );
+    /// }
+    /// ```
+    ///
+    /// ## Notes
+    ///
+    /// I let `Claude Opus 5` help complete this macro. I did not understand how to wire the
+    /// token tree muncher into the argument pattern to pass to [rumtk_cli_define_args](crate::rumtk_cli_define_args)
+    /// and the two additional arguments representing the closures to be executed if message parsing is successful or not.
+    ///
+    #[macro_export]
+    macro_rules! rumtk_cli_process {
+        (
+            @collect [$($cli_args:tt)*]
+            $(#[$field_meta:meta])+
+            $field_name:ident : $field_typ:ty,
+            $($rest:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(
+                @collect [$($cli_args)* $(#[$field_meta])* $field_name : $field_typ,]
+                $($rest)*
+            )
+        };
+        (
+            @collect [$($cli_args:tt)*]
+            $field_name:ident : $field_typ:ty,
+            $($rest:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(
+                @collect [$($cli_args)* $field_name : $field_typ,]
+                $($rest)*
+            )
+        };
+        (
+            @collect [$($cli_args:tt)*]
+            $logic:expr $(,)?
+        ) => {{
+            use $crate::cli::cli_utils::{process_message_loop, process_message, CliProcessor};
+            use $crate::types::RUMCLIParser;
+
+            $crate::rumtk_cli_define_args!($($cli_args)*);
+
+            let args = RUMTKInterfaceArgs::parse();
+
+            let r = match $logic {
+                CliProcessor::Direct(executor) => {
+                    executor(&args)
+                },
+                CliProcessor::Message(executor) => {
+                    if args.daemon {
+                        Ok(process_message_loop(&args, &executor))
+                    } else {
+                        process_message(&args, &executor)
+                    }
+                }
+            };
+
+            match r {
+                Ok(_) => {},
+                Err(e) => println!("Error: {}", e),
+            };
+        }};
+        (
+            $($tokens:tt)*
+        ) => {
+            $crate::rumtk_cli_process!(@collect [] $($tokens)*)
+        };
     }
 }

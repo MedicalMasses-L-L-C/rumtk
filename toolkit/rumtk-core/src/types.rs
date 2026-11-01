@@ -39,6 +39,6 @@ pub use serde_big_array::BigArray as RUMBigArray;
 /// assert!(is_int, "The compared type is not an integer!")
 /// ```
 /// 
-pub const fn is_type<T: 'static, R: 'static>(_: &T, target: &R) -> bool {
+pub const fn is_type<T: 'static, R: 'static>(_: &T, _: &R) -> bool {
     TypeId::of::<T>() == TypeId::of::<R>()
 }

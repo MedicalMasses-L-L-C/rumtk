@@ -1,11 +1,12 @@
 [package]
 name = "rumtk-sanitize"
 description = "HTML input sanitizer for RUMTK."
+version = "0.1.1"
 readme = "README.md"
 license = "GPL-3.0-or-later"
-homepage = "https://github.com/kiseitai3/rumtk/tree/main/toolkit/rumtk-sanitize"
+homepage = "https://github.com/MedicalMasses-L-L-C/rumtk/tree/main/toolkit/rumtk-sanitize"
 documentation = "https://docs.rs/rumtk-sanitize"
-repository = "https://github.com/kiseitai3/rumtk"
+repository = "https://github.com/MedicalMasses-L-L-C/rumtk"
 keywords = ["rumtk", "healthcare", "html", "sanitizer"]
 categories = ["parsing", "science", "web-programming"]
 edition = "2021"
@@ -23,6 +24,6 @@ panic = 'abort'
 strip = 'symbols'
 
 [dependencies]
-rumtk-core = { version = "0.17.4", path = "../rumtk-core" }
-rumtk-web = { version = "0.9.3", path = "../rumtk-web" }
+rumtk-core = { version = "0.18.0", path = "../rumtk-core" }
+rumtk-web = { version = "0.9.5", path = "../rumtk-web" }
 clap = { version = "4.5.38", features = ["derive"] }

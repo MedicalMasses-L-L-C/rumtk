@@ -18,84 +18,39 @@
  */
 #![feature(str_as_str)]
 
-use rumtk_core::base::RUMResult;
-use rumtk_core::strings::{RUMArrayConversions, RUMString};
+use rumtk_core::base::{RUMResult, RUMVec};
+use rumtk_core::cli::cli_utils::CliProcessor;
+use rumtk_core::strings::RUMArrayConversions;
+use rumtk_core::strings::RUMString;
 use rumtk_core::types::RUMCLIParser;
-use rumtk_core::{rumtk_deserialize, rumtk_read_stdin, rumtk_serialize, rumtk_write_stdout};
+use rumtk_core::{rumtk_cli_process, rumtk_deserialize, rumtk_serialize};
 use rumtk_hl7_v2::hl7_v2_parser::v2_parser::V2Message;
 use rumtk_hl7_v2::{rumtk_v2_generate_message, rumtk_v2_parse_message};
 
-///
-/// HL7 V2 Parser CLI
-///
-#[derive(RUMCLIParser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct RUMTKInterfaceArgs {
-    ///
-    /// Specifies command line script to execute on message.
-    ///
-    #[arg(short, long, default_value_t = 1)]
-    threads: usize,
-    ///
-    /// Specifies whether to output the pretty print version of the message. This option has no
-    /// effect for raw v2 messages piped into the program
-    ///
-    #[arg(short, long)]
-    pretty: bool,
-    ///
-    /// Don not write to stdout. Mostly used to distinguish between performance issues with parser
-    /// vs. serde's JSON serialization.
-    ///
-    #[arg(short, long)]
-    quiet: bool,
-    ///
-    /// Only used if in client/outbound mode. Places the interface into a loop constantly looking
-    /// for messages in stdin to ship to the connected listening interface.
-    ///
-    #[arg(short, long)]
-    daemon: bool,
-}
+fn main() {
+    rumtk_cli_process!(
+        ///
+        /// Specifies whether to output the pretty print version of the message. This option has no
+        /// effect for raw v2 messages piped into the program
+        ///
+        #[arg(short, long)]
+        pretty: bool,
+        CliProcessor::Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+            match rumtk_deserialize!(&data.to_string()?) {
+                Ok(msg) => {
+                    let parsed_msg: V2Message = msg;
+                    Ok(rumtk_v2_generate_message!(&parsed_msg))
+                }
+                Err(_) => {
+                    let msg = rumtk_v2_parse_message!(data)?;
 
-fn process_message(args: &RUMTKInterfaceArgs) -> RUMResult<()> {
-    let stdin_msg = rumtk_read_stdin!()?;
-    if !stdin_msg.is_empty() {
-        let out_data = match rumtk_deserialize!(&stdin_msg.as_slice().to_string()?) {
-            Ok(msg) => {
-                let parsed_msg: V2Message = msg;
-                rumtk_v2_generate_message!(&parsed_msg)
-            }
-            Err(_) => {
-                let msg = rumtk_v2_parse_message!(stdin_msg)?;
-
-                if !args.quiet {
-                    rumtk_serialize!(&msg)?
-                    //RUMString::default()
-                } else {
-                    RUMString::default()
+                    let r = match args.quiet {
+                        true => RUMString::default(),
+                        false => rumtk_serialize!(&msg)?
+                    };
+                    Ok(r)
                 }
             }
-        };
-
-        rumtk_write_stdout!(&out_data);
-    }
-    Ok(())
-}
-
-fn process_message_loop(args: &RUMTKInterfaceArgs) {
-    loop {
-        match process_message(args) {
-            Ok(()) => continue,
-            Err(e) => println!("{}", e), // TODO: missing log call
-        };
-    }
-}
-
-fn main() {
-    let args = RUMTKInterfaceArgs::parse();
-
-    if args.daemon {
-        process_message_loop(&args);
-    } else {
-        process_message(&args).expect("Failed to generate V2 message");
-    }
+        })
+    );
 }

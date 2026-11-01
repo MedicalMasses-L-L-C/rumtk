@@ -19,8 +19,8 @@
  */
 use crate::base::{RUMResult, RUMVec};
 use crate::buffers::buffer_to_str;
-use crate::mem::{as_slice_mut, copy_from_slice, AsPtr, AsSlice, SizedType};
-use crate::rumtk_mem_layout;
+use crate::mem::{as_slice_mut, copy_from_slice, AsRUMPtr, AsRUMSlice};
+use crate::{rumtk_mem_layout, SizedRUMType};
 use std::alloc::{alloc, dealloc, Layout};
 use std::cmp::PartialEq;
 use std::ops::DerefMut;
@@ -186,24 +186,24 @@ impl Iterator for RUMBuffer {
     }
 }
 
-impl SizedType for RUMBuffer {
+impl SizedRUMType for RUMBuffer {
     fn size(&self) -> usize {
         self.size as usize
     }
 }
 
-impl AsPtr for RUMBuffer {
+impl AsRUMPtr for RUMBuffer {
     #[inline(always)]
-    fn as_ptr(&self) -> *const u8 {
+    fn as_rum_ptr(&self) -> *const u8 {
         self.data
     }
     #[inline(always)]
-    fn as_mut_ptr(&mut self) -> *mut u8 {
+    fn as_mut_rum_ptr(&mut self) -> *mut u8 {
         self.data as *mut u8
     }
 }
 
-impl AsSlice for RUMBuffer {  }
+impl AsRUMSlice for RUMBuffer {  }
 
 impl AsRef<[u8]> for RUMBuffer {
     #[inline]
@@ -216,14 +216,14 @@ impl Deref for RUMBuffer {
     type Target = [u8];
     #[inline]
     fn deref(&self) -> &Self::Target {
-        self.as_slice()
+        self.as_rum_slice()
     }
 }
 
 impl DerefMut for RUMBuffer {
     #[inline]
     fn deref_mut(&mut self) -> &mut [u8] {
-        self.as_slice_mut()
+        self.as_rum_slice_mut()
     }
 }
 
@@ -309,35 +309,35 @@ impl Index<RangeFull> for RUMBuffer {
 impl IndexMut<usize> for RUMBuffer {
     #[inline]
     fn index_mut(&mut self, i: usize) -> &mut Self::Output {
-        &mut self.as_slice_mut()[i]
+        &mut self.as_rum_slice_mut()[i]
     }
 }
 
 impl IndexMut<Range<usize>> for RUMBuffer {
     #[inline]
     fn index_mut(&mut self, i: Range<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[i.start..i.end]
+        &mut self.as_rum_slice_mut()[i.start..i.end]
     }
 }
 
 impl IndexMut<RangeTo<usize>> for RUMBuffer {
     #[inline]
     fn index_mut(&mut self, i: RangeTo<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[..i.end]
+        &mut self.as_rum_slice_mut()[..i.end]
     }
 }
 
 impl IndexMut<RangeToInclusive<usize>> for RUMBuffer {
     #[inline]
     fn index_mut(&mut self, i: RangeToInclusive<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[..=i.end]
+        &mut self.as_rum_slice_mut()[..=i.end]
     }
 }
 
 impl IndexMut<RangeFull> for RUMBuffer {
     #[inline]
     fn index_mut(&mut self, i: RangeFull) -> &mut Self::Output {
-        self.as_slice_mut()
+        self.as_rum_slice_mut()
     }
 }
 

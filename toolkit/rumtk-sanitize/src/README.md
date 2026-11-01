@@ -4,7 +4,7 @@
     <img src="https://opencollective.com/medicalmasses-llc/contribute/button@2x.png?color=blue" width=300 />
 </a>
 
-[![Build Status](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/kiseitai3/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-sanitize)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-sanitize)](https://crates.io/crates/rumtk-sanitize) [![Released API docs](https://docs.rs/rumtk-sanitize/badge.svg)](https://docs.rs/rumtk-sanitize) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/kiseitai3/rumtk)
+[![Build Status](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml/badge.svg)](https://github.com/MedicalMasses-L-L-C/rumtk/actions/workflows/check.yml) [![Crates.io](https://img.shields.io/crates/l/rumtk-sanitize)](LICENSE-GPL3) [![Crates.io](https://img.shields.io/crates/v/rumtk-sanitize)](https://crates.io/crates/rumtk-sanitize) [![Released API docs](https://docs.rs/rumtk-sanitize/badge.svg)](https://docs.rs/rumtk-sanitize) [![Maintenance](https://img.shields.io/maintenance/yes/2026)](https://github.com/MedicalMasses-L-L-C/rumtk)
 
 Using RUMTK, this is a utility that implements the steps for parsing HL7 v2 messages.
 
