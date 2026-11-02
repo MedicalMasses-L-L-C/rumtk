@@ -31,9 +31,8 @@
 ///
 
 use rumtk_core::base::{RUMResult, RUMVec};
-use rumtk_core::strings::{RUMArrayConversions, RUMString};
-use rumtk_core::types::RUMCLIParser;
 use rumtk_core::rumtk_cli_process;
+use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_web::utils::sanitize_html;
 
 fn main() {
@@ -43,7 +42,7 @@ fn main() {
         ///
         #[arg(short, long)]
         mode: Option<String>,
-        CliProcessor::Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+        Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
             match &args.mode {
                 Some(mode) => {
                     match mode.to_lowercase().as_str() {

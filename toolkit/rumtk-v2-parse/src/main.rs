@@ -19,7 +19,6 @@
 #![feature(str_as_str)]
 
 use rumtk_core::base::{RUMResult, RUMVec};
-use rumtk_core::cli::cli_utils::CliProcessor;
 use rumtk_core::strings::RUMArrayConversions;
 use rumtk_core::strings::RUMString;
 use rumtk_core::types::RUMCLIParser;
@@ -35,7 +34,7 @@ fn main() {
         ///
         #[arg(short, long)]
         pretty: bool,
-        CliProcessor::Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+        Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
             match rumtk_deserialize!(&data.to_string()?) {
                 Ok(msg) => {
                     let parsed_msg: V2Message = msg;

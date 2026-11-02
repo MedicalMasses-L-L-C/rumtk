@@ -127,7 +127,7 @@ fn main() {
         ///
         #[arg(short, long)]
         local: bool,
-        CliProcessor::Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+        Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
             let mllp_filter_policy = match args.filter_policy.as_str() {
                 "escape" => MLLP_FILTER_POLICY::ESCAPE_INPUT,
                 "filter" => MLLP_FILTER_POLICY::FILTER_INPUT,
