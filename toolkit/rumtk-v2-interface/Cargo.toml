@@ -1,7 +1,7 @@
 [package]
 name = "rumtk-v2-interface"
 description = "HL7 V2 Interface utility based on the RUMTK framework."
-version = "0.2.26"
+version = "0.2.27"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 homepage = "https://github.com/MedicalMasses-L-L-C/rumtk/tree/main/toolkit/rumtk-v2-interface"
@@ -13,5 +13,5 @@ edition = "2021"
 rust-version = "1.81.0"
 
 [dependencies]
-rumtk-core = { version = "0.18.0", path = "../rumtk-core" }
-rumtk-hl7-v2 = { version = "0.12.2", path = "../rumtk-hl7-v2" }
+rumtk-core = { version = "0.19.0", path = "../rumtk-core" }
+rumtk-hl7-v2 = { version = "0.12.3", path = "../rumtk-hl7-v2" }
