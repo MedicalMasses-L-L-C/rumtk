@@ -252,10 +252,23 @@ pub mod cli_utils {
         Ok(())
     }
 
-    pub fn process_message_loop<Args, PF>(args: Args, processor: &PF)
+    ///
+    /// Runs a closure (or any `Fn`) that owns the whole lifecycle of the program. Unlike
+    /// [CliProcessor::Direct], the closure is not boxed, so it can borrow from its environment.
+    ///
+    pub fn run_direct<Args, F>(args: &Args, logic: F) -> RUMResult<()>
     where
         Args: RUMCLIParser,
-        PF: Fn(CliSTDInput, &Args) -> RUMResult<RUMString>
+        F: Fn(&Args) -> RUMResult<()>
+    {
+        logic(args)
+    }
+
+    pub fn process_message_loop<Args, PF, R>(args: Args, processor: &PF)
+    where
+        Args: RUMCLIParser,
+        R: AsRUMSlice,
+        PF: Fn(CliSTDInput, &Args) -> RUMResult<R>
     {
         loop {
             match process_message(&args, processor) {
@@ -491,9 +504,9 @@ pub mod macros {
     ///         ///
     ///         #[arg(short, long)]
     ///         debug: bool,
-    ///         |data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
+    ///         Message(|data: RUMVec<u8>, args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
     ///             Ok(RUMString::default())
-    ///         }
+    ///         })
     ///     );
     /// }
     /// ```
@@ -518,9 +531,9 @@ pub mod macros {
     ///         ///
     ///         #[arg(short, long)]
     ///         debug: bool,
-    ///         |args: &RUMTKInterfaceArgs| -> RUMResult<RUMString> {
-    ///             Ok(RUMString::default())
-    ///         }
+    ///         Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+    ///             Ok(())
+    ///         })
     ///     );
     /// }
     /// ```
@@ -556,26 +569,37 @@ pub mod macros {
         };
         (
             @collect [$($cli_args:tt)*]
-            $logic:expr $(,)?
+            Direct($logic:expr) $(,)?
         ) => {{
-            use $crate::cli::cli_utils::{process_message_loop, process_message, CliProcessor};
+            use $crate::cli::cli_utils::run_direct;
             use $crate::types::RUMCLIParser;
 
             $crate::rumtk_cli_define_args!($($cli_args)*);
 
             let args = RUMTKInterfaceArgs::parse();
 
-            let r = match $logic {
-                CliProcessor::Direct(executor) => {
-                    executor(args)
-                },
-                CliProcessor::Message(executor) => {
-                    if args.daemon {
-                        Ok(process_message_loop(args, &executor))
-                    } else {
-                        process_message(&args, &executor)
-                    }
-                }
+            match run_direct(&args, $logic) {
+                Ok(_) => {},
+                Err(e) => println!("Error: {}", e),
+            };
+        }};
+        (
+            @collect [$($cli_args:tt)*]
+            Message($logic:expr) $(,)?
+        ) => {{
+            use $crate::cli::cli_utils::{process_message_loop, process_message};
+            use $crate::types::RUMCLIParser;
+
+            $crate::rumtk_cli_define_args!($($cli_args)*);
+
+            let args = RUMTKInterfaceArgs::parse();
+            let processor = $logic;
+
+            let r = if args.daemon {
+                process_message_loop(args, &processor);
+                Ok(())
+            } else {
+                process_message(&args, &processor)
             };
 
             match r {

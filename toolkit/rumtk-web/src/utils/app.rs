@@ -761,7 +761,6 @@ macro_rules! rumtk_web_run_app {
         $app_components:expr,
         $switches:expr
     ) => {{
-        use rumtk_core::cli::cli_utils::CliProcessor;
         use rumtk_core::base::RUMResult;
         use rumtk_core::strings::RUMString;
         use rumtk_core::{rumtk_cli_process, rumtk_resolve_task};
@@ -839,8 +838,8 @@ macro_rules! rumtk_web_run_app {
             ///
             #[arg(long, default_value_t = false)]
             skip_default_css: bool,
-            CliProcessor::Direct(Box::new(|args: RUMTKInterfaceArgs| -> RUMResult<()> {
-                let state = rumtk_web_load_conf!(&args);
+            Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+                let state = rumtk_web_load_conf!(&*args);
 
                 rumtk_web_init_pages!(app_components.pages.clone());
                 rumtk_web_init_forms!(app_components.forms.clone(), state);
@@ -854,7 +853,7 @@ macro_rules! rumtk_web_run_app {
 
                 let task = run_app(args.ip.clone(), state, switches.clone());
                 rumtk_resolve_task!(task)
-            }))
+            })
         );
     }};
 }
