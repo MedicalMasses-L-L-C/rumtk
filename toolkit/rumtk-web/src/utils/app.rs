@@ -738,62 +738,41 @@ macro_rules! rumtk_web_register_app_switches {
 ///     );
 /// ```
 ///
+/// ## Signatures & Usages
+///
+/// This is a complex macro that is trying to be backwards compatible with the old prescribed way
+/// of producing a web applet. It is also trying to allow future applets to specify new flags and even
+/// a closure hook to perform further initialization of the framework based on the new flags.
+///
+/// Below are the supported macro signatures:
+///
+///     - ()
+///     - ( pretty: bool )
+///     - ( pretty: bool, app_components )
+///     - ( pretty: bool, app_components, app_switches )
+///     - ( pretty: bool, app_components, app_switches, |_args: &RUMTKInterfaceArgs, _app_components: &$crate::utils::app::SafeAppComponents, _app_switches: &$crate::utils::app::SafeAppSwitches | -> rumtk_core::base::RUMResult<()> { Ok(()) } )
+///     - ( app_components )
+///     - ( app_components, app_switches )
+///     - ( app_components, app_switches, |_args: &RUMTKInterfaceArgs, _app_components: &$crate::utils::app::SafeAppComponents, _app_switches: &$crate::utils::app::SafeAppSwitches | -> rumtk_core::base::RUMResult<()> { Ok(()) } )
+///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
     (
-    ) => {{
-        $crate::rumtk_web_run_app!(
-            [],
-            $crate::rumtk_web_register_app_components!(),
-            $crate::rumtk_web_register_app_switches!()
-        )
-    }};
-    (
         [
             $(
                 $(#[$field_meta:meta])*
                 $field_name:ident : $field_typ:ty
             ),* $(,)?
         ],
-    ) => {{
-        $crate::rumtk_web_run_app!(
-            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
-            $crate::rumtk_web_register_app_components!(),
-            $crate::rumtk_web_register_app_switches!()
-        )
-    }};
-    (
-        $app_components:expr $(,)?
-    ) => {{
-        $crate::rumtk_web_run_app!(
-            [],
-            $app_components,
-            $crate::rumtk_web_register_app_switches!()
-        )
-    }};
-    (
-        [
-            $(
-                $(#[$field_meta:meta])*
-                $field_name:ident : $field_typ:ty
-            ),* $(,)?
-        ],
-        $app_components:expr $(,)?
-    ) => {{
-        $crate::rumtk_web_run_app!(
-            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
-            $app_components,
-            $crate::rumtk_web_register_app_switches!()
-        )
-    }};
-    (
         $app_components:expr,
-        $switches:expr $(,)?
+        $switches:expr,
+        $hook:expr $(,)?
     ) => {{
         $crate::rumtk_web_run_app!(
-            [],
+            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
             $app_components,
-            $switches
+            $switches,
+            $hook
         )
     }};
     (
@@ -807,15 +786,71 @@ macro_rules! rumtk_web_run_app {
         $switches:expr $(,)?
     ) => {{
         $crate::rumtk_web_run_app!(
-            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
+            [$($(#[$field_meta])* $field_name : $field_typ),*],
             $app_components,
-            $switches
+            $switches,
+            |
+                _args: &RUMTKInterfaceArgs,
+                _app_components: &$crate::utils::app::SafeAppComponents,
+                _app_switches: &$crate::utils::app::SafeAppSwitches
+            | -> rumtk_core::base::RUMResult<()> { Ok(()) }
         )
+    }};
+    (
+        [
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ],
+        $app_components:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            [$($(#[$field_meta])* $field_name : $field_typ),*],
+            $app_components,
+            $crate::rumtk_web_register_app_switches!()
+        )
+    }};
+    (
+        [
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ] $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            [$($(#[$field_meta])* $field_name : $field_typ),*],
+            $crate::rumtk_web_register_app_components!()
+        )
+    }};
+    (
+    ) => {{
+        $crate::rumtk_web_run_app!([])
+    }};
+    (
+        $app_components:expr,
+        $switches:expr,
+        $hook:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!([], $app_components, $switches, $hook)
+    }};
+    (
+        $app_components:expr,
+        $switches:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!([], $app_components, $switches)
+    }};
+    (
+        $app_components:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!([], $app_components)
     }};
     (
         @collect [$($cli_args:tt)*],
         $app_components:expr,
-        $switches:expr
+        $switches:expr,
+        $hook:expr $(,)?
     ) => {{
         use rumtk_core::base::RUMResult;
         use rumtk_core::strings::RUMString;
@@ -907,6 +942,8 @@ macro_rules! rumtk_web_run_app {
                 );
 
                 rumtk_web_init_job_manager!(&args.threads);
+
+                ($hook)(args, &app_components, &switches)?;
 
                 let task = run_app(args.ip.clone(), state, switches.clone());
                 rumtk_resolve_task!(task)
