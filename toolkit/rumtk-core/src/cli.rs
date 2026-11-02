@@ -47,7 +47,7 @@ pub mod cli_utils {
     use crate::strings::{rumtk_format, RUMString};
     use crate::types::RUMCLIParser;
     use rumtk_arena::AsRUMSlice;
-    use std::io::{stdin, stdout, BufWriter, Read, Write};
+    use std::io::{stdin, stdout, BufReader, BufWriter, Read, Write};
     #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
     use std::os::fd::{AsRawFd, FromRawFd};
 
@@ -58,7 +58,7 @@ pub mod cli_utils {
     pub type CliDirectExecutor<Args: RUMCLIParser> = Box<dyn Fn(Args) -> RUMResult<()>>;
     pub type CliMessageExecutor<Args: RUMCLIParser, R: AsRUMSlice> = Box<dyn Fn(CliSTDInput, &Args) -> RUMResult<CliSTDOutput<R>>>;
 
-    const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
+    const STD_IN_STEP_SIZE: usize = u16::MAX as usize * 4;
 
     pub enum CliProcessor<Args>
     where
@@ -183,10 +183,11 @@ pub mod cli_utils {
     /// ```
     ///
     #[inline]
+    #[cfg(target_os = "windows")]
     pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
         let mut chunk: BufferChunk = [0; STD_IN_STEP_SIZE];
 
-        match stdin().read(&mut chunk[..]) {
+        match stdin().lock().read(&mut chunk[..]) {
             Ok(s) => {
                 buf.extend_from_slice(&chunk[..s]);
                 Ok(s)
@@ -196,11 +197,57 @@ pub mod cli_utils {
     }
 
     ///
+    /// Consumes the incoming buffer in chunks of [CPU_SIMD_64_SIZE](crate::cpu::CPU_SIMD_64_SIZE) bytes size.
+    ///
+    /// ## Example
+    ///
+    /// ```
+    /// use std::io::stdin;
+    /// use std::io::prelude::*;
+    /// use std::process::{Command, Stdio};
+    /// use rumtk_core::cli::cli_utils::{read_some_stdin};
+    /// use rumtk_core::cpu::CPU_PAGE_SIZE;
+    /// use rumtk_core::base::RUMVec;
+    ///
+    /// let mut stdin_buffer = RUMVec::with_capacity(CPU_PAGE_SIZE);
+    /// let mut s = read_some_stdin(&mut stdin_buffer).unwrap();
+    /// let mut totas_s = s;
+    /// while s > 0 {
+    ///    s = read_some_stdin(&mut stdin_buffer).unwrap();
+    ///    totas_s += s;
+    /// }
+    ///
+    /// assert_eq!(totas_s, 0, "Returned data with {} size even though we expected 0 bytes!", totas_s)
+    /// ```
+    ///
+    #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
+    pub fn read_some_stdin(buf: &mut BufferSlice) -> RUMResult<usize> {
+        // Create an unbuffered File handle from file descriptor 1 (stdout)
+        let locked = stdin().lock();
+        let stdin_fd = locked.as_raw_fd();
+        let mut chunk: BufferChunk = [0; STD_IN_STEP_SIZE];
+
+        let mut file = BufReader::new(unsafe { std::fs::File::from_raw_fd(stdin_fd) });
+
+        //Read directly from std input
+        let count = match file.read(&mut chunk[..]) {
+            Ok(s) => {
+                buf.extend_from_slice(&chunk[..s]);
+                std::mem::forget(file);
+                s
+            },
+            Err(e) => return Err(rumtk_format!("Error writing to stdout because {}", e)),
+        };
+
+        Ok(count)
+    }
+
+    ///
     /// Writes [RUMBuffer] to `stdout`.
     ///
     #[cfg(target_os = "windows")]
     pub fn write_stdout<R: AsSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
-        match stdout().write_all(data.as_rum_slice()) {
+        match stdout().lock().write_all(data.as_rum_slice()) {
             Ok(_) => {}
             Err(e) => return Err(rumtk_format!("Error writing to stdout because => {}", e)),
         };
@@ -211,20 +258,20 @@ pub mod cli_utils {
     #[cfg(any(target_family = "unix", target_os = "linux", target_os = "macos"))]
     pub fn write_stdout<R: AsRUMSlice>(data: CliSTDOutput<R>) -> RUMResult<()> {
         // Create an unbuffered File handle from file descriptor 1 (stdout)
-        let stdout_fd = stdout().as_raw_fd();
+        let locked = stdout().lock();
+        let stdout_fd = locked.as_raw_fd();
+        println!("stdin_fd: {}", stdout_fd);
 
-        {
-            let mut file = BufWriter::new(unsafe { std::fs::File::from_raw_fd(stdout_fd) });
+        let mut file = BufWriter::new(unsafe { std::fs::File::from_raw_fd(stdout_fd) });
 
-            // Write bytes directly
-            match file.write_all(data.as_rum_slice()) {
-                Ok(_) => {
-                    file.flush().unwrap_or_default();
-                    std::mem::forget(file);
-                },
-                Err(e) => return Err(rumtk_format!("Error writing to stdout because {}", e)),
-            };
-        }
+        // Write bytes directly
+        match file.write_all(data.as_rum_slice()) {
+            Ok(_) => {
+                file.flush().unwrap_or_default();
+                std::mem::forget(file);
+            },
+            Err(e) => return Err(rumtk_format!("Error writing to stdout because {}", e)),
+        };
 
         flush_stdout()?;
         Ok(())
