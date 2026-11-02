@@ -740,24 +740,80 @@ macro_rules! rumtk_web_register_app_switches {
 ///
 #[macro_export]
 macro_rules! rumtk_web_run_app {
-    (  ) => {{
-        use $crate::utils::app::app_main;
-        use $crate::{rumtk_web_register_app_components, rumtk_web_register_app_switches};
-
-        rumtk_web_run_app!(
-            rumtk_web_register_app_components!(),
-            rumtk_web_register_app_switches!(),
+    (
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            [],
+            $crate::rumtk_web_register_app_components!(),
+            $crate::rumtk_web_register_app_switches!()
         )
     }};
-    ( $app_components:expr ) => {{
-        use $crate::rumtk_web_register_app_switches;
-        let switches = rumtk_web_register_app_switches!();
-        rumtk_web_run_app!($app_components, switches)
-    }};
-    /*( $app_components:expr, $switches:expr ) => {{
-        rumtk_web_run_app!($app_components, $switches)
-    }};*/
     (
+        [
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ],
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
+            $crate::rumtk_web_register_app_components!(),
+            $crate::rumtk_web_register_app_switches!()
+        )
+    }};
+    (
+        $app_components:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            [],
+            $app_components,
+            $crate::rumtk_web_register_app_switches!()
+        )
+    }};
+    (
+        [
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ],
+        $app_components:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
+            $app_components,
+            $crate::rumtk_web_register_app_switches!()
+        )
+    }};
+    (
+        $app_components:expr,
+        $switches:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            [],
+            $app_components,
+            $switches
+        )
+    }};
+    (
+        [
+            $(
+                $(#[$field_meta:meta])*
+                $field_name:ident : $field_typ:ty
+            ),* $(,)?
+        ],
+        $app_components:expr,
+        $switches:expr $(,)?
+    ) => {{
+        $crate::rumtk_web_run_app!(
+            @collect [$($(#[$field_meta])* $field_name : $field_typ,)*],
+            $app_components,
+            $switches
+        )
+    }};
+    (
+        @collect [$($cli_args:tt)*],
         $app_components:expr,
         $switches:expr
     ) => {{
@@ -784,6 +840,7 @@ macro_rules! rumtk_web_run_app {
         let switches: SafeAppSwitches = $switches.clone();
 
         rumtk_cli_process!(
+            @collect [$($cli_args)*]
             ///
             /// Website title to use internally. It can be omitted if defined in the app.json config file
             /// bundled with your app.
