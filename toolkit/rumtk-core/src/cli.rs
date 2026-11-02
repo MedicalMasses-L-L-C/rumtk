@@ -55,12 +55,18 @@ pub mod cli_utils {
     pub type CliSTDInput = RUMVec<u8>;
     pub type CliSTDOutput<R: AsRUMSlice> = R;
     pub type BufferChunk = [u8; STD_IN_STEP_SIZE];
+    pub type CliDirectExecutor<Args: RUMCLIParser> = Box<dyn Fn(Args) -> RUMResult<()>>;
+    pub type CliMessageExecutor<Args: RUMCLIParser, R: AsRUMSlice> = Box<dyn Fn(CliSTDInput, &Args) -> RUMResult<CliSTDOutput<R>>>;
 
     const STD_IN_STEP_SIZE: usize = u16::MAX as usize;
 
-    pub enum CliProcessor<Args> {
-        Direct(fn(args: &Args) -> RUMResult<()>),
-        Message(fn(msg: RUMVec<u8>, args: &Args) -> RUMResult<RUMString>),
+    pub enum CliProcessor<Args>
+    where
+        Args: RUMCLIParser
+    {
+        Direct(CliDirectExecutor<Args>),
+        Message(CliMessageExecutor<Args, RUMString>),
+
     }
 
     ///
@@ -246,13 +252,13 @@ pub mod cli_utils {
         Ok(())
     }
 
-    pub fn process_message_loop<Args, PF>(args: &Args, processor: &PF)
+    pub fn process_message_loop<Args, PF>(args: Args, processor: &PF)
     where
         Args: RUMCLIParser,
         PF: Fn(CliSTDInput, &Args) -> RUMResult<RUMString>
     {
         loop {
-            match process_message(args, processor) {
+            match process_message(&args, processor) {
                 Ok(()) => continue,
                 Err(e) => println!("{}", e), // TODO: missing log call
             };
@@ -561,11 +567,11 @@ pub mod macros {
 
             let r = match $logic {
                 CliProcessor::Direct(executor) => {
-                    executor(&args)
+                    executor(args)
                 },
                 CliProcessor::Message(executor) => {
                     if args.daemon {
-                        Ok(process_message_loop(&args, &executor))
+                        Ok(process_message_loop(args, &executor))
                     } else {
                         process_message(&args, &executor)
                     }

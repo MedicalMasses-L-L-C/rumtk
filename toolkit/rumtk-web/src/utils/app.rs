@@ -19,18 +19,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::form::Forms;
+use std::sync::Arc;
 pub use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
-use crate::rumtk_web_fetch;
+use crate::{rumtk_web_fetch, RUMString};
 pub use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
 use crate::{rumtk_web_api_process, rumtk_web_get_config, SharedAppState};
 
 use rumtk_core::base::RUMResult;
-use rumtk_core::dependencies::clap;
-use rumtk_core::strings::RUMString;
-use rumtk_core::threading::threading_functions::get_default_system_thread_count;
-use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
+use rumtk_core::types::RUMTcpListener;
 
 use crate::api::UserAPIEndpoints;
 use axum::routing::{get, post};
@@ -40,76 +38,7 @@ use tower_http::services::ServeDir;
 
 pub const DEFAULT_UPLOAD_LIMIT: usize = 10240;
 
-///
-/// RUMTK WebApp CLI Args
-///
-#[derive(RUMCLIParser, Default, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    ///
-    /// Website title to use internally. It can be omitted if defined in the app.json config file
-    /// bundled with your app.
-    ///
-    #[arg(long, default_value = "")]
-    pub title: RUMString,
-    ///
-    /// Website description string. It can be omitted if defined in the app.json config file
-    /// bundled with your app.
-    ///
-    #[arg(long, default_value = "")]
-    pub description: RUMString,
-    ///
-    /// Company to display in website.
-    ///
-    #[arg(long, default_value = "")]
-    pub company: RUMString,
-    ///
-    /// Copyright year to display in website.
-    ///
-    #[arg(short, long, default_value = "")]
-    pub copyright: RUMString,
-    ///
-    /// Directory to scan on startup to find custom CSS sources to bundle into a minified CSS file
-    /// that can be quickly pulled by the app client side.
-    ///
-    /// This option can provide an alternative to direct component retrieval of CSS fragments.
-    /// Meaning, you could bundle all of your fragments into the master bundle at startup and
-    /// turn off component level ```custom_css_enabled``` option in the ```app.json``` config.
-    ///
-    #[arg(long, default_value = DEFAULT_OUT_CSS_DIR)]
-    pub css_source_dir: RUMString,
-    ///
-    /// Is the interface meant to be bound to the loopback address and remain hidden from the
-    /// outside world.
-    ///
-    /// It follows the format ```IPv4:port``` and it is a string.
-    ///
-    /// If a NIC IP is defined via `--ip`, that value will override this flag.
-    ///
-    #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
-    pub ip: RUMString,
-    ///
-    /// Specify the size limit for a file upload post request.
-    ///
-    #[arg(long, default_value_t = DEFAULT_UPLOAD_LIMIT)]
-    pub upload_limit: usize,
-    ///
-    /// How many threads to use to serve the website. By default, we use
-    /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
-    /// cpus available. We use the system's total count of cpus by default.
-    ///
-    #[arg(long, default_value_t = get_default_system_thread_count())]
-    pub threads: usize,
-    ///
-    /// How many threads to use to serve the website. By default, we use
-    /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
-    /// cpus available. We use the system's total count of cpus by default.
-    ///
-    #[arg(long, default_value_t = false)]
-    pub skip_default_css: bool,
-}
-
-pub async fn run_app(ip: &RUMString, state: SharedAppState, skip_serve: bool) -> RUMResult<()>
+pub async fn run_app(ip: RUMString, state: SharedAppState, switches: SafeAppSwitches) -> RUMResult<()>
 {
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
@@ -146,7 +75,7 @@ pub async fn run_app(ip: &RUMString, state: SharedAppState, skip_serve: bool) ->
         .expect("There was an issue biding the listener.");
     println!("listening on {}", listener.local_addr().unwrap());
 
-    if !skip_serve {
+    if !switches.skip_serve {
         axum::serve(listener, app)
             .await
             .expect("There was an issue with the server.");
@@ -219,18 +148,20 @@ pub async fn run_app(ip: &RUMString, state: SharedAppState, skip_serve: bool) ->
 /// pipeline jobs, return HTML fragments, redirect the current page somewhere else, or a combination of these.
 /// It is a powerful interface for organizing your routing.
 ///
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct AppComponents<'a> {
     pub pages: Option<UserPages<'a>>,
     pub forms: Option<Forms<'a>>,
     pub apis: Option<UserAPIEndpoints<'a>>,
 }
 
+pub type SafeAppComponents = Arc<AppComponents<'static>>;
+
 ///
 /// Struct for defining the global switches to drive the initialization of the web app. This struct
 /// works hand in hand with [AppComponents].
 ///
-#[derive(Default, Debug, PartialEq)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct AppSwitches {
     pub skip_serve: bool,
     pub skip_default_css: bool,
@@ -270,6 +201,8 @@ impl<const N: usize> From<[bool; N]> for AppSwitches {
         AppSwitches::from_slice(&switches)
     }
 }
+
+pub type SafeAppSwitches = Arc<AppSwitches>;
 
 ///
 /// Convenience macro for quickly building the [AppComponents] object. Feel free to pass an instance of
@@ -596,35 +529,39 @@ impl<const N: usize> From<[bool; N]> for AppSwitches {
 macro_rules! rumtk_web_register_app_components {
     (  ) => {{
         use $crate::utils::app::AppComponents;
+        use std::sync::Arc;
 
-        AppComponents::default()
+        Arc::new(AppComponents::default())
     }};
     ( $pages:expr ) => {{
         use $crate::utils::app::AppComponents;
+        use std::sync::Arc;
 
-        AppComponents {
+        Arc::new(AppComponents {
             pages: Some($pages),
             forms: None,
             apis: None,
-        }
+        })
     }};
     ( $pages:expr, $forms:expr ) => {{
         use $crate::utils::app::AppComponents;
+        use std::sync::Arc;
 
-        AppComponents {
+        Arc::new(AppComponents {
             pages: Some($pages),
             forms: Some($forms),
             apis: None,
-        }
+        })
     }};
     ( $pages:expr, $forms:expr, $apis:expr ) => {{
         use $crate::utils::app::AppComponents;
+        use std::sync::Arc;
 
-        AppComponents {
+        Arc::new(AppComponents {
             pages: Some($pages),
             forms: Some($forms),
             apis: Some($apis),
-        }
+        })
     }};
 }
 
@@ -650,13 +587,15 @@ macro_rules! rumtk_web_register_app_components {
 macro_rules! rumtk_web_register_app_switches {
     (  ) => {{
         use $crate::utils::app::AppSwitches;
+        use std::sync::Arc;
 
-        AppSwitches::default()
+        Arc::new(AppSwitches::default())
     }};
     ( $($switch:expr),+ ) => {{
         use $crate::utils::app::AppSwitches;
+        use std::sync::Arc;
 
-        AppSwitches::from([$($switch),+])
+        Arc::new(AppSwitches::from([$($switch),+]))
     }};
 }
 
@@ -836,7 +775,14 @@ macro_rules! rumtk_web_run_app {
             DEFAULT_LOCAL_LISTENING_ADDRESS,
             DEFAULT_UPLOAD_LIMIT
         };
+        use $crate::utils::app::{
+            SafeAppComponents,
+            SafeAppSwitches
+        };
         use $crate::utils::app::run_app;
+
+        let app_components: SafeAppComponents = $app_components.clone();
+        let switches: SafeAppSwitches = $switches.clone();
 
         rumtk_cli_process!(
             ///
@@ -893,22 +839,22 @@ macro_rules! rumtk_web_run_app {
             ///
             #[arg(long, default_value_t = false)]
             skip_default_css: bool,
-            CliProcessor::Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+            CliProcessor::Direct(Box::new(|args: RUMTKInterfaceArgs| -> RUMResult<()> {
                 let state = rumtk_web_load_conf!(&args);
 
-                rumtk_web_init_pages!($app_components.pages);
-                rumtk_web_init_forms!($app_components.forms, state);
-                rumtk_web_init_api_endpoints!($app_components.apis);
+                rumtk_web_init_pages!(app_components.pages.clone());
+                rumtk_web_init_forms!(app_components.forms.clone(), state);
+                rumtk_web_init_api_endpoints!(app_components.apis.clone());
                 rumtk_web_compile_css_bundle!(
                     &args.css_source_dir,
-                    &args.skip_default_css | $switches.skip_default_css
+                    &args.skip_default_css | switches.skip_default_css
                 );
 
                 rumtk_web_init_job_manager!(&args.threads);
 
-                let task = run_app(&args.ip, state, $switches.skip_serve);
+                let task = run_app(args.ip.clone(), state, switches.clone());
                 rumtk_resolve_task!(task)
-            })
+            }))
         );
     }};
 }
