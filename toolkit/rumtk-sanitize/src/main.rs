@@ -31,9 +31,8 @@
 ///
 
 use rumtk_core::base::{RUMResult, RUMVec};
-use rumtk_core::strings::{RUMArrayConversions, RUMString};
-use rumtk_core::types::RUMCLIParser;
 use rumtk_core::rumtk_cli_process;
+use rumtk_core::strings::{RUMArrayConversions, RUMString};
 use rumtk_web::utils::sanitize_html;
 
 fn main() {

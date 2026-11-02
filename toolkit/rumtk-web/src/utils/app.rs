@@ -19,18 +19,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 use crate::components::form::Forms;
-use crate::css::DEFAULT_OUT_CSS_DIR;
+pub use crate::css::DEFAULT_OUT_CSS_DIR;
 use crate::pages::UserPages;
-use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
+use crate::rumtk_web_fetch;
+pub use crate::utils::defaults::DEFAULT_LOCAL_LISTENING_ADDRESS;
 use crate::utils::matcher::*;
-use crate::{rumtk_web_api_process, rumtk_web_compile_css_bundle, rumtk_web_get_config, rumtk_web_init_api_endpoints, rumtk_web_init_forms, rumtk_web_init_job_manager, rumtk_web_init_pages, SharedAppState};
-use crate::{rumtk_web_fetch, rumtk_web_load_conf};
-use std::random;
+use crate::{rumtk_web_api_process, rumtk_web_get_config, SharedAppState};
 
 use rumtk_core::base::RUMResult;
 use rumtk_core::dependencies::clap;
-use rumtk_core::rumtk_resolve_task;
-use rumtk_core::strings::{rumtk_format, RUMString};
+use rumtk_core::strings::RUMString;
 use rumtk_core::threading::threading_functions::get_default_system_thread_count;
 use rumtk_core::types::{RUMCLIParser, RUMTcpListener};
 
@@ -40,7 +38,7 @@ use axum::Router;
 use tower_http::compression::{CompressionLayer, DefaultPredicate};
 use tower_http::services::ServeDir;
 
-const DEFAULT_UPLOAD_LIMIT: usize = 10240;
+pub const DEFAULT_UPLOAD_LIMIT: usize = 10240;
 
 ///
 /// RUMTK WebApp CLI Args
@@ -111,7 +109,8 @@ struct Args {
     pub skip_default_css: bool,
 }
 
-async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResult<()> {
+pub async fn run_app(ip: &RUMString, state: SharedAppState, skip_serve: bool) -> RUMResult<()>
+{
     let comression_layer: CompressionLayer = CompressionLayer::new()
         .br(true)
         .deflate(true)
@@ -141,8 +140,8 @@ async fn run_app(args: Args, state: SharedAppState, skip_serve: bool) -> RUMResu
         .with_state(state)
         .layer(comression_layer);
 
-    println!("binding IP {}", &args.ip.as_str());
-    let listener = RUMTcpListener::bind(&args.ip.as_str())
+    println!("binding IP {}", ip.as_str());
+    let listener = RUMTcpListener::bind(ip.as_str())
         .await
         .expect("There was an issue biding the listener.");
     println!("listening on {}", listener.local_addr().unwrap());
@@ -270,54 +269,6 @@ impl<const N: usize> From<[bool; N]> for AppSwitches {
     fn from(switches: [bool; N]) -> Self {
         AppSwitches::from_slice(&switches)
     }
-}
-
-///
-/// Main API function for running and serving the web application.
-///
-/// It takes an [AppComponents] instance and a few switches to help preconfigure the framework to
-/// use custom-made components and to register API endpoints.
-///
-/// See [rumtk_web_run_app](crate::rumtk_web_run_app) for more details.
-///
-/// ## Example
-/// ```
-/// use rumtk_web::app_main;
-/// use rumtk_web::{rumtk_web_register_app_switches, rumtk_web_register_app_components};
-///
-/// // We pass true to the switches because we do not want the web server to actually serve the page
-/// // It would hang the test otherwise...
-/// app_main(
-///     rumtk_web_register_app_components!(),
-///     rumtk_web_register_app_switches!(true)
-/// ).expect("Issue occurred while running the app");
-/// ```
-///
-pub fn app_main(app_components: AppComponents<'_>, switches: AppSwitches, port: Option<u16>) -> RUMResult<()> {
-    let args = match switches.skip_cli_args {
-        true => {
-            let port = port.unwrap_or_else(|| random::random::<u16>(..));
-            let ip = rumtk_format!("127.0.0.1:{port}");
-            Args {
-                ip,
-                ..Default::default()
-            }
-        },
-        false => Args::parse()
-    };
-    let state = rumtk_web_load_conf!(&args);
-
-    rumtk_web_init_pages!(app_components.pages);
-    rumtk_web_init_forms!(app_components.forms, state);
-    rumtk_web_init_api_endpoints!(app_components.apis);
-    rumtk_web_compile_css_bundle!(
-        &args.css_source_dir,
-        &args.skip_default_css | switches.skip_default_css
-    );
-
-    rumtk_web_init_job_manager!(&args.threads);
-    let task = run_app(args, state, switches.skip_serve);
-    rumtk_resolve_task!(task)
 }
 
 ///
@@ -862,14 +813,102 @@ macro_rules! rumtk_web_run_app {
     ( $app_components:expr ) => {{
         use $crate::rumtk_web_register_app_switches;
         let switches = rumtk_web_register_app_switches!();
-        rumtk_web_run_app!($app_components, switches, None)
+        rumtk_web_run_app!($app_components, switches)
     }};
-    ( $app_components:expr, $switches:expr ) => {{
-        rumtk_web_run_app!($app_components, $switches, None)
-    }};
-    ( $app_components:expr, $switches:expr, $port:expr ) => {{
-        use $crate::utils::app::app_main;
+    /*( $app_components:expr, $switches:expr ) => {{
+        rumtk_web_run_app!($app_components, $switches)
+    }};*/
+    (
+        $app_components:expr,
+        $switches:expr
+    ) => {{
+        use rumtk_core::cli::cli_utils::CliProcessor;
+        use rumtk_core::base::RUMResult;
+        use rumtk_core::strings::RUMString;
+        use rumtk_core::{rumtk_cli_process, rumtk_resolve_task};
+        use $crate::{
+            rumtk_web_load_conf, rumtk_web_init_pages, rumtk_web_init_forms,
+            rumtk_web_init_api_endpoints, rumtk_web_compile_css_bundle,
+            rumtk_web_init_job_manager
+        };
+        use $crate::utils::app::{
+            DEFAULT_OUT_CSS_DIR,
+            DEFAULT_LOCAL_LISTENING_ADDRESS,
+            DEFAULT_UPLOAD_LIMIT
+        };
+        use $crate::utils::app::run_app;
 
-        app_main($app_components, $switches, $port)
+        rumtk_cli_process!(
+            ///
+            /// Website title to use internally. It can be omitted if defined in the app.json config file
+            /// bundled with your app.
+            ///
+            #[arg(long, default_value = "")]
+            title: RUMString,
+            ///
+            /// Website description string. It can be omitted if defined in the app.json config file
+            /// bundled with your app.
+            ///
+            #[arg(long, default_value = "")]
+            description: RUMString,
+            ///
+            /// Company to display in website.
+            ///
+            #[arg(long, default_value = "")]
+            company: RUMString,
+            ///
+            /// Copyright year to display in website.
+            ///
+            #[arg(short, long, default_value = "")]
+            copyright: RUMString,
+            ///
+            /// Directory to scan on startup to find custom CSS sources to bundle into a minified CSS file
+            /// that can be quickly pulled by the app client side.
+            ///
+            /// This option can provide an alternative to direct component retrieval of CSS fragments.
+            /// Meaning, you could bundle all of your fragments into the master bundle at startup and
+            /// turn off component level ```custom_css_enabled``` option in the ```app.json``` config.
+            ///
+            #[arg(long, default_value = DEFAULT_OUT_CSS_DIR)]
+            css_source_dir: RUMString,
+            ///
+            /// Is the interface meant to be bound to the loopback address and remain hidden from the
+            /// outside world.
+            ///
+            /// It follows the format ```IPv4:port``` and it is a string.
+            ///
+            /// If a NIC IP is defined via `--ip`, that value will override this flag.
+            ///
+            #[arg(short, long, default_value = DEFAULT_LOCAL_LISTENING_ADDRESS)]
+            ip: RUMString,
+            ///
+            /// Specify the size limit for a file upload post request.
+            ///
+            #[arg(long, default_value_t = DEFAULT_UPLOAD_LIMIT)]
+            upload_limit: usize,
+            ///
+            /// How many threads to use to serve the website. By default, we use
+            /// ```get_default_system_thread_count()``` from ```rumtk-core``` to detect the total count of
+            /// cpus available. We use the system's total count of cpus by default.
+            ///
+            #[arg(long, default_value_t = false)]
+            skip_default_css: bool,
+            CliProcessor::Direct(|args: &RUMTKInterfaceArgs| -> RUMResult<()> {
+                let state = rumtk_web_load_conf!(&args);
+
+                rumtk_web_init_pages!($app_components.pages);
+                rumtk_web_init_forms!($app_components.forms, state);
+                rumtk_web_init_api_endpoints!($app_components.apis);
+                rumtk_web_compile_css_bundle!(
+                    &args.css_source_dir,
+                    &args.skip_default_css | $switches.skip_default_css
+                );
+
+                rumtk_web_init_job_manager!(&args.threads);
+
+                let task = run_app(&args.ip, state, $switches.skip_serve);
+                rumtk_resolve_task!(task)
+            })
+        );
     }};
 }

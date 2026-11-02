@@ -19,6 +19,7 @@ strip = false
 [dependencies]
 rumtk-core = { version = "0.18.0", path = "../rumtk-core" }
 rumtk-web = { version = "0.9.5", path = "../rumtk-web" }
+clap = { version = "4.6.7", features = ["derive"] }
 askama = "0.16.0"
 serde = { version = "1.0.229", features = ["derive", "std"] }
 tempfile = "3.27.0"
